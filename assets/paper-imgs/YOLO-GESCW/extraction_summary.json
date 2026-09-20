@@ -1,0 +1,158 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO_Crop_Detection_and_Counting\\2026_基于YOLO-GESCW的盛花期红花轻量化检测方法.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\YOLO-GESCW",
+  "total_pages": 10,
+  "total_items": 10,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "caption": "图1　不同场景下盛花期红花图像\nFig.1    Images of safflower in full bloom across different scenes",
+      "filename": "fig1.png",
+      "page": 2,
+      "w": 625,
+      "h": 912,
+      "bbox": [
+        318.3865966796875,
+        162.41371154785156,
+        542.9852905273438,
+        490.3249206542969
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "caption": "图2　YOLO-GESCW 模型结构\nFig.2    YOLO-GESCW model structure",
+      "filename": "fig2.png",
+      "page": 3,
+      "w": 601,
+      "h": 596,
+      "bbox": [
+        52.317108154296875,
+        294.68902587890625,
+        268.4289855957031,
+        508.7952575683594
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "caption": "图4　ECA 模块网络结构\nFig.4    ECA module network structure",
+      "filename": "fig4.png",
+      "page": 3,
+      "w": 352,
+      "h": 323,
+      "bbox": [
+        347.8636779785156,
+        597.4970703125,
+        474.448974609375,
+        713.3026733398438
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "caption": "图6　C3k2 模块结构\nFig.6    C3k2 module structure",
+      "filename": "fig6.png",
+      "page": 4,
+      "w": 551,
+      "h": 336,
+      "bbox": [
+        318.92694091796875,
+        90.92000579833984,
+        516.7690734863281,
+        211.53750610351562
+      ]
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "caption": "表 1    盛花期红花数据集的YOLOv8n 消融试验结果\nTable 1    YOLOv8n ablation test results for the safflower data set during full blooming period",
+      "filename": "tab1.png",
+      "page": 5,
+      "w": 1472,
+      "h": 623,
+      "bbox": [
+        35.5,
+        48.991302490234375,
+        565.1414184570312,
+        273.000732421875
+      ]
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "caption": "表 2    不同模型性能对比结果\nTable 2    Comparison results of the performance of different models",
+      "filename": "tab2.png",
+      "page": 6,
+      "w": 1457,
+      "h": 698,
+      "bbox": [
+        35.5,
+        96.48950958251953,
+        559.7986450195312,
+        347.5014343261719
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "caption": "图7　改进前后模型热力图可视化对比\nFig.7    Visual comparison of model heatmaps before and after\nimprovement",
+      "filename": "fig7.png",
+      "page": 6,
+      "w": 470,
+      "h": 907,
+      "bbox": [
+        365.5791015625,
+        330.3991394042969,
+        534.569580078125,
+        656.5162353515625
+      ]
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "caption": "表 3    模型部署性能对比结果\nTable 3    Comparison results of model deployment performance",
+      "filename": "tab3.png",
+      "page": 7,
+      "w": 1471,
+      "h": 584,
+      "bbox": [
+        35.5,
+        117.99945831298828,
+        564.8291625976562,
+        327.6278381347656
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "caption": "图8　改进模型不同场景下检测效果\nFig.8    Detection results of the improved model under different scenarios",
+      "filename": "fig8.png",
+      "page": 7,
+      "w": 1137,
+      "h": 283,
+      "bbox": [
+        93.22650146484375,
+        315.421630859375,
+        502.0770263671875,
+        417.2226257324219
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "9",
+      "caption": "图9　改进前后模型部署检测对比\nFig.9    Original and improved model comparison of deployment detection",
+      "filename": "fig9.png",
+      "page": 7,
+      "w": 862,
+      "h": 433,
+      "bbox": [
+        152.96780395507812,
+        574.4487915039062,
+        462.7660827636719,
+        730.0191650390625
+      ]
+    }
+  ]
+}

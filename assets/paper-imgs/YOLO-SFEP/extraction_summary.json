@@ -1,0 +1,248 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO_Crop_Detection_and_Counting\\2025 自然光环境下番茄穴盘苗缺苗检测的YOLO-SFEP模型.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\YOLO-SFEP",
+  "total_pages": 11,
+  "total_items": 16,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "caption": "图1　试验区域及番茄穴盘苗样例\nFig.1    Experimental area and tomato plug seedling samples",
+      "filename": "fig1.png",
+      "page": 2,
+      "w": 664,
+      "h": 526,
+      "bbox": [
+        311.29998779296875,
+        118.0997085571289,
+        550.0719604492188,
+        307.2430114746094
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "caption": "图2　数据增强效果示意图\nFig.2    Schematic of data augmentation effect",
+      "filename": "fig2.png",
+      "page": 3,
+      "w": 812,
+      "h": 440,
+      "bbox": [
+        104.01439666748047,
+        139.33714294433594,
+        395.7230224609375,
+        297.6712341308594
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "caption": "图3　YOLO-SFEP 模型的整体网络结构\nFig.3    Overall network structure of the YOLO-SFEP model",
+      "filename": "fig3.png",
+      "page": 3,
+      "w": 731,
+      "h": 918,
+      "bbox": [
+        157.3699951171875,
+        365.0272216796875,
+        420.1473083496094,
+        694.8150024414062
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "caption": "图4　Omni-Kernel 模块结构\nFig.4    Omni-Kernel module structure diagram",
+      "filename": "fig4.png",
+      "page": 4,
+      "w": 675,
+      "h": 247,
+      "bbox": [
+        38.13719177246094,
+        344.32293701171875,
+        280.7749328613281,
+        432.808837890625
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "caption": "图5　EMA 注意力机制模块网络结构图\nFig.5    EMA attention mechanism module network structure\ndiagram",
+      "filename": "fig5.png",
+      "page": 4,
+      "w": 449,
+      "h": 414,
+      "bbox": [
+        355.3269958496094,
+        448.9950256347656,
+        516.6619873046875,
+        597.8190307617188
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "caption": "图6　FasterNet Block 模块结构及PConv 原理图\nFig.6    FasterNet Block module structure diagram and PConv\nprinciple diagram",
+      "filename": "fig6.png",
+      "page": 5,
+      "w": 540,
+      "h": 411,
+      "bbox": [
+        63.235496520996094,
+        446.79803466796875,
+        257.14898681640625,
+        594.6329345703125
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "caption": "图7　PIoU 示意图\nFig.7    Schematic diagram of PIoU",
+      "filename": "fig7.png",
+      "page": 5,
+      "w": 236,
+      "h": 220,
+      "bbox": [
+        361.09100341796875,
+        394.73809814453125,
+        445.94219970703125,
+        473.44122314453125
+      ]
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "caption": "表 1    试验环境配置\nTable 1    Experimental environment configuration",
+      "filename": "tab1.png",
+      "page": 6,
+      "w": 1431,
+      "h": 1153,
+      "bbox": [
+        35.5,
+        48.991302490234375,
+        550.0900268554688,
+        463.7143249511719
+      ]
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "caption": "表 2    模型训练参数设置\nTable 2    Model training parameter settings",
+      "filename": "tab2.png",
+      "page": 6,
+      "w": 623,
+      "h": 302,
+      "bbox": [
+        318.6000061035156,
+        96.63947296142578,
+        542.77001953125,
+        204.88011169433594
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "caption": "图8　模型改进前后损失函数变化曲线\nFig.8    Loss function change curve before and after model\nimprovement",
+      "filename": "fig8.png",
+      "page": 6,
+      "w": 624,
+      "h": 209,
+      "bbox": [
+        326.74957275390625,
+        365.90301513671875,
+        550.8469848632812,
+        440.78619384765625
+      ]
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "caption": "表 3    YOLO-SFEP 模型消融试验结果\nTable 3    Results of the YOLO-SFEP model ablation experiments",
+      "filename": "tab3.png",
+      "page": 7,
+      "w": 1457,
+      "h": 156,
+      "bbox": [
+        35.5,
+        48.991302490234375,
+        559.7999877929688,
+        104.95787048339844
+      ]
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "caption": "表 4    不同目标检测模型性能\nTable 4    Performance of different object detection models",
+      "filename": "tab4.png",
+      "page": 7,
+      "w": 678,
+      "h": 156,
+      "bbox": [
+        48.83000183105469,
+        636.7994995117188,
+        292.4574890136719,
+        692.5300903320312
+      ]
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "caption": "表 5    YOLO-SFEP 在不同光照强度下的缺苗检测结果\nTable 5    Detection results of YOLO-SFEP on missing seedlings\nunder different light intensities",
+      "filename": "tab5.png",
+      "page": 7,
+      "w": 661,
+      "h": 198,
+      "bbox": [
+        311.8399963378906,
+        385.4894714355469,
+        549.5274658203125,
+        456.2801208496094
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "10",
+      "caption": "图10　热力图可视化分析\nFig.10    Visualization analysis of thermodynamic diagram",
+      "filename": "fig10.png",
+      "page": 8,
+      "w": 618,
+      "h": 1434,
+      "bbox": [
+        79.21607208251953,
+        118.11181640625,
+        301.37799072265625,
+        634.255615234375
+      ]
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "caption": "表 6    基于树莓派5 平台的模型检测性能对比\nTable 6    Comparison of detection performance of models on\nRaspberry Pi 5 platform",
+      "filename": "tab6.png",
+      "page": 8,
+      "w": 750,
+      "h": 358,
+      "bbox": [
+        288.67999267578125,
+        118.11181640625,
+        558.3135375976562,
+        246.91525268554688
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "11",
+      "caption": "图11　模型在树莓派5 平台上的性能验证\nFig.11    Performance verification of the models on the Raspberry\nPi 5 platform",
+      "filename": "fig11.png",
+      "page": 9,
+      "w": 553,
+      "h": 379,
+      "bbox": [
+        80.96749877929688,
+        70.29500579833984,
+        279.6413879394531,
+        206.404296875
+      ]
+    }
+  ]
+}

@@ -129,7 +129,7 @@ $$
 
 表 3 展示了 CBP-YOLO 在不同 GSD 图像上的检测结果：
 
-![](../assets/paper-imgs/cbp-yolo/page6_img7.jpeg)
+![](../assets/paper-imgs/CBP-YOLO/page6_img7.jpeg)
 
 **图 8 不同 GSD 检测结果可视化对比**
 
@@ -139,7 +139,7 @@ $$
 
 表 4 展示了不同模块组合对模型检测性能的影响：
 
-![](../assets/paper-imgs/cbp-yolo/page7_img3.jpeg)
+![](../assets/paper-imgs/CBP-YOLO/page7_img3.jpeg)
 
 **图 9 YOLOv8m 与 CBP-YOLOv8 检测效果对比**
 

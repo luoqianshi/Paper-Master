@@ -1,0 +1,126 @@
+{
+  "pdf_path": "pdf-papers/Improve YOLO12/YOLO_Crop_Detection_and_Counting/2025 基于YOLO-SSAR的自然环境下红花检测算法.pdf",
+  "output_dir": "assets/paper-imgs/YOLO-SSAR",
+  "total_pages": 9,
+  "total_items": 9,
+  "items": [
+    {
+      "filename": "fig1.png",
+      "page": 2,
+      "w": 642,
+      "h": 990,
+      "bbox": [
+        315,
+        115,
+        546,
+        471
+      ],
+      "caption": "图1　不同场景下的红花样本"
+    },
+    {
+      "filename": "fig2.png",
+      "page": 3,
+      "w": 1256,
+      "h": 704,
+      "bbox": [
+        72,
+        299,
+        524,
+        552
+      ],
+      "caption": "图2　YOLO-SSAR 模型结构"
+    },
+    {
+      "filename": "fig3.png",
+      "page": 4,
+      "w": 1270,
+      "h": 554,
+      "bbox": [
+        70,
+        74,
+        527,
+        273
+      ],
+      "caption": "图3　ShuffleNet v1 与 ShuffleNet v2 的构建单元"
+    },
+    {
+      "filename": "fig4.png",
+      "page": 4,
+      "w": 542,
+      "h": 551,
+      "bbox": [
+        67,
+        538,
+        262,
+        736
+      ],
+      "caption": "图4　Scale-Aware RFE 模块"
+    },
+    {
+      "filename": "fig5.png",
+      "page": 6,
+      "w": 1262,
+      "h": 504,
+      "bbox": [
+        70,
+        371,
+        524,
+        552
+      ],
+      "caption": "图5　不同光照强度的检测效果"
+    },
+    {
+      "filename": "fig6.png",
+      "page": 7,
+      "w": 1262,
+      "h": 518,
+      "bbox": [
+        70,
+        74,
+        524,
+        260
+      ],
+      "caption": "图6　不同尺度情况的检测效果"
+    },
+    {
+      "filename": "fig7.png",
+      "page": 7,
+      "w": 1262,
+      "h": 545,
+      "bbox": [
+        70,
+        448,
+        524,
+        644
+      ],
+      "caption": "图7　不同遮挡情况的检测效果"
+    },
+    {
+      "filename": "tab1.png",
+      "page": 5,
+      "w": 698,
+      "h": 487,
+      "bbox": [
+        305,
+        269,
+        556,
+        444
+      ],
+      "caption": "表 1　YOLO 模型的消融试验结果"
+    },
+    {
+      "filename": "tab2.png",
+      "page": 6,
+      "w": 699,
+      "h": 367,
+      "bbox": [
+        41,
+        130,
+        292,
+        262
+      ],
+      "caption": "表 2　不同模型检测性能对比"
+    }
+  ],
+  "note": "manually refined crops; auto extractor missed fig3/tab2 and mis-cropped fig2/fig4/tab1"
+}

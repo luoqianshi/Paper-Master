@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T10:13:17.526565+00:00",
+  "generatedAt": "2026-09-20T11:50:01.741859+00:00",
   "blogs": [
     {
       "title": "UAV remote sensing detection of tea leaf blight based on DDMA-YOLO",
@@ -55,7 +55,7 @@
       "category": "YOLO 应用",
       "date": "2026-09-20",
       "source_url": "http://www.tcsae.org",
-      "thumbnail": "assets/paper-imgs/cbp-yolo/page6_img7.jpeg"
+      "thumbnail": "assets/paper-imgs/CBP-YOLO/page6_img7.jpeg"
     },
     {
       "title": "Conv2Former: A Simple Transformer-Style ConvNet for Visual Recognition",
@@ -86,8 +86,8 @@
       "file": "paper-blogs/DFR-SN-YOLO.md",
       "category": "YOLO 应用",
       "date": "2026-09-20",
-      "source_url": " ",
-      "thumbnail": "assets/paper-imgs/dfrsn_yolo/fig1.png"
+      "source_url": "https://doi.org/10.11975/j.issn.1002-6819.202503208",
+      "thumbnail": "assets/paper-imgs/DFR-SN-YOLO/fig1.png"
     },
     {
       "title": "DilateFormer: Multi-Scale Dilated Transformer for Visual Recognition",
@@ -266,14 +266,6 @@
       "thumbnail": "assets/paper-imgs/SimAM/fig2.png"
     },
     {
-      "title": "低空航拍可见光图像快速检测甘蔗幼苗群体数量",
-      "file": "paper-blogs/Sugarcane-Seedlings-UAV.md",
-      "category": "YOLO 应用",
-      "date": "2026-09-20",
-      "source_url": " ",
-      "thumbnail": ""
-    },
-    {
       "title": "Wise-IoU: Bounding Box Regression Loss with Dynamic Focusing Mechanism",
       "file": "paper-blogs/Wise-IoU.md",
       "category": "损失函数",
@@ -295,7 +287,7 @@
       "category": "YOLO 应用",
       "date": "2026-09-20",
       "source_url": "https://doi.org/10.11975/j.issn.1002-6819.202509289",
-      "thumbnail": "assets/paper-imgs/YOLO-GESCW/table1_ablation.png"
+      "thumbnail": "assets/paper-imgs/YOLO-GESCW/tab1.png"
     },
     {
       "title": "YOLO-Master: MOE-Accelerated with Specialized Transformers for Enhanced Real-time Detection",
@@ -310,16 +302,16 @@
       "file": "paper-blogs/YOLO-SFEP.md",
       "category": "YOLO 应用",
       "date": "2026-09-20",
-      "source_url": " ",
-      "thumbnail": "assets/paper-imgs/yolo_sfep/fig1.png"
+      "source_url": "https://doi.org/10.11975/j.issn.1002-6819.202504135",
+      "thumbnail": "assets/paper-imgs/YOLO-SFEP/fig3.png"
     },
     {
       "title": "基于 YOLO-SSAR 的自然环境下红花检测算法",
       "file": "paper-blogs/YOLO-SSAR.md",
       "category": "YOLO 应用",
       "date": "2026-09-20",
-      "source_url": " ",
-      "thumbnail": "assets/paper-imgs/yolo_ssar/fig1.png"
+      "source_url": "https://doi.org/10.11975/j.issn.1002-6819.202408148",
+      "thumbnail": "assets/paper-imgs/YOLO-SSAR/fig2.png"
     },
     {
       "title": "2025 YOLO—Sugarcane_用于快速检测复杂背景下甘蔗植株的轻量级神经网络",
@@ -334,8 +326,8 @@
       "file": "paper-blogs/YOLO11n-EWL-Sugarcane-Bud.md",
       "category": "YOLO 应用",
       "date": "2026-09-20",
-      "source_url": " ",
-      "thumbnail": ""
+      "source_url": "https://doi.org/10.6041/j.issn.1000-1298.2025.11.045",
+      "thumbnail": "assets/paper-imgs/YOLO11n-EWL-Sugarcane-Bud/fig1.png"
     },
     {
       "title": "Ultralytics YOLO26: Unified Real-Time End-to-End Vision Models",
@@ -391,7 +383,7 @@
       "category": "YOLO 应用",
       "date": "2026-09-20",
       "source_url": "https://doi.org/10.11975/j.issn.1002-6819.202512131",
-      "thumbnail": "assets/paper-imgs/YOLOv12n-RCL-Sunflower/fig8_training.png"
+      "thumbnail": "assets/paper-imgs/YOLOv12n-RCL-Sunflower/fig8.png"
     },
     {
       "title": "基于改进YOLOv12n的VD炉真空下钢水液面高度检测",

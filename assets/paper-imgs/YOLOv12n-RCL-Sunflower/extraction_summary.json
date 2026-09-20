@@ -1,0 +1,263 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO_Crop_Detection_and_Counting\\2026_基于无人机影像与YOLOv12n-RCL的向日葵成熟期盘腐病危害程度检测_李京谦.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\YOLOv12n-RCL-Sunflower",
+  "total_pages": 13,
+  "total_items": 17,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "caption": "图1　不同等级盘腐病样本实例\nFig.1    Examples of disk rot samples at different grades",
+      "filename": "fig1.png",
+      "page": 2,
+      "w": 711,
+      "h": 230,
+      "bbox": [
+        302.79998779296875,
+        163.92971801757812,
+        558.5791625976562,
+        246.24171447753906
+      ]
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "caption": "表 1    向日葵盘腐病数据集的样本信息\nTable 1    Sample information of the sunflower disk rot dataset",
+      "filename": "tab1.png",
+      "page": 2,
+      "w": 499,
+      "h": 711,
+      "bbox": [
+        286.80999755859375,
+        281.5139465332031,
+        466.0,
+        536.831298828125
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "caption": "图3　RFAConv 模块结构图\nFig.3    Structure diagram of the RFAConv module",
+      "filename": "fig3.png",
+      "page": 4,
+      "w": 323,
+      "h": 1071,
+      "bbox": [
+        214.05322265625,
+        172.97735595703125,
+        330.0357666015625,
+        558.020263671875
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "caption": "图5　C3K2- RC 网络结构图\nFig.5    C3k2-RC network structure diagram",
+      "filename": "fig5.png",
+      "page": 5,
+      "w": 744,
+      "h": 91,
+      "bbox": [
+        166.989990234375,
+        459.31005859375,
+        434.2190246582031,
+        491.6298522949219
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "caption": "图6　CARAFE 上采样网络结构图\nFig.6    Network structure diagram of CARAFE upsampling",
+      "filename": "fig6.png",
+      "page": 5,
+      "w": 748,
+      "h": 691,
+      "bbox": [
+        166.989990234375,
+        459.31005859375,
+        435.7209777832031,
+        707.63818359375
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "caption": "图7　LSCSBD 检测头网络结构图\nFig.7    LSCSBD detection head network structure diagram",
+      "filename": "fig7.png",
+      "page": 6,
+      "w": 766,
+      "h": 408,
+      "bbox": [
+        160.00999450683594,
+        244.9000244140625,
+        435.2921142578125,
+        391.6712951660156
+      ]
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "caption": "表 2    试验的软硬件配置参数\nTable 2    Hardware and software configuration parameters for\nexperiments",
+      "filename": "tab2.png",
+      "page": 6,
+      "w": 505,
+      "h": 513,
+      "bbox": [
+        127.0,
+        401.54107666015625,
+        308.2250061035156,
+        585.9000244140625
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "caption": "图8　模型优化前后的性能评估结果\nFig.8    Performance comparison between the baseline and the\noptimized model",
+      "filename": "fig8.png",
+      "page": 7,
+      "w": 627,
+      "h": 543,
+      "bbox": [
+        61.35670471191406,
+        194.3810272216797,
+        286.56097412109375,
+        389.3991394042969
+      ]
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "caption": "表 3    C3K2-RC 模块不同引入位置的对比试验\nTable 3    Comparative experiment on different positions for the\nintroduction of the C3K2-RC module",
+      "filename": "tab3.png",
+      "page": 7,
+      "w": 627,
+      "h": 543,
+      "bbox": [
+        61.35670471191406,
+        194.3810272216797,
+        286.56097412109375,
+        389.3991394042969
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "9",
+      "caption": "图9　C3K2 引入不同模块后的输出感受野\nFig.9    Output receptive field of C3K2 with the integration of\ndifferent modules",
+      "filename": "fig9.png",
+      "page": 7,
+      "w": 732,
+      "h": 225,
+      "bbox": [
+        302.79998779296875,
+        289.6390380859375,
+        565.9503173828125,
+        370.150146484375
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "10",
+      "caption": "图10　添加CARAFE 模块前后输入输出特征对比图\nFig.10    Comparison of input and output features before and after adding the CARAFE module",
+      "filename": "fig10.png",
+      "page": 7,
+      "w": 1128,
+      "h": 300,
+      "bbox": [
+        94.68000030517578,
+        665.3172607421875,
+        500.62408447265625,
+        773.251220703125
+      ]
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "caption": "表 4    消融试验结果\nTable 4    Ablation test results",
+      "filename": "tab4.png",
+      "page": 8,
+      "w": 1472,
+      "h": 549,
+      "bbox": [
+        35.5,
+        48.991302490234375,
+        565.0333862304688,
+        246.5942840576172
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "11",
+      "caption": "图11　消融试验的可视化效果\nFig.11    Visualization effect of the ablation study",
+      "filename": "fig11.png",
+      "page": 8,
+      "w": 1200,
+      "h": 905,
+      "bbox": [
+        127.0,
+        260.55108642578125,
+        558.5792846679688,
+        585.9000244140625
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "12",
+      "caption": "图12　不同目标检测模型识别效果对比\nFig.12    Performance comparison of different object detection models",
+      "filename": "fig12.png",
+      "page": 9,
+      "w": 1392,
+      "h": 736,
+      "bbox": [
+        57.1304931640625,
+        244.9000244140625,
+        557.6744384765625,
+        509.63128662109375
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "13",
+      "caption": "图13　不同等级病害的混淆矩阵\nFig.13    Confusion matrix for different disease severity grades",
+      "filename": "fig13.png",
+      "page": 9,
+      "w": 506,
+      "h": 158,
+      "bbox": [
+        127.0,
+        529.21435546875,
+        308.6259460449219,
+        585.9000244140625
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "14",
+      "caption": "图14　向日葵盘腐病检测系统界面\nFig.14    Sunflower disk rot detection system interface",
+      "filename": "fig14.png",
+      "page": 10,
+      "w": 711,
+      "h": 394,
+      "bbox": [
+        36.720001220703125,
+        306.6150207519531,
+        292.5,
+        448.1500244140625
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "15",
+      "caption": "图15　向日葵盘腐病区域监测与分级结果可视化\nFig.15    Visualization of monitoring and grading results for\nsunflower disk rot regions",
+      "filename": "fig15.png",
+      "page": 10,
+      "w": 607,
+      "h": 975,
+      "bbox": [
+        321.72808837890625,
+        70.54501342773438,
+        539.6430053710938,
+        420.8929443359375
+      ]
+    }
+  ]
+}

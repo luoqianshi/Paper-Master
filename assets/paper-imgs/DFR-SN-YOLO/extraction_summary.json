@@ -2,11 +2,232 @@
   "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO_Crop_Detection_and_Counting\\2025 基于DFR-SN-YOLO的棉花顶芽识别方法.pdf",
   "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\DFR-SN-YOLO",
   "total_pages": 13,
-  "total_items": 0,
-  "total_figures": 0,
-  "total_tables": 0,
-  "total_algorithms": 0,
-  "total_unknowns": 0,
-  "rendered_pages": 0,
-  "items": []
+  "total_items": 15,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "caption": "图1　棉花顶芽数据集样本\nFig.1    Cotton top bud dataset sample",
+      "filename": "fig1.png",
+      "page": 2,
+      "w": 582,
+      "h": 826,
+      "bbox": [
+        320.8404846191406,
+        71.24101257324219,
+        529.9990844726562,
+        368.2275085449219
+      ]
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "caption": "表 1    YOLO 系列模型的检测结果\nTable 1    Detection results of models of YOLO series",
+      "filename": "tab1.png",
+      "page": 2,
+      "w": 692,
+      "h": 112,
+      "bbox": [
+        310.44000244140625,
+        633.4894409179688,
+        559.1199951171875,
+        673.2601318359375
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "caption": "图2　DFR-SN-YOLO 网络结构图\nFig.2    Structure diagram of the DFR-SN-YOLO network",
+      "filename": "fig2.png",
+      "page": 3,
+      "w": 711,
+      "h": 646,
+      "bbox": [
+        36.720001220703125,
+        481.4410400390625,
+        292.5,
+        713.780029296875
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "caption": "图3　轻量化主干创新模块示意图\nFig.3    Schematic diagram of the lightweight backbone innovation\nmodule",
+      "filename": "fig3.png",
+      "page": 3,
+      "w": 704,
+      "h": 1448,
+      "bbox": [
+        304.1617431640625,
+        158.21502685546875,
+        557.2177734375,
+        679.111328125
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "caption": "图5　SN-IoU 损失函数示意图\nFig.5    Schematic representation of the SN-IoU loss function",
+      "filename": "fig5.png",
+      "page": 5,
+      "w": 571,
+      "h": 895,
+      "bbox": [
+        328.1337890625,
+        194.47402954101562,
+        533.23779296875,
+        516.47998046875
+      ]
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "caption": "表 2    模型训练的参数设置\nTable 2    Parameter settings for the model training",
+      "filename": "tab2.png",
+      "page": 6,
+      "w": 505,
+      "h": 400,
+      "bbox": [
+        339.9599914550781,
+        144.82948303222656,
+        521.4113159179688,
+        288.41009521484375
+      ]
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "caption": "表 3    不同层加入CA 注意力的效果及不同的注意力机制对比\nTable 3    The effect of adding CA attention at different layers and the comparison of different attention mechanisms",
+      "filename": "tab3.png",
+      "page": 6,
+      "w": 1470,
+      "h": 1145,
+      "bbox": [
+        35.5,
+        138.3796844482422,
+        564.2884521484375,
+        550.144287109375
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "caption": "图6　融入感受野注意力C3_RFCBAMConv 的热力图可视化\nFig.6    Heatmap visualization incorporating receptive field attention C3_RFCBAMConv",
+      "filename": "fig6.png",
+      "page": 7,
+      "w": 1062,
+      "h": 649,
+      "bbox": [
+        136.84120178222656,
+        447.91650390625,
+        519.1032104492188,
+        681.1705322265625
+      ]
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "caption": "表 5    不同轻量化模块试验效果对比\nTable 5    Comparison of experimental effects of different\nlightweight modules",
+      "filename": "tab5.png",
+      "page": 8,
+      "w": 708,
+      "h": 380,
+      "bbox": [
+        303.44000244140625,
+        156.70948791503906,
+        557.9400024414062,
+        293.31011962890625
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "caption": "图7　不同损失函数平均检测精度mAP@50 对比图\nFig.7    Comparison chart of mAP@50 average detection accuracy\nof different loss functions",
+      "filename": "fig7.png",
+      "page": 8,
+      "w": 468,
+      "h": 385,
+      "bbox": [
+        355.2257995605469,
+        467.717041015625,
+        523.1319580078125,
+        606.0513305664062
+      ]
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "caption": "表 7    消融试验结果对比\nTable 7    Comparison of the results of the ablation experiments",
+      "filename": "tab7.png",
+      "page": 9,
+      "w": 1470,
+      "h": 220,
+      "bbox": [
+        35.5,
+        48.991302490234375,
+        564.4238891601562,
+        127.83753967285156
+      ]
+    },
+    {
+      "type": "table",
+      "number": "8",
+      "caption": "表 8    不同检测网络的检测结果对比\nTable 8    Comparison of the detection results for the different detection networks",
+      "filename": "tab8.png",
+      "page": 10,
+      "w": 1471,
+      "h": 530,
+      "bbox": [
+        35.5,
+        48.991302490234375,
+        564.747802734375,
+        239.69432067871094
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "caption": "图8　不同模型检测结果对比\nFig.8    Comparison of different experimental models",
+      "filename": "fig8.png",
+      "page": 10,
+      "w": 546,
+      "h": 956,
+      "bbox": [
+        79.74409484863281,
+        404.238525390625,
+        275.76629638671875,
+        747.8887329101562
+      ]
+    },
+    {
+      "type": "figure",
+      "number": "9",
+      "caption": "图9　检测中不同模型对比图\nFig.9    Comparison of different models in detection",
+      "filename": "fig9.png",
+      "page": 11,
+      "w": 971,
+      "h": 268,
+      "bbox": [
+        73.22184753417969,
+        70.30469512939453,
+        422.3071594238281,
+        166.6072998046875
+      ]
+    },
+    {
+      "type": "table",
+      "number": "9",
+      "caption": "表 9    不同模型的检测试验结果\nTable 9    Detection results for the different detection models",
+      "filename": "tab9.png",
+      "page": 11,
+      "w": 731,
+      "h": 465,
+      "bbox": [
+        35.5,
+        236.96949768066406,
+        298.24041748046875,
+        403.9314270019531
+      ]
+    }
+  ]
 }

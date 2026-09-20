@@ -125,7 +125,7 @@ $$r = \frac{\beta}{\delta \beta^\delta - \delta}$$
 
 为验证各改进模块在盛花期红花检测中的有效性，以 YOLOv8n 为基准模型开展消融试验，结果如下表所示。
 
-![消融试验结果](../assets/paper-imgs/YOLO-GESCW/table1_ablation.png)
+![消融试验结果](../assets/paper-imgs/YOLO-GESCW/tab1.png)
 
 由表可知，与基线模型 YOLOv8n 相比，单独引入 Ghost Conv 替换标准卷积后，参数量、浮点计算量均出现小幅度下降，说明先进行部分基础特征生成，再进行简单线性操作可减少计算开销。在引入 Ghost conv 基础上，引入 ECA 注意力模块替换 C2f 模块，模型参数量、浮点计算量均大幅度下降，说明该模块通过通道自适应卷积操作可有效降低模型的参数量和计算量。单独引入 SPPELAN 模块替换 SPPF 后，参数量、浮点计算量波动较小，平均精度均值维持 98.5%，说明其在不增加计算负担的前提下，维持多尺度特征融合能力。单独引入 C3k2 模块后精确率为所有单模块改进中最优达 95.1%，说明该模块有助于增强模型细节特征提取能力。同时进行 5 个模块改进的模型与仅不使用 Wise-IoUv3 的模型对比表明，引入 Wise-IoUv3 可以有效提高精确率和召回率，说明采用动态非单调聚焦机制强化了对低冗余、多尺度、细节特征的聚焦，从而提高了检测性能。引入 5 个模块改进的 YOLO-GESCW 模型参数量仅为 0.98 M、模型大小仅为 2.09 MB、浮点计算量仅为 3.4 G，较原模型 YOLOv8n 分别下降约 67.44%、65.10%、58.02%，精确率为 93.6%、召回率为 93.0%、平均精度均值为 98.1%，较原模型分别下降 1.1、3.4、0.7 个百分点，帧率为 106.79 帧/s，较原模型表现出更好的综合性能，在轻量化和检测精度平衡上较优。
 
@@ -133,7 +133,7 @@ $$r = \frac{\beta}{\delta \beta^\delta - \delta}$$
 
 选取目前主流检测模型 YOLOv9t、YOLOv10n、YOLOv11n、YOLOv12n，在相同试验条件下训练模型与 YOLO-GESCW 进行性能对比，同时为客观评价改进的 YOLO-GESCW 模型，选择本领域 9 种相关模型进行对比分析，不同模型性能对比结果如下表所示。
 
-![不同模型性能对比](../assets/paper-imgs/YOLO-GESCW/table2_comparison.png)
+![不同模型性能对比](../assets/paper-imgs/YOLO-GESCW/tab2.png)
 
 综合而言，改进后的模型计算资源消耗更少、模型更小、可部署性更优、检测速度更有优势，满足盛花期红花检测的精度需求和边缘设备部署要求。YOLO-GESCW 模型参数量较 YOLOv9t、YOLOv10n、YOLOv11n、YOLOv12n 分别降低约 50.25%、56.83%、62.02%、61.72%，浮点计算量较上述 4 种主流模型分别降低 55.3%、47.7%、46.0%、46.0%，同时参数量和计算量均低于本领域 9 种模型；模型大小仅为 2.09 MB；检测帧率为 106.79 帧/s，均比 4 种主流模型高。
 
@@ -141,7 +141,7 @@ $$r = \frac{\beta}{\delta \beta^\delta - \delta}$$
 
 采用 Grad-CAM（gradient-weighted class activation mapping）技术，选取盛花期红花图片分别对 YOLOv8n 与 YOLO-GESCW 的主干网络第 7、8、9 层进行特征图像可视化，结果如下图所示。
 
-![特征热力图可视化对比](../assets/paper-imgs/YOLO-GESCW/fig7_heatmap.png)
+![特征热力图可视化对比](../assets/paper-imgs/YOLO-GESCW/fig7.png)
 
 通过对比可知，YOLOv8n 模型第 7 层网络对盛花期红花目标区域关注度不高，并且存在对非花朵区域的关注，相比之下 YOLO-GESCW 模型更关注目标花朵区域；YOLOv8n 模型第 8 层网络关注区域是背景特征信息，YOLO-GESCW 模型仍然关注目标盛花期红花区域特征；YOLOv8n 模型第 9 层网络只关注到部分目标边缘区域，然而 YOLO-GESCW 模型更关注全局目标区域。相比之下 YOLO-GESCW 模型能够准确地聚焦于图像中检测目标的区域，对非目标区域关注较少，这一表现更符合网络模型改进设计的预期目标。
 
@@ -151,7 +151,7 @@ $$r = \frac{\beta}{\delta \beta^\delta - \delta}$$
 
 4 种典型场景下的检测性能如下表所示，其中帧率计算方法为 FPS = 1/(Tpre + Tin + Tpost) × 1000，YOLO-GESCW 模型的 best.engine 文件在测试中检测速度、推理速度最优。小尺度 - 强光 - 重叠遮挡场景下，best.engine 模型帧率 43.48 帧/s、推理耗时 0.007 1 s；弱光 - 无遮挡场景下，帧率 32.15 帧/s，推理耗时 0.007 1 s；多株连片红花场景下，平均帧率 51.81 帧/s，平均推理耗时 0.007 2 s；单株红花晃动场景下，平均帧率 52.36 帧/s，平均推理耗时 0.007 2 s。
 
-![模型部署性能对比](../assets/paper-imgs/YOLO-GESCW/table3_deployment.png)
+![模型部署性能对比](../assets/paper-imgs/YOLO-GESCW/tab3.png)
 
 部署试验表明，YOLO-GESCW 模型的 best.engine 文件在边缘设备上具备"小体积、高速度、高精度"的综合优势。
 
