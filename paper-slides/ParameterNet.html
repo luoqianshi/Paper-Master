@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>ParameterNet: Parameters Are All You Need for Large-Scale Visual Pretraining</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.small-text { font-size: clamp(11px, 1.05vw, 14px); color: #777; line-height: 1.5; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.tr { top: -120px; right: -120px; }
+.glow.br { bottom: -120px; right: -100px; }
+.glow.bl { bottom: -120px; left: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
+.step { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.step .step-num { font-size: clamp(10px, 0.9vw, 13px); font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; }
+.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
+.step .small-text { font-size: clamp(11px, 1vw, 14px); }
+.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b8c4d4; flex-shrink: 0; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .steps { flex-direction: column; } .dots { display: none; } .split { flex-direction: column; } }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+<div class="deck" id="deck">
+
+<section class="slide">
+  <div class="glow glow-blue tl"></div><div class="glow glow-navy br"></div>
+  <div class="anim badge"><span class="dot-yellow"></span>PAPER READING<span class="dot-gray"></span>CVPR 2024 · CCF-A</div>
+  <div class="anim" style="font-size:clamp(2.5rem,6vw,5rem);font-weight:900;line-height:1.05;letter-spacing:-2px;"><span class="highlight">ParameterNet</span></div>
+  <div class="anim" style="font-size:clamp(16px,2vw,28px);font-weight:700;color:var(--accent);margin-top:10px;line-height:1.35;">Parameters Are All You Need for Large-Scale<br>Visual Pretraining of Mobile Networks</div>
+  <p class="anim subtitle">在几乎不增加 FLOPs 的前提下大幅增加低 FLOPs 模型的参数量，用动态卷积实现参数增广，让移动级模型也能从大规模视觉预训练中受益。</p>
+  <div class="anim contributors"><div class="author">Kai Han · Yunhe Wang · Jianyuan Guo · Enhua Wu</div><div class="affil">华为诺亚方舟实验室 · 悉尼大学 · 中科院软件所 · 澳门大学</div></div>
+  <div class="anim cover-meta"><span class="cover-tag">骨干网络</span><span class="cover-tag">参数高效</span><span class="cover-tag">动态卷积</span><span class="cover-tag">CVPR 2024</span></div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献：跳出 low FLOPs pitfall</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">01</span><h3>命名 low FLOPs pitfall</h3><p class="body-text">发现并实证验证：低 FLOPs 模型用 <span style="color:var(--title);font-weight:600;">更多数据预训练反而性能下降</span>，在 Transformer 与 CNN 上普遍成立。</p></div>
+    <div class="card"><span class="card-num">02</span><h3>参数增广函数</h3><p class="body-text">用动态卷积实现，参数量提升约 <span style="color:var(--title);font-weight:600;">M 倍</span>而 FLOPs 增量可忽略。</p></div>
+    <div class="card"><span class="card-num">03</span><h3>视觉与语言双域验证</h3><p class="body-text">同一原则推广到 LLaMA-1B 的 <span style="color:var(--title);font-weight:600;">稀疏激活 MoE</span>，语言域同样成立。</p></div>
+  </div>
+  <div class="anim highlight-bar"><p>ParameterNet-600M 以 <span class="accent-word">81.6% top-1</span> 超过 Swin Transformer，FLOPs 仅为后者的约七分之一。</p></div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>low FLOPs pitfall：更多数据反而下降</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>Swin Transformer 与 EfficientNetV2 在 <span class="em">高 FLOPs 区间</span> ImageNet-22K 预训练明显优于 1K</li>
+        <li>但在 <span class="em">低 FLOPs 区间</span>情况反转，更大预训练数据反而性能下降</li>
+        <li>成因：压缩 FLOPs 的同时压缩了参数量，<span class="em">容量不足以吸收大规模数据</span></li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/ParameterNet/fig2.png" alt="Swin low FLOPs pitfall"></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="glow glow-blue tr"></div>
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>参数增广函数与动态卷积实现</h2></div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">参数增广函数</div>
+    <p class="formula"><i>W'</i> = <i>f</i>(<i>W</i>)</p>
+    <p class="formula-note">f 需满足：不需要太多计算成本，能大幅增加模型容量。选定动态卷积实现。</p>
+  </div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">动态卷积</div>
+    <p class="formula"><i>Y</i> = <i>X</i> * <i>W'</i>,&nbsp;&nbsp; <i>W'</i> = ∑<sub>i=1</sub><sup>M</sup> <i>α</i><sub>i</sub> <i>W</i><sub>i</sub></p>
+    <p class="formula"><i>α</i> = sigmoid(MLP(Pool(<i>X</i>)))</p>
+    <p class="formula-note">M 个专家卷积核，α 是输入相关的动态系数。系数生成模块 FLOPs 可忽略。</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>复杂度分析：参数翻倍、FLOPs 不变</h2></div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">参数比与 FLOPs 比</div>
+    <p class="formula"><i>R</i><sub>param</sub> ≈ 1/<i>K</i>² + <i>M</i></p>
+    <p class="formula"><i>R</i><sub>flops</sub> ≈ 1</p>
+    <p class="formula-note">M 是专家数，K 是卷积核尺寸。动态卷积拥有约 M 倍参数，额外 FLOPs 可忽略。</p>
+  </div>
+  <div class="anim steps">
+    <div class="step"><span class="step-num">示例</span><h3>C=32, K=3, M=4</h3><p class="small-text">标准卷积参数 9216</p></div>
+    <div class="step-arrow">→</div>
+    <div class="step"><span class="step-num">参数比</span><h3>R ≈ 4.11 倍</h3><p class="small-text">参数量 ~37900</p></div>
+    <div class="step-arrow">→</div>
+    <div class="step"><span class="step-num">FLOPs 增量</span><h3>仅 ~0.1%</h3><p class="small-text">系数生成约 38K FLOPs</p></div>
+    <div class="step-arrow">→</div>
+    <div class="step"><span class="step-num">效果</span><h3>容量翻 4 倍</h3><p class="small-text">低 FLOPs 模型吸收大规模数据</p></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>主对比：预训练增益由负转正</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/ParameterNet/table2.png" alt="主对比"></div>
+  <div class="anim figure-caption">GhostNet 经 22K 预训练后性能 <span class="cap-em">反而下降 0.6/0.3 个点</span>；ParameterNet 在同样预训练下分别 <span class="cap-em">提升 1.9/2.6 个点</span>，参数增广确实让低 FLOPs 模型吸收了大规模数据。</div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>与 SOTA 模型对比：7 倍更低 FLOPs 超越 Swin</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/ParameterNet/table3.png" alt="SOTA 对比"></div>
+  <div class="anim figure-caption">ParameterNet-600M 取得 <span class="cap-em">81.6% top-1</span>，FLOPs 比 ResNet50 或 Swin-T 低约 7 倍；ParameterNet-300M 在 300M 档超过 JFT-300M 预训练的 EfficientNet-B0。</div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>消融：构造途径与跨域验证</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>重参数化卷积途径：预训练增益 <span class="em">几乎为零</span>（推理期容量未增加）</li>
+        <li>动态卷积途径：增益达 <span class="em">+1.9 个点</span></li>
+        <li>施加于 Swin-300M/EfficientNetV2-B0 同样有效（<span class="em">+2.2/+1.7</span>）</li>
+        <li>语言域 LLaMA-1B + MoE：训练损失持续下降，up proj 加 8 专家 <span class="em">+2.37%</span></li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/ParameterNet/fig1.png" alt="GhostNet vs ParameterNet"></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="glow glow-blue tl"></div><div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">1</span><h3>发现 low FLOPs pitfall</h3><p class="body-text">在两类架构上实证验证，为移动端预训练研究提供明确的问题靶点。</p></div>
+    <div class="card"><span class="card-num">2</span><h3>参数增广函数原则</h3><p class="body-text">动态卷积以可忽略 FLOPs 增量换取约 M 倍参数，机制简洁且对基座架构通用。</p></div>
+    <div class="card"><span class="card-num">3</span><h3>视觉与语言双域验证</h3><p class="body-text">ParameterNet-600M 以 7 倍更低 FLOPs 超越 Swin Transformer，LLaMA-1B 上同样有效。</p></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">ParameterNet：参数是你所需要的一切</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">在不增加 FLOPs 的前提下增加参数量，<br><span style="color:var(--accent);font-weight:600;">让移动级模型从大规模预训练中受益</span>。</div>
+    <div class="anim cover-meta" style="margin-top:28px;"><span class="cover-tag">CVPR 2024</span><span class="cover-tag">parameternet.github.io</span><span class="cover-tag">感谢观看</span></div>
+  </div>
+</section>
+
+</div>
+<script>
+(function(){const slides=document.querySelectorAll('.slide');const total=slides.length;let current=0;const progress=document.getElementById('progress');const dotsWrap=document.getElementById('dots');const hint=document.getElementById('hint');for(let i=0;i<total;i++){const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.addEventListener('click',()=>goTo(i));dotsWrap.appendChild(d);}const dots=dotsWrap.querySelectorAll('.dot');function goTo(idx){if(idx<0||idx>=total||idx===current)return;const prev=slides[current];const next=slides[idx];prev.classList.remove('active');prev.classList.add('exit-up');requestAnimationFrame(()=>{next.classList.remove('exit-up');next.classList.add('active');});setTimeout(()=>{prev.classList.remove('exit-up');},700);dots[current].classList.remove('active');current=idx;dots[current].classList.add('active');progress.style.width=((current+1)/total*100)+'%';}function next(){goTo(current+1);}function prev(){goTo(current-1);}slides[0].classList.add('active');progress.style.width=(1/total*100)+'%';document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();prev();}if(e.key==='Home'){e.preventDefault();goTo(0);}if(e.key==='End'){e.preventDefault();goTo(total-1);}});let touchX=0,touchY=0;document.addEventListener('touchstart',(e)=>{touchX=e.changedTouches[0].screenX;touchY=e.changedTouches[0].screenY;},{passive:true});document.addEventListener('touchend',(e)=>{const dx=e.changedTouches[0].screenX-touchX;const dy=e.changedTouches[0].screenY-touchY;if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>50){dx<0?next():prev();}},{passive:true});document.addEventListener('click',(e)=>{if(e.target.closest('.dot'))return;next();});function hideHint(){hint.classList.add('hidden');}document.addEventListener('keydown',hideHint,{once:true});document.addEventListener('click',hideHint,{once:true});setTimeout(()=>hideHint(),5000);})();
+</script>
+</body>
+</html>

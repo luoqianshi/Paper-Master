@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>基于改进 YOLOv7 的甘蔗幼苗检测方法试验研究</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.tr { top: -120px; right: -120px; }
+.glow.br { bottom: -120px; right: -100px; }
+.glow.bl { bottom: -120px; left: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
+.step { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.step .step-num { font-size: clamp(10px, 0.9vw, 13px); font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; }
+.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
+.step .small-text { font-size: clamp(11px, 1vw, 14px); }
+.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b8c4d4; flex-shrink: 0; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .steps { flex-direction: column; } .dots { display: none; } .split { flex-direction: column; } }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- ═══════ 1 封面 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    PAPER READING
+    <span class="dot-gray"></span>
+    农机化研究 · 2025
+  </div>
+  <div class="anim" style="font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
+    基于改进 <span class="highlight">YOLOv7</span> 的<br>甘蔗幼苗检测方法
+  </div>
+  <p class="anim subtitle">YOLOv7-SSC：注入 SE 注意力与可切换空洞卷积 SAConv 增强特征提取，引入 CoordConv 提升位置感知，通道剪枝实现轻量化，mAP 达 94.4%。</p>
+  <div class="anim contributors">
+    <div class="author">李会 · 郭家文 · 黄世醒 · 郑丁科 · 安星宇 · 郑健林 · 杨丹彤</div>
+    <div class="affil">华南农业大学 · 云南省农业科学院甘蔗研究所</div>
+  </div>
+  <div class="anim cover-meta">
+    <span class="cover-tag">甘蔗幼苗检测</span>
+    <span class="cover-tag">SE 注意力</span>
+    <span class="cover-tag">SAConv</span>
+    <span class="cover-tag">通道剪枝</span>
+  </div>
+</section>
+
+<!-- ═══════ 2 核心贡献 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>四处改进：特征提取层、融合层与轻量化</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-2">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>SE 注意力机制</h3>
+      <p class="body-text">在 backbone 的 ELAN 分支中引入 SE，通过通道级权重重标定加强通道特征，缓解幼苗大小不一导致的漏检。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>SAConv 可切换空洞卷积</h3>
+      <p class="body-text">在 ELAN3 分支中以 SAConv 替换普通卷积，对不同空间采样率的卷积结果做开关聚合，增强位置特征感知。</p>
+    </div>
+  </div>
+  <div class="anim card-grid cols-2" style="margin-top:12px;">
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>CoordConv 坐标卷积</h3>
+      <p class="body-text">在 head 中插入 CoordConv，将坐标信息编码进特征图，提高对蔗苗位置与多尺度目标的检测能力。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">04</span>
+      <h3>通道剪枝轻量化</h3>
+      <p class="body-text">基于重要性度量的通道剪枝，推理速度提高 6.33 帧/s、模型减小 23.1 MB，最终 mAP 94.4%、FPS 8.79。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ 3 研究动机 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>甘蔗幼苗检测的挑战</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>田间光照、拍摄角度、杂草与遮挡等<span class="em">干扰因素叠加</span>，背景混淆严重</li>
+      <li>甘蔗幼苗处于真叶数不断变化的苗期，<span class="em">叶片尺寸与株高波动大</span>，漏检风险高</li>
+      <li>遮挡与拍摄距离造成<span class="em">远处蔗苗与非完整蔗苗漏检</span></li>
+      <li>暂未有工作同时兼顾<span class="em">复杂田间干扰下的漏检抑制与轻量化部署</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════ 4 整体结构 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>YOLOv7-SSC 网络结构</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv7-Sugarcane-Seedling/fig2.png" alt="YOLOv7-SSC 结构" style="max-height: 60vh;"></div>
+  <div class="anim figure-caption">在 backbone 的 ELAN 分支中接入 SE，在 ELAN3 分支中以 SAConv 替换普通卷积，在 head 中插入 CoordConv。</div>
+</section>
+
+<!-- ═══════ 5 SE 注意力 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue tr"></div>
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>SE 注意力机制：通道权重重标定</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>SE 模块在计算上是<span class="em">轻量级的</span>，只略微增加模型复杂性</li>
+        <li>压缩：全局平均池化把每个通道压缩为一个标量</li>
+        <li>激励：<span class="em">瓶颈式两层全连接</span>学习一组通道权重</li>
+        <li>回乘到原特征图上加强通道特征</li>
+      </ul>
+      <div class="prompt-box" style="margin-top:14px;">
+        <div class="prompt-label">激励操作</div>
+        <p class="formula" style="font-size:clamp(14px,1.5vw,20px);">
+          <i>s</i> = σ(<i>W</i><sub>2</sub> δ(<i>W</i><sub>1</sub> <i>z</i>))
+        </p>
+        <p class="formula-note">σ 为 sigmoid，δ 为 ReLU，z 为压缩后的通道统计量。</p>
+      </div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLOv7-Sugarcane-Seedling/fig3.png" alt="SE 注意力机制"></div>
+  </div>
+</section>
+
+<!-- ═══════ 6 SAConv ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>SAConv 可切换空洞卷积</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>切换函数在标准卷积与空洞卷积之间<span class="em">按位置做软选择</span></li>
+        <li>感受野随内容自适应变化，<span class="em">用更少的参数</span>表示特征之间的关系</li>
+        <li>置于 backbone 的 ELAN3 分支，输出进入特征融合部分</li>
+      </ul>
+      <div class="prompt-box" style="margin-top:14px;">
+        <div class="prompt-label">SAC 转换公式</div>
+        <p class="formula" style="font-size:clamp(12px,1.3vw,17px);">
+          <i>S</i>(<i>x</i>) · Conv(<i>x</i>,<i>w</i>,1) + [1−<i>S</i>(<i>x</i>)] · Conv(<i>x</i>,<i>w</i>+Δ<i>w</i>,<i>r</i>)
+        </p>
+      </div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLOv7-Sugarcane-Seedling/fig4.png" alt="SAConv 结构"></div>
+  </div>
+</section>
+
+<!-- ═══════ 7 CoordConv ═══════ -->
+<section class="slide">
+  <div class="glow glow-navy bl"></div>
+  <div class="anim slide-label">Method 04</div>
+  <div class="anim"><h2>CoordConv 坐标卷积：位置感知增强</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>CoordConv 通过<span class="em">额外的通道填充坐标信息 i、j</span>，之后按通道进行串联</li>
+        <li>是对标准卷积层的简单扩展</li>
+        <li>坐标通道的加入使网络能够<span class="em">感知特征所处的位置</span></li>
+        <li>更加准确地检测不同大小的蔗苗，是改善远处与遮挡目标检测的关键</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLOv7-Sugarcane-Seedling/fig5.png" alt="CoordConv 结构"></div>
+  </div>
+</section>
+
+<!-- ═══════ 8 对比实验 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>对比实验：与主流检测模型对比</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv7-Sugarcane-Seedling/fig6.png" alt="检测结果对比" style="max-height: 50vh;"></div>
+  <div class="anim figure-caption">
+    SSD 与 Faster-RCNN 漏检框明显多于 YOLO 系列；<span class="cap-em">YOLOv7-SSC 在遮挡与拍摄距离两类干扰下检测框最完整</span>，精度 95.1%、mAP 94.4% 均为最优。
+  </div>
+</section>
+
+<!-- ═══════ 9 消融实验 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>消融实验与剪枝效果</h2></div>
+  <div class="anim steps">
+    <div class="step">
+      <span class="step-num">基线</span>
+      <h3>YOLOv7</h3>
+      <p class="small-text">P 91.1% / mAP 93.0%</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">+SE</span>
+      <h3>+1.1% P</h3>
+      <p class="small-text">P 92.2% / mAP 93.2%</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">+SAConv</span>
+      <h3>+2.6% P</h3>
+      <p class="small-text">P 94.8% / mAP 93.1%</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">+CoordConv</span>
+      <h3>+1.3% mAP</h3>
+      <p class="small-text">P 95.1% / mAP 94.4%</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>剪枝后推理速度提高 6.33 帧/s、模型减小 23.1 MB，<span class="accent-word">mAP 92.6%、FPS 8.79</span>，以少量精度为代价换来可用的推理速度。</p>
+  </div>
+</section>
+
+<!-- ═══════ 10 可视化 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>可视化：不同条件下的检测效果</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv7-Sugarcane-Seedling/fig7.png" alt="消融检测结果" style="max-height: 55vh;"></div>
+  <div class="anim figure-caption">拍摄角度和光照对检测影响极小，影响检测的主要因素是苗的大小、遮挡和拍摄距离。<span class="cap-em">添加 CoordConv 后远处幼苗检测更为准确</span>。</div>
+</section>
+
+<!-- ═══════ 11 总结 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">1</span>
+      <h3>SE 通道注意力</h3>
+      <p class="body-text">在 backbone ELAN 中引入 SE，以极小计算开销重标定通道权重，为田间小目标检测特征增强提供参考。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">2</span>
+      <h3>SAConv + CoordConv</h3>
+      <p class="body-text">在特征提取层与融合层分别组合可切换空洞卷积和坐标编码，消融实验中各模块增益归属清晰。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">3</span>
+      <h3>通道剪枝部署</h3>
+      <p class="body-text">以通道重要性度量剪枝配合二次微调，推理速度提升到 8.79 帧/s 并压缩到 53.8 MB，兼顾精度与部署。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ 12 结尾 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">YOLOv7-SSC：甘蔗幼苗检测</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">
+      SE + SAConv + CoordConv + 通道剪枝，<br>
+      mAP 达 <span style="color:var(--accent);font-weight:600;">94.4%</span>，FPS 8.79，模型仅 53.8 MB。
+    </div>
+    <div class="anim cover-meta" style="margin-top:28px;">
+      <span class="cover-tag">农机化研究 2025</span>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
+  const dots = dotsWrap.querySelectorAll('.dot');
+  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
+  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
+  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
+  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
+})();
+</script>
+
+</body>
+</html>

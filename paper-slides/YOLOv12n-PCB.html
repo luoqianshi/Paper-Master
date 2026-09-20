@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>基于改进 YOLOv12n 的 PCB 缺陷检测算法研究</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --title: #3966A2;
+  --accent: #132843;
+  --dim: #6191D3;
+  --card-bg: #f7f9fc;
+  --border: #e2e8f0;
+  --radius: 12px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  height: 100vh;
+  cursor: default;
+  user-select: none;
+}
+
+/* ═══════════ SLIDE ENGINE ═══════════ */
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5vh 7vw;
+  background: var(--bg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(60px) scale(0.97);
+  transition: opacity 0.6s cubic-bezier(.4,0,.2,1),
+              transform 0.6s cubic-bezier(.4,0,.2,1),
+              visibility 0.6s;
+  will-change: opacity, transform;
+}
+.slide.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+}
+.slide.exit-up {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-60px) scale(0.97);
+}
+
+/* ═══════════ PROGRESS / DOTS / HINT ═══════════ */
+.progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--title), var(--accent));
+  z-index: 100;
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  border-radius: 0 1px 1px 0;
+}
+.dots {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+}
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #d4dce8;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #999;
+  z-index: 90;
+  opacity: 1;
+  transition: opacity 1s;
+  pointer-events: none;
+}
+.hint.hidden { opacity: 0; }
+
+/* ═══════════ TYPOGRAPHY ═══════════ */
+.slide-label {
+  font-size: clamp(11px, 1.1vw, 14px);
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 12px;
+}
+h1 {
+  font-size: clamp(30px, 4vw, 54px);
+  font-weight: 800;
+  line-height: 1.18;
+  color: var(--text);
+  letter-spacing: -1.5px;
+}
+h1 .highlight { color: var(--title); }
+h2 {
+  font-size: clamp(24px, 2.9vw, 40px);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--title);
+  letter-spacing: -1px;
+}
+h3 {
+  font-size: clamp(15px, 1.6vw, 22px);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.subtitle {
+  font-size: clamp(15px, 1.6vw, 21px);
+  font-weight: 400;
+  color: #555;
+  line-height: 1.55;
+  margin-top: 16px;
+  max-width: 800px;
+}
+.body-text {
+  font-size: clamp(13px, 1.35vw, 18px);
+  font-weight: 400;
+  color: #333;
+  line-height: 1.65;
+}
+.small-text {
+  font-size: clamp(11px, 1.05vw, 14px);
+  color: #777;
+  line-height: 1.5;
+}
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+
+/* ═══════════ BADGE / COVER ═══════════ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(57,102,162,0.08);
+  border: 1px solid rgba(57,102,162,0.15);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--title);
+  letter-spacing: 0.06em;
+  margin-bottom: 36px;
+  text-transform: uppercase;
+  width: fit-content;
+}
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag {
+  font-size: clamp(11px, 1vw, 14px);
+  font-weight: 500;
+  color: var(--dim);
+  background: rgba(57,102,162,0.06);
+  border: 1px solid rgba(57,102,162,0.12);
+  padding: 5px 14px;
+  border-radius: 100px;
+}
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+
+/* ═══════════ CARDS ═══════════ */
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(16px, 2vw, 26px);
+  display: flex;
+  flex-direction: column;
+}
+.card .card-num {
+  font-size: clamp(26px, 3vw, 42px);
+  font-weight: 800;
+  color: var(--title);
+  opacity: 0.25;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+
+/* ═══════════ HIGHLIGHT BAR ═══════════ */
+.highlight-bar {
+  background: rgba(57,102,162,0.06);
+  border-left: 3px solid var(--dim);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px);
+  margin-top: 16px;
+}
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+
+/* ═══════════ BULLET LIST ═══════════ */
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li {
+  font-size: clamp(13px, 1.35vw, 18px);
+  color: #333;
+  line-height: 1.65;
+  padding: 4px 0 4px 22px;
+  position: relative;
+}
+.bullet-list li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 13px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--title);
+}
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+
+/* ═══════════ VS COLUMNS ═══════════ */
+.vs-row { display: flex; align-items: stretch; gap: 24px; margin-top: 16px; }
+.vs-col {
+  flex: 1;
+  border-radius: var(--radius);
+  padding: clamp(14px, 1.7vw, 22px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.vs-col.left-col { background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.15); }
+.vs-col.right-col { background: rgba(34,197,94,0.04); border: 1px solid rgba(34,197,94,0.15); }
+.vs-col .vs-tag {
+  display: inline-block;
+  font-size: clamp(10px, 0.9vw, 12px);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  width: fit-content;
+}
+.vs-col.left-col .vs-tag { background: rgba(239,68,68,0.1); color: #b91c1c; }
+.vs-col.right-col .vs-tag { background: rgba(34,197,94,0.1); color: #15803d; }
+.vs-col h3 { font-size: clamp(15px, 1.5vw, 21px); margin-bottom: 10px; }
+.vs-col ul { list-style: none; padding: 0; }
+.vs-col ul li {
+  font-size: clamp(12px, 1.15vw, 16px);
+  color: #333;
+  line-height: 1.55;
+  padding: 3px 0 3px 20px;
+  position: relative;
+}
+.vs-col ul li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 11px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+}
+.vs-col.left-col ul li::before { background: #ef4444; }
+.vs-col.right-col ul li::before { background: #22c55e; }
+
+/* ═══════════ FORMULA BOX ═══════════ */
+.prompt-box {
+  background: var(--accent);
+  border-radius: var(--radius);
+  padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px);
+  margin-top: 14px;
+}
+.prompt-box .prompt-label {
+  font-size: clamp(9px, 0.85vw, 12px);
+  font-weight: 600;
+  color: #9db8d9;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula {
+  font-size: clamp(16px, 2vw, 27px);
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.55;
+  letter-spacing: 0.5px;
+}
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.fx-inline { font-weight: 600; color: var(--accent); white-space: nowrap; }
+.fx-inline i { font-style: italic; }
+.fx-inline sub, .fx-inline sup { font-size: 68%; }
+
+/* 分式与求和 */
+.frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 5px; line-height: 1.15; }
+.frac .num { padding: 0 6px 3px; border-bottom: 1.6px solid rgba(255,255,255,0.75); }
+.frac .den { padding: 3px 6px 0; }
+.sum-wrap { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 5px; line-height: 1; }
+.sum-wrap .lim { font-size: 52%; font-weight: 500; color: #a8c6ec; }
+.sum-wrap .sig { font-size: 135%; line-height: 0.95; }
+
+/* ═══════════ GLOW ═══════════ */
+.glow {
+  position: absolute;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.10;
+  pointer-events: none;
+}
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.tr { top: -120px; right: -120px; }
+.glow.br { bottom: -120px; right: -100px; }
+.glow.bl { bottom: -120px; left: -100px; }
+
+/* ═══════════ FIGURE ═══════════ */
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img {
+  max-width: 100%;
+  max-height: 46vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 16px rgba(19,40,67,0.08);
+}
+.figure-caption {
+  text-align: center;
+  font-size: clamp(11px, 1vw, 14px);
+  color: #555;
+  margin-top: 10px;
+  line-height: 1.55;
+  max-width: 960px;
+}
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+
+/* 左右分栏 */
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+
+/* ═══════════ STEPS ═══════════ */
+.steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
+.step {
+  flex: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.step .step-num {
+  font-size: clamp(10px, 0.9vw, 13px);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
+.step .small-text { font-size: clamp(11px, 1vw, 14px); }
+.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b8c4d4; flex-shrink: 0; }
+
+/* ═══════════ END CARD ═══════════ */
+.end-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+
+/* ═══════════ ANIMATIONS ═══════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+
+/* ═══════════ RESPONSIVE ═══════════ */
+@media (max-width: 900px) {
+  .slide { padding: 4vh 5vw; }
+  .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; }
+  .vs-row { flex-direction: column; gap: 12px; }
+  .steps { flex-direction: column; }
+  .dots { display: none; }
+  .split { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- ═══════ 1 封面 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    PAPER READING
+    <span class="dot-gray"></span>
+    电子测量与仪器学报 · 2026
+  </div>
+  <div class="anim" style="font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
+    基于改进 <span class="highlight">YOLOv12n</span> 的<br>PCB 缺陷检测算法研究
+  </div>
+  <p class="anim subtitle">提出 C3K2-CF 轻量化模块、FFEN 特征融合增强网络、FFF 特征聚焦融合模块与 TADDH 任务对齐动态检测头，在 PKU-Market-PCB 数据集上 mAP@0.5 达 98.6%，参数量减少 47.2%。</p>
+  <div class="anim contributors">
+    <div class="author">王宇 · 魏利胜 · 张平改 · 胡保玲</div>
+    <div class="affil">安徽工程大学 · 巢湖学院 · 上海大学</div>
+  </div>
+  <div class="anim cover-meta">
+    <span class="cover-tag">PCB 缺陷检测</span>
+    <span class="cover-tag">轻量化</span>
+    <span class="cover-tag">YOLOv12n</span>
+    <span class="cover-tag">北大核心 · CSCD</span>
+  </div>
+</section>
+
+<!-- ═══════ 2 核心贡献 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>四处改进：骨干、Neck、检测头全链路协同优化</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-2">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>C3K2-CF 轻量化特征提取</h3>
+      <p class="body-text">以 ConvFormer 令牌混合器重构 C3K2，参数量下降 20.2% 的同时 mAP@0.5:0.95 提升 4.8 个百分点，实现轻量化与小目标感知的双向优化。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>FFEN + FFF 跨尺度融合</h3>
+      <p class="body-text">特征融合增强网络对齐、拼接与残差通路保障跨尺度信息完整；特征聚焦融合模块以多感受野深度卷积聚焦融合多尺度上下文。</p>
+    </div>
+  </div>
+  <div class="anim card-grid cols-2" style="margin-top:12px;">
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>TADDH 任务对齐动态检测头</h3>
+      <p class="body-text">共享卷积与任务对齐学习打通分类-定位交互通道，参数量仅 1.33M 即取得 98.6% 的 mAP@0.5。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">04</span>
+      <h3>整体性能</h3>
+      <p class="body-text">mAP@0.5 达 98.6%，mAP@0.5:0.95 提升 7.2%，参数量和计算量分别减少 47.2% 和 16.9%。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ 3 研究动机 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>PCB 缺陷检测的挑战与现有局限</h2></div>
+  <div class="anim divider divider-accent"></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>PCB 缺陷普遍<span class="em">尺寸微小、隐蔽性强、特征辨识度低</span>，传统人工目视检测效率低且易受主观因素影响</li>
+      <li>深度学习方法已成为主流，但 Faster R-CNN 等两阶段检测器<span class="em">结构冗余、推理速度慢</span></li>
+      <li>已有 YOLO 改进引入 SPD-Conv、BiFPN 等提升精度，但<span class="em">计算量大、精度与速度无法兼顾</span></li>
+      <li>在工业边缘设备计算资源受限的约束下，暂未有工作从骨干参数、跨尺度信息完整性、多尺度上下文融合与<span class="em">分类-定位任务协同四个方面联合优化</span></li>
+    </ul>
+  </div>
+  <div class="anim highlight-bar">
+    <p>本文目标：在实现<span class="accent-word">轻量化</span>的同时，从骨干、Neck 到检测头实现<span class="accent-word">全链路协同优化</span>，兼顾高精度与实时性。</p>
+  </div>
+</section>
+
+<!-- ═══════ 4 C3K2-CF ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>C3K2-CF：ConvFormer 令牌混合器重构骨干</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>ConvFormer 作为 MetaFormer 纯卷积范式，完全摒弃注意力机制，仅依靠卷积操作实现全局特征交互</li>
+        <li>SConv 由<span class="em">逐深度卷积 DWConv</span> 与<span class="em">逐点卷积 PWConv</span> 组成，大幅降低参数量与计算量</li>
+        <li>替换后参数量与计算量按 <span class="em">1/K² + 1/N</span> 的比例压缩</li>
+        <li>减少冗余卷积对 PCB 小目标弱特征的干扰，保障特征完整传递</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLOv12n-PCB/fig2.png" alt="ConvFormer 结构"></div>
+  </div>
+</section>
+
+<!-- ═══════ 5 SConv 公式 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue tr"></div>
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>SConv 参数量与计算量分析</h2></div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">标准卷积 vs 深度可分离卷积</div>
+    <p class="formula">
+      <i>Parm</i><sub>dsc</sub> = <i>K</i><sup>2</sup> × <i>C</i> + <i>C</i> × <i>N</i>
+      &nbsp;&nbsp;|&nbsp;&nbsp;
+      <i>Calc</i><sub>dsc</sub> = <i>K</i><sup>2</sup> × <i>W</i> × <i>H</i> × <i>C</i> + <i>W</i> × <i>H</i> × <i>C</i> × <i>N</i>
+    </p>
+    <p class="formula-note">压缩比 = 1/K² + 1/N，其中 N 为输出通道数，K 为卷积核尺寸，C 为输入通道数。</p>
+  </div>
+  <div class="anim figure-box" style="margin-top:16px;"><img src="../assets/paper-imgs/YOLOv12n-PCB/fig3.png" alt="SConv 结构" style="max-height: 36vh;"></div>
+  <div class="anim figure-caption">SConv 先通过 DWConv 对每个通道单独进行空间特征提取，再通过 PWConv 完成通道维度的融合与输出通道数调整。</div>
+</section>
+
+<!-- ═══════ 6 FFEN ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>FFEN：特征融合增强网络</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>接收来自主干网络的三组不同尺度输入特征，通过<span class="em">尺度归一化与逐通道卷积</span>完成特征分辨率与维度的对齐</li>
+        <li>将对齐后的多尺度特征拼接，采用<span class="em">多尺度深度可分离卷积</span>构建多感受野特征提取分支</li>
+        <li>引入<span class="em">残差连接通路</span>，强化梯度反向传播效率，抑制特征衰减与丢失</li>
+        <li>内嵌 FFF 模块促进高层语义与低层细节的互补融合</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLOv12n-PCB/fig5.png" alt="颈部结构改进"></div>
+  </div>
+</section>
+
+<!-- ═══════ 7 FFF ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>FFF：特征聚焦融合模块</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>P3 层经 Adown 模块降采样保留小目标边缘细节，P4 层直接卷积提取语义特征，P5 层上采样强化高层语义</li>
+        <li>三层特征拼接后经<span class="em">多卷积核深度卷积</span>精细化增强</li>
+        <li>1×1 卷积捕获局部细腻特征、7×7 卷积提取大范围上下文，实现<span class="em">局部细节与全局上下文双重增强</span></li>
+      </ul>
+      <div class="prompt-box" style="margin-top:14px;">
+        <div class="prompt-label">FFF 融合公式</div>
+        <p class="formula" style="font-size:clamp(13px,1.5vw,19px);">
+          <i>f</i><sub>dw</sub> = <i>x</i><sub>cat</sub> + ∑<sub><i>k</i>∈kernel_sizes</sub> <i>dw_conv</i><sub>k</sub>(<i>x</i><sub>cat</sub>)
+        </p>
+      </div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLOv12n-PCB/fig6.png" alt="FFF 模块"></div>
+  </div>
+</section>
+
+<!-- ═══════ 8 TADDH ═══════ -->
+<section class="slide">
+  <div class="glow glow-navy bl"></div>
+  <div class="anim slide-label">Method 04</div>
+  <div class="anim"><h2>TADDH：任务对齐动态检测头</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>以<span class="em">共享卷积层</span>替代双分支独立卷积减少冗余参数</li>
+        <li>引入 Scale 层对多尺度特征动态缩放，适配不同检测头对应目标尺度</li>
+        <li>通过 DCNv2 可变形卷积实现灵活的空间采样</li>
+        <li>层注意力机制动态分配任务专属权重，缓解分类与定位的特征冲突</li>
+      </ul>
+      <div class="prompt-box" style="margin-top:14px;">
+        <div class="prompt-label">任务对齐注意力</div>
+        <p class="formula" style="font-size:clamp(13px,1.5vw,19px);">
+          <i>X</i><sub>task</sub> = ∑<sub><i>k</i>=1</sub><sup>N</sup> <i>w</i><sub>k</sub> · <i>X</i><sub>inter</sub><sup>k</sup>，
+          <i>w</i> = σ(<i>f</i><sub>c2</sub>(σ<sub>1</sub>(<i>f</i><sub>c1</sub>(<i>x</i><sub>inter</sub>))))
+        </p>
+      </div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLOv12n-PCB/fig7.png" alt="TADDH 模块结构"></div>
+  </div>
+</section>
+
+<!-- ═══════ 9 整体结构 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Method 05</div>
+  <div class="anim"><h2>改进 YOLOv12n 整体结构</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12n-PCB/fig1.png" alt="改进 YOLOv12n 模型整体结构图" style="max-height: 60vh;"></div>
+  <div class="anim figure-caption">四处改进分别作用于特征提取、特征融合与预测输出三个阶段：C3K2-CF 提供轻量而完整的浅层特征，FFEN 与 FFF 保障跨尺度传递与融合质量，TADDH 在输出端完成分类与定位的协同优化。</div>
+</section>
+
+<!-- ═══════ 10 实验：数据集 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>数据集与实验设置</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>PKU-Market-PCB 数据集共 693 张原始图像，涵盖<span class="em">缺孔、开路、短路、鼠咬、余铜及毛刺</span> 6 类缺陷</li>
+        <li>数据增强扩展至 10,668 张，按 8:1:1 划分</li>
+        <li>输入 640×640，SGD 优化器，学习率 0.01，迭代 200 次</li>
+        <li>评价指标：精确率、召回率、mAP@0.5、mAP@0.5:0.95、参数量、GFLOPs、FPS</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLOv12n-PCB/fig8.png" alt="PCB 表面缺陷示例"></div>
+  </div>
+</section>
+
+<!-- ═══════ 11 可视化 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>特征提取可视化：改进模型聚焦缺陷关键区域</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12n-PCB/fig10.png" alt="特征提取效果对比" style="max-height: 55vh;"></div>
+  <div class="anim figure-caption">原模型对缺陷目标聚焦能力不足，毛刺类缺陷存在明显漏检；改进模型对 PCB 缺陷的特征提取能力明显增强，<span class="cap-em">能够捕捉缺陷集中区域、更直观地展示关键缺陷点</span>。</div>
+</section>
+
+<!-- ═══════ 12 消融实验 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>消融实验：四处改进增益逐级叠加</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12n-PCB/table3.png" alt="消融实验结果" style="max-height: 50vh;"></div>
+  <div class="anim figure-caption">
+    四处改进齐备时参数量和计算量较基线分别减少 47.2% 和 16.9%，mAP@0.5 达到 <span class="cap-em">98.6%</span>、mAP@0.5:0.95 大幅提升 7.2%，改进在实现轻量化的同时实现了高精度检测。
+  </div>
+</section>
+
+<!-- ═══════ 13 对比实验 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 04</div>
+  <div class="anim"><h2>对比实验：与主流算法的全面对比</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12n-PCB/table5.png" alt="对比实验结果" style="max-height: 50vh;"></div>
+  <div class="anim figure-caption">
+    改进模型 mAP@0.5 增至 98.6%、mAP@0.5:0.95 达到 64.7%，参数量与计算量仅 1.33M 与 4.9G，推理帧率可达 78.4 fps；<span class="cap-em">RT-DETR 参数量与计算量高达 19.88M 与 57.0G</span>，改进模型在轻量化的同时检测精度显著提升。
+  </div>
+</section>
+
+<!-- ═══════ 14 跨数据集泛化 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 05</div>
+  <div class="anim"><h2>跨数据集泛化：Deep PCB 验证</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12n-PCB/table6.png" alt="Deep PCB 对比实验" style="max-height: 50vh;"></div>
+  <div class="anim figure-caption">
+    在 Deep PCB 数据集上精确率达到 97.2%、mAP@0.5 达到 97.5%，计算量仅为 4.9G、参数量低至 1.33M。<span class="cap-em">短路缺陷 mAP@0.5:0.95 提升 4.3 个百分点</span>，全类别缺陷检测精度提高 2.5 个百分点，验证了跨数据集泛化能力。
+  </div>
+</section>
+
+<!-- ═══════ 15 总结 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">1</span>
+      <h3>ConvFormer 轻量化</h3>
+      <p class="body-text">以深度可分离卷积令牌混合器重构 C3K2，参数量下降 20.2% 的同时 mAP@0.5:0.95 提升 4.8 个百分点，实现轻量化与小目标感知双向优化。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">2</span>
+      <h3>跨尺度特征融合</h3>
+      <p class="body-text">面向 Neck 跨尺度细节丢失设计 FFEN 与 FFF，以对齐-拼接-残差通路和多感受野深度卷积保留浅层弱特征，短路、开路等微小目标增益最大。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">3</span>
+      <h3>任务对齐学习</h3>
+      <p class="body-text">将任务对齐学习引入动态检测头，以层注意力与可变形卷积打通分类-定位信息交互，参数量仅 1.33M 即取得 98.6% 的 mAP@0.5。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ 16 结尾 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">YOLOv12n-PCB：轻量化 + 高精度</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">
+      全链路协同优化，参数量减少 47.2%，<br>
+      mAP@0.5 达到 <span style="color:var(--accent);font-weight:600;">98.6%</span>，适用于工业边缘部署。
+    </div>
+    <div class="anim cover-meta" style="margin-top:28px;">
+      <span class="cover-tag">电子测量与仪器学报 2026</span>
+      <span class="cover-tag">北大核心 · CSCD</span>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+  }
+  const dots = dotsWrap.querySelectorAll('.dot');
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= total || idx === current) return;
+    const prev = slides[current];
+    const next = slides[idx];
+
+    prev.classList.remove('active');
+    prev.classList.add('exit-up');
+
+    requestAnimationFrame(() => {
+      next.classList.remove('exit-up');
+      next.classList.add('active');
+    });
+
+    setTimeout(() => {
+      prev.classList.remove('exit-up');
+    }, 700);
+
+    dots[current].classList.remove('active');
+    current = idx;
+    dots[current].classList.add('active');
+    progress.style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchX = e.changedTouches[0].screenX;
+    touchY = e.changedTouches[0].screenY;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].screenX - touchX;
+    const dy = e.changedTouches[0].screenY - touchY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      dx < 0 ? next() : prev();
+    }
+  }, { passive: true });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.dot')) return;
+    next();
+  });
+
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
+})();
+</script>
+
+</body>
+</html>

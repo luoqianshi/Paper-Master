@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>基于改进YOLOv12n的VD炉真空下钢水液面高度检测</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h1 { font-size: clamp(30px, 4vw, 54px); font-weight: 800; line-height: 1.18; color: var(--text); letter-spacing: -1.5px; }
+h1 .highlight { color: var(--title); }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.small-text { font-size: clamp(11px, 1.05vw, 14px); color: #777; line-height: 1.5; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.vs-row { display: flex; align-items: stretch; gap: 24px; margin-top: 16px; }
+.vs-col { flex: 1; border-radius: var(--radius); padding: clamp(14px, 1.7vw, 22px); display: flex; flex-direction: column; position: relative; }
+.vs-col.left-col { background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.15); }
+.vs-col.right-col { background: rgba(34,197,94,0.04); border: 1px solid rgba(34,197,94,0.15); }
+.vs-col .vs-tag { display: inline-block; font-size: clamp(10px, 0.9vw, 12px); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 6px; margin-bottom: 12px; width: fit-content; }
+.vs-col.left-col .vs-tag { background: rgba(239,68,68,0.1); color: #b91c1c; }
+.vs-col.right-col .vs-tag { background: rgba(34,197,94,0.1); color: #15803d; }
+.vs-col h3 { font-size: clamp(15px, 1.5vw, 21px); margin-bottom: 10px; }
+.vs-col ul { list-style: none; padding: 0; }
+.vs-col ul li { font-size: clamp(12px, 1.15vw, 16px); color: #333; line-height: 1.55; padding: 3px 0 3px 20px; position: relative; }
+.vs-col ul li::before { content: ''; position: absolute; left: 0; top: 11px; width: 7px; height: 7px; border-radius: 50%; }
+.vs-col.left-col ul li::before { background: #ef4444; }
+.vs-col.right-col ul li::before { background: #22c55e; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.fx-inline { font-weight: 600; color: var(--accent); white-space: nowrap; }
+.fx-inline i { font-style: italic; }
+.fx-inline sub, .fx-inline sup { font-size: 68%; }
+.frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 5px; line-height: 1.15; }
+.frac .num { padding: 0 6px 3px; border-bottom: 1.6px solid rgba(255,255,255,0.75); }
+.frac .den { padding: 3px 6px 0; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.tr { top: -120px; right: -120px; }
+.glow.br { bottom: -120px; right: -100px; }
+.glow.bl { bottom: -120px; left: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
+.step { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.step .step-num { font-size: clamp(10px, 0.9vw, 13px); font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; }
+.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
+.step .small-text { font-size: clamp(11px, 1vw, 14px); }
+.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b8c4d4; flex-shrink: 0; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .vs-row { flex-direction: column; gap: 12px; } .steps { flex-direction: column; } .dots { display: none; } .split { flex-direction: column; } }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- 1 封面 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    PAPER READING
+    <span class="dot-gray"></span>
+    《钢铁》2026
+  </div>
+  <div class="anim" style="font-size: clamp(2.2rem, 5vw, 3.8rem); font-weight: 900; line-height: 1.15; letter-spacing: -1.5px;">
+    基于改进 <span class="highlight">YOLOv12n</span> 的<br>VD 炉真空下钢水液面高度检测
+  </div>
+  <p class="anim subtitle">针对 VD 炉烟雾粉尘干扰、液面尺度动态变化与深层融合衰减三类问题，提出 EMD-YOLO，以 ECAConv、MRA、DElan 分层改进 YOLOv12n。</p>
+  <div class="anim contributors">
+    <div class="author">东鹏涛 · 史利民 · 李枫 · 孔令种 · 李世森 · 臧喜民 · 杨杰</div>
+    <div class="affil">辽宁科技大学 · 中国科学院自动化研究所 · 天津钢管制造有限公司 · 沈阳工业大学</div>
+  </div>
+  <div class="anim cover-meta">
+    <span class="cover-tag">工业检测</span>
+    <span class="cover-tag">VD 炉液面</span>
+    <span class="cover-tag">通道注意力</span>
+    <span class="cover-tag">《钢铁》2026</span>
+  </div>
+</section>
+
+<!-- 2 核心贡献 -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献：「通道增强-区域定位-融合提效」的分层改进</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>ECAConv 通道增强</h3>
+      <p class="body-text">集成高效通道注意力 ECA 构建 ECAConv 卷积块，<span style="color:var(--title);font-weight:600;">自适应强化关键通道特征</span>，抑制烟雾粉尘散射与光斑噪声通道。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>MRA 多尺度区域注意力</h3>
+      <p class="body-text">嵌入多尺度动态区域注意力 MRA 模块，<span style="color:var(--title);font-weight:600;">精准聚焦液面区域</span>的多尺度特征响应，适配液面尺度与位置的动态变化。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>DElan 深层融合模块</h3>
+      <p class="body-text">将 R-ELAN 改进为 DElan，嵌入双重注意力 DA 与多尺度融合 MSF，<span style="color:var(--title);font-weight:600;">增强深层特征关联性</span>与梯度传播效率。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>EMD-YOLO 的 mAP@50% 与综合置信度较 YOLOv12n 分别提升 <span class="accent-word">4.7 和 6.9</span> 个百分点，参数量仅增 0.01G FLOPs。</p>
+  </div>
+</section>
+
+<!-- 3 研究动机 -->
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>VD 炉真空下液面检测的三重挑战</h2></div>
+  <div class="anim divider divider-accent"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">A</span>
+      <h3>通道干扰</h3>
+      <p class="body-text">烟雾与粉尘散射削弱通道层面的判别信息，液面反光造成局部过曝与边缘模糊。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">B</span>
+      <h3>尺度动态变化</h3>
+      <p class="body-text">抽真空、保压、破空各阶段液面持续起伏，传统感受野难以适配多尺度目标。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">C</span>
+      <h3>深层融合衰减</h3>
+      <p class="body-text">R-ELAN 在高噪声、低对比度液面特征上融合效率欠佳、梯度传播衰减。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>暂未有工作同时围绕<span class="accent-word">通道干扰、液面尺度动态变化与深层融合衰减</span>三方面对 YOLOv12n 做定向改造。</p>
+  </div>
+</section>
+
+<!-- 4 总体结构 -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>EMD-YOLO 网络总体结构</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12n-VD-Furnace/fig2.png" alt="EMD-YOLO 网络结构"></div>
+  <div class="anim figure-caption">
+    ECAConv 出现在骨干与颈部的卷积连接处，MRA 插入多尺度特征路径动态聚焦液面区域，DElan 接管深层特征聚合，
+    <span class="cap-em">三者串联构成「通道增强-区域定位-融合提效」的数据流</span>。
+  </div>
+</section>
+
+<!-- 5 方法：ECAConv -->
+<section class="slide">
+  <div class="glow glow-blue tr"></div>
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>ECAConv：自适应核尺寸通道注意力</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>ECA 先做全局平均池化，再用<span class="em">自适应核尺寸一维卷积</span>生成通道权重</li>
+        <li>卷积核大小 <span class="fx-inline">k</span> 由通道数自适应确定，只随通道数按<span class="em">对数速度增长</span></li>
+        <li>被强化的是液面-炉壁边缘结构与高温辐射灰度梯度通道，被抑制的是粉尘散射与光斑噪声通道</li>
+        <li>嵌入标准卷积层即得到 ECAConv，为 MRA 提供更干净的特征输入</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLOv12n-VD-Furnace/fig3.png" alt="ECA 模块结构"></div>
+  </div>
+</section>
+
+<!-- 6 方法：MRA -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>MRA：多尺度动态区域注意力</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12n-VD-Furnace/fig5.png" alt="MRA 模块结构" style="max-height: 38vh;"></div>
+  <div class="anim figure-caption">
+    特征被均匀划分为 M 个区域，在区域内独立执行自注意力，计算复杂度由全局 O((HW)<sup>2</sup>) 降为 O(M(H/M)W<sup>2</sup>)。
+    <span class="cap-em">引入尺度集 {2,4,8,16} 与 DRS 动态区域选择机制</span>，按输入特征自适应选择最优划分尺度。
+  </div>
+</section>
+
+<!-- 7 方法：DElan -->
+<section class="slide">
+  <div class="anim slide-label">Method 04</div>
+  <div class="anim"><h2>DElan：改进 R-ELAN 的深层融合模块</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li><span class="em">双重注意力 DA</span>：沿通道与空间两个维度并行建模特征重要性，抑制反光与烟雾冗余通道</li>
+      <li><span class="em">多尺度融合 MSF</span>：用 1x1、3x3、5x5、7x7 多尺寸卷积核构建差异化感受野</li>
+      <li><span class="em">可学习残差缩放因子</span>：自适应调节残差连接强度，缓解训练不稳定与梯度衰减</li>
+    </ul>
+  </div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12n-VD-Furnace/fig7.png" alt="DA 模块" style="max-height: 30vh;"></div>
+  <div class="anim figure-caption">
+    DA 模块沿通道与空间两个维度并行完成特征重要性建模，输出直接送检测头，<span class="cap-em">决定最终检测框与掩码的质量</span>。
+  </div>
+</section>
+
+<!-- 8 实验：数据集 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>16000 张 VD 炉液面工业数据集</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12n-VD-Furnace/fig9.png" alt="数据集样例" style="max-height: 42vh;"></div>
+  <div class="anim figure-caption">
+    覆盖不同轮次钢液颜色差异（浅绿、暗蓝、粉红等）与不同液面高度，经翻转、平移、旋转、裁剪与亮度调整扩充至 16000 张，
+    <span class="cap-em">按 8:1:1 划分训练集、验证集与测试集</span>。
+  </div>
+</section>
+
+<!-- 9 实验：对比 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>对比试验：精度大幅跃升而计算量几乎不变</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12n-VD-Furnace/table3.png" alt="对比试验" style="max-height: 44vh;"></div>
+  <div class="anim figure-caption">
+    EMD-YOLO 的 mAP@50% 达到 99.5%、CC 达到 95.6%，较 YOLOv12n 分别提升 4.7 和 6.9 个百分点；
+    <span class="cap-em">计算量仅由 6.0 GB 增至 6.1 GB</span>，增益来自注意力与融合结构本身而非模型扩容。
+  </div>
+</section>
+
+<!-- 10 实验：消融 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>消融试验：逐项叠加、各自可归因</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12n-VD-Furnace/table2.png" alt="消融试验" style="max-height: 42vh;"></div>
+  <div class="anim figure-caption">
+    仅加入 ECAConv 时参数量与计算量不升反降，召回率提升 2.6 个百分点；叠加 MRA 后精确率提升 4.1 个百分点；
+    <span class="cap-em">三者齐备时四项指标达到 99.2%、98.9%、99.5% 与 95.6%</span>。
+  </div>
+</section>
+
+<!-- 11 总结 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">1</span>
+      <h3>分层改进对应工况难点</h3>
+      <p class="body-text">ECAConv 抑制烟雾粉尘干扰、MRA 适配液面尺度波动、DElan 缓解梯度衰减，并由消融试验逐项验证增益。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">2</span>
+      <h3>液面高度量化方案</h3>
+      <p class="body-text">设计相对高度比与相对面积比两种换算方案，用综合置信度 CC 融合物理、统计、时间与工艺四个口径。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">3</span>
+      <h3>工业数据集说服力强</h3>
+      <p class="body-text">构建覆盖全阶段、含多种遮挡工况的 16000 张工业数据集，对比五个检测模型与四个分割模型。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 结尾 -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">EMD-YOLO：通道-区域-融合，分层攻克</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">
+      面向 VD 炉烟雾粉尘工况，<br>
+      以<span style="color:var(--accent);font-weight:600;">「通道增强-区域定位-融合提效」</span>三步提升液面检测精度。
+    </div>
+    <div class="anim cover-meta" style="margin-top:28px;">
+      <span class="cover-tag">《钢铁》2026</span>
+      <span class="cover-tag">mAP@50% 99.5%</span>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
+  const dots = dotsWrap.querySelectorAll('.dot');
+  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
+  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
+  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
+  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
+})();
+</script>
+
+</body>
+</html>

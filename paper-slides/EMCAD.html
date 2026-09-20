@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>EMCAD: Efficient Multi-scale Convolutional Attention Decoding for Medical Image Segmentation</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --title: #3966A2;
+  --accent: #132843;
+  --dim: #6191D3;
+  --card-bg: #f7f9fc;
+  --border: #e2e8f0;
+  --radius: 12px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  height: 100vh;
+  cursor: default;
+  user-select: none;
+}
+
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5vh 7vw;
+  background: var(--bg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(60px) scale(0.97);
+  transition: opacity 0.6s cubic-bezier(.4,0,.2,1),
+              transform 0.6s cubic-bezier(.4,0,.2,1),
+              visibility 0.6s;
+  will-change: opacity, transform;
+}
+.slide.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+}
+.slide.exit-up {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-60px) scale(0.97);
+}
+
+.progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--title), var(--accent));
+  z-index: 100;
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  border-radius: 0 1px 1px 0;
+}
+.dots {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+}
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #d4dce8;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #999;
+  z-index: 90;
+  opacity: 1;
+  transition: opacity 1s;
+  pointer-events: none;
+}
+.hint.hidden { opacity: 0; }
+
+.slide-label {
+  font-size: clamp(11px, 1.1vw, 14px);
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 12px;
+}
+h1 {
+  font-size: clamp(30px, 4vw, 54px);
+  font-weight: 800;
+  line-height: 1.18;
+  color: var(--text);
+  letter-spacing: -1.5px;
+}
+h1 .highlight { color: var(--title); }
+h2 {
+  font-size: clamp(24px, 2.9vw, 40px);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--title);
+  letter-spacing: -1px;
+}
+h3 {
+  font-size: clamp(15px, 1.6vw, 22px);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.subtitle {
+  font-size: clamp(15px, 1.6vw, 21px);
+  font-weight: 400;
+  color: #555;
+  line-height: 1.55;
+  margin-top: 16px;
+  max-width: 800px;
+}
+.body-text {
+  font-size: clamp(13px, 1.35vw, 18px);
+  font-weight: 400;
+  color: #333;
+  line-height: 1.65;
+}
+.small-text {
+  font-size: clamp(11px, 1.05vw, 14px);
+  color: #777;
+  line-height: 1.5;
+}
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(57,102,162,0.08);
+  border: 1px solid rgba(57,102,162,0.15);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--title);
+  letter-spacing: 0.06em;
+  margin-bottom: 36px;
+  text-transform: uppercase;
+  width: fit-content;
+}
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag {
+  font-size: clamp(11px, 1vw, 14px);
+  font-weight: 500;
+  color: var(--dim);
+  background: rgba(57,102,162,0.06);
+  border: 1px solid rgba(57,102,162,0.12);
+  padding: 5px 14px;
+  border-radius: 100px;
+}
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(16px, 2vw, 26px);
+  display: flex;
+  flex-direction: column;
+}
+.card .card-num {
+  font-size: clamp(26px, 3vw, 42px);
+  font-weight: 800;
+  color: var(--title);
+  opacity: 0.25;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+
+.highlight-bar {
+  background: rgba(57,102,162,0.06);
+  border-left: 3px solid var(--dim);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px);
+  margin-top: 16px;
+}
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li {
+  font-size: clamp(13px, 1.35vw, 18px);
+  color: #333;
+  line-height: 1.65;
+  padding: 4px 0 4px 22px;
+  position: relative;
+}
+.bullet-list li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 13px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--title);
+}
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+
+.vs-row { display: flex; align-items: stretch; gap: 24px; margin-top: 16px; }
+.vs-col {
+  flex: 1;
+  border-radius: var(--radius);
+  padding: clamp(14px, 1.7vw, 22px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.vs-col.left-col { background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.15); }
+.vs-col.right-col { background: rgba(34,197,94,0.04); border: 1px solid rgba(34,197,94,0.15); }
+.vs-col .vs-tag {
+  display: inline-block;
+  font-size: clamp(10px, 0.9vw, 12px);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  width: fit-content;
+}
+.vs-col.left-col .vs-tag { background: rgba(239,68,68,0.1); color: #b91c1c; }
+.vs-col.right-col .vs-tag { background: rgba(34,197,94,0.1); color: #15803d; }
+.vs-col h3 { font-size: clamp(15px, 1.5vw, 21px); margin-bottom: 10px; }
+.vs-col ul { list-style: none; padding: 0; }
+.vs-col ul li {
+  font-size: clamp(12px, 1.15vw, 16px);
+  color: #333;
+  line-height: 1.55;
+  padding: 3px 0 3px 20px;
+  position: relative;
+}
+.vs-col ul li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 11px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+}
+.vs-col.left-col ul li::before { background: #ef4444; }
+.vs-col.right-col ul li::before { background: #22c55e; }
+
+.prompt-box {
+  background: var(--accent);
+  border-radius: var(--radius);
+  padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px);
+  margin-top: 14px;
+}
+.prompt-box .prompt-label {
+  font-size: clamp(9px, 0.85vw, 12px);
+  font-weight: 600;
+  color: #9db8d9;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula {
+  font-size: clamp(16px, 2vw, 27px);
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.55;
+  letter-spacing: 0.5px;
+}
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.fx-inline { font-weight: 600; color: var(--accent); white-space: nowrap; }
+.fx-inline i { font-style: italic; }
+.fx-inline sub, .fx-inline sup { font-size: 68%; }
+
+.frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 5px; line-height: 1.15; }
+.frac .num { padding: 0 6px 3px; border-bottom: 1.6px solid rgba(255,255,255,0.75); }
+.frac .den { padding: 3px 6px 0; }
+.sum-wrap { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 5px; line-height: 1; }
+.sum-wrap .lim { font-size: 52%; font-weight: 500; color: #a8c6ec; }
+.sum-wrap .sig { font-size: 135%; line-height: 0.95; }
+
+.glow {
+  position: absolute;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.10;
+  pointer-events: none;
+}
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.tr { top: -120px; right: -120px; }
+.glow.br { bottom: -120px; right: -100px; }
+.glow.bl { bottom: -120px; left: -100px; }
+
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img {
+  max-width: 100%;
+  max-height: 46vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 16px rgba(19,40,67,0.08);
+}
+.figure-caption {
+  text-align: center;
+  font-size: clamp(11px, 1vw, 14px);
+  color: #555;
+  margin-top: 10px;
+  line-height: 1.55;
+  max-width: 960px;
+}
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+
+.steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
+.step {
+  flex: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.step .step-num {
+  font-size: clamp(10px, 0.9vw, 13px);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
+.step .small-text { font-size: clamp(11px, 1vw, 14px); }
+.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b8c4d4; flex-shrink: 0; }
+
+.end-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+
+@media (max-width: 900px) {
+  .slide { padding: 4vh 5vw; }
+  .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; }
+  .vs-row { flex-direction: column; gap: 12px; }
+  .steps { flex-direction: column; }
+  .dots { display: none; }
+  .split { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- 1 封面 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    PAPER READING
+    <span class="dot-gray"></span>
+    CVPR 2024 · CCF-A
+  </div>
+  <div class="anim" style="font-size: clamp(2.4rem, 5.5vw, 4.5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
+    <span class="highlight">EMCAD</span>
+  </div>
+  <div class="anim" style="font-size: clamp(16px, 2vw, 28px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35;">
+    Efficient Multi-scale Convolutional Attention Decoding<br>for Medical Image Segmentation
+  </div>
+  <p class="anim subtitle">用多尺度深度可分离卷积与门控注意力重构解码路径，在六大医学分割任务的 12 个数据集上取得 SOTA 精度，同时参数量与 FLOPs 分别降低 79.4% 与 80.3%。</p>
+  <div class="anim contributors">
+    <div class="author">Md Mostafijur Rahman · Mustafa Munir · Radu Marculescu</div>
+    <div class="affil">德克萨斯大学奥斯汀分校</div>
+  </div>
+  <div class="anim cover-meta">
+    <span class="cover-tag">特征融合</span>
+    <span class="cover-tag">医学图像分割</span>
+    <span class="cover-tag">即插即用解码器</span>
+    <span class="cover-tag">PVTv2</span>
+  </div>
+</section>
+
+<!-- 2 核心贡献 -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献：高效多尺度卷积注意力解码器</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>MSCAM 多尺度卷积注意力</h3>
+      <p class="body-text">以「<span style="color:var(--title);font-weight:600;">通道注意力 → 空间注意力 → 多尺度卷积块</span>」级联精炼编码器各阶段特征，多尺度处均使用深度卷积，计算量显著低于 CASCADE 的 CAM。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>LGAG 大核分组注意力门</h3>
+      <p class="body-text">用 <span style="color:var(--title);font-weight:600;">3×3 分组卷积</span>处理门控信号与输入特征，在更大局部上下文中生成门控信号，三个门参数从 124.68K 降到 11.01K，精度反而更高。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>极致效率</h3>
+      <p class="body-text">标准编码器下解码器仅需 <span style="color:var(--title);font-weight:600;">1.91M 参数与 0.381G FLOPs</span>，比 CASCADE 降低 79.4% 参数与 80.3% FLOPs，DICE 反而更高。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>实验表明：EMCAD 在六大医学分割任务的 12 个数据集上取得 SOTA 精度，可搭配<span class="accent-word">任意层级化编码器</span>即插即用。</p>
+  </div>
+</section>
+
+<!-- 3 研究动机 -->
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>医学分割解码器的效率与精度困境</h2></div>
+  <div class="anim divider divider-accent"></div>
+  <div class="anim card-grid cols-2">
+    <div class="card">
+      <span class="card-num">A</span>
+      <h3>注意力机制计算昂贵</h3>
+      <p class="body-text">以 CASCADE 为代表，每个解码阶段使用三个 3×3 标准卷积层，计算效率低，难以部署到算力受限的真实医疗场景（如床旁即时检测）。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">B</span>
+      <h3>单尺度卷积表达受限</h3>
+      <p class="body-text">解码时只用单尺度卷积，无法同时捕获多尺度上下文信息，<span style="color:var(--title);font-weight:600;">既不够高效，也不够多尺度</span>。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>研究缺口：暂未有解码器能在<span class="accent-word">多尺度局部注意力建模与极低计算开销</span>之间同时做好，既能配合任意层级化编码器即插即用，又能在多类医学分割任务上保持 SOTA 精度。</p>
+  </div>
+</section>
+
+<!-- 4 整体架构 -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>EMCAD 解码器整体架构</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/EMCAD/fig2.png" alt="EMCAD 整体架构"></div>
+  <div class="anim figure-caption">
+    (a) 四阶段编码器，(b) EMCAD 解码器，(c)-(i) 各子模块：EUCB、MSCAM、MSCB、MSDC、LGAG、CAB、SAB。
+    <span class="cap-em">MSCAM 精炼 → 分割头预测 → EUCB 上采样 → LGAG 门控融合</span>，四张分割图参与多头损失聚合。
+  </div>
+</section>
+
+<!-- 5 LGAG -->
+<section class="slide">
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>LGAG：大核分组注意力门</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>与 Attention UNet 用 1×1 卷积处理门控信号不同，LGAG 对 $g$ 与 $x$ 分别做<span class="em"> 3×3 分组卷积</span></li>
+      <li>注意力系数：<span class="fx-inline">q<sub>att</sub>(g, x) = R(BN(GC<sub>g</sub>(g) + BN(GC<sub>x</sub>(x))))</span></li>
+      <li>门控融合：<span class="fx-inline">LGAG(g, x) = x ⊙ σ(BN(C(q<sub>att</sub>(g, x))))</span></li>
+    </ul>
+  </div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">核心思想</div>
+    <p>3×3 分组卷积让门控信号在<span style="color:#fff;font-weight:600;">更大的局部上下文中</span>决定「看哪里」，分组与深度化设计把代价压得比逐点卷积更低。三个门合计参数从 124.68K 降到 11.01K，精度反而从 83.51% 升到 83.63%。</p>
+  </div>
+</section>
+
+<!-- 6 MSCAM -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>MSCAM：多尺度卷积注意力模块</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li><span class="em">CAB 通道注意力块</span>：沿用 CBAM 的通道分支，最大池化 + 平均池化 → MLP → Sigmoid 加权</li>
+      <li><span class="em">SAB 空间注意力块</span>：通道维最大/平均池化拼接后用 7×7 大核卷积，增强局部上下文关系</li>
+      <li><span class="em">MSCB 多尺度卷积块</span>：基于 MobileNetV2 倒残差块，把单一深度卷积换成并行的 1×1、3×3、5×5 多尺度深度卷积并加入通道混洗</li>
+    </ul>
+  </div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">MSCAM 定义</div>
+    <p class="formula">MSCAM(<i>x</i>) = MSCB(SAB(CAB(<i>x</i>)))</p>
+    <p class="formula-note">级联顺序：通道筛选 → 空间定位 → 多尺度增强；多尺度处均使用深度卷积，计算量显著低于 CASCADE。</p>
+  </div>
+</section>
+
+<!-- 7 实验：DICE-FLOPs -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>二值分割：FLOPs 最低、DICE 最高</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/EMCAD/fig1.png" alt="DICE vs FLOPs"></div>
+  <div class="anim figure-caption">
+    10 个二值分割数据集上的平均 DICE 与 FLOPs 对比：
+    <span class="cap-em">PVT-EMCAD 位于左下角最优区域——FLOPs 最低而 DICE 最高</span>。
+  </div>
+</section>
+
+<!-- 8 实验：定量结果 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>二值分割详细结果：12 数据集全面领先</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/EMCAD/table1.png" alt="二值分割结果"></div>
+  <div class="anim figure-caption">
+    PVT-EMCAD-B2 以 26.76M 参数与 5.6G FLOPs 取得 <span class="cap-em">91.10% 的平均 DICE</span>，五个息肉数据集全面领先，ISIC17 达到 85.95%，BUSI 达到 80.25% SOTA。
+  </div>
+</section>
+
+<!-- 9 实验：多类分割 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>多类分割：Synapse 与 ACDC 结果</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li><span class="em">Synapse 腹部八器官</span>：B2 以 83.63% DICE 与 15.68 HD95 同时最优，比 PVT-CASCADE 高 2.57%</li>
+        <li><span class="em">ACDC 心脏三结构</span>：B2 达到 92.12% DICE，比 Cascaded MERIT 高 0.27%，三个子结构全部更优</li>
+        <li>计算成本远低于同类方法</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/EMCAD/table2.png" alt="Synapse 结果"></div>
+  </div>
+</section>
+
+<!-- 10 消融 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 04</div>
+  <div class="anim"><h2>消融实验：各组件的独立贡献</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/EMCAD/table4.png" alt="消融实验"></div>
+  <div class="anim figure-caption">
+    从纯编码器 80.10% 开始，LGAG 带来 +1.82%，MSCAM 带来 +2.76%，两者合用达到 <span class="cap-em">83.63%</span>，总代价仅 0.381G FLOPs 与 1.91M 参数——MSCAM 贡献更大，二者互补。
+  </div>
+</section>
+
+<!-- 11 可视化 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 05</div>
+  <div class="anim"><h2>定性对比：多尺度精炼改善难分器官</h2></div>
+  <div class="anim split">
+    <div class="figure-box"><img src="../assets/paper-imgs/EMCAD/fig4.png" alt="Synapse 定性"></div>
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>多数方法难以分准<span class="em">左肾与部分胰腺</span></li>
+        <li>PVT-EMCAD-B0 与 B2 在这两个器官上分割更准确</li>
+        <li>计算成本低得多</li>
+      </ul>
+      <div class="figure-box"><img src="../assets/paper-imgs/EMCAD/fig5.png" alt="息肉定性" style="max-height:28vh;"></div>
+      <p class="small-text" style="margin-top:6px;">息肉预测与真值掩码高度重叠，现有 SOTA 在红框区域出现错误分割</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 总结 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">1</span>
+      <h3>组件级效率改造</h3>
+      <p class="body-text">用多尺度深度卷积加通道混洗替代 CASCADE 的三重标准卷积，以少 79.4% 参数与 80.3% FLOPs 反超基线 DICE，为解码器提供可复用的轻量化范式。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">2</span>
+      <h3>分组+大核的巧妙设计</h3>
+      <p class="body-text">LGAG 用 3×3 分组卷积重构注意力门，三个门参数从 124.68K 降到 11.01K 精度反而更高，展示了以低价换上下文的设计思路。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">3</span>
+      <h3>实验覆盖面广</h3>
+      <p class="body-text">六大任务 12 个数据集、五次运行取均值、五组消融加定性可视化，结论互相印证，说服力强。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 13 结尾 -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">EMCAD：高效、多尺度、即插即用</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">
+      用多尺度深度卷积注意力与门控融合重构解码路径，<br>
+      以极低代价在 12 个医学分割数据集上全面领先。
+    </div>
+    <div class="anim cover-meta" style="margin-top:28px;">
+      <span class="cover-tag">CVPR 2024</span>
+      <span class="cover-tag">代码开源 SLDGroup/EMCAD</span>
+      <span class="cover-tag">感谢观看</span>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+  }
+  const dots = dotsWrap.querySelectorAll('.dot');
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= total || idx === current) return;
+    const prev = slides[current];
+    const next = slides[idx];
+
+    prev.classList.remove('active');
+    prev.classList.add('exit-up');
+
+    requestAnimationFrame(() => {
+      next.classList.remove('exit-up');
+      next.classList.add('active');
+    });
+
+    setTimeout(() => {
+      prev.classList.remove('exit-up');
+    }, 700);
+
+    dots[current].classList.remove('active');
+    current = idx;
+    dots[current].classList.add('active');
+    progress.style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchX = e.changedTouches[0].screenX;
+    touchY = e.changedTouches[0].screenY;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].screenX - touchX;
+    const dy = e.changedTouches[0].screenY - touchY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      dx < 0 ? next() : prev();
+    }
+  }, { passive: true });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.dot')) return;
+    next();
+  });
+
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
+})();
+</script>
+
+</body>
+</html>

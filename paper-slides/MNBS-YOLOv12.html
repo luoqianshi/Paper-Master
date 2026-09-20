@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>MNBS-YOLOv12: 基于 MNBS-YOLOV12 的肾脏肿瘤病变区域检测</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.br { bottom: -120px; right: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3, .card-grid.cols-4 { grid-template-columns: 1fr; } .split { flex-direction: column; } .dots { display: none; } }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+<div class="deck" id="deck">
+
+<!-- 1 封面 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge"><span class="dot-yellow"></span>PAPER READING<span class="dot-gray"></span>计算机工程与应用 2026</div>
+  <div class="anim" style="font-size: clamp(2.5rem, 5.5vw, 4.2rem); font-weight: 900; line-height: 1.08; letter-spacing: -2px;"><span class="highlight">MNBS-YOLOv12</span></div>
+  <div class="anim" style="font-size: clamp(16px, 2vw, 26px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35;">基于 MNBS-YOLOV12 的肾脏肿瘤病变区域检测</div>
+  <p class="anim subtitle">针对肾脏肿瘤形态不规则、边界模糊与多尺度融合三类挑战，在 YOLOv12 上集成 CSWin-SA、EMA、DAFM 与 B_CIoU 四处改进。</p>
+  <div class="anim contributors"><div class="author">杨丹丹 · 王霄 · 吴钦木 · 何志琴 · 罗霞</div><div class="affil">贵州大学电气工程学院</div></div>
+  <div class="anim cover-meta"><span class="cover-tag">医学影像</span><span class="cover-tag">注意力机制</span><span class="cover-tag">肾脏肿瘤</span><span class="cover-tag">北大核心 2026</span></div>
+</section>
+
+<!-- 2 贡献 -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>四处改进对应四类核心挑战</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-4">
+    <div class="card"><span class="card-num">01</span><h3>CSWin-SA</h3><p class="body-text">十字形窗口自注意力，沿水平与垂直方向建模不规则病变的长程依赖。</p></div>
+    <div class="card"><span class="card-num">02</span><h3>EMA-C3k2</h3><p class="body-text">通道分组与跨空间学习，精细化区分肿瘤与正常肾实质纹理差异。</p></div>
+    <div class="card"><span class="card-num">03</span><h3>DAFM</h3><p class="body-text">双聚合注意力融合替代 Concat，以 softmin 差异聚焦唤醒微弱病变信号。</p></div>
+    <div class="card"><span class="card-num">04</span><h3>B_CIoU</h3><p class="body-text">在 CIoU 基础上增加三项约束，优化弱边界小病灶的边界框回归。</p></div>
+  </div>
+  <div class="anim highlight-bar"><p>精确率 95.75%、召回率 97.77%、mAP50 <span class="accent-word">98.35%</span>、mAP50-95 93.65%，较 YOLOv12 基线分别提升 2.72、2.06、2.54、1.83 个百分点。</p></div>
+</section>
+
+<!-- 3 整体架构 -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>MNBS-YOLOv12 网络结构</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/MNBS-YOLOv12/fig1.png" alt="MNBS-YOLOv12 网络结构"></div>
+  <div class="anim figure-caption">骨干以 C3k2_EMA 与 A2C2f_CSWA 强化深层特征；Neck 以 DAFM 替换 Concat；<span class="cap-em">检测头将 CIoU 替换为 B_CIoU</span>，四处改进对应形态、纹理、融合、定位四类挑战。</div>
+</section>
+
+<!-- 4 CSWin-SA -->
+<section class="slide">
+  <div class="glow glow-blue tr"></div>
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>CSWin-SA：十字形窗口自注意力</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>N 个注意力头<span class="em">均分为两组</span>，分别在水平与垂直条纹上并行执行自注意力</li>
+        <li>条纹宽度由可调参数 sw 控制，把不规则肿瘤凸起视作<span class="em">两个正交方向的矢量和</span></li>
+        <li>狭长条纹感受野在单一窗口内完整覆盖肿瘤基底部与尖端，保持不规则边界的拓扑连续性</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/MNBS-YOLOv12/fig2.png" alt="CSWin-SA"></div>
+  </div>
+</section>
+
+<!-- 5 EMA + DAFM -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>EMA 多尺度纹理辨析与 DAFM 双聚合融合</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li><span class="em">EMA</span>：通道分组并行处理，1x1 分支聚焦短程边界，3x3 分支捕捉长程结构</li>
+        <li><span class="em">DAFM</span>：自注意力抑制无关背景，交叉注意力以<span class="em"> softmin 差异聚焦</span>唤醒微弱病变信号</li>
+        <li>DAFM 使小尺寸病变 mAP50 提升 <span class="em">4.1 个百分点</span>，增益最大</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/MNBS-YOLOv12/fig4.png" alt="DAFM"></div>
+  </div>
+</section>
+
+<!-- 6 B_CIoU -->
+<section class="slide">
+  <div class="anim slide-label">Method 04</div>
+  <div class="anim"><h2>B_CIoU：扩展边界框回归损失</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/MNBS-YOLOv12/fig5.png" alt="CIoU 与 B_CIoU" style="max-height: 36vh;"></div>
+  <div class="anim figure-caption">
+    CIoU 的宽高比惩罚项在宽高比相同时退化为 DIoU；B_CIoU 引入重叠区域中心距离、宽高一致性与归一化距离三项约束，
+    <span class="cap-em">在宽高比相同时仍能提供有效梯度</span>，使弱边界、小尺度病灶的约束更稳定。
+  </div>
+</section>
+
+<!-- 7 可视化 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>Grad-CAM 热力图：逐级聚焦肿瘤区域</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/MNBS-YOLOv12/fig11.png" alt="Grad-CAM 热力图" style="max-height: 48vh;"></div>
+  <div class="anim figure-caption">
+    Baseline 热力图存在大量背景高激活；+EMA 后背景激活显著降低；+EMA+DAFM 更精准聚焦肿瘤；
+    <span class="cap-em">+EMA+DAFM+CSWin-SA 在边界模糊处仍保持完整激活</span>。
+  </div>
+</section>
+
+<!-- 8 对比实验 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>对比实验：四项指标全面领先</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/MNBS-YOLOv12/tab4.png" alt="对比实验" style="max-height: 44vh;"></div>
+  <div class="anim figure-caption">
+    mAP50-95 分别超出 YOLOv5n、YOLOv6n、YOLOv8n、YOLOv9n 约 8.55、7.42、6.08、5.72 个百分点；
+    <span class="cap-em">参数量 5.57M，较 YOLOv12s 减少 40.1%</span>，推理延迟 2.40 ms。
+  </div>
+</section>
+
+<!-- 9 消融 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>消融实验：四模块增益逐级叠加</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/MNBS-YOLOv12/table3.png" alt="消融实验" style="max-height: 44vh;"></div>
+  <div class="anim figure-caption">
+    四者齐备时精确率 95.75%、召回率 97.77%、mAP50 98.35%、mAP50-95 93.65%，权重仅 10.9MB。
+    <span class="cap-em">多模块协同设计在保持轻量化的同时达到了最优性能</span>。
+  </div>
+</section>
+
+<!-- 10 总结 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">1</span><h3>解剖先验注入注意力</h3><p class="body-text">CSWin-SA 的十字形条纹与肾脏两条解剖轴线对齐，以接近线性的开销建模不规则病变长程依赖。</p></div>
+    <div class="card"><span class="card-num">2</span><h3>softmin 差异聚焦</h3><p class="body-text">DAFM 使深层特征主动唤醒浅层细节，小尺寸病变分层实验增益最大、证据充分。</p></div>
+    <div class="card"><span class="card-num">3</span><h3>实验证据链完整</h3><p class="body-text">九组消融、损失与注意力横向对比、尺寸分层以及 Grad-CAM 与通道解耦可视化。</p></div>
+  </div>
+</section>
+
+<!-- 11 结尾 -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">MNBS-YOLOv12：形态-纹理-融合-定位</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">四处改进层层递进、互为支撑，<br>以<span style="color:var(--accent);font-weight:600;">mAP50 98.35%</span>实现肾脏肿瘤精准检测。</div>
+    <div class="anim cover-meta" style="margin-top:28px;"><span class="cover-tag">计算机工程与应用 2026</span><span class="cover-tag">参数量 5.57M</span></div>
+  </div>
+</section>
+
+</div>
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide'); const total = slides.length; let current = 0;
+  const progress = document.getElementById('progress'); const dotsWrap = document.getElementById('dots'); const hint = document.getElementById('hint');
+  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
+  const dots = dotsWrap.querySelectorAll('.dot');
+  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
+  function next() { goTo(current + 1); } function prev() { goTo(current - 1); }
+  slides[0].classList.add('active'); progress.style.width = (1 / total * 100) + '%';
+  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
+  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
+  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true }); document.addEventListener('click', hideHint, { once: true }); setTimeout(() => hideHint(), 5000);
+})();
+</script>
+</body>
+</html>

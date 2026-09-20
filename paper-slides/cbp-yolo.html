@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>CBP-YOLO: 玉米田间草地贪夜蛾侵染痕迹检测</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h1 { font-size: clamp(30px, 4vw, 54px); font-weight: 800; line-height: 1.18; color: var(--text); letter-spacing: -1.5px; }
+h1 .highlight { color: var(--title); }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.small-text { font-size: clamp(11px, 1.05vw, 14px); color: #777; line-height: 1.5; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.vs-row { display: flex; align-items: stretch; gap: 24px; margin-top: 16px; }
+.vs-col { flex: 1; border-radius: var(--radius); padding: clamp(14px, 1.7vw, 22px); display: flex; flex-direction: column; position: relative; }
+.vs-col.left-col { background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.15); }
+.vs-col.right-col { background: rgba(34,197,94,0.04); border: 1px solid rgba(34,197,94,0.15); }
+.vs-col .vs-tag { display: inline-block; font-size: clamp(10px, 0.9vw, 12px); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 6px; margin-bottom: 12px; width: fit-content; }
+.vs-col.left-col .vs-tag { background: rgba(239,68,68,0.1); color: #b91c1c; }
+.vs-col.right-col .vs-tag { background: rgba(34,197,94,0.1); color: #15803d; }
+.vs-col h3 { font-size: clamp(15px, 1.5vw, 21px); margin-bottom: 10px; }
+.vs-col ul { list-style: none; padding: 0; }
+.vs-col ul li { font-size: clamp(12px, 1.15vw, 16px); color: #333; line-height: 1.55; padding: 3px 0 3px 20px; position: relative; }
+.vs-col ul li::before { content: ''; position: absolute; left: 0; top: 11px; width: 7px; height: 7px; border-radius: 50%; }
+.vs-col.left-col ul li::before { background: #ef4444; }
+.vs-col.right-col ul li::before { background: #22c55e; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.fx-inline { font-weight: 600; color: var(--accent); white-space: nowrap; }
+.frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 5px; line-height: 1.15; }
+.frac .num { padding: 0 6px 3px; border-bottom: 1.6px solid rgba(255,255,255,0.75); }
+.frac .den { padding: 3px 6px 0; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.tr { top: -120px; right: -120px; }
+.glow.br { bottom: -120px; right: -100px; }
+.glow.bl { bottom: -120px; left: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
+.step { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.step .step-num { font-size: clamp(10px, 0.9vw, 13px); font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; }
+.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
+.step .small-text { font-size: clamp(11px, 1vw, 14px); }
+.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b8c4d4; flex-shrink: 0; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .vs-row { flex-direction: column; gap: 12px; } .steps { flex-direction: column; } .dots { display: none; } .split { flex-direction: column; } }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- 1 封面 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    PAPER READING
+    <span class="dot-gray"></span>
+    农业工程学报 2026
+  </div>
+  <div class="anim" style="font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
+    <span class="highlight">CBP-YOLO</span>
+  </div>
+  <div class="anim" style="font-size: clamp(16px, 2vw, 28px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35;">
+    基于 CBP-YOLO 的玉米田间草地贪夜蛾侵染痕迹检测与试验
+  </div>
+  <p class="anim subtitle">通过 Real-ESRGAN 超分辨率重建、协调注意力机制与 BiFPN 双向特征融合，系统提升无人机多尺度图像中小尺度虫害痕迹的检测精度。</p>
+  <div class="anim contributors">
+    <div class="author">齐江涛 · 王硕 · 熊悦凇 · 高芳芳 · 王发赢 · 邹宗峰 · 刘英智 · 刘慧力</div>
+    <div class="affil">吉林大学 · 吉林省智慧农业装备与技术重点实验室 · 烟台市农业技术推广中心</div>
+  </div>
+  <div class="anim cover-meta">
+    <span class="cover-tag">超分辨率重建</span>
+    <span class="cover-tag">协调注意力</span>
+    <span class="cover-tag">BiFPN</span>
+    <span class="cover-tag">虫害检测</span>
+  </div>
+</section>
+
+<!-- 2 核心贡献 -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献：超分辨率 + 协调注意力 + BiFPN + P2 检测头</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>Real-ESRGAN 超分辨率</h3>
+      <p class="body-text">对低分辨率图像进行超分辨率预处理，恢复叶片损伤区域的<span style="color:var(--title);font-weight:600;">纹理细节</span>，GSD 从 0.53 提升至 0.26 cm/像素。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>C2f-CA 协调注意力</h3>
+      <p class="body-text">将通道注意力分解为水平与垂直两个独立一维编码，<span style="color:var(--title);font-weight:600;">保留精确位置信息</span>，弥补 SE 模块空间细节丢失。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>BiFPN + P2 检测头</h3>
+      <p class="body-text">BiFPN 可学习权重动态调节跨尺度融合，新增 P2 检测头拓展对<span style="color:var(--title);font-weight:600;">小尺度目标</span>的感知能力。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>CBP-YOLO 在自建数据集上 mAP@0.5 达 <span class="accent-word">76.5%</span>，较 YOLOv8m 提升 3.4 个百分点，较 YOLOv9m、YOLOv10m 分别提升 10.1、7.2 个百分点。</p>
+  </div>
+</section>
+
+<!-- 3 研究动机 -->
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>无人机多尺度图像中的虫害检测难点</h2></div>
+  <div class="anim vs-row">
+    <div class="vs-col left-col">
+      <span class="vs-tag">核心挑战</span>
+      <h3>检测难点</h3>
+      <ul>
+        <li>小目标尺度变化大、<span style="font-weight:600;">特征对比度低</span>容易被忽略</li>
+        <li>GSD 从 0.22 到 0.53 cm/像素的宽范围变化下模型鲁棒性不足</li>
+        <li>土壤、杂草、阴影等<span style="font-weight:600;">背景噪声干扰</span>严重</li>
+      </ul>
+    </div>
+    <div class="vs-col right-col">
+      <span class="vs-tag">本文方案</span>
+      <h3>系统改进</h3>
+      <ul>
+        <li>Real-ESRGAN 超分辨率恢复<span style="font-weight:600;">低分辨率纹理</span></li>
+        <li>CA 注意力增强<span style="font-weight:600;">位置感知</span></li>
+        <li>BiFPN + P2 检测头实现多尺度均衡检测</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 4 超分辨率 -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>Real-ESRGAN 超分辨率预处理</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>结合 RRDBs 生成器与 U-Net 判别器，<span class="em">恢复高频细节、抑制伪影</span></li>
+      <li>引入模糊、下采样、噪声和 JPEG 压缩等<span class="em">高阶退化过程</span>合成训练数据</li>
+      <li>Pixel Unshuffle 操作将空间分辨率降为 1/2、通道扩展 4 倍，<span class="em">减少 GPU 显存</span></li>
+      <li>GSD=0.53 图像经处理后尺寸由 800×650 提升至 1600×1300，GSD 减小为 <span class="em">0.26 cm/像素</span></li>
+    </ul>
+  </div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">退化建模流程</div>
+    <p class="formula"><i>I</i><sub>b</sub> = Blur(<i>I</i>) → <i>I</i><sub>n</sub> = Noise(<i>I</i><sub>b</sub>) → <i>I</i><sub>s</sub> = Down(<i>I</i><sub>n</sub>) → <i>I</i><sub>LR</sub> = JPEG(<i>I</i><sub>s</sub>)</p>
+    <p class="formula-note">正向退化建模逆向重建，使生成器学习真实世界退化的逆过程。</p>
+  </div>
+</section>
+
+<!-- 5 CA 注意力 -->
+<section class="slide">
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>C2f-CA 协调注意力机制</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>将通道注意力分解为水平和垂直<span class="em">两个独立一维特征编码</span></li>
+      <li>一条路径沿空间维度捕捉<span class="em">长程依赖</span>，另一条路径保留精确<span class="em">位置信息</span></li>
+      <li>拼接后经 1×1 卷积变换，再分解为两个方向的注意力权重</li>
+    </ul>
+  </div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">CA 注意力输出</div>
+    <p class="formula"><i>y</i><sub>c</sub>(<i>i</i>, <i>j</i>) = <i>x</i><sub>c</sub>(<i>i</i>, <i>j</i>) × <i>g</i><sub>c</sub><sup>h</sup>(<i>i</i>) × <i>g</i><sub>c</sub><sup>w</sup>(<i>j</i>)</p>
+    <p class="formula-note">嵌入 YOLOv8 的 C2f 模块形成 C2f-CA 结构，有效削弱背景噪声干扰。</p>
+  </div>
+</section>
+
+<!-- 6 BiFPN -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>BiFPN 双向特征金字塔网络</h2></div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">加权融合公式</div>
+    <p class="formula">
+      <i>P̂</i><sub>i</sub> =
+      <span class="frac"><span class="num">∑ <i>w</i><sub>j</sub> · <i>P</i><sub>j</sub></span><span class="den">∑ <i>w</i><sub>j</sub> + <i>ε</i></span></span>
+    </p>
+    <p class="formula-note">其中 <em>w<sub>j</sub></em> 为非负可学习权重，<em>ε</em> 为避免除零的常数。可学习权重通过归一化 softmax 获得。</p>
+  </div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>构建 4 层特征金字塔：P2(160×160×64)、P3(80×80×128)、P4(40×40×256)、P5(20×20×512)</li>
+      <li>新增 P2 浅层检测头可检测 <span class="em">4×4 像素</span>感受野的小目标</li>
+      <li>4 个尺度并行输出检测结果，<span class="em">显著提升小尺度虫害感知</span></li>
+    </ul>
+  </div>
+</section>
+
+<!-- 7 实验：GSD 对比 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>不同地面采样距离 GSD 的检测对比</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/CBP-YOLO/page6_img7.jpeg" alt="不同 GSD 检测结果" style="max-height: 44vh;"></div>
+  <div class="anim figure-caption">
+    GSD=0.38 cm/像素取得最佳效果（AP@0.5=79.8%），GSD=0.53 条件下应用 Real-ESRGAN 后 <span class="cap-em">AP@0.5 提高 7.3 个百分点</span>，F1-score 提高 8.6 个百分点。
+  </div>
+</section>
+
+<!-- 8 消融实验 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>消融实验：多模块协同增益</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/CBP-YOLO/page7_img3.jpeg" alt="消融实验" style="max-height: 38vh;"></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>基准 AP@0.5=73.1%，P2 模块引入提升至 75.1%（<span class="em">+2.0%</span>），CA 提升约 1%，BiFPN 达 73.8%</li>
+      <li>三模块协同：<span class="em">精确率 74.7%，AP@0.5=76.5%，F1=73.5%</span></li>
+      <li>多模块协同优化实现精确率与召回率的有效平衡</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 9 对比实验 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>与主流模型性能对比</h2></div>
+  <div class="anim">
+    <ul class="bullet-list tight">
+      <li>CBP-YOLO 在各项指标上均优于其他模型，AP@0.5 较 YOLOv9m 提升 <span class="em">10.1</span>、较 YOLOv10m 提升 <span class="em">7.2</span>、较 RetinaNet 提升 <span class="em">17.9</span> 个百分点</li>
+    </ul>
+  </div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/CBP-YOLO/page7_img3.jpeg" alt="检测效果对比" style="max-height: 40vh;"></div>
+  <div class="anim figure-caption">
+    红框为真实标注框，蓝框为检测框。CBP-YOLO 在多个尺度下均能更准确定位虫害痕迹，<span class="cap-em">漏检和误检数量明显减少</span>。
+  </div>
+</section>
+
+<!-- 10 总结 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">1</span>
+      <h3>超分辨率预处理</h3>
+      <p class="body-text">Real-ESRGAN 恢复低分辨率纹理细节，GSD=0.53 条件下 AP@0.5 提升 7.3 个百分点。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">2</span>
+      <h3>协调注意力 CA</h3>
+      <p class="body-text">二维坐标注意力分解同时捕捉空间位置信息和通道重要性，增强小目标局部细节提取。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">3</span>
+      <h3>BiFPN + P2 检测头</h3>
+      <p class="body-text">可学习权重动态调节跨尺度融合，配合 P2 小目标检测头实现多尺度均衡检测。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 结尾 -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">CBP-YOLO</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">
+      超分辨率重建 + 协调注意力 + BiFPN，<br>
+      为无人机多尺度图像中<span style="color:var(--accent);font-weight:600;">「草地贪夜蛾侵染检测」</span>提供系统方案。
+    </div>
+    <div class="anim cover-meta" style="margin-top:28px;">
+      <span class="cover-tag">农业工程学报 2026</span>
+      <span class="cover-tag">感谢观看</span>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
+  const dots = dotsWrap.querySelectorAll('.dot');
+  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+  slides[0].classList.add('active'); progress.style.width = (1 / total * 100) + '%';
+  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
+  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
+  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
+})();
+</script>
+</body>
+</html>

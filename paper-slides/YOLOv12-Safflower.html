@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>基于改进YOLOv12的轻量化复杂环境红花识别方法</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.br { bottom: -120px; right: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3, .card-grid.cols-4 { grid-template-columns: 1fr; } .split { flex-direction: column; } .dots { display: none; } }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+<div class="deck" id="deck">
+
+<!-- 1 封面 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge"><span class="dot-yellow"></span>PAPER READING<span class="dot-gray"></span>农业机械学报 2026</div>
+  <div class="anim" style="font-size: clamp(2rem, 4.5vw, 3.5rem); font-weight: 900; line-height: 1.12; letter-spacing: -1.5px;">基于改进 <span class="highlight">YOLOv12</span> 的<br>轻量化复杂环境红花识别方法</div>
+  <p class="anim subtitle">针对田间光照变化与枝叶遮挡下的红花识别，设计 HEP-DSF、TriCAFusion、AdaPool 与 LSBNet 四模块协同的 LNSR 轻量化识别网络。</p>
+  <div class="anim contributors"><div class="author">王超 · 于海洋 · 张小栋 · 李晓娟 · 罗秀芝 · 程义锋</div><div class="affil">新疆大学 · 新疆农牧机器人及智能装备工程研究中心 · 西安交通大学</div></div>
+  <div class="anim cover-meta"><span class="cover-tag">农业视觉</span><span class="cover-tag">轻量化</span><span class="cover-tag">边缘部署</span><span class="cover-tag">农业机械学报 2026</span></div>
+</section>
+
+<!-- 2 贡献 -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>四模块协同：边缘纹理 + 多维融合 + 保细节下采样 + 轻量头</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-4">
+    <div class="card"><span class="card-num">01</span><h3>HEP-DSF</h3><p class="body-text">Sobel 边缘流与池化流双流融合，<span style="color:var(--title);font-weight:600;">强化低级边缘与纹理</span>。</p></div>
+    <div class="card"><span class="card-num">02</span><h3>TriCAFusion</h3><p class="body-text">通道、空间、像素级<span style="color:var(--title);font-weight:600;">三重协同自适应融合</span>。</p></div>
+    <div class="card"><span class="card-num">03</span><h3>AdaPool</h3><p class="body-text">位置自适应权重决定各像素贡献，<span style="color:var(--title);font-weight:600;">保细节下采样</span>。</p></div>
+    <div class="card"><span class="card-num">04</span><h3>LSBNet</h3><p class="body-text">共享卷积 + 分离 BN 检测头，<span style="color:var(--title);font-weight:600;">压缩参数冗余</span>。</p></div>
+  </div>
+  <div class="anim highlight-bar"><p>mAP50 达 <span class="accent-word">98.9%</span>、参数量仅 1.72M，Jetson 边缘设备实时帧率 30 fps。</p></div>
+</section>
+
+<!-- 3 动机 -->
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>复杂田间环境下的三重矛盾</h2></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">A</span><h3>边缘纹理流失</h3><p class="body-text">传统卷积层难以捕捉花丝轮廓走向，关键特征在深层传递中流失。</p></div>
+    <div class="card"><span class="card-num">B</span><h3>多维融合不足</h3><p class="body-text">独立处理通道或空间特征，简单相加或拼接无法充分挖掘互补信息。</p></div>
+    <div class="card"><span class="card-num">C</span><h3>体积与精度矛盾</h3><p class="body-text">已有的轻量化改进常以精度换取体积，难以同时满足边缘设备算力约束。</p></div>
+  </div>
+  <div class="anim highlight-bar"><p>暂未有工作在光照变化与遮挡下兼顾<span class="accent-word">边缘纹理保持、多维特征融合与模型体积压缩</span>。</p></div>
+</section>
+
+<!-- 4 LNSR 架构 -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>LNSR 网络总体结构</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12-Safflower/fig5.png" alt="LNSR 网络结构"></div>
+  <div class="anim figure-caption">HEP-DSF 位于 Backbone 起始，AdaPool 与 TriCAFusion 插入 Neck，<span class="cap-em">检测头三支路统一替换为 LSBNet</span>。</div>
+</section>
+
+<!-- 5 HEP-DSF -->
+<section class="slide">
+  <div class="glow glow-blue br"></div>
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>HEP-DSF：异构边缘-池化双流融合</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li><span class="em">Sobel 分支</span>：通过预定义 X/Y 方向梯度卷积核计算梯度分量，欧几里得范数融合输出边缘增强特征</li>
+        <li><span class="em">池化分支</span>：ZeroPad2d + MaxPool2d 保留窗口内最强纹理响应</li>
+        <li>双分支输出在通道维度拼接形成 128 通道融合特征</li>
+        <li>边缘流响应花瓣轮廓走向，池化流保留最强纹理响应</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLOv12-Safflower/fig6.png" alt="HEP-DSF"></div>
+  </div>
+</section>
+
+<!-- 6 TriCAFusion -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>TriCAFusion：三重协同自适应融合</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12-Safflower/fig7.png" alt="TriCAFusion" style="max-height: 38vh;"></div>
+  <div class="anim figure-caption">
+    通道注意力经全局平均池化 + FC 生成通道权重；空间注意力联合 AvgPool 与 MaxPool 生成空间权重；
+    <span class="cap-em">像素注意力采用通道分组卷积输出动态像素级权重图 p</span>，最终 F = I + p·X + (1-p)·Y。
+  </div>
+</section>
+
+<!-- 7 LSBNet -->
+<section class="slide">
+  <div class="anim slide-label">Method 04</div>
+  <div class="anim"><h2>LSBNet：共享卷积 + 分离 BN 轻量化检测头</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12-Safflower/fig9.png" alt="LSBNet" style="max-height: 40vh;"></div>
+  <div class="anim figure-caption">
+    共享卷积组（3x3 + 1x1）在所有尺度间完全共享权重，尺度专属 BN 层保持多尺度分布特异性；
+    <span class="cap-em">卷积权重共享压缩参数量，分离 BN 保持多尺度表征</span>。
+  </div>
+</section>
+
+<!-- 8 实验：可视化 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>四种环境下的检测效果与热力图</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>遮挡场景下基线 <span class="em">6 处漏检</span>、LNSR 仅 3 处</li>
+        <li>噪声场景下基线漏检而 LNSR 未漏检</li>
+        <li>LNSR 热力图花蕊中心高热区密集、<span class="em">花丝边缘连贯</span>、背景保持冷色调</li>
+        <li>基线存在花蕊高热区不精准、花瓣边缘分界条带模糊</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLOv12-Safflower/fig10.png" alt="热力图"></div>
+  </div>
+</section>
+
+<!-- 9 实验：对比 + 消融 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>对比与消融：精度提升与参数压缩同时出现</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>mAP50 达 98.9%，较基线提升 <span class="em">1.4 个百分点</span></li>
+        <li>参数量降低 <span class="em">31.5%</span>、模型减少 1.1 MB</li>
+        <li>相较 RT-Detr 参数量降低 91.3%</li>
+        <li>AdaPool 与 LSBNet 主承担压缩、HEP-DSF 与 TriCAFusion 主承担精度补偿</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLOv12-Safflower/table2.png" alt="消融试验"></div>
+  </div>
+</section>
+
+<!-- 10 泛化与部署 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>泛化试验与边缘部署：菊科同源验证 + Jetson 实测</h2></div>
+  <div class="anim card-grid cols-2">
+    <div class="card">
+      <span class="card-num">G</span>
+      <h3>菊花数据集泛化</h3>
+      <p class="body-text">mAP50 达 97.0%、召回率 91.9%，较 YOLOv12 分别提升 5.9 和 4.0 个百分点，参数量降低 35.1%——<span style="color:var(--title);font-weight:600;">模型未过度拟合特定数据分布</span>。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">D</span>
+      <h3>Jetson Orin Nano 部署</h3>
+      <p class="body-text">LNSR 检测速率 <span style="color:var(--title);font-weight:600;">30 帧/s</span>，基线 YOLOv12 为 21 帧/s，相对性能提升 42.9%，与边缘算力约束设备良好适配。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar"><p>算法到工程的证据链完整：从精度验证、泛化验证到<span class="accent-word"> Jetson 边缘设备实测部署</span>。</p></div>
+</section>
+
+<!-- 11 总结 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">1</span><h3>模块增益清晰可归因</h3><p class="body-text">四模块分别对应边缘流失、多维融合、下采样细节与头冗余，消融逐阶段给出参数量与 mAP50 变化。</p></div>
+    <div class="card"><span class="card-num">2</span><h3>可视化说服力强</h3><p class="body-text">用 Grad-CAM 热力图与四种环境检测效果图组相互验证，漏检与偏移逐项归因到具体模块。</p></div>
+    <div class="card"><span class="card-num">3</span><h3>泛化与部署闭环</h3><p class="body-text">在菊科同源菊花数据集上验证跨场景泛化，Jetson Orin Nano 实测 30 fps。</p></div>
+  </div>
+</section>
+
+<!-- 12 结尾 -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">LNSR：轻量化、精准、可部署</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">四模块协同在复杂田间环境下同时解决漏检、精度与体积三个矛盾，<br>以<span style="color:var(--accent);font-weight:600;">1.72M 参数 / 98.9% mAP50 / 30 fps</span>适配边缘采收机器人。</div>
+    <div class="anim cover-meta" style="margin-top:28px;"><span class="cover-tag">农业机械学报 2026</span><span class="cover-tag">Jetson 部署</span></div>
+  </div>
+</section>
+
+</div>
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide'); const total = slides.length; let current = 0;
+  const progress = document.getElementById('progress'); const dotsWrap = document.getElementById('dots'); const hint = document.getElementById('hint');
+  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
+  const dots = dotsWrap.querySelectorAll('.dot');
+  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
+  function next() { goTo(current + 1); } function prev() { goTo(current - 1); }
+  slides[0].classList.add('active'); progress.style.width = (1 / total * 100) + '%';
+  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
+  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
+  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true }); document.addEventListener('click', hideHint, { once: true }); setTimeout(() => hideHint(), 5000);
+})();
+</script>
+</body>
+</html>

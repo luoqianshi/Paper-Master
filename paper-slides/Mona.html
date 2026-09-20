@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>5%>100%: Breaking Performance Shackles of Full Fine-Tuning on Visual Recognition Tasks</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --title: #3966A2;
+  --accent: #132843;
+  --dim: #6191D3;
+  --card-bg: #f7f9fc;
+  --border: #e2e8f0;
+  --radius: 12px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  height: 100vh;
+  cursor: default;
+  user-select: none;
+}
+
+/* ═══════════ SLIDE ENGINE ═══════════ */
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5vh 7vw;
+  background: var(--bg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(60px) scale(0.97);
+  transition: opacity 0.6s cubic-bezier(.4,0,.2,1),
+              transform 0.6s cubic-bezier(.4,0,.2,1),
+              visibility 0.6s;
+  will-change: opacity, transform;
+}
+.slide.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+}
+.slide.exit-up {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-60px) scale(0.97);
+}
+
+/* ═══════════ PROGRESS / DOTS / HINT ═══════════ */
+.progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--title), var(--accent));
+  z-index: 100;
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  border-radius: 0 1px 1px 0;
+}
+.dots {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+}
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #d4dce8;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #999;
+  z-index: 90;
+  opacity: 1;
+  transition: opacity 1s;
+  pointer-events: none;
+}
+.hint.hidden { opacity: 0; }
+
+/* ═══════════ TYPOGRAPHY ═══════════ */
+.slide-label {
+  font-size: clamp(11px, 1.1vw, 14px);
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 12px;
+}
+h1 {
+  font-size: clamp(30px, 4vw, 54px);
+  font-weight: 800;
+  line-height: 1.18;
+  color: var(--text);
+  letter-spacing: -1.5px;
+}
+h1 .highlight { color: var(--title); }
+h2 {
+  font-size: clamp(24px, 2.9vw, 40px);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--title);
+  letter-spacing: -1px;
+}
+h3 {
+  font-size: clamp(15px, 1.6vw, 22px);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.subtitle {
+  font-size: clamp(15px, 1.6vw, 21px);
+  font-weight: 400;
+  color: #555;
+  line-height: 1.55;
+  margin-top: 16px;
+  max-width: 800px;
+}
+.body-text {
+  font-size: clamp(13px, 1.35vw, 18px);
+  font-weight: 400;
+  color: #333;
+  line-height: 1.65;
+}
+.small-text {
+  font-size: clamp(11px, 1.05vw, 14px);
+  color: #777;
+  line-height: 1.5;
+}
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+
+/* ═══════════ BADGE / COVER ═══════════ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(57,102,162,0.08);
+  border: 1px solid rgba(57,102,162,0.15);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--title);
+  letter-spacing: 0.06em;
+  margin-bottom: 36px;
+  text-transform: uppercase;
+  width: fit-content;
+}
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag {
+  font-size: clamp(11px, 1vw, 14px);
+  font-weight: 500;
+  color: var(--dim);
+  background: rgba(57,102,162,0.06);
+  border: 1px solid rgba(57,102,162,0.12);
+  padding: 5px 14px;
+  border-radius: 100px;
+}
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+
+/* ═══════════ CARDS ═══════════ */
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(16px, 2vw, 26px);
+  display: flex;
+  flex-direction: column;
+}
+.card .card-num {
+  font-size: clamp(26px, 3vw, 42px);
+  font-weight: 800;
+  color: var(--title);
+  opacity: 0.25;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+
+/* ═══════════ HIGHLIGHT BAR ═══════════ */
+.highlight-bar {
+  background: rgba(57,102,162,0.06);
+  border-left: 3px solid var(--dim);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px);
+  margin-top: 16px;
+}
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+
+/* ═══════════ BULLET LIST ═══════════ */
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li {
+  font-size: clamp(13px, 1.35vw, 18px);
+  color: #333;
+  line-height: 1.65;
+  padding: 4px 0 4px 22px;
+  position: relative;
+}
+.bullet-list li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 13px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--title);
+}
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+
+/* ═══════════ VS COLUMNS ═══════════ */
+.vs-row { display: flex; align-items: stretch; gap: 24px; margin-top: 16px; }
+.vs-col {
+  flex: 1;
+  border-radius: var(--radius);
+  padding: clamp(14px, 1.7vw, 22px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.vs-col.left-col { background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.15); }
+.vs-col.right-col { background: rgba(34,197,94,0.04); border: 1px solid rgba(34,197,94,0.15); }
+.vs-col .vs-tag {
+  display: inline-block;
+  font-size: clamp(10px, 0.9vw, 12px);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  width: fit-content;
+}
+.vs-col.left-col .vs-tag { background: rgba(239,68,68,0.1); color: #b91c1c; }
+.vs-col.right-col .vs-tag { background: rgba(34,197,94,0.1); color: #15803d; }
+.vs-col h3 { font-size: clamp(15px, 1.5vw, 21px); margin-bottom: 10px; }
+.vs-col ul { list-style: none; padding: 0; }
+.vs-col ul li {
+  font-size: clamp(12px, 1.15vw, 16px);
+  color: #333;
+  line-height: 1.55;
+  padding: 3px 0 3px 20px;
+  position: relative;
+}
+.vs-col ul li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 11px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+}
+.vs-col.left-col ul li::before { background: #ef4444; }
+.vs-col.right-col ul li::before { background: #22c55e; }
+
+/* ═══════════ FORMULA BOX ═══════════ */
+.prompt-box {
+  background: var(--accent);
+  border-radius: var(--radius);
+  padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px);
+  margin-top: 14px;
+}
+.prompt-box .prompt-label {
+  font-size: clamp(9px, 0.85vw, 12px);
+  font-weight: 600;
+  color: #9db8d9;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula {
+  font-size: clamp(16px, 2vw, 27px);
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.55;
+  letter-spacing: 0.5px;
+}
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.fx-inline { font-weight: 600; color: var(--accent); white-space: nowrap; }
+.fx-inline i { font-style: italic; }
+.fx-inline sub, .fx-inline sup { font-size: 68%; }
+
+/* 分式与求和 */
+.frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 5px; line-height: 1.15; }
+.frac .num { padding: 0 6px 3px; border-bottom: 1.6px solid rgba(255,255,255,0.75); }
+.frac .den { padding: 3px 6px 0; }
+.sum-wrap { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 5px; line-height: 1; }
+.sum-wrap .lim { font-size: 52%; font-weight: 500; color: #a8c6ec; }
+.sum-wrap .sig { font-size: 135%; line-height: 0.95; }
+
+/* ═══════════ GLOW ═══════════ */
+.glow {
+  position: absolute;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.10;
+  pointer-events: none;
+}
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.tr { top: -120px; right: -120px; }
+.glow.br { bottom: -120px; right: -100px; }
+.glow.bl { bottom: -120px; left: -100px; }
+
+/* ═══════════ FIGURE ═══════════ */
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img {
+  max-width: 100%;
+  max-height: 46vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 16px rgba(19,40,67,0.08);
+}
+.figure-caption {
+  text-align: center;
+  font-size: clamp(11px, 1vw, 14px);
+  color: #555;
+  margin-top: 10px;
+  line-height: 1.55;
+  max-width: 960px;
+}
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+
+/* 左右分栏 */
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+
+/* ═══════════ STEPS ═══════════ */
+.steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
+.step {
+  flex: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.step .step-num {
+  font-size: clamp(10px, 0.9vw, 13px);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
+.step .small-text { font-size: clamp(11px, 1vw, 14px); }
+.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b8c4d4; flex-shrink: 0; }
+
+/* ═══════════ END CARD ═══════════ */
+.end-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+
+/* ═══════════ ANIMATIONS ═══════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+
+/* ═══════════ RESPONSIVE ═══════════ */
+@media (max-width: 900px) {
+  .slide { padding: 4vh 5vw; }
+  .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; }
+  .vs-row { flex-direction: column; gap: 12px; }
+  .steps { flex-direction: column; }
+  .dots { display: none; }
+  .split { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- ═══════ 1 封面 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    PAPER READING
+    <span class="dot-gray"></span>
+    CVPR 2025 · CCF-A
+  </div>
+  <div class="anim" style="font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
+    <span class="highlight">Mona</span> : 5% &gt; 100%
+  </div>
+  <div class="anim" style="font-size: clamp(16px, 2vw, 28px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35;">
+    Breaking Performance Shackles of Full Fine-Tuning<br>on Visual Recognition Tasks
+  </div>
+  <p class="anim subtitle">多认知视觉适配器 Mona 以 &lt;5% 可训练参数在实例分割、目标检测、语义分割等任务上全面超越全微调，为视觉迁移学习提供更优解。</p>
+  <div class="anim contributors">
+    <div class="author">Dongshuo Yin · Leiyi Hu · Bin Li · Youqun Zhang · Xue Yang</div>
+    <div class="affil">上海交通大学 · 清华大学 · 中国科学院大学 · 阿里巴巴集团</div>
+  </div>
+  <div class="anim cover-meta">
+    <span class="cover-tag">模型微调</span>
+    <span class="cover-tag">PEFT</span>
+    <span class="cover-tag">多认知视觉适配器</span>
+    <span class="cover-tag">CVPR 2025</span>
+  </div>
+</section>
+
+<!-- ═══════ 2 核心贡献 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献：面向视觉信号的多认知适配器突破全微调</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>多尺度 DWConv 适配器</h3>
+      <p class="body-text">将 NLP 线性适配器改造为 <span style="color:var(--title);font-weight:600;">3×3、5×5、7×7 三路并联</span> 深度可分离卷积 + 1×1 聚合的多认知视觉适配器。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>缩放层归一化输入优化</h3>
+      <p class="body-text">LayerNorm + 两个可学习缩放因子 <span style="color:var(--title);font-weight:600;">s₁、s₂</span> 稳定来自固定上游层的输入分布。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>全面超越全微调</h3>
+      <p class="body-text">在 <span style="color:var(--title);font-weight:600;">5 个视觉任务</span>上以 &lt;5% 参数统一超越全微调 1%~3.6%。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>Mona 在 COCO 实例分割上以 4.67% 参数取得 AP<sup>Box</sup> 53.40%（<span class="accent-word">+1.00%</span>），是表中唯一超过全微调的方法。</p>
+  </div>
+</section>
+
+<!-- ═══════ 3 研究动机 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>视觉 delta-tuning 的三个具体局限</h2></div>
+  <div class="anim divider divider-accent"></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>现有视觉适配器内部沿用 NLP 的 <span class="em">线性滤波器</span>（down-projection + 激活 + up-projection），未针对视觉信号的二维空间局部性与多尺度特性做改造</li>
+      <li>单一下游层将上游特征压缩到同一个语义空间，缺乏 <span class="em">多尺度/多认知维度</span> 的并行处理</li>
+      <li>不同 PEFT 范式在统一视觉基准下缺乏系统对照，工程难以取舍</li>
+    </ul>
+  </div>
+  <div class="anim highlight-bar">
+    <p>亟需一种面向视觉信号的、以参数高效为目标的 <span class="accent-word">多认知适配器</span>，以替代全微调成为视觉迁移学习的更优解。</p>
+  </div>
+</section>
+
+<!-- ═══════ 4 方法：优化目标 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>全微调与适配器微调的优化目标</h2></div>
+  <div class="anim vs-row">
+    <div class="vs-col left-col">
+      <span class="vs-tag">全微调</span>
+      <h3>优化全部参数 θ</h3>
+      <ul>
+        <li>同时更新骨干与任务头所有参数</li>
+        <li>优化目标：θ ← argmin<sub>θ</sub> loss(D, θ)</li>
+      </ul>
+    </div>
+    <div class="vs-col right-col">
+      <span class="vs-tag">适配器微调</span>
+      <h3>固定骨干 θ<sub>F</sub>，仅更新 ω</h3>
+      <ul>
+        <li>固定预训练骨干，更新适配器与任务头</li>
+        <li>优化目标：ω ← argmin<sub>ω</sub> loss(D, θ<sub>F</sub>, ω)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">缩放层归一化 · 输入优化</div>
+    <p class="formula"><i>x</i><sub>norm</sub> = <i>s</i><sub>1</sub> · LN(<i>x</i><sub>0</sub>) + <i>s</i><sub>2</sub> · <i>x</i><sub>0</sub></p>
+    <p class="formula-note">其中 LN 为 LayerNorm，s₁、s₂ 为可学习缩放因子，x₀ 是来自固定层的原始输入。</p>
+  </div>
+</section>
+
+<!-- ═══════ 5 方法：多认知滤波器 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue tr"></div>
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>多认知视觉滤波器：多尺度 DWConv + 1×1 聚合</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>借鉴 Inception 的多尺度并行思路，<span class="em">3×3、5×5、7×7</span> 三路深度可分离卷积并联</li>
+      <li>通道级参数共享控制额外参数量，结果先做平均再送入 <span class="em">1×1 卷积聚合</span></li>
+      <li>两个层级都引入残差跳连</li>
+    </ul>
+  </div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">多认知滤波器公式</div>
+    <p class="formula">
+      <i>f</i><sub>dw</sub> = <i>x</i> + avg(∑<sub>i=1</sub><sup>3</sup> ω<sub>dw</sub><sup>i</sup> ⊗<sub>dw</sub> <i>x</i>)
+    </p>
+    <p class="formula">
+      <i>f</i><sub>pw</sub> = <i>x</i> + ω<sub>pw</sub> ⊗ <i>x</i>
+    </p>
+    <p class="formula-note">⊗<sub>dw</sub> 表示深度可分离卷积，⊗ 表示点卷积；三路 DWConv 先平均后聚合，两层均带残差。</p>
+  </div>
+</section>
+
+<!-- ═══════ 6 方法：整体架构 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>Mona 在 SwinBlock 中的插入位置与整体流程</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/Mona/mona_fig2_arch.png" alt="Mona 架构"></div>
+  <div class="anim figure-caption">
+    每个 SwinBlock 在 <span class="cap-em">MSA 与 MLP 之后各插入一个 Mona</span>，以残差加回原分支，
+    仅更新 Mona 与下游任务头。数据流：LN 缩放 → 下投影 → 多尺度 DWConv-平均-1×1 卷积 → GeLU → 上投影。
+  </div>
+</section>
+
+<!-- ═══════ 7 方法：参数量分析 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>Mona 整体计算流程与参数量</h2></div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">整体计算公式</div>
+    <p class="formula">
+      <i>x'</i> = <i>x</i><sub>0</sub> + <i>U<sup>l</sup></i> · σ(<i>f</i><sub>pw</sub>(<i>f</i><sub>dw</sub>(<i>D<sup>l</sup></i>(<i>x</i><sub>norm</sub>))))
+    </p>
+    <p class="formula-note">D<sup>l</sup> 与 U<sup>l</sup> 分别为下投影与上投影，σ 为 GeLU 激活。全程共四处跳连。</p>
+  </div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">每个 Mona 模块参数量</div>
+    <p class="formula">(2<i>n</i> + 3)<i>m</i> + <i>n</i><sup>2</sup> + 84<i>n</i> + 2</p>
+    <p class="formula-note">输入维度 m、压缩后维度 n（固定为 64）；三路 DWConv 共 (3²+5²+7²)n = 83n 个参数。</p>
+  </div>
+</section>
+
+<!-- ═══════ 8 实验：COCO 实例分割 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>COCO 实例分割：唯一超越全微调的适配器</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/Mona/mona_tab1_coco.png" alt="COCO 实例分割对比"></div>
+  <div class="anim figure-caption">
+    Mona 以 <span class="cap-em">4.16M（4.67%）</span>可训练参数取得 AP<sup>Box</sup> 53.40%（+1.00%）与 AP<sup>Mask</sup> 46.00%（+0.90%），
+    是唯一超过全微调的方法；可训练参数最多的 Partial-1（14.53%）反而低于参数量仅 4.67% 的 Mona。
+  </div>
+</section>
+
+<!-- ═══════ 9 实验：VOC + ADE20K ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>Pascal VOC 与 ADE20K：最低参数、最高精度</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/Mona/mona_tab2_voc_ade.png" alt="VOC 与 ADE20K 对比"></div>
+  <div class="anim figure-caption">
+    VOC 上 Mona 以 <span class="cap-em">2.56%</span> 参数取得 AP<sup>Box</sup> 87.30%（<span class="cap-em">+3.60%</span>）；
+    ADE20K 上 mIoU 51.36%（+0.18%）。Pascal VOC 上所有 PEFT 方法均超过全微调，低资源场景全微调大模型容易过拟合。
+  </div>
+</section>
+
+<!-- ═══════ 10 实验：分类与有向检测 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>图像分类与有向目标检测：任务无关的泛化性</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>Flowers102、OxfordPets 均取得 <span class="em">最高 top-1</span>，全局平均 94.04% / 99.76%</li>
+        <li>DOTA/STAR 上 Oriented R-CNN、KLD、H2RBox-v2 三类框架 <span class="em">均取得最高 AP</span></li>
+        <li>STAR 上 Oriented R-CNN 39.45%（+0.82%），H2RBox-v2 31.34%（+1.05%）</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/Mona/mona_tab4_dota_star.png" alt="DOTA/STAR 对比"></div>
+  </div>
+</section>
+
+<!-- ═══════ 11 消融实验 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 04</div>
+  <div class="anim"><h2>消融实验：容量与结构设计的规律</h2></div>
+  <div class="anim steps">
+    <div class="step">
+      <span class="step-num">中间维度</span>
+      <h3>64 维最优</h3>
+      <p class="small-text">32/64/128 → 86.8%/87.3%/87.1%，容量并非越大越好</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">骨干尺寸</span>
+      <h3>越大越高效</h3>
+      <p class="small-text">Swin-T/B/L：4.87%/3.71%/2.56% 参数占比递减</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">卷积核设置</span>
+      <h3>[3,5,7] 最佳</h3>
+      <p class="small-text">过大核 [7] 与冗余核 [3,3,3] 均性能下降</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">跨框架</span>
+      <h3>PVT 上有效</h3>
+      <p class="small-text">PVT-L 上 AP 80.3%，超过 AdaptFormer 79.2%</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>适配器容量越大并不一定更好；<span class="accent-word">骨干越大反而参数占比越小</span>，Mona 在大模型时代具备更强的参数效率优势。</p>
+  </div>
+</section>
+
+<!-- ═══════ 12 收敛分析 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 05</div>
+  <div class="anim"><h2>损失收敛：多认知滤波器加速学习</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/Mona/mona_fig3_loss.png" alt="训练损失曲线"></div>
+  <div class="anim figure-caption">
+    Mona（橙线）<span class="cap-em">收敛速度最快且最终损失最低</span>，在第 1500–1800 轮放大区域内明显低于
+    AdaptFormer、Adapter、LoRA 等基线，且低于全微调（紫色实线）。
+  </div>
+</section>
+
+<!-- ═══════ 13 总结 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-2">
+    <div class="card">
+      <span class="card-num">1</span>
+      <h3>多尺度卷积取代线性适配器</h3>
+      <p class="body-text">3×3、5×5、7×7 三路 DWConv 并联 + 1×1 聚合，在不显著增大参数量的前提下突破视觉 delta-tuning 的性能上限。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">2</span>
+      <h3>缩放层归一化稳定训练</h3>
+      <p class="body-text">LayerNorm + s₁/s₂ 的输入优化策略可作为视觉适配器的通用前置模块复用。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">3</span>
+      <h3>五任务全面超越全微调</h3>
+      <p class="body-text">实例分割、检测、语义分割、有向检测、分类上以 &lt;5% 参数统一超越全微调。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">4</span>
+      <h3>架构无关的良好扩展性</h3>
+      <p class="body-text">在 PVT 骨干上完成迁移验证，展现对非 Swin 架构的泛化能力。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ 14 结尾 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">Mona：5% 参数 &gt; 100% 全微调</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">
+      面向视觉信号的多认知适配器，<br>
+      以多尺度卷积 + 缩放归一化<span style="color:var(--accent);font-weight:600;">重新定义视觉迁移学习的 PEFT 范式</span>。
+    </div>
+    <div class="anim cover-meta" style="margin-top:28px;">
+      <span class="cover-tag">CVPR 2025</span>
+      <span class="cover-tag">代码开源 github.com/Leiyi-Hu/mona</span>
+      <span class="cover-tag">感谢观看</span>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+  }
+  const dots = dotsWrap.querySelectorAll('.dot');
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= total || idx === current) return;
+    const prev = slides[current];
+    const next = slides[idx];
+
+    prev.classList.remove('active');
+    prev.classList.add('exit-up');
+
+    requestAnimationFrame(() => {
+      next.classList.remove('exit-up');
+      next.classList.add('active');
+    });
+
+    setTimeout(() => {
+      prev.classList.remove('exit-up');
+    }, 700);
+
+    dots[current].classList.remove('active');
+    current = idx;
+    dots[current].classList.add('active');
+    progress.style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchX = e.changedTouches[0].screenX;
+    touchY = e.changedTouches[0].screenY;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].screenX - touchX;
+    const dy = e.changedTouches[0].screenY - touchY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      dx < 0 ? next() : prev();
+    }
+  }, { passive: true });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.dot')) return;
+    next();
+  });
+
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
+})();
+</script>
+
+</body>
+</html>

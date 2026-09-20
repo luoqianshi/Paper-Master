@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>基于 TPH-YOLO 的无人机图像麦穗计数方法</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h1 { font-size: clamp(30px, 4vw, 54px); font-weight: 800; line-height: 1.18; color: var(--text); letter-spacing: -1.5px; }
+h1 .highlight { color: var(--title); }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.small-text { font-size: clamp(11px, 1.05vw, 14px); color: #777; line-height: 1.5; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.tr { top: -120px; right: -120px; }
+.glow.br { bottom: -120px; right: -100px; }
+.glow.bl { bottom: -120px; left: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
+.step { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.step .step-num { font-size: clamp(10px, 0.9vw, 13px); font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; }
+.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
+.step .small-text { font-size: clamp(11px, 1vw, 14px); }
+.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b8c4d4; flex-shrink: 0; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .steps { flex-direction: column; } .dots { display: none; } .split { flex-direction: column; } }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- ═══════ 1 封面 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    PAPER READING
+    <span class="dot-gray"></span>
+    农业工程学报 · 2023
+  </div>
+  <div class="anim" style="font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
+    基于 <span class="highlight">TPH-YOLO</span> 的<br>无人机图像麦穗计数方法
+  </div>
+  <p class="anim subtitle">以 YOLOv5 为基线，引入坐标注意力 CA、Transformer 预测头 TPH 与迁移学习策略，在无人机麦穗检测中精确率 87.2%、AP 88.8%，计数错误率仅 0.022。</p>
+  <div class="anim contributors">
+    <div class="author">鲍文霞 · 谢文杰 · 胡根生 · 杨先军 · 苏彪彪</div>
+    <div class="affil">安徽大学 · 中国科学院合肥物质科学研究院</div>
+  </div>
+  <div class="anim cover-meta">
+    <span class="cover-tag">麦穗检测</span>
+    <span class="cover-tag">无人机图像</span>
+    <span class="cover-tag">Transformer</span>
+    <span class="cover-tag">迁移学习</span>
+  </div>
+</section>
+
+<!-- ═══════ 2 核心贡献 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>三处改造 + 迁移学习：特征细化与全局定位</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>坐标注意力 CA</h3>
+      <p class="body-text">在 CSP 模块与卷积模块之间插入 CA，细化特征并抑制麦秆麦叶等背景干扰，单独使用后 AP 升至 86.4%。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>Transformer 预测头 TPH</h3>
+      <p class="body-text">用多头自注意力 Transformer 编码器替换部分 CSP 模块并转换预测头，单独使用后 AP 为 86.2%。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>迁移学习策略</h3>
+      <p class="body-text">田间高分辨率图像预训练骨干，冻结后以无人机图像微调，缓解样本少的困难，AP 提升至 88.8%。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>测试集 30 幅图像麦穗真实值合计 1415，模型计数 1384，<span class="accent-word">错误率仅 0.022</span>，R² 约 0.95。</p>
+  </div>
+</section>
+
+<!-- ═══════ 3 研究动机 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>无人机图像麦穗计数的难点</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>无人机图像中<span class="em">麦穗分布稠密、重叠现象严重、尺寸小</span>、背景信息复杂</li>
+      <li>传统机器学习方法对纹理、颜色等人工特征依赖较强，<span class="em">受土壤、光照与麦叶影响</span>较大</li>
+      <li>深度学习方法大多面向田间近景图像设计，直接套用到无人机图像<span class="em">容易出现错检与漏检</span></li>
+      <li>暂少有工作针对无人机小麦图像的稠密重叠特点，从注意力机制、预测头结构与训练策略三个层面同时改造</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ═══════ 4 Retinex 增强 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue tr"></div>
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>Retinex 图像增强：削弱光照不均匀影响</h2></div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">Retinex 理论</div>
+    <p class="formula">
+      <i>S</i>(<i>x</i>, <i>y</i>) = <i>R</i>(<i>x</i>, <i>y</i>) × <i>L</i>(<i>x</i>, <i>y</i>)
+    </p>
+    <p class="formula-note">把乘性的光照分量在对数域中减掉，剩下的就是与光照无关的物体反射属性。</p>
+  </div>
+  <div class="anim figure-box" style="margin-top:12px;"><img src="../assets/paper-imgs/TPH-YOLO/fig2.png" alt="Retinex 增强效果" style="max-height: 40vh;"></div>
+  <div class="anim figure-caption">增强后麦穗与背景的对比更清晰，作为检测网络的输入。增强后 P 提升至 87.2%、AP 提升至 88.8%。</div>
+</section>
+
+<!-- ═══════ 5 TPH-YOLO 结构 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>TPH-YOLO 模型结构</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/TPH-YOLO/fig3.png" alt="TPH-YOLO 模型结构" style="max-height: 60vh;"></div>
+  <div class="anim figure-caption">在骨干 CSP 模块与卷积模块之间插入 CA 模块，Neck 用 Transformer 编码器替换部分 CSP 模块，预测头转换为 TPH。</div>
+</section>
+
+<!-- ═══════ 6 CA 注意力 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>坐标注意力 CA：细化特征、抑制背景干扰</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>CA 在<span class="em">通道注意力中嵌入位置信息</span>，使模型在细化特征的同时提高特征提取能力</li>
+        <li>被加在 CSPDarkNet-53 中 CSP 模块与卷积模块之间</li>
+        <li>骨干接收 Focus 切片后的特征，经多级 CSP 与 CA 交替处理，逐层抽象为含麦穗语义的多尺度特征</li>
+        <li>输出送入颈部融合与 TPH 分支</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/TPH-YOLO/fig3_backbone.png" alt="CA 插入位置"></div>
+  </div>
+</section>
+
+<!-- ═══════ 7 TPH ═══════ -->
+<section class="slide">
+  <div class="glow glow-navy bl"></div>
+  <div class="anim slide-label">Method 04</div>
+  <div class="anim"><h2>Transformer 编码器与 TPH 预测头</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>用 Transformer 编码器<span class="em">替换 Neck 中部分 CSP 模块</span>，捕获全局信息和丰富的上下文信息</li>
+        <li>将原始预测头转换成 Transformer 预测头 TPH，具备<span class="em">多头注意力机制的预测潜力</span></li>
+        <li>与骨干的 CA 形成<span class="em">「特征细化—全局定位」</span>的互补</li>
+        <li>三个尺度的预测头被替换为 TPH，在高密度场景中准确定位麦穗</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/TPH-YOLO/fig3_neck.png" alt="Transformer 预测头"></div>
+  </div>
+</section>
+
+<!-- ═══════ 8 迁移学习 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Method 05</div>
+  <div class="anim"><h2>迁移学习训练策略</h2></div>
+  <div class="anim steps">
+    <div class="step">
+      <span class="step-num">Step 1</span>
+      <h3>田间数据预训练</h3>
+      <p class="small-text">在 342 幅田间图像上训练骨干 CSPDarkNet-53</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">Step 2</span>
+      <h3>冻结骨干参数</h3>
+      <p class="small-text">加载预训练模型，冻结骨干参数</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">Step 3</span>
+      <h3>无人机数据微调</h3>
+      <p class="small-text">只训练更新 Neck 与 Head</p>
+    </div>
+  </div>
+  <div class="anim figure-box" style="margin-top:12px;"><img src="../assets/paper-imgs/TPH-YOLO/fig4.png" alt="迁移学习示意图" style="max-height: 32vh;"></div>
+  <div class="anim figure-caption">田间图像分辨率更高，预训练得到的参数效果更好；冻结骨干还能减少训练层数、降低过拟合风险。</div>
+</section>
+
+<!-- ═══════ 9 消融实验 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>消融实验：三组件增益叠加</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/TPH-YOLO/table2.png" alt="消融实验结果" style="max-height: 50vh;"></div>
+  <div class="anim figure-caption">
+    三者均不使用时 AP 为 84.7%；单独加入 CA 后 AP 升至 86.4%，单独替换 TPH 后 AP 为 86.2%；CA+TPH 为 87.6%；再加入迁移学习后达到 <span class="cap-em">88.8%</span>，比基准模型高 4.1 个百分点。
+  </div>
+</section>
+
+<!-- ═══════ 10 对比实验 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>对比实验：与主流检测模型对比</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/TPH-YOLO/table3.png" alt="对比实验结果" style="max-height: 42vh;"></div>
+  <div class="anim figure-caption">
+    SSD 的 AP 为 73.7%、Faster-RCNN 为 77.3%、CenterNet 为 82.8%、YOLOv5 为 84.7%，<span class="cap-em">本文方法以 88.8% 的 AP 取得最优</span>。在 GWHD 公开数据集上 AP 达 91.6%，泛化能力突出。
+  </div>
+</section>
+
+<!-- ═══════ 11 可视化与计数 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>检测与计数可视化</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/TPH-YOLO/fig5.png" alt="麦穗检测结果" style="max-height: 38vh;"></div>
+  <div class="anim figure-caption">本文模型在稠密重叠区域能更加注意到麦穗信息、准确定位麦穗，重叠现象带来的漏检误检被有效缓解。</div>
+</section>
+
+<!-- ═══════ 12 计数拟合 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 04</div>
+  <div class="anim"><h2>计数相关性分析：R² ≈ 0.95</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/TPH-YOLO/fig7.png" alt="计数拟合结果" style="max-height: 50vh;"></div>
+  <div class="anim figure-caption">
+    拟合的决定系数 R² 在 0.95 左右，模型对麦穗数的估计值与真实值之间存在明显的线性关联，<span class="cap-em">计数结果可以直接支撑单位面积估产</span>。
+  </div>
+</section>
+
+<!-- ═══════ 13 总结 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">1</span>
+      <h3>三处结构改造</h3>
+      <p class="body-text">CA 细化特征、TPH 提供多头注意力定位潜力，消融实验给出逐组件增益，改造点与问题一一对应。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">2</span>
+      <h3>迁移学习策略</h3>
+      <p class="body-text">田间高分辨率图像预训练骨干、冻结后以无人机图像微调，缓解了无人机样本少的困难。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">3</span>
+      <h3>检测到计数证据链</h3>
+      <p class="body-text">实验除检测指标外还给出计数错误率 0.022 与 R² 约 0.95 的拟合分析，从检测到计数的证据链完整。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ 14 结尾 ═══════ -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">TPH-YOLO：无人机麦穗计数</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">
+      CA 特征细化 + TPH 全局定位 + 迁移学习，<br>
+      AP 达 <span style="color:var(--accent);font-weight:600;">88.8%</span>，计数错误率仅 0.022。
+    </div>
+    <div class="anim cover-meta" style="margin-top:28px;">
+      <span class="cover-tag">农业工程学报 2023</span>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
+  const dots = dotsWrap.querySelectorAll('.dot');
+  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
+  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
+  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
+  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
+})();
+</script>
+
+</body>
+</html>

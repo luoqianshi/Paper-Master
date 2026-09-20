@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>YOLO11n-EWL: 甘蔗芽检测方法</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.br { bottom: -120px; right: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .dots { display: none; } .split { flex-direction: column; } }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+<div class="deck" id="deck">
+
+<section class="slide">
+  <div class="glow glow-blue tl"></div><div class="glow glow-navy br"></div>
+  <div class="anim badge"><span class="dot-yellow"></span>PAPER READING<span class="dot-gray"></span>农业机械学报 2025</div>
+  <div class="anim" style="font-size:clamp(2rem,5.5vw,4.5rem);font-weight:900;line-height:1.05;letter-spacing:-2px;"><span class="highlight">YOLO11n-EWL</span></div>
+  <div class="anim" style="font-size:clamp(16px,2vw,28px);font-weight:700;color:var(--accent);margin-top:10px;line-height:1.35;">基于 YOLO11n-EWL 的甘蔗芽检测方法</div>
+  <p class="anim subtitle">C3k2-EIEM 边缘信息增强 + Wavelet pooling 小波池化 + LSCDECD 轻量化检测头，在产线上实现 99.0% 动态识别率。</p>
+  <div class="anim contributors"><div class="author">李尚平 · 刘建举 · 王恒 · 王宝银 · 李凯华</div><div class="affil">广西民族大学 · 广西蔗糖产业省部共建协同创新中心</div></div>
+  <div class="anim cover-meta"><span class="cover-tag">蔗芽检测</span><span class="cover-tag">Sobel 边缘增强</span><span class="cover-tag">小波池化</span><span class="cover-tag">动态识别</span></div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>三项改进：边缘增强 + 小波池化 + 轻量检测头</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">01</span><h3>C3k2-EIEM</h3><p class="body-text">将 Sobel 算子嵌入 C3k2 模块，骨干同时提取<span style="color:var(--title);font-weight:600;">空间语义与边缘结构信息</span>，mAP@0.5 提升 4.0 个百分点。</p></div>
+    <div class="card"><span class="card-num">02</span><h3>Wavelet Pooling</h3><p class="body-text">基于快速小波变换的二阶离散小波分解，<span style="color:var(--title);font-weight:600;">按方向保留子带</span>替代取最大/平均。</p></div>
+    <div class="card"><span class="card-num">03</span><h3>LSCDECD 检测头</h3><p class="body-text">共享卷积 + 细节增强卷积，<span style="color:var(--title);font-weight:600;">FLOPs 减 25.8%、参数量减 31.7%</span>。</p></div>
+  </div>
+  <div class="anim highlight-bar"><p>mAP@0.5=<span class="accent-word">99.4%</span>、P=99.2%、R=98.3%，整机动态识别率 <span class="accent-word">99.0%</span>，每小时识别 4522 段蔗种。</p></div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>C3k2-EIEM 边缘信息增强模块</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>输入特征经 Split 分为两支：常规 Conv+Bottleneck 提取<span class="em">空间信息</span>，SobelConv 分支提取<span class="em">边缘梯度</span></li>
+        <li>Sobel 算子通过 2 个 3×3 卷积核分别提取 x、y 方向梯度，合成梯度幅值图</li>
+        <li>相较 Canny 更易嵌入 CNN，相较 Laplacian 具备更强<span class="em">抗噪能力</span></li>
+        <li>两支特征经 Cat 拼接与 ReLU 激活后 Conv 输出</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLO11n-EWL-Sugarcane-Bud/fig7.png" alt="C3k2-EIEM"></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>小波池化 Wavelet Pooling</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>基于快速小波变换 FWT 进行<span class="em">二阶离散小波分解</span></li>
+        <li>得到 LL（近似）、LH（水平边缘）、HL（垂直边缘）、HH（对角线边缘）四个子带</li>
+        <li>拼接后通道数变为 4C、<span class="em">尺寸减半</span></li>
+        <li>二阶分解后用小波子带重建图像特征，增强<span class="em">目标轮廓感知</span></li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLO11n-EWL-Sugarcane-Bud/fig8.png" alt="Wavelet pooling"></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>LSCDECD 轻量化检测头</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLO11n-EWL-Sugarcane-Bud/fig9.png" alt="LSCDECD" style="max-height:40vh;"></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>P3、P4、P5 三个尺度特征先经 1×1 Conv_GN 归一化压缩</li>
+      <li>汇入共享的 Conv_DE <span class="em">细节增强卷积</span>，再分出回归支与分类支</li>
+      <li>回归支后接 Scale 层应对不同尺度目标，<span class="em">FLOPs 减 22.7%、参数量减 14.5%</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>消融实验与主流模型对比</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLO11n-EWL-Sugarcane-Bud/tab2.png" alt="消融实验" style="max-height:38vh;"></div>
+  <div class="anim figure-caption">
+    三项改进在精度与复杂度上互为补充：mAP@0.5 提升 <span class="cap-em">4.7</span> 个百分点，FLOPs 减 <span class="cap-em">25.8%</span>，参数量减 <span class="cap-em">31.7%</span>，帧率提高 14 f/s。
+  </div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>整机动态识别实验</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLO11n-EWL-Sugarcane-Bud/fig11.png" alt="动态检测实验" style="max-height:38vh;"></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>正交实验得出最优参数：速度 <span class="em">18.48 cm/s</span>、光照 <span class="em">16520 lx</span>、曝光 <span class="em">1000 μs</span></li>
+      <li>3 个因素影响由大到小：曝光时间 > 速度 > 光照强度</li>
+      <li>蔗芽识别率达 <span class="em">99.0%</span>，平均每小时识别蔗种 4522 段</li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="glow glow-blue tl"></div><div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">1</span><h3>Sobel 边缘增强</h3><p class="body-text">将 Sobel 算子嵌入 C3k2 模块，使骨干同时提取空间语义与边缘结构信息，mAP@0.5 提升 4.0 个百分点。</p></div>
+    <div class="card"><span class="card-num">2</span><h3>小波池化 + LSCDECD</h3><p class="body-text">精度上升的同时 FLOPs 和参数量分别压缩 25.8% 和 31.7%，适合边缘系统部署。</p></div>
+    <div class="card"><span class="card-num">3</span><h3>完整产线验证</h3><p class="body-text">速度、光照、曝光的单因素与正交实验，落到整机动态识别率 99.0% 与每小时 4522 段的生产节拍上。</p></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">YOLO11n-EWL</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">边缘增强 + 小波池化 + 轻量检测头，<br>为蔗种质量检测的<span style="color:var(--accent);font-weight:600;">「产线实时筛选」</span>提供方案。</div>
+    <div class="anim cover-meta" style="margin-top:28px;"><span class="cover-tag">农业机械学报 2025</span><span class="cover-tag">感谢观看</span></div>
+  </div>
+</section>
+
+</div>
+<script>
+(function(){const slides=document.querySelectorAll('.slide');const total=slides.length;let current=0;const progress=document.getElementById('progress');const dotsWrap=document.getElementById('dots');const hint=document.getElementById('hint');for(let i=0;i<total;i++){const d=document.createElement('div');d.className='dot'+(i===0?' active':'');d.addEventListener('click',()=>goTo(i));dotsWrap.appendChild(d);}const dots=dotsWrap.querySelectorAll('.dot');function goTo(idx){if(idx<0||idx>=total||idx===current)return;const prev=slides[current];const next=slides[idx];prev.classList.remove('active');prev.classList.add('exit-up');requestAnimationFrame(()=>{next.classList.remove('exit-up');next.classList.add('active');});setTimeout(()=>{prev.classList.remove('exit-up');},700);dots[current].classList.remove('active');current=idx;dots[current].classList.add('active');progress.style.width=((current+1)/total*100)+'%';}function next(){goTo(current+1);}function prev(){goTo(current-1);}slides[0].classList.add('active');progress.style.width=(1/total*100)+'%';document.addEventListener('keydown',(e)=>{if(e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' '){e.preventDefault();next();}if(e.key==='ArrowLeft'||e.key==='ArrowUp'){e.preventDefault();prev();}if(e.key==='Home'){e.preventDefault();goTo(0);}if(e.key==='End'){e.preventDefault();goTo(total-1);}});let touchX=0,touchY=0;document.addEventListener('touchstart',(e)=>{touchX=e.changedTouches[0].screenX;touchY=e.changedTouches[0].screenY;},{passive:true});document.addEventListener('touchend',(e)=>{const dx=e.changedTouches[0].screenX-touchX;const dy=e.changedTouches[0].screenY-touchY;if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>50){dx<0?next():prev();}},{passive:true});document.addEventListener('click',(e)=>{if(e.target.closest('.dot'))return;next();});function hideHint(){hint.classList.add('hidden');}document.addEventListener('keydown',hideHint,{once:true});document.addEventListener('click',hideHint,{once:true});setTimeout(()=>hideHint(),5000);})();
+</script>
+</body>
+</html>

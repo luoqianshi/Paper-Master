@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>融合SFAR-Net与YOLOv12-DMFA的高铁接触网支持装置故障检测</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.fx-inline { font-weight: 600; color: var(--accent); white-space: nowrap; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.br { bottom: -120px; right: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .split { flex-direction: column; } .dots { display: none; } }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+<div class="deck" id="deck">
+
+<!-- 1 封面 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge"><span class="dot-yellow"></span>PAPER READING<span class="dot-gray"></span>湖南大学学报 2026</div>
+  <div class="anim" style="font-size: clamp(2rem, 4.5vw, 3.5rem); font-weight: 900; line-height: 1.12; letter-spacing: -1.5px;">融合 <span class="highlight">SFAR-Net</span> 与 <span class="highlight">YOLOv12-DMFA</span><br>的高铁接触网支持装置故障检测</div>
+  <p class="anim subtitle">面向低质量 4C 巡检图像，构建空频联合增强网络 SFAR-Net 与引入 DMFA 模块的 YOLOv12 深度耦合框架，实现螺母缺失与绝缘子脏污的精准检测。</p>
+  <div class="anim contributors"><div class="author">顾桂梅 · 蹇靖宇 · 赵克进</div><div class="affil">兰州交通大学 · 中国铁路兰州局集团有限公司</div></div>
+  <div class="anim cover-meta"><span class="cover-tag">图像增强</span><span class="cover-tag">频域自注意力</span><span class="cover-tag">接触网检测</span><span class="cover-tag">湖南大学学报 2026</span></div>
+</section>
+
+<!-- 2 贡献 -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献：「增强-检测」深度耦合的两阶段协同</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">01</span><h3>SFAR-Net 空频联合增强</h3><p class="body-text">频域分支强化高频纹理，空域分支保持空间结构，<span style="color:var(--title);font-weight:600;">FFTSA 频域自注意力</span>实现全局建模与加权。</p></div>
+    <div class="card"><span class="card-num">02</span><h3>DMFA 动态多尺度自适应</h3><p class="body-text">DFFN + DyT + Mona 三个轻量组件在骨干与融合网络关键节点做<span style="color:var(--title);font-weight:600;">动态特征对齐与区域强化</span>。</p></div>
+    <div class="card"><span class="card-num">03</span><h3>轻量高效部署</h3><p class="body-text">模型仅 <span style="color:var(--title);font-weight:600;">6.0 MB</span>、230.1 fps，满足 4C 检测车快速响应的部署需求。</p></div>
+  </div>
+  <div class="anim highlight-bar"><p>SFAR-Net 在 PSNR、SSIM、LPIPS 上分别达到 <span class="accent-word">39.08 dB、0.9747、0.1014</span>，框架 mAP@0.5 达 74.9%。</p></div>
+</section>
+
+<!-- 3 动机 -->
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>增强与检测两个环节缺乏协同</h2></div>
+  <div class="anim card-grid cols-2">
+    <div class="card"><span class="card-num">A</span><h3>低质量巡检图像</h3><p class="body-text">列车震颤、成像距离与户外光照造成对比度低、运动模糊与压缩伪影，单纯空域增强难以充分表征全局频率分布。</p></div>
+    <div class="card"><span class="card-num">B</span><h3>检测端特征退化</h3><p class="body-text">现有检测工作大多侧重结构改进，对低质量巡检图像的特征退化关注不足，增强与检测在任务逻辑与特征流转上缺乏协同。</p></div>
+  </div>
+  <div class="anim highlight-bar"><p>暂未有工作面向高铁巡检的耦合退化场景，将<span class="accent-word">空频联合增强与实时检测网络做深度耦合</span>。</p></div>
+</section>
+
+<!-- 4 总体框架 -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>两阶段总体框架</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12-DMFA-Catenary/fig1.png" alt="两阶段框架"></div>
+  <div class="anim figure-caption">第一阶段 SFAR-Net 空频双分支并行输出增强图像；第二阶段 DMFA 集成于 YOLOv12 的骨干与融合网络关键节点，<span class="cap-em">以 A2C2f-DMFA 替换原 A2C2f 模块</span>。</div>
+</section>
+
+<!-- 5 SFAR-Net -->
+<section class="slide">
+  <div class="glow glow-blue br"></div>
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>SFAR-Net：空频双分支 + FFTSA 频域自注意力</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12-DMFA-Catenary/fig2.png" alt="空频双分支" style="max-height: 36vh;"></div>
+  <div class="anim figure-caption">
+    频域分支经 DCT-FFT卷积-IDCT 完成「变换-增强-逆变换」；空域分支引入 NLSA 非局部稀疏注意力建模长程依赖。
+    <span class="cap-em">两路特征级联后经 FFTSA 在频域完成自注意力加权</span>，实现跨域特征的高阶融合。
+  </div>
+</section>
+
+<!-- 6 DMFA -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>DMFA 三大组件：DFFN + DyT + Mona</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12-DMFA-Catenary/fig6.png" alt="DMFA 模块" style="max-height: 38vh;"></div>
+  <div class="anim figure-caption">
+    DFFN 利用动态滤波算子补偿运动模糊造成的边缘纹理损失；DyT 通过 <span class="cap-em">γ·tanh(αx) + m</span> 实现内容自适应特征调制；Mona 用多尺度 DWConv 增强多维度视觉特征感知。
+  </div>
+</section>
+
+<!-- 7 实验：增强 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>图像增强效果：空频联合高保真还原</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12-DMFA-Catenary/table2.png" alt="增强对比" style="max-height: 38vh;"></div>
+  <div class="anim figure-caption">
+    SFAR-Net 以 PSNR 39.08 dB、SSIM 0.9747、LPIPS 0.1014 三项指标均最优；U-Net 各项指标最低，Restormer 的 LPIPS 仍高于本文方法。
+    <span class="cap-em">空频双分支与频域自注意力的协同设计在宏观结构与微观像素两个层面都实现了高保真还原</span>。
+  </div>
+</section>
+
+<!-- 8 实验：检测 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>检测性能对比：精度、复杂度与实时性同时占优</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12-DMFA-Catenary/table4.png" alt="检测对比" style="max-height: 42vh;"></div>
+  <div class="anim figure-caption">
+    mAP@0.5 为 74.9%、mAP@0.5:0.95 为 65.9%，参数量 2.82 M、模型仅 6.0 MB、推理速度 230.1 fps；
+    <span class="cap-em">Faster R-CNN mAP@0.5 仅 59.9%、17.1 fps</span>。
+  </div>
+</section>
+
+<!-- 9 消融 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>消融实验：逐级叠加、置信度逐级抬升</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv12-DMFA-Catenary/fig14.png" alt="消融可视化" style="max-height: 48vh;"></div>
+  <div class="anim figure-caption">
+    基线置信度较低且漏检明显 → SFAR-Net 后置信度从 0.59 升至 0.67 → DFFN 找回漏检目标 → DyT 精细化边界框 → Mona 置信度升至 0.76。
+    <span class="cap-em">置信度沿 (a) 到 (e) 逐级抬升</span>。
+  </div>
+</section>
+
+<!-- 10 总结 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">1</span><h3>增强-检测深度耦合</h3><p class="body-text">SFAR-Net 用空频双分支与 FFTSA 互补建模，增强指标全面优于 U-Net、Restormer 等基线，且对下游检测的增益可量化。</p></div>
+    <div class="card"><span class="card-num">2</span><h3>DMFA 三组件逐级增益</h3><p class="body-text">DFFN、DyT、Mona 三个轻量组件嵌入关键节点，消融实验逐级给出增益并配以置信度变化可视化。</p></div>
+    <div class="card"><span class="card-num">3</span><h3>精度-效率-部署兼顾</h3><p class="body-text">6.0 MB 与 230.1 fps 兼顾精度增益与边缘部署需求，工程参考价值高。</p></div>
+  </div>
+</section>
+
+<!-- 11 结尾 -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">SFAR-Net + YOLOv12-DMFA</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">空频联合增强与动态多尺度自适应深度耦合，<br>以<span style="color:var(--accent);font-weight:600;">6.0 MB / 230.1 fps</span>实现高铁巡检故障精准检测。</div>
+    <div class="anim cover-meta" style="margin-top:28px;"><span class="cover-tag">湖南大学学报 2026</span><span class="cover-tag">mAP@0.5 74.9%</span></div>
+  </div>
+</section>
+
+</div>
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide'); const total = slides.length; let current = 0;
+  const progress = document.getElementById('progress'); const dotsWrap = document.getElementById('dots'); const hint = document.getElementById('hint');
+  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
+  const dots = dotsWrap.querySelectorAll('.dot');
+  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
+  function next() { goTo(current + 1); } function prev() { goTo(current - 1); }
+  slides[0].classList.add('active'); progress.style.width = (1 / total * 100) + '%';
+  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
+  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
+  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true }); document.addEventListener('click', hideHint, { once: true }); setTimeout(() => hideHint(), 5000);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>FBRT-YOLO: Faster and Better for Real-Time Aerial Image Detection</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h1 { font-size: clamp(30px, 4vw, 54px); font-weight: 800; line-height: 1.18; color: var(--text); letter-spacing: -1.5px; }
+h1 .highlight { color: var(--title); }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.small-text { font-size: clamp(11px, 1.05vw, 14px); color: #777; line-height: 1.5; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.fx-inline { font-weight: 600; color: var(--accent); white-space: nowrap; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.tr { top: -120px; right: -120px; }
+.glow.br { bottom: -120px; right: -100px; }
+.glow.bl { bottom: -120px; left: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
+.step { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.step .step-num { font-size: clamp(10px, 0.9vw, 13px); font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; }
+.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
+.step .small-text { font-size: clamp(11px, 1vw, 14px); }
+.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b8c4d4; flex-shrink: 0; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .steps { flex-direction: column; } .dots { display: none; } .split { flex-direction: column; } }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- 1 封面 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    PAPER READING
+    <span class="dot-gray"></span>
+    AAAI 2025 · CCF-A
+  </div>
+  <div class="anim" style="font-size: clamp(3rem, 6.5vw, 5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
+    <span class="highlight">FBRT-YOLO</span>
+  </div>
+  <div class="anim" style="font-size: clamp(16px, 2vw, 28px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35;">
+    Faster and Better for Real-Time<br>Aerial Image Detection
+  </div>
+  <p class="anim subtitle">以 FCM 互补映射 + MKP 多核感知 + RR 冗余削减，在精度与效率上全面超越多种主流实时航拍检测器。</p>
+  <div class="anim contributors">
+    <div class="author">Yao Xiao · Tingfa Xu · Yu Xin · Jianan Li</div>
+    <div class="affil">北京理工大学</div>
+  </div>
+  <div class="anim cover-meta">
+    <span class="cover-tag">YOLO 改进</span>
+    <span class="cover-tag">航拍检测</span>
+    <span class="cover-tag">实时检测</span>
+    <span class="cover-tag">AAAI 2025</span>
+  </div>
+</section>
+
+<!-- 2 核心贡献 -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献：两模块 + 一削减实现精度效率双赢</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>FCM 互补映射</h3>
+      <p class="body-text">通道分割加双向权重交互，把<span style="color:var(--title);font-weight:600;">浅层空间信息逐层送进骨干深层</span>，AP50 提升 2.0%。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>MKP 多核感知</h3>
+      <p class="body-text">3、5、7 递增核串联逐点卷积，<span style="color:var(--title);font-weight:600;">替换最后一个下采样层并删去对应检测头</span>，AP 再升 1.6%。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>RR 冗余削减</h3>
+      <p class="body-text">解耦下采样与通道扩张，该层<span style="color:var(--title);font-weight:600;">参数开销压到约四分之一</span>，腾出预算转化精度。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 整体架构 -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>FBRT-YOLO 整体架构</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/FBRT-YOLO/fig3.png" alt="整体架构"></div>
+  <div class="anim figure-caption">
+    骨干每个 stage 之后嵌入 FCM，第四个 stage 用 MKP 替换下采样层并删去对应检测头——<span class="cap-em">FCM 与 MKP 都在骨干内部完成，对颈部与头部透明</span>。
+  </div>
+</section>
+
+<!-- 4 FCM -->
+<section class="slide">
+  <div class="glow glow-blue tr"></div>
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>FCM：信息互补映射模块</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>输入按通道分割为两支：<span class="em">α 比例走 3×3 卷积强化语义</span>，(1−α) 走逐点卷积保留空间</li>
+      <li>通道交互：深度卷积 + GAP + Sigmoid 生成通道权重 ω₁</li>
+      <li>空间交互：1×1 卷积 + BN + Sigmoid 生成空间权重 ω₂</li>
+      <li>聚合：<span class="em">(X<sub>C</sub> ⊗ ω₂) ⊕ (X<sub>S</sub> ⊗ ω₁)</span>，「强者引导弱者」的互补融合</li>
+    </ul>
+  </div>
+  <div class="anim highlight-bar">
+    <p>α 取 (0.75, 0.75, 0.25, 0.25)，随下采样推进、<span class="accent-word">走逐点卷积的空间特征分支占比升高</span>——在深层保留更多空间位置信息。</p>
+  </div>
+</section>
+
+<!-- 5 MKP 与 RR -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>MKP 多核感知 + RR 冗余削减</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>MKP：3→5→7 递增核串接逐点卷积，<span class="em">感受野逐级扩张</span>，删去对应检测头简化结构</li>
+        <li>RR：先分组卷积做空间下采样、再逐点卷积做通道扩张</li>
+        <li>标准卷积 <span class="em">294,912</span> 参数，本文方案 <span class="em">69,632</span> 参数，压缩到约四分之一</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/FBRT-YOLO/fig4.png" alt="热力图"></div>
+  </div>
+</section>
+
+<!-- 6 VisDrone 对比 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>VisDrone：各尺度全面领先</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/FBRT-YOLO/table1.png" alt="VisDrone 对比"></div>
+  <div class="anim figure-caption">
+    FBRT-YOLO-N 以 <span class="cap-em">0.9 M 参数跑出 192 FPS</span>，FBRT-YOLO-N/S 参数量比 YOLOv8 减少 72%/74%，AP 反而提高 0.6%/2.3%。
+  </div>
+</section>
+
+<!-- 7 更多数据集 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>UAVDT 与 AI-TOD：复杂场景同样有效</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>UAVDT：AP <span class="em">18.4%</span>、AP50 <span class="em">31.1%</span>、AP75 <span class="em">18.9%</span>，全面超过 GLSAN 与 CEASC</li>
+      <li>AI-TOD：FBRT-YOLO-S 参数减少 74%、GFLOPs 减少 20%，AP50 提高 2.2%</li>
+      <li>VisDrone 先进对比：AP <span class="em">30.1%</span>，高于 YOLC 的 28.9% 与 CEASC 的 28.7%</li>
+    </ul>
+  </div>
+  <div class="anim highlight-bar">
+    <p>三个航拍数据集上一致领先，说明<span class="accent-word">空间信息传播策略在多种复杂场景下均有效</span>。</p>
+  </div>
+</section>
+
+<!-- 8 消融 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>消融：RR → FCM → MKP 逐步叠加</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/FBRT-YOLO/table5.png" alt="消融实验"></div>
+  <div class="anim figure-caption">
+    RR 减参 18% 精度轻微回落；+FCM 拉高 AP50 1.4%；+MKP AP 再升 1.6%——<span class="cap-em">冗余削减腾出的预算被两个感知模块转化成了精度</span>。
+  </div>
+</section>
+
+<!-- 9 可视化 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 04</div>
+  <div class="anim"><h2>可视化：热力图更集中、漏检更少</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/FBRT-YOLO/fig2.png" alt="散点图"></div>
+  <div class="anim figure-caption">
+    散点图中 FBRT-YOLO 的 N、S、M 三个尺度均落在同参数量级检测器的<span class="cap-em">左上方</span>，圆面积也更小，即以更少参数与 GFLOPs 取得更高精度。
+  </div>
+</section>
+
+<!-- 10 总结 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">1</span>
+      <h3>互补映射统一处理</h3>
+      <p class="body-text">FCM 以通道分割加双向权重交互，把空间信息逐层送进骨干深层。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">2</span>
+      <h3>一举两得的 MKP</h3>
+      <p class="body-text">递增核增强多尺度感知，删去对应检测头简化结构。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">3</span>
+      <h3>完整尺度族验证</h3>
+      <p class="body-text">N 到 X 完整覆盖，0.9M 参数达 192 FPS，工程可用性强。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 结尾 -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">FBRT-YOLO：更快、更好、更轻</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">
+      用互补映射与多核感知释放精度，<br>
+      用冗余削减换取效率，<span style="color:var(--accent);font-weight:600;">让航拍检测真正实时</span>。
+    </div>
+    <div class="anim cover-meta" style="margin-top:28px;">
+      <span class="cover-tag">AAAI 2025 CCF-A</span>
+      <span class="cover-tag">代码开源 galaxy-oss/FCM</span>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+  }
+  const dots = dotsWrap.querySelectorAll('.dot');
+  function goTo(idx) {
+    if (idx < 0 || idx >= total || idx === current) return;
+    const prev = slides[current]; const next = slides[idx];
+    prev.classList.remove('active'); prev.classList.add('exit-up');
+    requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); });
+    setTimeout(() => { prev.classList.remove('exit-up'); }, 700);
+    dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active');
+    progress.style.width = ((current + 1) / total * 100) + '%';
+  }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
+  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
+  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
+})();
+</script>
+
+</body>
+</html>

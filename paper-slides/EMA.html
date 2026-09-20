@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>EMA: Efficient Multi-Scale Attention Module with Cross-Spatial Learning</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.small-text { font-size: clamp(11px, 1.05vw, 14px); color: #777; line-height: 1.5; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.br { bottom: -120px; right: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .dots { display: none; } .split { flex-direction: column; } }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- 1 封面 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    PAPER READING
+    <span class="dot-gray"></span>
+    ICASSP 2023 · CCF-B
+  </div>
+  <div class="anim" style="font-size: clamp(2.4rem, 5.5vw, 4.5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
+    <span class="highlight">EMA</span>
+  </div>
+  <div class="anim" style="font-size: clamp(16px, 2vw, 28px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35;">
+    Efficient Multi-Scale Attention Module<br>with Cross-Spatial Learning
+  </div>
+  <p class="anim subtitle">通道分组 + batch 维 reshape 避开通道降维，用矩阵点积的跨空间学习融合两条并行分支输出，在 ResNet50 上取得 +3.43% Top-1 增益。</p>
+  <div class="anim contributors">
+    <div class="author">Daliang Ouyang · Su He · Guozhong Zhang · Mingzhu Luo · Huaiyong Guo · Jian Zhan · Zhijie Huang</div>
+    <div class="affil">中国航天科工集团深圳有限公司</div>
+  </div>
+  <div class="anim cover-meta">
+    <span class="cover-tag">注意力模块</span>
+    <span class="cover-tag">通道分组</span>
+    <span class="cover-tag">跨空间学习</span>
+    <span class="cover-tag">即插即用</span>
+  </div>
+</section>
+
+<!-- 2 贡献 -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献：不降维的多尺度跨空间注意力</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>通道分组 + batch 维 reshape</h3>
+      <p class="body-text">把部分通道维 reshape 到 batch 维，<span style="color:var(--title);font-weight:600;">从机制上避开通道维度缩减</span>，保留每通道信息的同时控制参数量。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>跨空间学习</h3>
+      <p class="body-text">用<span style="color:var(--title);font-weight:600;">矩阵点积</span>融合两条并行分支输出，捕获像素级成对关系并突出全局上下文，超越简单平均聚合。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>极致轻量</h3>
+      <p class="body-text">参数增量仅 <span style="color:var(--title);font-weight:600;">0.01M 至 0.22M</span>，在分类与检测上稳定超过 CBAM、SA、ECA、CA。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>CIFAR100 上 ResNet50 Top-1 从 77.26% 提升到 <span class="accent-word">80.69%</span>（+3.43%），参数量与 FLOPs 低于 CA。</p>
+  </div>
+</section>
+
+<!-- 3 动机 -->
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>通道降维副作用与并行分支融合不充分</h2></div>
+  <div class="anim divider divider-accent"></div>
+  <div class="anim card-grid cols-2">
+    <div class="card">
+      <span class="card-num">A</span>
+      <h3>通道维度缩减的副作用</h3>
+      <p class="body-text">SENet 式的通道注意力对每个通道独立做全局平均池化，再用两个 FC 层与 Sigmoid 生成通道权重，但降维会给通道注意力预测带来副作用。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">B</span>
+      <h3>并行分支融合不充分</h3>
+      <p class="body-text">Shuffle Attention、Triplet Attention 等并行子网络的输出大多只用<span style="color:var(--title);font-weight:600;">简单平均聚合</span>，像素级的成对关系与全局上下文没有被充分利用。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>问题：暂未有工作在<span class="accent-word">不做通道维度缩减的前提下建模跨通道交互</span>，并同时把并行分支的输出特征图做充分融合。</p>
+  </div>
+</section>
+
+<!-- 4 模块结构 -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>EMA 模块整体结构</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/EMA/fig1.png" alt="EMA 模块结构"></div>
+  <div class="anim figure-caption">
+    Groups 之后三路并行：X Avg Pool 与 Y Avg Pool 两条 1D 池化路径属于 1×1 分支，Conv(3×3) 一路属于 3×3 分支。
+    <span class="cap-em">两路输出在跨空间学习中交叉相乘，把多尺度信息注入同一处理阶段</span>。
+  </div>
+</section>
+
+<!-- 5 通道分组 -->
+<section class="slide">
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>通道分组与 batch 维 reshape</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>沿通道维把 X 划分为 G 个子特征：<span class="em">X = [X<sub>0</sub>, X<sub>1</sub>, ..., X<sub>G-1</sub>]</span></li>
+      <li>利用卷积核与 batch 维无关的性质，把 G 个组 reshape 并 permute 到 batch 维</li>
+      <li>分组把「通道间建模」转化为「<span class="em">组间 batch 并行 + 组内跨空间建模</span>」</li>
+      <li>从机制上避开通道维度缩减，为后续不做降维的卷积打下基础</li>
+    </ul>
+  </div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">关键洞察</div>
+    <p>普通 2D 卷积核的输入维度为 (oup, inp, k, k)，卷积核数量与前向输入的 batch 系数无关，因此可以把 G 个组 reshape 到 batch 维，<em>将输入张量重新定义为 (C//G) × H × W</em>。</p>
+  </div>
+</section>
+
+<!-- 6 跨空间学习 -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>跨空间学习：矩阵点积融合</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li><span class="em">1×1 分支</span>：水平与垂直方向 1D 全局平均池化 → 拼接 → 共享 1×1 卷积 → Split → Sigmoid → 乘法聚合</li>
+      <li><span class="em">3×3 分支</span>：单 3×3 卷积扩大特征空间，提供多尺度感受野</li>
+      <li><span class="em">跨空间融合</span>：1×1 分支输出 reshape 为 (C//G) × (H·W)，3×3 分支输出 2D 池化 + Softmax 后与之矩阵点积</li>
+      <li>得到两张 <span class="em">1 × H × W 的空间注意力图</span>：一张汇聚多尺度空间信息，一张保留精确位置信息</li>
+    </ul>
+  </div>
+  <div class="anim highlight-bar">
+    <p>每个像素的最终权重同时携带了<span class="accent-word">跨尺度信息与全局位置信息</span>，这正是 cross-spatial 一词的含义。</p>
+  </div>
+</section>
+
+<!-- 7 分类结果 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>CIFAR100 分类：EMA 在 ResNet50/101 上领先</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/EMA/table1.png" alt="分类结果"></div>
+  <div class="anim figure-caption">
+    ResNet50 嵌入 EMA 后 Top-1 从 77.26% 到 <span class="cap-em">80.69%</span>（+3.43%），Top-5 从 93.63% 到 95.59%。
+    在几乎相同计算复杂度下，EMA 的 Top-1 比 CA 高 0.52%，参数量与 FLOPs 更低。
+  </div>
+</section>
+
+<!-- 8 检测结果 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>COCO 与 VisDrone 检测：一致性领先</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/EMA/table2.png" alt="检测结果"></div>
+  <div class="anim figure-caption">
+    COCO 上 EMA 以 7.24M 参数取得 <span class="cap-em">57.8% mAP(0.5) 与 38.4% mAP(0.5:0.95)</span>，超过 CA 的 57.5% 与 38.1%。
+    VisDrone 上 EMA 以多 0.22M 参数的代价取得 0.41% 与 0.4% 的提升。
+  </div>
+</section>
+
+<!-- 9 消融 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>消融：跨空间学习是增益主源</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/EMA/table3.png" alt="消融实验"></div>
+  <div class="anim figure-caption">
+    关闭跨空间学习的 EMA<sub>no</sub> 取得 78.24% Top-1，开启后 EMA<sub>32</sub> 达到 <span class="cap-em">80.69%</span>（+2.45%），可见跨空间学习是增益的主要来源。
+    分组大小为 32 比 16 更优且参数量更低。
+  </div>
+</section>
+
+<!-- 10 总结 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">1</span>
+      <h3>避开通道降维</h3>
+      <p class="body-text">利用卷积核与 batch 维无关的性质，把部分通道维 reshape 到 batch 维，在保留每通道信息的同时控制参数量，视角新颖。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">2</span>
+      <h3>跨空间学习</h3>
+      <p class="body-text">用矩阵点积融合并行分支输出，捕获像素级成对关系并突出全局上下文，超越了简单平均聚合方式。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">3</span>
+      <h3>轻量即插即用</h3>
+      <p class="body-text">参数增量仅 0.01M 至 0.22M，在分类与无人机航拍检测上稳定超过 CBAM、SA、ECA、CA。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 11 结尾 -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">EMA：不降维、多尺度、跨空间融合</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">
+      用通道分组避开降维副作用，<br>
+      以矩阵点积跨空间学习捕获像素级成对关系与全局上下文。
+    </div>
+    <div class="anim cover-meta" style="margin-top:28px;">
+      <span class="cover-tag">ICASSP 2023</span>
+      <span class="cover-tag">感谢观看</span>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
+  const dots = dotsWrap.querySelectorAll('.dot');
+  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
+  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
+  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
+  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
+})();
+</script>
+
+</body>
+</html>

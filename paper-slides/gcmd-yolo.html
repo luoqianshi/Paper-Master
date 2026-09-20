@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>基于 GCMD-YOLO 的轻量化多尺度中药材检测方法</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.tr { top: -120px; right: -120px; }
+.glow.br { bottom: -120px; right: -100px; }
+.glow.bl { bottom: -120px; left: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .dots { display: none; } .split { flex-direction: column; } }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+<div class="deck" id="deck">
+
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge"><span class="dot-yellow"></span>PAPER READING<span class="dot-gray"></span>农业工程学报 · 2026</div>
+  <div class="anim" style="font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">基于 <span class="highlight">GCMD-YOLO</span> 的<br>轻量化多尺度中药材检测方法</div>
+  <p class="anim subtitle">面向 100 种中药材检测，GhostConv 轻量化 + C3K2-GL 动态卷积 + MG-CA 多尺度注意力 + Dysample 动态上采样，精确率 93%、mAP@0.5 92.8%，Jetson Nano 推理 39 FPS。</p>
+  <div class="anim contributors"><div class="author">孙鹏 · 唐永菁 · 孙传聪</div><div class="affil">山东药品食品职业学院 · 威海市妇幼保健院</div></div>
+  <div class="anim cover-meta"><span class="cover-tag">中药材检测</span><span class="cover-tag">GhostConv</span><span class="cover-tag">动态卷积</span><span class="cover-tag">边缘部署</span></div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>四项改进：轻量化与多尺度特征增强</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-2">
+    <div class="card"><span class="card-num">01</span><h3>GhostConv 轻量化</h3><p class="body-text">用标准卷积和廉价变换双路径结构重构主干与颈部网络，减少约 50% 参数量与计算量。</p></div>
+    <div class="card"><span class="card-num">02</span><h3>C3K2-GL 动态卷积</h3><p class="body-text">全局-局部双通路动态卷积 GL-ODConv，生成动态卷积核自适应提取多尺度纹理特征。</p></div>
+  </div>
+  <div class="anim card-grid cols-2" style="margin-top:12px;">
+    <div class="card"><span class="card-num">03</span><h3>MG-CA 多尺度注意力</h3><p class="body-text">采用 1×1、2×2、4×4 三级池化粒度捕获不同尺度空间信息，抑制复杂背景干扰。</p></div>
+    <div class="card"><span class="card-num">04</span><h3>Dysample 动态上采样</h3><p class="body-text">通过动态权重生成和自适应特征插值实现精准尺度转换，替代固定插值规则。</p></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>中药材检测面临的困难</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>药材种类繁多、形态各异、<span class="em">类间相似性高</span>，细微根须等特征提取困难</li>
+      <li>现有方法<span class="em">仅聚焦精度提升</span>，对轻量化与推理速度重视不足</li>
+      <li>传统卷积与池化机制易导致<span class="em">纹理细节丢失</span></li>
+      <li>在 100 种中药材的高细粒度分类任务中，模型鲁棒性有待提升</li>
+    </ul>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="glow glow-blue tr"></div>
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>GhostConv 与 Conv-SPPF 轻量化</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>GhostConv 先经标准卷积 Conv 输出 n 个通道，再通过<span class="em">线性变换生成 s 个幻影特征图</span></li>
+      <li>参数压缩比近似为 s，可节省约 <span class="em">s 倍训练时间与参数量</span></li>
+      <li>Conv-SPPF 用 GhostConv 替代 SPPF 的浅层 MaxPool，保留原 SPPF 的深层池化框架</li>
+      <li>在维持多尺度聚合能力的同时避免关键鉴别信息的损失</li>
+    </ul>
+  </div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">GhostConv 计算量</div>
+    <p class="formula" style="font-size:clamp(14px,1.5vw,20px);">
+      <i>F</i><sub>2</sub> = <i>H'</i>×<i>W'</i>×<i>n</i>×<i>K</i><sup>2</sup>×<i>c</i> + (<i>s</i>−1)×<i>H'</i>×<i>W'</i>×(<i>n</i>/<i>s</i>)×<i>b</i><sup>2</sup>
+    </p>
+    <p class="formula-note">b 为线性变换卷积核尺寸，参数压缩比近似为 s。</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>C3K2-GL 全局-局部双通路动态卷积</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>全局通路经<span class="em">全局平均池化</span>提取通道维度全局信息</li>
+      <li>局部通路经 1×1 Conv 提取局部信息</li>
+      <li>两路拼接后生成<span class="em">动态卷积核</span>自适应调整感受野与卷积核形态</li>
+      <li>多分支分别适配整体形态、纹理和细节的多尺度特征提取需求</li>
+    </ul>
+  </div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">动态权重融合</div>
+    <p class="formula" style="font-size:clamp(14px,1.5vw,20px);">
+      <i>z</i><sub>fused</sub> = σ(FC([<i>z</i><sub>g</sub>; <i>z</i><sub>l</sub>])) ⊙ <i>X</i> + <i>X</i>
+    </p>
+    <p class="formula-note">σ 为 Sigmoid，⊙ 为逐通道逐像素相乘，+X 为残差连接。</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="glow glow-navy bl"></div>
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>MG-CA 多尺度全局注意力</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li><span class="em">s=1</span>（1×1 网格）：全局粒度，捕获整株药材形态特征，针对人参、黄芪等大尺度目标</li>
+      <li><span class="em">s=2</span>（2×2 网格）：中尺度粒度，提取切片纹理特征，针对当归、白术等纹理目标</li>
+      <li><span class="em">s=4</span>（4×4 网格）：局部粒度，定位颗粒细节，针对枸杞、虫草等小目标</li>
+      <li>三级特征拼接后经 1×1 卷积压缩通道，<span class="em">分开为宽高两并行支路</span>生成注意力权重</li>
+    </ul>
+  </div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">空间关键区域增强</div>
+    <p class="formula"><i>F'</i> = <i>F</i> ⊗ <i>g</i><sub>h</sub> ⊗ <i>g</i><sub>w</sub></p>
+    <p class="formula-note">行注意力权重 g<sub>h</sub> 和列注意力权重 g<sub>w</sub> 联合作用于输入特征图。</p>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>消融实验：模块增益逐级叠加</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/gcmd-yolo/page7_img11.jpeg" alt="CAM 对比图" style="max-height: 55vh;"></div>
+  <div class="anim figure-caption">集成全部改进模块后参数量与运算量分别较基线降低 16% 与 27%，<span class="cap-em">精确率、召回率与 mAP@0.5 分别大幅提升至 93%、91% 和 92.8%</span>。</div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>对比实验：与主流模型全面对比</h2></div>
+  <div class="anim">
+    <table style="width:100%;border-collapse:collapse;font-size:clamp(12px,1.2vw,16px);margin-top:16px;">
+      <tr style="background:var(--card-bg);"><th style="padding:10px;border:1px solid var(--border);">模型</th><th style="padding:10px;border:1px solid var(--border);">Precision/%</th><th style="padding:10px;border:1px solid var(--border);">mAP@0.5/%</th><th style="padding:10px;border:1px solid var(--border);">Parameters/M</th><th style="padding:10px;border:1px solid var(--border);">FLOPs/G</th></tr>
+      <tr><td style="padding:8px;border:1px solid var(--border);">Faster R-CNN</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">82</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">82.1</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">28.5</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">180.6</td></tr>
+      <tr><td style="padding:8px;border:1px solid var(--border);">YOLOv11S</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">86</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">85.5</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">9.4</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">21.5</td></tr>
+      <tr style="font-weight:700;color:var(--title);"><td style="padding:8px;border:1px solid var(--border);">GCMD-YOLO</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">93</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">92.8</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">7.9</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">15.6</td></tr>
+    </table>
+  </div>
+  <div class="anim highlight-bar"><p>相较基线 YOLOv11S，精确率提升 7.0 个百分点、mAP@0.5 提升 7.3 个百分点，参数量降低 16%、<span class="accent-word">推理速度提升 27%</span>。</p></div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>边缘部署与泛化验证</h2></div>
+  <div class="anim">
+    <table style="width:100%;border-collapse:collapse;font-size:clamp(12px,1.2vw,16px);margin-top:16px;">
+      <tr style="background:var(--card-bg);"><th style="padding:10px;border:1px solid var(--border);">指标</th><th style="padding:10px;border:1px solid var(--border);">YOLOv11-S</th><th style="padding:10px;border:1px solid var(--border);">GCMD-YOLO</th></tr>
+      <tr><td style="padding:8px;border:1px solid var(--border);">mAP@0.5</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">85%</td><td style="padding:8px;border:1px solid var(--border);text-align:center;font-weight:700;color:var(--title);">92%</td></tr>
+      <tr><td style="padding:8px;border:1px solid var(--border);">FPS</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">25</td><td style="padding:8px;border:1px solid var(--border);text-align:center;font-weight:700;color:var(--title);">39</td></tr>
+    </table>
+  </div>
+  <div class="anim highlight-bar"><p>在 Jetson Nano 边缘设备上推理速度达到 <span class="accent-word">39 FPS</span>，跨数据集（ChinesMedicine-163）mAP@0.5 提升 7.6%，验证了轻量化优势和边缘部署可行性。</p></div>
+</section>
+
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">1</span><h3>轻量化重构</h3><p class="body-text">GhostConv + Dysample + Conv-SPPF 在参数量降低 16%、运算量减少 27% 的轻量化基础上实现精度提升。</p></div>
+    <div class="card"><span class="card-num">2</span><h3>动态卷积增强</h3><p class="body-text">C3K2-GL 全局-局部双通路动态卷积，自适应调整感受野，显著增强细粒度纹理特征捕捉能力。</p></div>
+    <div class="card"><span class="card-num">3</span><h3>多尺度注意力</h3><p class="body-text">MG-CA 三级池化粒度（1×1、2×2、4×4）捕获不同尺度空间信息，将易混淆品类误判率从 12.5% 降至 4.2%。</p></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">GCMD-YOLO：中药材检测</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">100 种中药材，精确率 93%，mAP@0.5 <span style="color:var(--accent);font-weight:600;">92.8%</span>，Jetson Nano 39 FPS。</div>
+    <div class="anim cover-meta" style="margin-top:28px;"><span class="cover-tag">农业工程学报 2026</span></div>
+  </div>
+</section>
+
+</div>
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
+  const dots = dotsWrap.querySelectorAll('.dot');
+  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
+  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
+  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
+  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
+})();
+</script>
+</body>
+</html>

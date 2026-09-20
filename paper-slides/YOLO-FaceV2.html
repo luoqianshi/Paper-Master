@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>YOLO-FaceV2: A scale and occlusion aware face detector</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.fx-inline { font-weight: 600; color: var(--accent); white-space: nowrap; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.tr { top: -120px; right: -120px; }
+.glow.br { bottom: -120px; right: -100px; }
+.glow.bl { bottom: -120px; left: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .split { flex-direction: column; } .dots { display: none; } }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+<div class="deck" id="deck">
+
+<!-- 1 封面 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge"><span class="dot-yellow"></span>PAPER READING<span class="dot-gray"></span>Pattern Recognition 2024 · CCF-B</div>
+  <div class="anim" style="font-size: clamp(3rem, 6.5vw, 5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;"><span class="highlight">YOLO-FaceV2</span></div>
+  <div class="anim" style="font-size: clamp(16px, 2vw, 28px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35;">A Scale and Occlusion Aware Face Detector</div>
+  <p class="anim subtitle">针对人脸尺度变化、遮挡与难易样本不平衡，提出 RFE 感受野增强、SEAM 遮挡感知注意力与 SWF 滑动权重函数，在 YOLOv5 上构建实时人脸检测器。</p>
+  <div class="anim contributors"><div class="author">Ziping Yu · Hongbo Huang · Weijun Chen · Yongxin Su · Yahui Liu · Xiuying Wang</div><div class="affil">北京信息科技大学 · 蔚来数据算法部门</div></div>
+  <div class="anim cover-meta"><span class="cover-tag">人脸检测</span><span class="cover-tag">尺度感知</span><span class="cover-tag">遮挡感知</span><span class="cover-tag">Pattern Recognition 2024</span></div>
+</section>
+
+<!-- 2 贡献 -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>三个模块分别对准三类人脸难题</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">01</span><h3>RFE 感受野增强</h3><p class="body-text">共享权重的多分支空洞卷积提取多尺度像素信息，配合<span style="color:var(--title);font-weight:600;">有效感受野设计的 anchor</span> 与 NWD 度量应对小脸。</p></div>
+    <div class="card"><span class="card-num">02</span><h3>SEAM 遮挡感知注意力</h3><p class="body-text">利用特征图之间的关系<span style="color:var(--title);font-weight:600;">召回被遮挡的特征</span>，配合 Repulsion Loss 降低检测器对 NMS 的敏感。</p></div>
+    <div class="card"><span class="card-num">03</span><h3>SWF 滑动权重函数</h3><p class="body-text">以<span style="color:var(--title);font-weight:600;">单一阈值 μ 与分段指数加权</span>实现难易样本的自适应加权，避开众多超参数。</p></div>
+  </div>
+  <div class="anim highlight-bar"><p>WiderFace 验证集 easy/medium/hard 取得 <span class="accent-word">98.6% / 97.9% / 91.9%</span>，超过此前 SOTA 2.3 / 2.5 / 1.1 个百分点；FDDB 98.71% mAP。</p></div>
+</section>
+
+<!-- 3 整体架构 -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>YOLO-FaceV2 网络架构</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLO-FaceV2/fig1.png" alt="YOLO-FaceV2 架构"></div>
+  <div class="anim figure-caption">骨干 CSPDarknet53 的 P5 层 C3 块替换为 RFE；P2 层并入 PAN 提升小脸检测精度；<span class="cap-em">颈部之后引入 SEAM 模块增强对遮挡人脸的响应</span>。</div>
+</section>
+
+<!-- 4 RFE + Anchor -->
+<section class="slide">
+  <div class="glow glow-blue tr"></div>
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>RFE 模块与有效感受野 Anchor 设计</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>RFE 以 dilation rate 1/2/3 的 3x3 空洞卷积 + 平均 pooling 构成四分支，<span class="em">共享权重</span>减少参数</li>
+        <li>依据有效感受野近似高斯形状的结论<span class="em">重新估计 anchor 尺寸</span></li>
+        <li>宽高比设为 1:1.2，P2/P3/P4 步长 4/8/16</li>
+        <li>NWD 对小目标不敏感，与 IoU 按 <span class="em">1:1 组合</span>互补</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLO-FaceV2/fig2.png" alt="RFE 模块"></div>
+  </div>
+</section>
+
+<!-- 5 SEAM -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>SEAM：遮挡感知注意力与 Repulsion Loss</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>SEAM 第一部分：带残差的<span class="em">深度可分离卷积</span>逐通道学习</li>
+        <li>第二部分：1x1 卷积组合 + FC 聚合通道信息，<span class="em">指数变换扩展到 [1, e]</span></li>
+        <li>RepGT 使预测框远离周围真值框，RepBox 降低预测框之间 IoU</li>
+        <li>两者缓解拥挤场景中被遮挡人脸的误检与漏检</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLO-FaceV2/fig4.png" alt="SEAM"></div>
+  </div>
+</section>
+
+<!-- 6 SWF -->
+<section class="slide">
+  <div class="anim slide-label">Method 04</div>
+  <div class="anim"><h2>SWF 滑动权重函数：自适应难样本加权</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLO-FaceV2/fig5.png" alt="SWF 曲线" style="max-height: 38vh;"></div>
+  <div class="anim figure-caption">
+    取 IoU 均值 μ=0.5 为阈值：IoU=0.3 的简单样本权重 1；IoU=0.45 的边界样本权重 e<sup>0.5</sup> ≈ 1.65；
+    <span class="cap-em">IoU=0.9 的正样本权重 e<sup>0.1</sup> ≈ 1.11</span>，难分类边界样本的相对损失抬到约 1.65 倍。
+  </div>
+</section>
+
+<!-- 7 实验：对比 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>WiderFace 验证集对比：三子集全面 SOTA</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLO-FaceV2/table7.png" alt="WiderFace 对比" style="max-height: 44vh;"></div>
+  <div class="anim figure-caption">
+    YOLO-FaceV2l 在 easy/medium/hard 取得 98.6%/97.9%/91.9%，超过此前 SOTA 2.3/2.5/1.1 个百分点；
+    <span class="cap-em">FDDB 不重训即取得 98.71% mAP</span>，达到 SOTA。
+  </div>
+</section>
+
+<!-- 8 消融 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>消融实验：尺度、遮挡、样本不平衡三组独立验证</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li><span class="em">尺度消融</span>：RFE + P2 并入 PAN + 有效感受野 anchor，hard 提升 0.9%</li>
+        <li><span class="em">遮挡消融</span>：SEAM 超过 SE、CBAM、EMA；Repulsion Loss 分别提升 0.71%/0.63%/0.5%</li>
+        <li><span class="em">组合消融</span>：SWF+RFE+SEAM 依次叠加，三子集达 98.39/97.07/89.39</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLO-FaceV2/table3.png" alt="消融"></div>
+  </div>
+</section>
+
+<!-- 9 可视化 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>遮挡人脸热力图：逐级召回被遮挡的人脸</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLO-FaceV2/fig7_heat.png" alt="热力图" style="max-height: 48vh;"></div>
+  <div class="anim figure-caption">
+    基线没有注意到被手臂遮挡的脸；加入 Repulsion Loss 后该脸被检出；加入 SEAM 后每张脸都获得聚焦响应。
+    <span class="cap-em">所有被遮挡的脸都被召回</span>。
+  </div>
+</section>
+
+<!-- 10 总结 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">1</span><h3>问题-模块映射清晰</h3><p class="body-text">RFE、SEAM、SWF 分别对准尺度、遮挡、样本不平衡，消融独立自证。</p></div>
+    <div class="card"><span class="card-num">2</span><h3>有效感受野理论落地</h3><p class="body-text">将有效感受野理论引入 anchor 尺寸估计，以高斯分布形状重估离散 anchor，设计依据扎实。</p></div>
+    <div class="card"><span class="card-num">3</span><h3>SWF 简单高效</h3><p class="body-text">以单一阈值 μ 与分段指数加权实现难易样本自适应加权，避开众多超参数。</p></div>
+  </div>
+</section>
+
+<!-- 11 结尾 -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">YOLO-FaceV2：尺度 + 遮挡 + 不平衡</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">用 RFE、SEAM、SWF 三个模块统一应对人脸检测的三类难题，<br>以<span style="color:var(--accent);font-weight:600;">单阶段架构达到 WiderFace SOTA</span>。</div>
+    <div class="anim cover-meta" style="margin-top:28px;"><span class="cover-tag">Pattern Recognition 2024</span><span class="cover-tag">CCF-B</span><span class="cover-tag">代码开源 Krasjet-Yu/YOLO-FaceV2</span></div>
+  </div>
+</section>
+
+</div>
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide'); const total = slides.length; let current = 0;
+  const progress = document.getElementById('progress'); const dotsWrap = document.getElementById('dots'); const hint = document.getElementById('hint');
+  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
+  const dots = dotsWrap.querySelectorAll('.dot');
+  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
+  function next() { goTo(current + 1); } function prev() { goTo(current - 1); }
+  slides[0].classList.add('active'); progress.style.width = (1 / total * 100) + '%';
+  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
+  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
+  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true }); document.addEventListener('click', hideHint, { once: true }); setTimeout(() => hideHint(), 5000);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>基于无人机 RGB 图像与改进 YOLOv5s 的宿根蔗缺苗定位方法</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --title: #3966A2;
+  --accent: #132843;
+  --dim: #6191D3;
+  --card-bg: #f7f9fc;
+  --border: #e2e8f0;
+  --radius: 12px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  height: 100vh;
+  cursor: default;
+  user-select: none;
+}
+
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5vh 7vw;
+  background: var(--bg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(60px) scale(0.97);
+  transition: opacity 0.6s cubic-bezier(.4,0,.2,1),
+              transform 0.6s cubic-bezier(.4,0,.2,1),
+              visibility 0.6s;
+  will-change: opacity, transform;
+}
+.slide.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+}
+.slide.exit-up {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-60px) scale(0.97);
+}
+
+.progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--title), var(--accent));
+  z-index: 100;
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  border-radius: 0 1px 1px 0;
+}
+.dots {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+}
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #d4dce8;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #999;
+  z-index: 90;
+  opacity: 1;
+  transition: opacity 1s;
+  pointer-events: none;
+}
+.hint.hidden { opacity: 0; }
+
+.slide-label {
+  font-size: clamp(11px, 1.1vw, 14px);
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 12px;
+}
+h1 {
+  font-size: clamp(30px, 4vw, 54px);
+  font-weight: 800;
+  line-height: 1.18;
+  color: var(--text);
+  letter-spacing: -1.5px;
+}
+h1 .highlight { color: var(--title); }
+h2 {
+  font-size: clamp(24px, 2.9vw, 40px);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--title);
+  letter-spacing: -1px;
+}
+h3 {
+  font-size: clamp(15px, 1.6vw, 22px);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.subtitle {
+  font-size: clamp(15px, 1.6vw, 21px);
+  font-weight: 400;
+  color: #555;
+  line-height: 1.55;
+  margin-top: 16px;
+  max-width: 800px;
+}
+.body-text {
+  font-size: clamp(13px, 1.35vw, 18px);
+  font-weight: 400;
+  color: #333;
+  line-height: 1.65;
+}
+.small-text {
+  font-size: clamp(11px, 1.05vw, 14px);
+  color: #777;
+  line-height: 1.5;
+}
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(57,102,162,0.08);
+  border: 1px solid rgba(57,102,162,0.15);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--title);
+  letter-spacing: 0.06em;
+  margin-bottom: 36px;
+  text-transform: uppercase;
+  width: fit-content;
+}
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag {
+  font-size: clamp(11px, 1vw, 14px);
+  font-weight: 500;
+  color: var(--dim);
+  background: rgba(57,102,162,0.06);
+  border: 1px solid rgba(57,102,162,0.12);
+  padding: 5px 14px;
+  border-radius: 100px;
+}
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(16px, 2vw, 26px);
+  display: flex;
+  flex-direction: column;
+}
+.card .card-num {
+  font-size: clamp(26px, 3vw, 42px);
+  font-weight: 800;
+  color: var(--title);
+  opacity: 0.25;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+
+.highlight-bar {
+  background: rgba(57,102,162,0.06);
+  border-left: 3px solid var(--dim);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px);
+  margin-top: 16px;
+}
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li {
+  font-size: clamp(13px, 1.35vw, 18px);
+  color: #333;
+  line-height: 1.65;
+  padding: 4px 0 4px 22px;
+  position: relative;
+}
+.bullet-list li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 13px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--title);
+}
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+
+.vs-row { display: flex; align-items: stretch; gap: 24px; margin-top: 16px; }
+.vs-col {
+  flex: 1;
+  border-radius: var(--radius);
+  padding: clamp(14px, 1.7vw, 22px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.vs-col.left-col { background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.15); }
+.vs-col.right-col { background: rgba(34,197,94,0.04); border: 1px solid rgba(34,197,94,0.15); }
+.vs-col .vs-tag {
+  display: inline-block;
+  font-size: clamp(10px, 0.9vw, 12px);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  width: fit-content;
+}
+.vs-col.left-col .vs-tag { background: rgba(239,68,68,0.1); color: #b91c1c; }
+.vs-col.right-col .vs-tag { background: rgba(34,197,94,0.1); color: #15803d; }
+.vs-col h3 { font-size: clamp(15px, 1.5vw, 21px); margin-bottom: 10px; }
+.vs-col ul { list-style: none; padding: 0; }
+.vs-col ul li {
+  font-size: clamp(12px, 1.15vw, 16px);
+  color: #333;
+  line-height: 1.55;
+  padding: 3px 0 3px 20px;
+  position: relative;
+}
+.vs-col ul li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 11px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+}
+.vs-col.left-col ul li::before { background: #ef4444; }
+.vs-col.right-col ul li::before { background: #22c55e; }
+
+.prompt-box {
+  background: var(--accent);
+  border-radius: var(--radius);
+  padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px);
+  margin-top: 14px;
+}
+.prompt-box .prompt-label {
+  font-size: clamp(9px, 0.85vw, 12px);
+  font-weight: 600;
+  color: #9db8d9;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula {
+  font-size: clamp(16px, 2vw, 27px);
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.55;
+  letter-spacing: 0.5px;
+}
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.fx-inline { font-weight: 600; color: var(--accent); white-space: nowrap; }
+.fx-inline i { font-style: italic; }
+.fx-inline sub, .fx-inline sup { font-size: 68%; }
+
+.frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 5px; line-height: 1.15; }
+.frac .num { padding: 0 6px 3px; border-bottom: 1.6px solid rgba(255,255,255,0.75); }
+.frac .den { padding: 3px 6px 0; }
+.sum-wrap { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 5px; line-height: 1; }
+.sum-wrap .lim { font-size: 52%; font-weight: 500; color: #a8c6ec; }
+.sum-wrap .sig { font-size: 135%; line-height: 0.95; }
+
+.glow {
+  position: absolute;
+  width: 400px; height: 400px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.10;
+  pointer-events: none;
+}
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.tr { top: -120px; right: -120px; }
+.glow.br { bottom: -120px; right: -100px; }
+.glow.bl { bottom: -120px; left: -100px; }
+
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img {
+  max-width: 100%;
+  max-height: 46vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 16px rgba(19,40,67,0.08);
+}
+.figure-caption {
+  text-align: center;
+  font-size: clamp(11px, 1vw, 14px);
+  color: #555;
+  margin-top: 10px;
+  line-height: 1.55;
+  max-width: 960px;
+}
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+
+.steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
+.step {
+  flex: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.step .step-num {
+  font-size: clamp(10px, 0.9vw, 13px);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
+.step .small-text { font-size: clamp(11px, 1vw, 14px); }
+.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b8c4d4; flex-shrink: 0; }
+
+.end-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+
+@media (max-width: 900px) {
+  .slide { padding: 4vh 5vw; }
+  .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; }
+  .vs-row { flex-direction: column; gap: 12px; }
+  .steps { flex-direction: column; }
+  .dots { display: none; }
+  .split { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- 1 封面 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    PAPER READING
+    <span class="dot-gray"></span>
+    农业工程学报 2024
+  </div>
+  <div class="anim" style="font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
+    <span class="highlight">Ratoon-Sugarcane-YOLOv5s</span>
+  </div>
+  <div class="anim" style="font-size: clamp(16px, 2vw, 28px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35;">
+    基于无人机 RGB 图像与改进 YOLOv5s 的宿根蔗缺苗定位方法
+  </div>
+  <p class="anim subtitle">通过多尺度注意力机制与动态检测头提升甘蔗幼苗检测精度，结合椭圆形 DBSCAN 聚类与 PCA 拟合实现端到端缺苗自动化定位。</p>
+  <div class="anim contributors">
+    <div class="author">作者未获取</div>
+    <div class="affil">农业工程学报 · 2024</div>
+  </div>
+  <div class="anim cover-meta">
+    <span class="cover-tag">无人机检测</span>
+    <span class="cover-tag">缺苗定位</span>
+    <span class="cover-tag">YOLOv5s</span>
+    <span class="cover-tag">DBSCAN 聚类</span>
+  </div>
+</section>
+
+<!-- 2 核心贡献 -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献：多尺度注意力 + 动态检测头 + 缺苗定位</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>任务感知注意力模块</h3>
+      <p class="body-text">引入尺度感知、空间感知与任务感知三个并行注意力分支，通过<span style="color:var(--title);font-weight:600;">自适应权重分配</span>显著提升小目标识别能力。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>动态检测头 DyHead</h3>
+      <p class="body-text">替代标准检测头，<span style="color:var(--title);font-weight:600;">解耦分类与回归任务</span>，通过可学习注意力机制自适应调整特征响应，适应甘蔗幼苗尺度剧烈变化。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>椭圆形 DBSCAN 缺苗定位</h3>
+      <p class="body-text">提出椭圆形 DBSCAN 替代球形邻域，<span style="color:var(--title);font-weight:600;">贴合甘蔗垄行长条形分布</span>，结合 PCA 拟合实现端到端缺苗自动化定位。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>实验表明：在自建数据集上 mAP 达 <span class="accent-word">88.2%</span>，较基线 YOLOv5s 提升 11.9 个百分点，定位误差均值仅 <span class="accent-word">9.73 像素</span>。</p>
+  </div>
+</section>
+
+<!-- 3 研究动机 -->
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>宿根蔗缺苗定位的技术瓶颈</h2></div>
+  <div class="anim divider divider-accent"></div>
+  <div class="anim vs-row">
+    <div class="vs-col left-col">
+      <span class="vs-tag">现有局限</span>
+      <h3>检测层面</h3>
+      <ul>
+        <li>无人机航拍下甘蔗幼苗<span style="font-weight:600;">尺度跨度大</span>，小目标漏检严重</li>
+        <li>密集遮挡场景下<span style="font-weight:600;">误检率高</span></li>
+        <li>背景杂草干扰严重，检测性能下降</li>
+      </ul>
+    </div>
+    <div class="vs-col right-col">
+      <span class="vs-tag">本文方案</span>
+      <h3>定位层面</h3>
+      <ul>
+        <li>构建完整<span style="font-weight:600;">检测-聚类-拟合-定位</span>技术 pipeline</li>
+        <li>椭圆形 DBSCAN 聚类适应垄行长条形分布</li>
+        <li>PCA 拟合垄线实现精确缺苗定位</li>
+      </ul>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>研究空白：暂未有工作能够同时实现<span class="accent-word">高精度幼苗检测</span>与<span class="accent-word">系统化缺苗定位</span>的完整解决方案。</p>
+  </div>
+</section>
+
+<!-- 4 数据预处理 -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>数据预处理与增强</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>原始图像分辨率 <span class="em">5472×3648</span> 像素，飞行高度 10 m，单张覆盖约 0.05 公顷</li>
+        <li>采用<span class="em">重叠切片策略</span>，重叠率 0.15，切片尺寸统一 640×640</li>
+        <li>数据增强包括 Mosaic、随机翻转、亮度调整等</li>
+        <li>样本从 933 张扩展至约 <span class="em">3700 张</span></li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/Ratoon-Sugarcane-YOLOv5s/fig_003_003.png" alt="数据增强效果"></div>
+  </div>
+  <div class="anim figure-caption">
+    图 3 切分原始子图与数据增强后的对比效果，增强操作有效增加了样本多样性。
+  </div>
+</section>
+
+<!-- 5 网络结构 -->
+<section class="slide">
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>改进 YOLOv5s 网络结构</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/Ratoon-Sugarcane-YOLOv5s/fig_004_004.png" alt="改进 YOLOv5s 网络结构"></div>
+  <div class="anim figure-caption">
+    图 4 改进主要在检测头部分引入 <span class="cap-em">DyHead 结构</span>，并在特征融合路径中嵌入注意力模块，骨干保留 CSPDarknet + FPN+PAN 双向融合架构。
+  </div>
+</section>
+
+<!-- 6 注意力模块 -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>任务感知注意力模块</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li><span class="em">尺度感知分支</span>：Avg Pool → Conv → ReLU → Hard Sigmoid，提取尺度信息</li>
+        <li><span class="em">空间感知分支</span>：Index 操作 + Conv，捕获空间关系</li>
+        <li><span class="em">任务感知分支</span>：Normalize → fc → ReLU，学习任务特定权重</li>
+        <li>三者输出<span class="em">加权融合</span>后作用于检测头</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/Ratoon-Sugarcane-YOLOv5s/fig_005_007.png" alt="注意力模块结构"></div>
+  </div>
+</section>
+
+<!-- 7 SAHI 推理 -->
+<section class="slide">
+  <div class="anim slide-label">Method 04</div>
+  <div class="anim"><h2>切片辅助推理框架 SAHI</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/Ratoon-Sugarcane-YOLOv5s/fig_005_008.png" alt="SAHI 推理流程"></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>将高分辨率整图切分为重叠子图，对每个子图<span class="em">独立推理</span></li>
+      <li>通过<span class="em">非极大值抑制</span>合并重叠区域的检测结果</li>
+      <li>重叠宽度比与高度比均设为 0.15，平衡计算效率与检测完整性</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 8 椭圆DBSCAN -->
+<section class="slide">
+  <div class="glow glow-blue tr"></div>
+  <div class="anim slide-label">Method 05</div>
+  <div class="anim"><h2>椭圆形 DBSCAN 聚类算法</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>传统 DBSCAN 假设簇为球形，<span class="em">不适用于甘蔗垄行</span>长条形分布</li>
+        <li>将邻域定义改为<span class="em">椭圆区域</span>，长半轴 a、短半轴 b 可调</li>
+        <li>优化参数：<span class="em">a=1800px、b=200px、N<sub>minpts</sub>=10</span></li>
+        <li>聚类准确率达 <span class="em">95% 以上</span></li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/Ratoon-Sugarcane-YOLOv5s/fig_006_014.png" alt="DBSCAN 聚类流程图"></div>
+  </div>
+</section>
+
+<!-- 9 PCA 拟合 -->
+<section class="slide">
+  <div class="anim slide-label">Method 06</div>
+  <div class="anim"><h2>PCA 拟合垄线与缺苗定位</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/Ratoon-Sugarcane-YOLOv5s/fig_011_002.png" alt="垄线拟合对比" style="max-height: 38vh;"></div>
+  <div class="anim figure-caption">
+    从左至右：聚类结果、LSM、RANSAC、PCA。PCA 拟合垄线最平滑连续，<span class="cap-em">R<sup>2</sup>=0.987</span>，平均绝对误差仅 2.3°。
+  </div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>基于幼苗坐标与拟合垄线计算垂直距离，超过 <span class="em">0.3 倍垄间距</span>标记为缺苗区</li>
+      <li>定位误差均值 <span class="em">9.73 像素</span>，标准差 6.54 像素</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 10 实验：数据集 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>数据集统计与评价指标</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/Ratoon-Sugarcane-YOLOv5s/fig_004_002.png" alt="数据集统计" style="max-height: 38vh;"></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>共 933 张标注图像，按 <span class="em">8:1:1</span> 划分为训练集、验证集与测试集</li>
+      <li>RSS 类 88273 个、RSS_O 类 3057 个，正负样本比约 <span class="em">29:1</span></li>
+      <li>评价指标：AP、AP50、AP75、AP<sub>S</sub>，置信度阈值 0.25</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 11 消融实验 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>消融实验：各模块增益清晰可归因</h2></div>
+  <div class="anim">
+    <ul class="bullet-list tight">
+      <li>YOLOv5s 基线 mAP 76.3%，引入 iw 策略提升至 81.7%，加 P2+DyHead 达 85.4%，完整模型达 <span class="em">88.2%</span></li>
+    </ul>
+  </div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/Ratoon-Sugarcane-YOLOv5s/fig_009_002.png" alt="检测效果对比" style="max-height: 44vh;"></div>
+  <div class="anim figure-caption">
+    Fig.9(b) 密集遮挡场景下，基线 YOLOv5s 存在明显漏检（黄圈），本文方法成功检测到被部分遮挡的幼苗。
+  </div>
+</section>
+
+<!-- 12 可视化分析 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>检测效果可视化与误检分析</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/Ratoon-Sugarcane-YOLOv5s/fig_009_003.png" alt="误检案例分析" style="max-height: 38vh;"></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li><span class="em">阳光反射</span>造成的假阳性集中在图像边缘光照不均匀区域</li>
+      <li><span class="em">杂草干扰</span>导致部分误检，需后续融合多光谱信息区分</li>
+      <li>完整模型在保持 <span class="em">79 FPS</span> 实时性能的同时，mAP 达到 88.2%</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 13 缺苗定位可视化 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 04</div>
+  <div class="anim"><h2>缺苗定位可视化结果</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/Ratoon-Sugarcane-YOLOv5s/fig_012_002.png" alt="缺苗定位结果"></div>
+  <div class="anim figure-caption">
+    绿色线条为拟合垄线，黄色点为检测幼苗，红色点为预测缺苗位置。<span class="cap-em">预测结果在大部分区域吻合良好</span>，少数偏差源于幼苗检测不完整导致的聚类误差。
+  </div>
+</section>
+
+<!-- 14 总结 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">1</span>
+      <h3>任务感知注意力 + DyHead</h3>
+      <p class="body-text">解耦多尺度检测任务，显著提升小目标识别能力，mAP 提升达 11.9 个百分点。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">2</span>
+      <h3>椭圆形 DBSCAN 聚类</h3>
+      <p class="body-text">替代传统球形邻域假设，更贴合甘蔗垄行长条形分布特征，聚类准确率达 95% 以上。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">3</span>
+      <h3>端到端缺苗定位 pipeline</h3>
+      <p class="body-text">首次实现无人机航拍下宿根蔗缺苗的完整自动化定位，定位误差均值仅 9.73 像素。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 15 结尾 -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">Ratoon-Sugarcane-YOLOv5s</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">
+      从检测到定位的完整技术 pipeline，<br>
+      为无人机航拍下甘蔗缺苗的<span style="color:var(--accent);font-weight:600;">「精准农业管理」</span>提供新方案。
+    </div>
+    <div class="anim cover-meta" style="margin-top:28px;">
+      <span class="cover-tag">农业工程学报 2024</span>
+      <span class="cover-tag">感谢观看</span>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+  }
+  const dots = dotsWrap.querySelectorAll('.dot');
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= total || idx === current) return;
+    const prev = slides[current];
+    const next = slides[idx];
+
+    prev.classList.remove('active');
+    prev.classList.add('exit-up');
+
+    requestAnimationFrame(() => {
+      next.classList.remove('exit-up');
+      next.classList.add('active');
+    });
+
+    setTimeout(() => {
+      prev.classList.remove('exit-up');
+    }, 700);
+
+    dots[current].classList.remove('active');
+    current = idx;
+    dots[current].classList.add('active');
+    progress.style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchX = e.changedTouches[0].screenX;
+    touchY = e.changedTouches[0].screenY;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].screenX - touchX;
+    const dy = e.changedTouches[0].screenY - touchY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      dx < 0 ? next() : prev();
+    }
+  }, { passive: true });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.dot')) return;
+    next();
+  });
+
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
+})();
+</script>
+
+</body>
+</html>

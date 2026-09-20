@@ -104,6 +104,390 @@
       "kind": "期刊/会议",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/FreqFusion.png"
+    },
+    {
+      "title": "ASF-YOLO: A novel YOLO model with attentional scale sequence fusion for cell instance segmentation",
+      "file": "paper-slides/ASF-YOLO.html",
+      "description": "ASF-YOLO: A novel YOLO model with attentional scale sequence fusion for cell instance segmentation 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/ASF-YOLO.png"
+    },
+    {
+      "title": "Learning Spatial Fusion for Single-Shot Object Detection",
+      "file": "paper-slides/ASFF.html",
+      "description": "Learning Spatial Fusion for Single-Shot Object Detection 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/ASFF.png"
+    },
+    {
+      "title": "CARAFE: Content-Aware ReAssembly of FEatures",
+      "file": "paper-slides/CARAFE.html",
+      "description": "CARAFE: Content-Aware ReAssembly of FEatures 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/CARAFE.png"
+    },
+    {
+      "title": "基于 CBP-YOLO 的玉米田间草地贪夜蛾侵染痕迹检测与试验",
+      "file": "paper-slides/cbp-yolo.html",
+      "description": "基于 CBP-YOLO 的玉米田间草地贪夜蛾侵染痕迹检测与试验 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/cbp-yolo.png"
+    },
+    {
+      "title": "Conv2Former: A Simple Transformer-Style ConvNet for Visual Recognition",
+      "file": "paper-slides/Conv2Former.html",
+      "description": "Conv2Former: A Simple Transformer-Style ConvNet for Visual Recognition 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Conv2Former.png"
+    },
+    {
+      "title": "Coordinate Attention for Efficient Mobile Network Design",
+      "file": "paper-slides/Coordinate-Attention.html",
+      "description": "Coordinate Attention for Efficient Mobile Network Design 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Coordinate-Attention.png"
+    },
+    {
+      "title": "Context and Spatial Feature Calibration for Real-Time Semantic Segmentation",
+      "file": "paper-slides/CSFC.html",
+      "description": "Context and Spatial Feature Calibration for Real-Time Semantic Segmentation 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/CSFC.png"
+    },
+    {
+      "title": "UAV remote sensing detection of tea leaf blight based on DDMA-YOLO",
+      "file": "paper-slides/DDMA-YOLO.html",
+      "description": "UAV remote sensing detection of tea leaf blight based on DDMA-YOLO 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/DDMA-YOLO.png"
+    },
+    {
+      "title": "基于 DFR-SN-YOLO 的棉花顶芽识别方法",
+      "file": "paper-slides/DFR-SN-YOLO.html",
+      "description": "基于 DFR-SN-YOLO 的棉花顶芽识别方法 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/DFR-SN-YOLO.png"
+    },
+    {
+      "title": "DilateFormer: Multi-Scale Dilated Transformer for Visual Recognition",
+      "file": "paper-slides/DilateFormer.html",
+      "description": "DilateFormer: Multi-Scale Dilated Transformer for Visual Recognition 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/DilateFormer.png"
+    },
+    {
+      "title": "Efficient Deformable ConvNets: Rethinking Dynamic and Sparse Operator for Vision Applications",
+      "file": "paper-slides/Efficient-Deformable-ConvNets.html",
+      "description": "Efficient Deformable ConvNets: Rethinking Dynamic and Sparse Operator for Vision Applications 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Efficient-Deformable-ConvNets.png"
+    },
+    {
+      "title": "Efficient Multi-Scale Attention Module with Cross-Spatial Learning",
+      "file": "paper-slides/EMA.html",
+      "description": "Efficient Multi-Scale Attention Module with Cross-Spatial Learning 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/EMA.png"
+    },
+    {
+      "title": "EMCAD: Efficient Multi-scale Convolutional Attention Decoding for Medical Image Segmentation",
+      "file": "paper-slides/EMCAD.html",
+      "description": "EMCAD: Efficient Multi-scale Convolutional Attention Decoding for Medical Image Segmentation 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/EMCAD.png"
+    },
+    {
+      "title": "FADE: A Task-Agnostic Upsampling Operator for Encoder–Decoder Architectures",
+      "file": "paper-slides/FADE.html",
+      "description": "FADE: A Task-Agnostic Upsampling Operator for Encoder–Decoder Architectures 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/FADE.png"
+    },
+    {
+      "title": "FBRT-YOLO: Faster and Better for Real-Time Aerial Image Detection",
+      "file": "paper-slides/FBRT-YOLO.html",
+      "description": "FBRT-YOLO: Faster and Better for Real-Time Aerial Image Detection 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/FBRT-YOLO.png"
+    },
+    {
+      "title": "基于 FMA-YOLOv12 的轨道交通密集行人检测算法",
+      "file": "paper-slides/FMA-YOLOv12.html",
+      "description": "基于 FMA-YOLOv12 的轨道交通密集行人检测算法 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/FMA-YOLOv12.png"
+    },
+    {
+      "title": "Focaler-IoU: More Focused Intersection over Union Loss",
+      "file": "paper-slides/Focaler-IoU.html",
+      "description": "Focaler-IoU: More Focused Intersection over Union Loss 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Focaler-IoU.png"
+    },
+    {
+      "title": "基于 GCMD-YOLO 的轻量化多尺度中药材检测方法",
+      "file": "paper-slides/gcmd-yolo.html",
+      "description": "基于 GCMD-YOLO 的轻量化多尺度中药材检测方法 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/gcmd-yolo.png"
+    },
+    {
+      "title": "Generalized Focal Loss: Learning Qualified and Distributed Bounding Boxes for Dense Object Detection",
+      "file": "paper-slides/Generalized-Focal-Loss.html",
+      "description": "Generalized Focal Loss: Learning Qualified and Distributed Bounding Boxes for Dense Object Detection 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Generalized-Focal-Loss.png"
+    },
+    {
+      "title": "Inner-IoU: More Effective Intersection over Union Loss with Auxiliary Bounding Box",
+      "file": "paper-slides/Inner-IoU.html",
+      "description": "Inner-IoU: More Effective Intersection over Union Loss with Auxiliary Bounding Box 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Inner-IoU.png"
+    },
+    {
+      "title": "Multi-Branch Auxiliary Fusion YOLO with Re-parameterization Heterogeneous Convolutional for accurate object detection",
+      "file": "paper-slides/MAF-YOLO.html",
+      "description": "Multi-Branch Auxiliary Fusion YOLO with Re-parameterization Heterogeneous Convolutional for accurate object detection 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/MAF-YOLO.png"
+    },
+    {
+      "title": "基于 MNBS-YOLOV12 的肾脏肿瘤病变区域检测",
+      "file": "paper-slides/MNBS-YOLOv12.html",
+      "description": "基于 MNBS-YOLOV12 的肾脏肿瘤病变区域检测 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/MNBS-YOLOv12.png"
+    },
+    {
+      "title": "5%>100%: Breaking Performance Shackles of Full Fine-Tuning on Visual Recognition Tasks",
+      "file": "paper-slides/Mona.html",
+      "description": "5%>100%: Breaking Performance Shackles of Full Fine-Tuning on Visual Recognition Tasks 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Mona.png"
+    },
+    {
+      "title": "A Normalized Gaussian Wasserstein Distance for Tiny Object Detection",
+      "file": "paper-slides/NWD.html",
+      "description": "A Normalized Gaussian Wasserstein Distance for Tiny Object Detection 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/NWD.png"
+    },
+    {
+      "title": "ParameterNet: Parameters Are All You Need for Large-Scale Visual Pretraining of Mobile Networks",
+      "file": "paper-slides/ParameterNet.html",
+      "description": "ParameterNet: Parameters Are All You Need for Large-Scale Visual Pretraining of Mobile Networks 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/ParameterNet.png"
+    },
+    {
+      "title": "Pinwheel-shaped Convolution and Scale-based Dynamic Loss for Infrared Small Target Detection",
+      "file": "paper-slides/Pinwheel-Conv-Loss.html",
+      "description": "Pinwheel-shaped Convolution and Scale-based Dynamic Loss for Infrared Small Target Detection 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Pinwheel-Conv-Loss.png"
+    },
+    {
+      "title": "Powerful-IoU: More straightforward and faster bounding box regression loss with a nonmonotonic focusing mechanism",
+      "file": "paper-slides/Powerful-IoU.html",
+      "description": "Powerful-IoU: More straightforward and faster bounding box regression loss with a nonmonotonic focusing mechanism 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Powerful-IoU.png"
+    },
+    {
+      "title": "基于 PSMF-YOLO 的无人机遥感图像枇杷花蕾小目标检测方法",
+      "file": "paper-slides/psmf-yolo.html",
+      "description": "基于 PSMF-YOLO 的无人机遥感图像枇杷花蕾小目标检测方法 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/psmf-yolo.png"
+    },
+    {
+      "title": "基于无人机 RGB 图像与改进 YOLO+v5s 的宿根蔗缺苗定位方法",
+      "file": "paper-slides/Ratoon-Sugarcane-YOLOv5s.html",
+      "description": "基于无人机 RGB 图像与改进 YOLO+v5s 的宿根蔗缺苗定位方法 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Ratoon-Sugarcane-YOLOv5s.png"
+    },
+    {
+      "title": "RSO-YOLO: A Real-Time Detector for Small and Occluded Objects in Autonomous Driving Scenarios",
+      "file": "paper-slides/RSO-YOLO.html",
+      "description": "RSO-YOLO: A Real-Time Detector for Small and Occluded Objects in Autonomous Driving Scenarios 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/RSO-YOLO.png"
+    },
+    {
+      "title": "基于TPH-YOLO的无人机图像麦穗计数方法",
+      "file": "paper-slides/TPH-YOLO.html",
+      "description": "基于TPH-YOLO的无人机图像麦穗计数方法 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/TPH-YOLO.png"
+    },
+    {
+      "title": "VarifocalNet: An IoU-aware Dense Object Detector",
+      "file": "paper-slides/VarifocalNet.html",
+      "description": "VarifocalNet: An IoU-aware Dense Object Detector 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/VarifocalNet.png"
+    },
+    {
+      "title": "Wise-IoU: Bounding Box Regression Loss with Dynamic Focusing Mechanism",
+      "file": "paper-slides/Wise-IoU.html",
+      "description": "Wise-IoU: Bounding Box Regression Loss with Dynamic Focusing Mechanism 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Wise-IoU.png"
+    },
+    {
+      "title": "YOLO-FaceV2: A scale and occlusion aware face detector",
+      "file": "paper-slides/YOLO-FaceV2.html",
+      "description": "YOLO-FaceV2: A scale and occlusion aware face detector 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLO-FaceV2.png"
+    },
+    {
+      "title": "基于 YOLO-GESCW 的盛花期红花轻量化检测方法",
+      "file": "paper-slides/YOLO-GESCW.html",
+      "description": "基于 YOLO-GESCW 的盛花期红花轻量化检测方法 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLO-GESCW.png"
+    },
+    {
+      "title": "自然光环境下番茄穴盘苗缺苗检测的 YOLO-SFEP 模型",
+      "file": "paper-slides/YOLO-SFEP.html",
+      "description": "自然光环境下番茄穴盘苗缺苗检测的 YOLO-SFEP 模型 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLO-SFEP.png"
+    },
+    {
+      "title": "基于 YOLO-SSAR 的自然环境下红花检测算法",
+      "file": "paper-slides/YOLO-SSAR.html",
+      "description": "基于 YOLO-SSAR 的自然环境下红花检测算法 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLO-SSAR.png"
+    },
+    {
+      "title": "2025 YOLO—Sugarcane_用于快速检测复杂背景下甘蔗植株的轻量级神经网络",
+      "file": "paper-slides/YOLO-Sugarcane.html",
+      "description": "2025 YOLO—Sugarcane_用于快速检测复杂背景下甘蔗植株的轻量级神经网络 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLO-Sugarcane.png"
+    },
+    {
+      "title": "2025 基于 YOLO_11n-EWL 的甘蔗芽检测方法",
+      "file": "paper-slides/YOLO11n-EWL-Sugarcane-Bud.html",
+      "description": "2025 基于 YOLO_11n-EWL 的甘蔗芽检测方法 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLO11n-EWL-Sugarcane-Bud.png"
+    },
+    {
+      "title": "基于改进 YOLOv10n 的复杂田间小麦幼苗检测和计数方法",
+      "file": "paper-slides/YOLOv10n-Wheat-Seedling.html",
+      "description": "基于改进 YOLOv10n 的复杂田间小麦幼苗检测和计数方法 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLOv10n-Wheat-Seedling.png"
+    },
+    {
+      "title": "融合SFAR-Net图像增强与YOLOv12-DMFA的高铁接触网支持装置故障检测方法",
+      "file": "paper-slides/YOLOv12-DMFA-Catenary.html",
+      "description": "融合SFAR-Net图像增强与YOLOv12-DMFA的高铁接触网支持装置故障检测方法 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLOv12-DMFA-Catenary.png"
+    },
+    {
+      "title": "基于改进YOLOv12的轻量化复杂环境红花识别方法",
+      "file": "paper-slides/YOLOv12-Safflower.html",
+      "description": "基于改进YOLOv12的轻量化复杂环境红花识别方法 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLOv12-Safflower.png"
+    },
+    {
+      "title": "改进YOLOv12的水面垃圾检测方法",
+      "file": "paper-slides/YOLOv12-Water-Debris.html",
+      "description": "改进YOLOv12的水面垃圾检测方法 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLOv12-Water-Debris.png"
+    },
+    {
+      "title": "基于改进 YOLOv12n 的 PCB 缺陷检测算法研究",
+      "file": "paper-slides/YOLOv12n-PCB.html",
+      "description": "基于改进 YOLOv12n 的 PCB 缺陷检测算法研究 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLOv12n-PCB.png"
+    },
+    {
+      "title": "基于无人机影像与 YOLOv12n-RCL 的向日葵成熟期盘腐病危害程度检测",
+      "file": "paper-slides/YOLOv12n-RCL-Sunflower.html",
+      "description": "基于无人机影像与 YOLOv12n-RCL 的向日葵成熟期盘腐病危害程度检测 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLOv12n-RCL-Sunflower.png"
+    },
+    {
+      "title": "基于改进YOLOv12n的VD炉真空下钢水液面高度检测",
+      "file": "paper-slides/YOLOv12n-VD-Furnace.html",
+      "description": "基于改进YOLOv12n的VD炉真空下钢水液面高度检测 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLOv12n-VD-Furnace.png"
+    },
+    {
+      "title": "YOLOv13: Real-Time Object Detection with Hypergraph-Enhanced Adaptive Visual Perception",
+      "file": "paper-slides/YOLOv13.html",
+      "description": "YOLOv13: Real-Time Object Detection with Hypergraph-Enhanced Adaptive Visual Perception 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLOv13.png"
+    },
+    {
+      "title": "基于改进 YOLOv7 的甘蔗幼苗检测方法试验研究",
+      "file": "paper-slides/YOLOv7-Sugarcane-Seedling.html",
+      "description": "基于改进 YOLOv7 的甘蔗幼苗检测方法试验研究 论文演示文稿，基于阅读笔记生成。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLOv7-Sugarcane-Seedling.png"
     }
   ]
 }

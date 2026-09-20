@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>CARAFE: Content-Aware ReAssembly of FEatures</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.small-text { font-size: clamp(11px, 1.05vw, 14px); color: #777; line-height: 1.5; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.br { bottom: -120px; right: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .dots { display: none; } .split { flex-direction: column; } }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- 1 封面 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    PAPER READING
+    <span class="dot-gray"></span>
+    ICCV 2019 · CCF-A
+  </div>
+  <div class="anim" style="font-size: clamp(2.4rem, 5.5vw, 4.5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
+    <span class="highlight">CARAFE</span>
+  </div>
+  <div class="anim" style="font-size: clamp(16px, 2vw, 28px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35;">
+    Content-Aware ReAssembly of FEatures
+  </div>
+  <p class="anim subtitle">把上采样拆解为「逐位置预测重组核」与「按核重组局部特征」两步，在 FPN 中为 Faster R-CNN 带来 +1.2% AP，256 通道 2 倍上采样仅需 199k FLOPs 每像素。</p>
+  <div class="anim contributors">
+    <div class="author">Jiaqi Wang · Kai Chen · Rui Xu · Ziwei Liu · Chen Change Loy · Dahua Lin</div>
+    <div class="affil">香港中文大学 · 商汤联合实验室 · 南洋理工大学</div>
+  </div>
+  <div class="anim cover-meta">
+    <span class="cover-tag">上采样</span>
+    <span class="cover-tag">内容感知</span>
+    <span class="cover-tag">即插即用</span>
+    <span class="cover-tag">动态算子</span>
+  </div>
+</section>
+
+<!-- 2 贡献 -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献：内容感知的特征重组算子</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>逐位置核预测</h3>
+      <p class="body-text">用轻量全卷积模块在线预测每个目标位置专属的 <span style="color:var(--title);font-weight:600;">k×k 重组核</span>，不是网络参数而是由内容生成。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>极简高效</h3>
+      <p class="body-text">每位置核参数仅 K×K，256 通道 2 倍上采样只需 <span style="color:var(--title);font-weight:600;">199k FLOPs</span>，约为反卷积的六分之一。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>通用即插即用</h3>
+      <p class="body-text">可无缝替换 <span style="color:var(--title);font-weight:600;">FPN、mask head、UperNet、修复 U-Net</span> 中的既有上采样器，已在 MMDetection 中开源。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>CARAFE 在 COCO 上为 Faster R-CNN 带来 <span class="accent-word">+1.2% AP</span>，ADE20k 上为 UperNet 带来 +1.8% mIoU，Places 上为修复带来 +1.1 dB PSNR。</p>
+  </div>
+</section>
+
+<!-- 3 动机 -->
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>现有上采样算子的三重局限</h2></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">A</span>
+      <h3>插值：语义盲区</h3>
+      <p class="body-text">最近邻与双线性插值只按空间距离取值，仅利用亚像素邻域内的信息，无法捕获密集预测所需的丰富语义。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">B</span>
+      <h3>反卷积：内容无关</h3>
+      <p class="body-text">同一组核对整幅图所有样本共享、与内容无关，核尺寸增大时参数量与计算量急剧上升。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">C</span>
+      <h3>其他方法的局限</h3>
+      <p class="body-text">Pixel Shuffle 局限于小邻域，GUM 需要昂贵计算才能完成自适应插值。暂无算子能同时满足<span style="color:var(--title);font-weight:600;">大感受野、内容自适应、轻量</span>。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 4 整体框架 -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>CARAFE 整体框架</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/CARAFE/fig2.png" alt="CARAFE 整体框架"></div>
+  <div class="anim figure-caption">
+    左半为核预测模块（通道压缩器 → 内容编码器 → 核归一化器），右半为内容感知重组模块。
+    <span class="cap-em">每个源位置对应 σ² 个目标位置，每个目标位置需要一个 k<sub>up</sub>×k<sub>up</sub> 的重组核</span>。
+  </div>
+</section>
+
+<!-- 5 核心子模块 -->
+<section class="slide">
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>三大子模块设计</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li><span class="em">通道压缩器</span>：1×1 卷积把通道从 C 压到 C<sub>m</sub>=64，让后续编码器在相同预算下使用更大核</li>
+      <li><span class="em">内容编码器</span>：核尺寸 k<sub>encoder</sub> 的卷积依据内容生成重组核，经验公式 k<sub>encoder</sub> = k<sub>up</sub> − 2</li>
+      <li><span class="em">核归一化器</span>：对每个 k<sub>up</sub>×k<sub>up</sub> 的重组核做 <span style="font-weight:600;">softmax 归一化</span>，核内权重之和为 1，不改变特征均值</li>
+    </ul>
+  </div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">重组公式</div>
+    <p class="formula" style="font-size:clamp(14px,1.6vw,22px);">X'<sub>l'</sub> = Σ<sub>n=-r</sub><sup>r</sup> Σ<sub>m=-r</sub><sup>r</sup> W<sub>l'</sub>(n, m) · X(i+n, j+m)</p>
+    <p class="formula-note">邻域内每个像素对上采样像素 l' 的贡献各不相同，依据的是特征内容而非位置距离。</p>
+  </div>
+</section>
+
+<!-- 6 集成方式 -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>在主流架构中的集成</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/CARAFE/fig3.png" alt="集成 CARAFE 的 FPN"></div>
+  <div class="anim figure-caption">
+    <span class="cap-em">FPN 自顶向下路径中的所有最近邻插值替换为 CARAFE</span>，无需其它改动。
+    Mask R-CNN mask head 的反卷积、UperNet 的 PPM/FPN/FUSE 三处上采样均可替换。
+  </div>
+</section>
+
+<!-- 7 检测结果 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>COCO 检测与实例分割：全面领先</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/CARAFE/table2.png" alt="COCO 结果"></div>
+  <div class="anim figure-caption">
+    CARAFE 把 Faster R-CNN bbox AP 从 36.9 提升到 <span class="cap-em">38.1</span>，Mask R-CNN mask AP 从 34.6 提升到 35.9，
+    AP_S、AP_M、AP_L 的提升均超过 1 个点。
+  </div>
+</section>
+
+<!-- 8 算子对比 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>算子横向对比：CARAFE 独占鳌头</h2></div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li>Nearest 36.5、Bilinear 36.7、Deconv 36.4、Pixel Shuffle 36.5、GUM 36.9、Spatial Attention 36.9</li>
+      <li><span class="em">CARAFE 达到 37.8</span>，FLOPs 仅 199k、参数仅 74k</li>
+      <li>「插值 + 卷积」的额外参数本身带不来显著增益</li>
+    </ul>
+  </div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/CARAFE/table4.png" alt="FPN+mask head 消融"></div>
+  <div class="anim figure-caption">
+    FPN 与 mask head 两处同时替换进一步到 <span class="cap-em">38.6 bbox AP 与 35.7 mask AP</span>，收益可以叠加。
+  </div>
+</section>
+
+<!-- 9 分割与修复 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>语义分割与图像修复：通用验证</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>UperNet 单尺度 mIoU 从 40.44% 提升到 <span class="em">42.23%</span>（+1.8%），超过 PSPNet 与 PSANet</li>
+        <li>Global&Local PSNR 从 19.58 dB 提升到 <span class="em">20.71 dB</span>（+1.1 dB）</li>
+        <li>Partial Conv 从 20.78 dB 提升到 20.98 dB</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/CARAFE/table6.png" alt="UperNet 消融"></div>
+  </div>
+</section>
+
+<!-- 10 可视化 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 04</div>
+  <div class="anim"><h2>重组可视化：语义相似点被优先聚合</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/CARAFE/fig5.png" alt="重组过程可视化"></div>
+  <div class="anim figure-caption">
+    绿圈为采样位置、红点为重组时的高权重来源。<span class="cap-em">人体上的位置倾向从同一人体的其它点重组</span>，而非邻近的背景或其它目标——内容感知被清晰验证。
+  </div>
+</section>
+
+<!-- 11 总结 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">1</span>
+      <h3>极简动态算子模板</h3>
+      <p class="body-text">每位置核参数仅 K×K，199k FLOPs 远低于反卷积的 1180k，为轻量动态算子设计提供了通用模板。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">2</span>
+      <h3>自洽且可验证</h3>
+      <p class="body-text">softmax 归一化使核和为 1 不改变特征均值，重组可视化显示语义相似点被优先聚合，机制解释与四类任务增益互相印证。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">3</span>
+      <h3>工程可用性突出</h3>
+      <p class="body-text">可无缝替换 FPN、mask head、UperNet、修复 U-Net 中的既有上采样器，已在 MMDetection 中开源。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 12 结尾 -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">CARAFE：内容感知、轻量高效、即插即用</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">
+      把上采样归约为「逐位置核预测 + 局部加权重组」，<br>
+      在检测、分割、修复四类任务上一致带来显著增益。
+    </div>
+    <div class="anim cover-meta" style="margin-top:28px;">
+      <span class="cover-tag">ICCV 2019</span>
+      <span class="cover-tag">已集成 MMDetection</span>
+      <span class="cover-tag">感谢观看</span>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
+  const dots = dotsWrap.querySelectorAll('.dot');
+  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
+  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
+  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
+  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
+})();
+</script>
+
+</body>
+</html>

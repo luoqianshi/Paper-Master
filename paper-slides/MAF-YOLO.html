@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>MAF-YOLO: Multi-Branch Auxiliary Fusion YOLO</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+html { font-size: 16px; scroll-behavior: smooth; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint.hidden { opacity: 0; }
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider-accent { background: var(--accent); }
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
+.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.fx-inline { font-weight: 600; color: var(--accent); white-space: nowrap; }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.tr { top: -120px; right: -120px; }
+.glow.br { bottom: -120px; right: -100px; }
+.glow.bl { bottom: -120px; left: -100px; }
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .split { flex-direction: column; } .dots { display: none; } }
+</style>
+</head>
+<body>
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+<div class="deck" id="deck">
+
+<!-- 1 封面 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge"><span class="dot-yellow"></span>PAPER READING<span class="dot-gray"></span>arXiv 2024</div>
+  <div class="anim" style="font-size: clamp(2.5rem, 5.5vw, 4.2rem); font-weight: 900; line-height: 1.08; letter-spacing: -2px;"><span class="highlight">MAF-YOLO</span></div>
+  <div class="anim" style="font-size: clamp(16px, 2vw, 26px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35;">Multi-Branch Auxiliary Fusion YOLO with<br>Re-parameterization Heterogeneous Convolutional</div>
+  <p class="anim subtitle">针对 PAFPN 跨分辨率融合不足与梯度路径单一的问题，提出 SAF 与 AAF 两级辅助融合，配合 RepHELAN 与 GHSK 实现零推理开销的异构卷积。</p>
+  <div class="anim contributors"><div class="author">Zhiqiang Yang · Qiu Guan · Keer Zhao · Jianmin Yang · Xinli Xu · Haixia Long · Ying Tang</div><div class="affil">浙江工业大学 · 浙江体育职业技术学院</div></div>
+  <div class="anim cover-meta"><span class="cover-tag">特征融合</span><span class="cover-tag">重参数化</span><span class="cover-tag">即插即用</span><span class="cover-tag">arXiv:2407.04381</span></div>
+</section>
+
+<!-- 2 贡献 -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献：多功能颈部 MAFPN 与异构卷积</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">01</span><h3>SAF 浅层辅助融合</h3><p class="body-text">以双向连接把骨干<span style="color:var(--title);font-weight:600;">浅层空间信息</span>作为辅助分支并入颈部，保留丰富的定位细节。</p></div>
+    <div class="card"><span class="card-num">02</span><h3>AAF 深层辅助融合</h3><p class="body-text">以<span style="color:var(--title);font-weight:600;">多向连接</span>把更丰富的梯度信息传递给输出层，显著增强中等尺寸目标性能。</p></div>
+    <div class="card"><span class="card-num">03</span><h3>RepHELAN + GHSK</h3><p class="body-text">训练期并行多尺度深度卷积、推理期<span style="color:var(--title);font-weight:600;">重参数化合并为一个</span>，零推理开销扩大感受野。</p></div>
+  </div>
+  <div class="anim highlight-bar"><p>MAF-YOLOn 以 3.76M 参数与 10.51G FLOPs 取得 <span class="accent-word">42.4% AP</span>，超过 YOLOv8n 约 5.1%。</p></div>
+</section>
+
+<!-- 3 动机 -->
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>PAFPN 的两处局限</h2></div>
+  <div class="anim divider divider-accent"></div>
+  <div class="anim card-grid cols-2">
+    <div class="card"><span class="card-num">A</span><h3>同质尺度融合</h3><p class="body-text">各融合块倾向合并同质尺度的特征图，缺乏跨分辨率层信息整合。例如第一个块只有上采样 P5 与同层 P4，忽略了 P3 层的浅层空间信息。</p></div>
+    <div class="card"><span class="card-num">B</span><h3>梯度路径单一</h3><p class="body-text">小目标检测层特征只由单一自底向上路径与两个融合块供给，显著削弱了模型对微小物体特征的学习与表达能力。</p></div>
+  </div>
+  <div class="anim highlight-bar"><p>暂未有颈部结构能在<span class="accent-word">保留适量浅层空间信息的同时</span>，向输出层传递足够多样的多尺度梯度信息。</p></div>
+</section>
+
+<!-- 4 整体架构 -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>MAF-YOLO 网络架构总览</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/MAF-YOLO/fig2.png" alt="MAF-YOLO 网络架构"></div>
+  <div class="anim figure-caption">骨干输出 P2-P5 四层特征；SAF 在第一条路径做初步辅助融合，AAF 在第二条路径收集多向梯度信息；<span class="cap-em">两条路径均采用 RepHELAN 模块，GHSK 自适应调整核尺寸</span>。</div>
+</section>
+
+<!-- 5 SAF -->
+<section class="slide">
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>SAF 浅层辅助融合：保留浅层定位细节</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>同时用 1x1 卷积<span class="em">控制浅层信息的通道数</span>，使其在 concat 中占较小比例</li>
+        <li>把下采样后的浅层辅助分支、同层骨干特征与上采样深层特征拼接</li>
+        <li>输出送入本路径下一层，同时作为 AAF 的输入之一</li>
+      </ul>
+      <div class="prompt-box" style="margin-top:14px;">
+        <div class="prompt-label">SAF 输出</div>
+        <p class="formula"><i>P'</i><sub>n</sub> = concat(δ(C(Down(<i>P</i><sub>n-1</sub>))), <i>P</i><sub>n</sub>, <i>U</i>(<i>P'</i><sub>n+1</sub>))</p>
+      </div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/MAF-YOLO/fig3.png" alt="SAF 结构"></div>
+  </div>
+</section>
+
+<!-- 6 AAF -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>AAF 深层辅助融合：多向连接丰富梯度路径</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>AAF 部署在 MAFPN 较深层，<span class="em">同时聚合四类信息</span>：浅层高/低分辨率、同层浅层与前一层输出</li>
+        <li>使最终输出层 P4 能同时合并四个不同层的信息</li>
+        <li>各层通道数取齐以保证模型获得<span class="em">多样化输出</span></li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/MAF-YOLO/fig4.png" alt="AAF 结构"></div>
+  </div>
+</section>
+
+<!-- 7 RepHELAN -->
+<section class="slide">
+  <div class="glow glow-blue tr"></div>
+  <div class="anim slide-label">Method 04</div>
+  <div class="anim"><h2>RepHELAN 与重参数化异构卷积</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/MAF-YOLO/fig5.png" alt="RepHELAN 结构" style="max-height: 42vh;"></div>
+  <div class="anim figure-caption">
+    输入经 Split 分成两股：一股直接进 Concat，另一股经 N 个倒置瓶颈单元（内含 RepHDWConv）；<span class="cap-em">训练期并行多尺度 DWConv，推理期重参数化合并为一个</span>，以零推理开销扩大有效感受野。
+  </div>
+</section>
+
+<!-- 8 实验：对比 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01</div>
+  <div class="anim"><h2>COCO 对比实验：三档尺度一致领先</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/MAF-YOLO/table6.png" alt="对比实验" style="max-height: 44vh;"></div>
+  <div class="anim figure-caption">
+    nano 尺度 MAF-YOLOn 以 3.8M 参数取得 42.4% AP，比 YOLOv8n 高 5.1%；small 尺度 47.4% AP 领先；medium 尺度 51.2% AP 超过 YOLOMS。
+    <span class="cap-em">增益在三档尺度上保持一致</span>。
+  </div>
+</section>
+
+<!-- 9 消融 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>消融实验：RepHELAN 内部与 MAFPN 组件</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/MAF-YOLO/table2.png" alt="消融实验" style="max-height: 42vh;"></div>
+  <div class="anim figure-caption">
+    单独加入 ELAN 提升 0.2 AP，大核 + ELAN 提升 1 AP 但 APs 下降 0.3，替换为 RepHConv 后 APs 回升到 22.0、总 AP 达 42.4。
+    <span class="cap-em">异构并行核补上了大核遮蔽小目标细节的损失</span>。
+  </div>
+</section>
+
+<!-- 10 可视化 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>Grad-CAM++ 可视化：更完整的小目标激活</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/MAF-YOLO/fig1.png" alt="Grad-CAM 可视化" style="max-height: 48vh;"></div>
+  <div class="anim figure-caption">
+    PAFPN 的同质尺度融合限制了跨分辨率层信息流动，激活区域相对分散；<span class="cap-em">MAF-YOLOn 在物体边缘与小目标区域的响应更完整、更集中</span>。
+  </div>
+</section>
+
+<!-- 11 总结 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">1</span><h3>SAF + AAF 两级辅助融合</h3><p class="body-text">以双向与多向连接同时保留浅层定位信息并丰富输出层梯度路径，消融完整。</p></div>
+    <div class="card"><span class="card-num">2</span><h3>零推理开销的异构卷积</h3><p class="body-text">训练期并行多尺度 DWConv、推理期重参数化合并，以零推理代价扩大感受野并兼顾小目标。</p></div>
+    <div class="card"><span class="card-num">3</span><h3>即插即用通用性强</h3><p class="body-text">MAFPN 在 YOLOv8n 与两阶段 Cascade Mask R-CNN 上替换颈部均获一致增益。</p></div>
+  </div>
+</section>
+
+<!-- 12 结尾 -->
+<section class="slide">
+  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">MAF-YOLO：多分支辅助，零开销异构</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">用 SAF + AAF 突破 PAFPN 的同质融合瓶颈，<br>以<span style="color:var(--accent);font-weight:600;">重参数化异构卷积</span>实现零推理开销的感受野扩张。</div>
+    <div class="anim cover-meta" style="margin-top:28px;"><span class="cover-tag">arXiv 2024</span><span class="cover-tag">代码开源 yang-0201/MAF-YOLO</span></div>
+  </div>
+</section>
+
+</div>
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide'); const total = slides.length; let current = 0;
+  const progress = document.getElementById('progress'); const dotsWrap = document.getElementById('dots'); const hint = document.getElementById('hint');
+  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
+  const dots = dotsWrap.querySelectorAll('.dot');
+  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
+  function next() { goTo(current + 1); } function prev() { goTo(current - 1); }
+  slides[0].classList.add('active'); progress.style.width = (1 / total * 100) + '%';
+  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
+  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
+  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true }); document.addEventListener('click', hideHint, { once: true }); setTimeout(() => hideHint(), 5000);
+})();
+</script>
+</body>
+</html>
