@@ -1,21 +1,421 @@
 {
-  "generatedAt": "2026-09-06T23:06:23.521306+08:00",
+  "generatedAt": "2026-09-20T10:13:17.526565+00:00",
   "blogs": [
     {
-      "title": "FreqFusion: Frequency-Aware Feature Fusion for Dense Image Prediction",
-      "file": "paper-blogs/FreqFusion.md",
+      "title": "UAV remote sensing detection of tea leaf blight based on DDMA-YOLO",
+      "file": "paper-blogs/DDMA-YOLO.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-21",
+      "source_url": "https://doi.org/10.1016/j.compag.2023.107637",
+      "thumbnail": "assets/paper-imgs/DDMA-YOLO/fig3.png"
+    },
+    {
+      "title": "基于TPH-YOLO的无人机图像麦穗计数方法",
+      "file": "paper-blogs/TPH-YOLO.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-21",
+      "source_url": "https://doi.org/10.11975/j.issn.1002-6819.202210020",
+      "thumbnail": "assets/paper-imgs/TPH-YOLO/fig1.png"
+    },
+    {
+      "title": "融合SFAR-Net图像增强与YOLOv12-DMFA的高铁接触网支持装置故障检测方法",
+      "file": "paper-blogs/YOLOv12-DMFA-Catenary.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-21",
+      "source_url": "https://link.cnki.net/urlid/43.1061.N.20260521.2008.002",
+      "thumbnail": "assets/paper-imgs/YOLOv12-DMFA-Catenary/fig1.png"
+    },
+    {
+      "title": "ASF-YOLO: A novel YOLO model with attentional scale sequence fusion for cell instance segmentation",
+      "file": "paper-blogs/ASF-YOLO.md",
+      "category": "YOLO 改进",
+      "date": "2026-09-20",
+      "source_url": "https://doi.org/10.1016/j.imavis.2024.105057",
+      "thumbnail": "assets/paper-imgs/ASF-YOLO/fig3.png"
+    },
+    {
+      "title": "Learning Spatial Fusion for Single-Shot Object Detection",
+      "file": "paper-blogs/ASFF.md",
+      "category": "检测头",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/1911.09516",
+      "thumbnail": "assets/paper-imgs/ASFF/fig2.png"
+    },
+    {
+      "title": "CARAFE: Content-Aware ReAssembly of FEatures",
+      "file": "paper-blogs/CARAFE.md",
+      "category": "上采样",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/1905.02188",
+      "thumbnail": "assets/paper-imgs/CARAFE/fig2.png"
+    },
+    {
+      "title": "基于 CBP-YOLO 的玉米田间草地贪夜蛾侵染痕迹检测与试验",
+      "file": "paper-blogs/cbp-yolo.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": "http://www.tcsae.org",
+      "thumbnail": "assets/paper-imgs/cbp-yolo/page6_img7.jpeg"
+    },
+    {
+      "title": "Conv2Former: A Simple Transformer-Style ConvNet for Visual Recognition",
+      "file": "paper-blogs/Conv2Former.md",
+      "category": "骨干网络",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2211.11943",
+      "thumbnail": "assets/paper-imgs/Conv2Former/fig1.png"
+    },
+    {
+      "title": "Coordinate Attention for Efficient Mobile Network Design",
+      "file": "paper-blogs/Coordinate-Attention.md",
+      "category": "注意力模块",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2103.02907",
+      "thumbnail": "assets/paper-imgs/Coordinate-Attention/fig2.png"
+    },
+    {
+      "title": "Context and Spatial Feature Calibration for Real-Time Semantic Segmentation",
+      "file": "paper-blogs/CSFC.md",
       "category": "特征融合",
-      "date": "2026-09-06",
-      "source_url": "https://github.com/ying-fu/FreqFusion",
-      "thumbnail": "assets/paper-imgs/FreqFusion/fig3.png"
+      "date": "2026-09-20",
+      "source_url": "https://doi.org/10.1109/TIP.2023.3318967",
+      "thumbnail": "assets/paper-imgs/CSFC/fig1.png"
+    },
+    {
+      "title": "基于 DFR-SN-YOLO 的棉花顶芽识别方法",
+      "file": "paper-blogs/DFR-SN-YOLO.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": " ",
+      "thumbnail": "assets/paper-imgs/dfrsn_yolo/fig1.png"
+    },
+    {
+      "title": "DilateFormer: Multi-Scale Dilated Transformer for Visual Recognition",
+      "file": "paper-blogs/DilateFormer.md",
+      "category": "注意力模块",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2302.00464",
+      "thumbnail": "assets/paper-imgs/DilateFormer/fig2.png"
+    },
+    {
+      "title": "Dynamic Head: Unifying Object Detection Heads with Attentions",
+      "file": "paper-blogs/DynamicHead.md",
+      "category": "检测头",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2106.08322",
+      "thumbnail": "assets/paper-imgs/DynamicHead/fig1.png"
+    },
+    {
+      "title": "Efficient Deformable ConvNets: Rethinking Dynamic and Sparse Operator for Vision Applications",
+      "file": "paper-blogs/Efficient-Deformable-ConvNets.md",
+      "category": "骨干网络",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2401.06197",
+      "thumbnail": "assets/paper-imgs/Efficient-Deformable-ConvNets/fig2.png"
+    },
+    {
+      "title": "Efficient Multi-Scale Attention Module with Cross-Spatial Learning",
+      "file": "paper-blogs/EMA.md",
+      "category": "注意力模块",
+      "date": "2026-09-20",
+      "source_url": "https://doi.org/10.1109/ICASSP49357.2023.10096516",
+      "thumbnail": "assets/paper-imgs/EMA/fig1.png"
+    },
+    {
+      "title": "EMCAD: Efficient Multi-scale Convolutional Attention Decoding for Medical Image Segmentation",
+      "file": "paper-blogs/EMCAD.md",
+      "category": "特征融合",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2405.06880",
+      "thumbnail": "assets/paper-imgs/EMCAD/fig2.png"
+    },
+    {
+      "title": "FADE: A Task-Agnostic Upsampling Operator for Encoder–Decoder Architectures",
+      "file": "paper-blogs/FADE.md",
+      "category": "上采样",
+      "date": "2026-09-20",
+      "source_url": "https://doi.org/10.1007/s11263-024-02191-8",
+      "thumbnail": "assets/paper-imgs/FADE/fig2.png"
+    },
+    {
+      "title": "Frequency-Aware Feature Fusion for Dense Image Prediction",
+      "file": "paper-blogs/FAFF.md",
+      "category": "特征融合",
+      "date": "2026-09-20",
+      "source_url": "https://doi.org/10.1109/TPAMI.2024.3449959",
+      "thumbnail": "assets/paper-imgs/FAFF/fig2.png"
+    },
+    {
+      "title": "FBRT-YOLO: Faster and Better for Real-Time Aerial Image Detection",
+      "file": "paper-blogs/FBRT-YOLO.md",
+      "category": "YOLO 改进",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2504.20670",
+      "thumbnail": "assets/paper-imgs/FBRT-YOLO/fig3.png"
+    },
+    {
+      "title": "基于 FMA-YOLOv12 的轨道交通密集行人检测算法",
+      "file": "paper-blogs/FMA-YOLOv12.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": "https://link.cnki.net/urlid/23.1235.t.20260114.1112.002",
+      "thumbnail": "assets/paper-imgs/FMA-YOLOv12/fig3.png"
+    },
+    {
+      "title": "Focaler-IoU: More Focused Intersection over Union Loss",
+      "file": "paper-blogs/Focaler-IoU.md",
+      "category": "损失函数",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2401.10525",
+      "thumbnail": "assets/paper-imgs/Focaler-IoU/fig1.png"
+    },
+    {
+      "title": "基于 GCMD-YOLO 的轻量化多尺度中药材检测方法",
+      "file": "paper-blogs/gcmd-yolo.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": "http://www.tcsae.org",
+      "thumbnail": "assets/paper-imgs/gcmd-yolo/page7_img11.jpeg"
+    },
+    {
+      "title": "Generalized Focal Loss: Learning Qualified and Distributed Bounding Boxes for Dense Object Detection",
+      "file": "paper-blogs/Generalized-Focal-Loss.md",
+      "category": "损失函数",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2006.04388",
+      "thumbnail": "assets/paper-imgs/Generalized-Focal-Loss/fig1.png"
+    },
+    {
+      "title": "Inner-IoU: More Effective Intersection over Union Loss with Auxiliary Bounding Box",
+      "file": "paper-blogs/Inner-IoU.md",
+      "category": "损失函数",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2311.02877",
+      "thumbnail": "assets/paper-imgs/Inner-IoU/fig3.png"
+    },
+    {
+      "title": "Multi-Branch Auxiliary Fusion YOLO with Re-parameterization Heterogeneous Convolutional for accurate object detection",
+      "file": "paper-blogs/MAF-YOLO.md",
+      "category": "YOLO 改进",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2407.04381",
+      "thumbnail": "assets/paper-imgs/MAF-YOLO/fig2.png"
+    },
+    {
+      "title": "基于 MNBS-YOLOV12 的肾脏肿瘤病变区域检测",
+      "file": "paper-blogs/MNBS-YOLOv12.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": "https://link.cnki.net/urlid/11.2127.TP.20260601.1358.016",
+      "thumbnail": "assets/paper-imgs/MNBS-YOLOv12/fig1.png"
+    },
+    {
+      "title": "A Normalized Gaussian Wasserstein Distance for Tiny Object Detection",
+      "file": "paper-blogs/NWD.md",
+      "category": "损失函数",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2110.13389",
+      "thumbnail": "assets/paper-imgs/NWD/fig1.png"
+    },
+    {
+      "title": "ParameterNet: Parameters Are All You Need for Large-Scale Visual Pretraining of Mobile Networks",
+      "file": "paper-blogs/ParameterNet.md",
+      "category": "骨干网络",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2401.12036",
+      "thumbnail": "assets/paper-imgs/ParameterNet/table1.png"
+    },
+    {
+      "title": "Pinwheel-shaped Convolution and Scale-based Dynamic Loss for Infrared Small Target Detection",
+      "file": "paper-blogs/Pinwheel-Conv-Loss.md",
+      "category": "损失函数",
+      "date": "2026-09-20",
+      "source_url": "https://github.com/JN-Yang/PConv-SDloss-Data",
+      "thumbnail": "assets/paper-imgs/Pinwheel-Conv-Loss/fig1.png"
+    },
+    {
+      "title": "基于 PSMF-YOLO 的无人机遥感图像枇杷花蕾小目标检测方法",
+      "file": "paper-blogs/psmf-yolo.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": "http://www.tcsae.org",
+      "thumbnail": "assets/paper-imgs/psmf-yolo/page7_img7.jpeg"
+    },
+    {
+      "title": "基于无人机 RGB 图像与改进 YOLO+v5s 的宿根蔗缺苗定位方法",
+      "file": "paper-blogs/Ratoon-Sugarcane-YOLOv5s.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": " ",
+      "thumbnail": "assets/paper-imgs/Ratoon-Sugarcane-YOLOv5s/fig_003_003.png"
+    },
+    {
+      "title": "RSO-YOLO: A Real-Time Detector for Small and Occluded Objects in Autonomous Driving Scenarios",
+      "file": "paper-blogs/RSO-YOLO.md",
+      "category": "YOLO 改进",
+      "date": "2026-09-20",
+      "source_url": "https://doi.org/10.3390/s25216703",
+      "thumbnail": "assets/paper-imgs/RSO-YOLO/fig2.png"
     },
     {
       "title": "SimAM: A Simple, Parameter-Free Attention Module for Convolutional Neural Networks",
       "file": "paper-blogs/SimAM.md",
-      "category": "注意力机制",
-      "date": "2026-09-06",
-      "source_url": "https://proceedings.mlr.press/v139/yang21o.html",
+      "category": "注意力模块",
+      "date": "2026-09-20",
+      "source_url": "未获取",
       "thumbnail": "assets/paper-imgs/SimAM/fig2.png"
+    },
+    {
+      "title": "低空航拍可见光图像快速检测甘蔗幼苗群体数量",
+      "file": "paper-blogs/Sugarcane-Seedlings-UAV.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": " ",
+      "thumbnail": ""
+    },
+    {
+      "title": "Wise-IoU: Bounding Box Regression Loss with Dynamic Focusing Mechanism",
+      "file": "paper-blogs/Wise-IoU.md",
+      "category": "损失函数",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2301.10051",
+      "thumbnail": "assets/paper-imgs/Wise-IoU/fig4.png"
+    },
+    {
+      "title": "YOLO-FaceV2: A scale and occlusion aware face detector",
+      "file": "paper-blogs/YOLO-FaceV2.md",
+      "category": "YOLO 改进",
+      "date": "2026-09-20",
+      "source_url": "https://doi.org/10.1016/j.patcog.2024.110714",
+      "thumbnail": "assets/paper-imgs/YOLO-FaceV2/fig1.png"
+    },
+    {
+      "title": "基于 YOLO-GESCW 的盛花期红花轻量化检测方法",
+      "file": "paper-blogs/YOLO-GESCW.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": "https://doi.org/10.11975/j.issn.1002-6819.202509289",
+      "thumbnail": "assets/paper-imgs/YOLO-GESCW/table1_ablation.png"
+    },
+    {
+      "title": "YOLO-Master: MOE-Accelerated with Specialized Transformers for Enhanced Real-time Detection",
+      "file": "paper-blogs/YOLO-Master.md",
+      "category": "YOLO 改进",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2512.23273",
+      "thumbnail": "assets/paper-imgs/YOLO-Master/fig2.png"
+    },
+    {
+      "title": "自然光环境下番茄穴盘苗缺苗检测的 YOLO-SFEP 模型",
+      "file": "paper-blogs/YOLO-SFEP.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": " ",
+      "thumbnail": "assets/paper-imgs/yolo_sfep/fig1.png"
+    },
+    {
+      "title": "基于 YOLO-SSAR 的自然环境下红花检测算法",
+      "file": "paper-blogs/YOLO-SSAR.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": " ",
+      "thumbnail": "assets/paper-imgs/yolo_ssar/fig1.png"
+    },
+    {
+      "title": "2025 YOLO—Sugarcane_用于快速检测复杂背景下甘蔗植株的轻量级神经网络",
+      "file": "paper-blogs/YOLO-Sugarcane.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": " ",
+      "thumbnail": "assets/paper-imgs/YOLO-Sugarcane/fig4.png"
+    },
+    {
+      "title": "2025 基于 YOLO_11n-EWL 的甘蔗芽检测方法",
+      "file": "paper-blogs/YOLO11n-EWL-Sugarcane-Bud.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": " ",
+      "thumbnail": ""
+    },
+    {
+      "title": "Ultralytics YOLO26: Unified Real-Time End-to-End Vision Models",
+      "file": "paper-blogs/YOLO26.md",
+      "category": "YOLO 改进",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2606.03748",
+      "thumbnail": "assets/paper-imgs/YOLO26/fig2_pipeline.png"
+    },
+    {
+      "title": "基于改进 YOLOv10n 的复杂田间小麦幼苗检测和计数方法",
+      "file": "paper-blogs/YOLOv10n-Wheat-Seedling.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": "https://doi.org/10.11975/j.issn.1002-6819.202511204",
+      "thumbnail": "assets/paper-imgs/YOLOv10n-Wheat-Seedling/fig1_data_augmentation.png"
+    },
+    {
+      "title": "基于改进YOLOv12的轻量化复杂环境红花识别方法",
+      "file": "paper-blogs/YOLOv12-Safflower.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": "https://link.cnki.net/urlid/11.1964.S.20260228.1136.002",
+      "thumbnail": "assets/paper-imgs/YOLOv12-Safflower/fig4.png"
+    },
+    {
+      "title": "改进YOLOv12的水面垃圾检测方法",
+      "file": "paper-blogs/YOLOv12-Water-Debris.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": "https://doi.org/10.3778/j.issn.1002-8331.2505-0249",
+      "thumbnail": "assets/paper-imgs/YOLOv12-Water-Debris/fig1.png"
+    },
+    {
+      "title": "YOLOv12: Attention-Centric Real-Time Object Detectors",
+      "file": "paper-blogs/YOLOv12.md",
+      "category": "YOLO 改进",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2502.12524",
+      "thumbnail": "assets/paper-imgs/YOLOv12/fig2.png"
+    },
+    {
+      "title": "基于改进 YOLOv12n 的 PCB 缺陷检测算法研究",
+      "file": "paper-blogs/YOLOv12n-PCB.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": "https://link.cnki.net/urlid/11.2488.TN.20260602.1136.002",
+      "thumbnail": "assets/paper-imgs/YOLOv12n-PCB/fig1.png"
+    },
+    {
+      "title": "基于无人机影像与 YOLOv12n-RCL 的向日葵成熟期盘腐病危害程度检测",
+      "file": "paper-blogs/YOLOv12n-RCL-Sunflower.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": "https://doi.org/10.11975/j.issn.1002-6819.202512131",
+      "thumbnail": "assets/paper-imgs/YOLOv12n-RCL-Sunflower/fig8_training.png"
+    },
+    {
+      "title": "基于改进YOLOv12n的VD炉真空下钢水液面高度检测",
+      "file": "paper-blogs/YOLOv12n-VD-Furnace.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": "https://doi.org/10.13228/j.boyuan.issn0449-749x.20250682",
+      "thumbnail": "assets/paper-imgs/YOLOv12n-VD-Furnace/fig1.png"
+    },
+    {
+      "title": "YOLOv13: Real-Time Object Detection with Hypergraph-Enhanced Adaptive Visual Perception",
+      "file": "paper-blogs/YOLOv13.md",
+      "category": "YOLO 改进",
+      "date": "2026-09-20",
+      "source_url": "https://arxiv.org/abs/2506.17733",
+      "thumbnail": "assets/paper-imgs/YOLOv13/fig2.png"
+    },
+    {
+      "title": "基于改进 YOLOv7 的甘蔗幼苗检测方法试验研究",
+      "file": "paper-blogs/YOLOv7-Sugarcane-Seedling.md",
+      "category": "YOLO 应用",
+      "date": "2026-09-20",
+      "source_url": " ",
+      "thumbnail": "assets/paper-imgs/YOLOv7-Sugarcane-Seedling/fig1.png"
     },
     {
       "title": "Dynamic Head: Unifying Object Detection Heads with Attentions",
@@ -26,9 +426,25 @@
       "thumbnail": "assets/paper-imgs/Dynamic-Head/dyhead_fig1_overview.png"
     },
     {
+      "title": "FreqFusion：Frequency-Aware Feature Fusion for Dense Image Prediction",
+      "file": "paper-blogs/FreqFusion.md",
+      "category": "特征融合",
+      "date": "2026-09-06",
+      "source_url": "https://github.com/ying-fu/FreqFusion",
+      "thumbnail": "assets/paper-imgs/FreqFusion/fig2.png"
+    },
+    {
+      "title": "Powerful-IoU: More straightforward and faster bounding box regression loss with a nonmonotonic focusing mechanism",
+      "file": "paper-blogs/Powerful-IoU.md",
+      "category": "损失函数",
+      "date": "2026-09-04",
+      "source_url": "https://github.com/fppccc/Powerful-IoU",
+      "thumbnail": "assets/paper-imgs/Powerful-IoU/piou_fig2_loss_formulas.png"
+    },
+    {
       "title": "5%>100%: Breaking Performance Shackles of Full Fine-Tuning on Visual Recognition Tasks",
       "file": "paper-blogs/Mona.md",
-      "category": "目标检测",
+      "category": "模型微调",
       "date": "2026-09-02",
       "source_url": "https://github.com/Leiyi-Hu/mona",
       "thumbnail": "assets/paper-imgs/Mona/mona_fig1_comparison.png"
@@ -36,7 +452,7 @@
     {
       "title": "VarifocalNet: An IoU-aware Dense Object Detector",
       "file": "paper-blogs/VarifocalNet.md",
-      "category": "目标检测",
+      "category": "损失函数",
       "date": "2026-09-02",
       "source_url": "https://github.com/hyz-xmaster/VarifocalNet",
       "thumbnail": "assets/paper-imgs/VarifocalNet/vfnet_fig1_iacs.png"
@@ -52,26 +468,10 @@
     {
       "title": "YOLO-PEFT: Parameter-Efficient Fine-Tuning on YOLO Family",
       "file": "paper-blogs/YOLO-PEFT.md",
-      "category": "目标检测",
+      "category": "模型微调",
       "date": "2026-08-30",
       "source_url": "https://arxiv.org/abs/2608.07051",
       "thumbnail": "assets/paper-imgs/YOLO-PEFT/yolopeft_fig1_overview.png"
-    },
-    {
-      "title": "Powerful-IoU: More straightforward and faster bounding box regression loss with a nonmonotonic focusing mechanism",
-      "file": "paper-blogs/Powerful-IoU.md",
-      "category": "损失函数",
-      "date": "2026-09-04",
-      "source_url": "https://github.com/fppccc/Powerful-IoU",
-      "thumbnail": "assets/paper-imgs/Powerful-IoU/piou_fig1_regression_process.png"
-    },
-    {
-      "title": "YOLO-Master: MOE-Accelerated with Specialized Transformers for Enhanced Real-time Detection",
-      "file": "paper-blogs/YOLO-Master.md",
-      "category": "目标检测",
-      "date": "2026-09-06",
-      "source_url": "https://arxiv.org/abs/2512.23273",
-      "thumbnail": "assets/paper-imgs/YOLO-Master/ym_fig1_pareto.png"
     }
   ]
 }

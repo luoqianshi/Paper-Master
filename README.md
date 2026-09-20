@@ -207,8 +207,10 @@ Paper-Master/
 ├── index.html            # 单页门户:左侧导航栏(首页/幻灯片/博客) + 右侧内容区无刷新切换(由 GitHub Pages 自动部署)
 ├── pages/                # 独立功能页
 │   └── note.html         #   阅读笔记全屏阅读深链(Markdown 渲染 + LaTeX 公式)
-├── slides-manifest.json  # paper-slides 演示文稿清单
-├── blogs-manifest.json   # paper-blogs 阅读笔记清单(部署时由 GitHub Actions 自动生成)
+├── slides-manifest.json  # paper-slides 演示文稿清单(新增内容后运行 python scripts/generate_manifests.py 重新生成并提交)
+├── blogs-manifest.json   # paper-blogs 阅读笔记清单(新增内容后运行 python scripts/generate_manifests.py 重新生成并提交)
+├── scripts/
+│   └── generate_manifests.py    # 本地重建两份清单(与 pages.yml 内联逻辑一致)
 ├── README.md             # 中文 README(默认)
 ├── README.en.md          # 英文 README
 ├── LICENSE               # MIT 协议
