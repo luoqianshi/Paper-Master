@@ -1,0 +1,237 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\UpSample Modules\\2019 CARAFE_Content-Aware ReAssembly of FEatures.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\CARAFE",
+  "total_pages": 15,
+  "total_items": 14,
+  "total_figures": 9,
+  "total_tables": 5,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1: Illustration of CARAFE working mechanism. Left:\nMulti-level FPN features from Mask R-CNN (left to dotted line)\nand Right: Mask R-CNN with CARAFE (right to dotted line). For\nsampled locations, this ﬁgure shows the accumulated reassembled\nregions in the top-down pathway of FPN. Information inside such\na region is reassembled into the corresponding reassembly center.",
+      "filename": "fig1.png",
+      "page": 1,
+      "bbox": [
+        303.9995422363281,
+        222.85174560546875,
+        525.691650390625,
+        424.0294189453125
+      ],
+      "width": 617,
+      "height": 559
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2: The overall framework of CARAFE. CARAFE is composed of two key components, i.e., kernel prediction module and\ncontent-aware reassembly module. A feature map with size C × H × W is upsampled by a factor of σ(= 2) in this ﬁgure.",
+      "filename": "fig2.png",
+      "page": 3,
+      "bbox": [
+        197.06866455078125,
+        163.8739013671875,
+        479.6461486816406,
+        296.1395568847656
+      ],
+      "width": 786,
+      "height": 368
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3: FPN architecture with CARAFE. CARAFE upsam-\nples a feature map by a factor of 2 in the top-down pathway. It is\nintegrated into FPN by seamlessly substituting the nearest neigh-\nbor interpolation.",
+      "filename": "fig3.png",
+      "page": 5,
+      "bbox": [
+        46.032958984375,
+        108.03978729248047,
+        290.5234680175781,
+        228.40029907226562
+      ],
+      "width": 681,
+      "height": 335
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2: Detection results with Faster RCNN. Various upsam-\npling methods are used in FPN. N.C., B.C., P.S. and S.A. indicate\nNearest + Conv, Bilinear + Conv, Pixel Shufﬂe and Spatial Atten-\ntion, respectively.",
+      "filename": "table2.png",
+      "page": 6,
+      "bbox": [
+        124.69599914550781,
+        95.36801147460938,
+        465.5450134277344,
+        186.3643798828125
+      ],
+      "width": 948,
+      "height": 254
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3: Instance Segmentation results with Mask RCNN. Vari-\nous upsampling methods are used in mask head.",
+      "filename": "table3.png",
+      "page": 6,
+      "bbox": [
+        124.69599914550781,
+        95.36801147460938,
+        465.5450134277344,
+        186.3643798828125
+      ],
+      "width": 948,
+      "height": 254
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4: Detection and Instance Segmentation results with Mask\nRCNN via adopting CARAFE in FPN and mask head respectively.\nM.H. indicates using CARAFE in mask head.",
+      "filename": "table4.png",
+      "page": 6,
+      "bbox": [
+        308.48699951171875,
+        377.5419921875,
+        544.987060546875,
+        491.25335693359375
+      ],
+      "width": 658,
+      "height": 317
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Figure 4: Comparison of instance segmentation results between baseline (top row) and CARAFE (bottom row) on COCO 2017 val.",
+      "filename": "fig4.png",
+      "page": 7,
+      "bbox": [
+        45.207550048828125,
+        67.12047576904297,
+        549.7279663085938,
+        215.3994140625
+      ],
+      "width": 1403,
+      "height": 413
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "label": "Table 7",
+      "caption": "Table 7: Image inpainting results on Places val.",
+      "filename": "table7.png",
+      "page": 7,
+      "bbox": [
+        330.3340148925781,
+        256.4789733886719,
+        519.1600341796875,
+        325.1583251953125
+      ],
+      "width": 526,
+      "height": 192
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6: Effects of adopting CARAFE in each component of\nUperNet.",
+      "filename": "table6.png",
+      "page": 7,
+      "bbox": [
+        96.35499572753906,
+        376.65997314453125,
+        235.63714599609375,
+        478.1354064941406
+      ],
+      "width": 388,
+      "height": 283
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Figure 5: CARAFE performs content-aware reassembly when upsampling a feature map. Red units are reassembled into the green center\nunit by CARAFE in the top-down pathway of a FPN structure.",
+      "filename": "fig5.png",
+      "page": 8,
+      "bbox": [
+        45.3349609375,
+        45.0,
+        571.8115234375,
+        212.62110900878906
+      ],
+      "width": 1464,
+      "height": 466
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Figure 6: CARAFE performs content-aware reassembly when upsampling a feature map. Red units are reassembled into the green center\nunit by CARAFE in the top-down pathway of a FPN structure.",
+      "filename": "fig6.png",
+      "page": 12,
+      "bbox": [
+        45.2159423828125,
+        111.33544921875,
+        549.8282470703125,
+        619.19189453125
+      ],
+      "width": 1403,
+      "height": 1411
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Figure 7: More comparison of object detection and instance segmentation results between Mask RCNN [9] baseline (left to the dash line)\nand Mask RCNN w/ CARAFE (right to the dash line) on COCO 2017 val.",
+      "filename": "fig7.png",
+      "page": 13,
+      "bbox": [
+        45.5030517578125,
+        126.00347900390625,
+        549.721435546875,
+        674.884765625
+      ],
+      "width": 1402,
+      "height": 1525
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "label": "Figure 8",
+      "caption": "Figure 8: Comparison of semantic segmentation results between UperNet [38] baseline and UperNet w/ CARAFE on ADE20k val.\nColumns from left to right correspond to the input image, ground truth, baseline results and CARAFE results, respectively.",
+      "filename": "fig8.png",
+      "page": 14,
+      "bbox": [
+        45.29869079589844,
+        162.25131225585938,
+        550.017578125,
+        640.8052978515625
+      ],
+      "width": 1403,
+      "height": 1331
+    },
+    {
+      "type": "figure",
+      "number": "9",
+      "label": "Figure 9",
+      "caption": "Figure 9: Comparison of image inpainting results between Global&Local [13] baseline and Global&Local w/ CARAFE on Places val.\nColumns from left to right correspond to the masked input, baseline results, CARAFE results and original image, respectively.",
+      "filename": "fig9.png",
+      "page": 15,
+      "bbox": [
+        70.1246337890625,
+        128.2164306640625,
+        506.83282470703125,
+        647.974609375
+      ],
+      "width": 1214,
+      "height": 1444
+    }
+  ]
+}

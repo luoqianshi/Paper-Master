@@ -1,0 +1,45 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO12_Applications\\2026_基于MNBS-YOLOV12的肾脏肿瘤病变区域检测_杨丹丹.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\MNBS-YOLOv12",
+  "total_pages": 24,
+  "total_items": 2,
+  "total_figures": 0,
+  "total_tables": 2,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3  MNBS-YOLOV12 Ablation Study",
+      "filename": "table3.png",
+      "page": 16,
+      "bbox": [
+        190.77999877929688,
+        185.08001708984375,
+        407.989990234375,
+        524.0800170898438
+      ],
+      "width": 605,
+      "height": 942
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "label": "Table 7",
+      "caption": "Table 7 The impact of DAFM on lesion detection performance of different sizes",
+      "filename": "table7.png",
+      "page": 19,
+      "bbox": [
+        128.0,
+        185.08001708984375,
+        463.8499755859375,
+        524.0800170898438
+      ],
+      "width": 934,
+      "height": 942
+    }
+  ]
+}

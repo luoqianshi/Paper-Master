@@ -1,0 +1,157 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Attn Modules\\2021 SimAM_A Simple Parameter-Free Attention Module for Convolutional Neural Networks.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\SimAM",
+  "total_pages": 12,
+  "total_items": 9,
+  "total_figures": 5,
+  "total_tables": 4,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1. Visualization of feature activations obtained by dif-\nferent networks. All compared networks are trained on ImageNet\n(Russakovsky et al., 2015) under a consistent setting. The features\nare extracted on the validation set and shown by Grad-CAM (Sel-\nvaraju et al., 2017). Our SimAM helps the network focus on some\nprimary regions which are close to the image labels shown below.",
+      "filename": "fig1.png",
+      "page": 1,
+      "bbox": [
+        289.0694885253906,
+        162.37403869628906,
+        558.580810546875,
+        365.1040954589844
+      ],
+      "width": 750,
+      "height": 564
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2. Comparisons of different attention steps. Most of existing attention modules generate 1-D or 2-D weights from features X,\nand then expand the generated weights for channel (a) and spatial (b) attention. Our module instead directly estimates 3-D weights (c). In\neach subﬁgure, same color denotes that a single scalar is employed for each channel, for spatial location or for each point on that features.",
+      "filename": "fig2.png",
+      "page": 3,
+      "bbox": [
+        25.0,
+        45.0,
+        587.0,
+        184.65147399902344
+      ],
+      "width": 1562,
+      "height": 388
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1. Comparisons of different attention modules in their\nstructure design and parameters. Operators are: spatial (GAP)\nor channel average pooling (CAP), spatial (GMP) or channel max\npooling (CMP), standard deviation calculated along spatial di-\nmension (GSP), standard convolution (C2D) or channel-based\nconvolution (C1D), standard (FC) or channel-wise (CFC) fully-\nconnected layers, layer normalization (LN), batch normalization\n(BN), Softmax and ReLU. k and r are convolutional ﬁlter numbers\nand reduction ratio respectively. C is the current feature channels.",
+      "filename": "table1.png",
+      "page": 3,
+      "bbox": [
+        307.06298828125,
+        332.0031433105469,
+        541.8182983398438,
+        439.6579284667969
+      ],
+      "width": 654,
+      "height": 300
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Figure 4. Visualization of cross validation for λ search. This\nprocess is achieved based on ResNet-20 network on a split from\ntrain set. Mean and standard deviation over 5 folds are reported.",
+      "filename": "fig4.png",
+      "page": 5,
+      "bbox": [
+        287.8552551269531,
+        59.68315124511719,
+        566.4427490234375,
+        205.09188842773438
+      ],
+      "width": 775,
+      "height": 405
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2. Top-1 accuracies (%) for different networks with 5 attention modules, SE (Hu et al., 2018b), CBAM (Woo et al., 2018), ECA\n(Wang et al., 2020), GC (Cao et al., 2020) and our SimAM, on CIFAR-10 (C10) and CIFAR-100 (C100) datasets. All results are reported\nas mean±std by calculating the top1 accuracy of each model over 5 trials . Our SimAM achieves very competitive results against other\nmodules without introducing any parameter into the baseline models.",
+      "filename": "table2.png",
+      "page": 6,
+      "bbox": [
+        58.574981689453125,
+        129.50698852539062,
+        538.3062744140625,
+        380.8223876953125
+      ],
+      "width": 1334,
+      "height": 699
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3. Top-1 and Top-5 accuracies (%) for different networks with various attention modules, including SE (Hu et al., 2018b), CBAM\n(Woo et al., 2018), ECA (Wang et al., 2020), SRM (Lee et al., 2019) and the proposed SimAM, on ImageNet-1k (Russakovsky et al.,\n2015) dataset. All networks are trained under the same settings in our own computers. Our SimAM achieves very competitive results\nagainst other attention modules, while being efﬁciency in terms of speed and parameters. Speed is tested on a GTX 1080 TI gpu with a\nsingle image. We forward 500 images and report the average FPS.",
+      "filename": "table3.png",
+      "page": 7,
+      "bbox": [
+        56.90599822998047,
+        137.81748962402344,
+        539.9783935546875,
+        604.2353515625
+      ],
+      "width": 1342,
+      "height": 1297
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Figure 5. Training curve comparisons for ResNet-50 with and without our module on ImageNet-1K. Top-1 (%) and Top-5 (%)\naccuracies of both networks are shown in the left and right, respectively. As can be seen, integrating our SimAM into ResNet-50 works\nbetter than the baseline model on both training and validation.",
+      "filename": "fig5.png",
+      "page": 8,
+      "bbox": [
+        57.4687614440918,
+        58.968048095703125,
+        539.722900390625,
+        232.411865234375
+      ],
+      "width": 1341,
+      "height": 483
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Figure 6. Visualization of feature activations using the trained\nResNet-50 with our SimAM. For each image, maps (from left to\nright) are GradCAM on features before and after SimAM, attention\nweights, and GradCAM on attention weights. The attention maps\nare obtained by averaging the 3-D attention weights along the\nchannel dimension (see more channel-wise attention weights in\nsupplementary materials).",
+      "filename": "fig6.png",
+      "page": 8,
+      "bbox": [
+        52.05841064453125,
+        304.6658935546875,
+        292.93597412109375,
+        506.5683898925781
+      ],
+      "width": 670,
+      "height": 562
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4. Comparisons ofp ResNet-50/101 with SE and the pro-\nposed SimAM on COCO dataset. All backbone networks are\npre-trained on ImageNet-1K dataset. APs refer to box IoU and\nmask IoU in detection and segmentation tasks respectively. We\nalso include the number additional parameters in this table.",
+      "filename": "table4.png",
+      "page": 9,
+      "bbox": [
+        53.20500183105469,
+        129.31846618652344,
+        291.6755676269531,
+        165.74835205078125
+      ],
+      "width": 664,
+      "height": 102
+    }
+  ]
+}

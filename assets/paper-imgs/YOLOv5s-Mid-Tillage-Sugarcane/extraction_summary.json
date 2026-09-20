@@ -1,0 +1,125 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO_Sugarcane_Detection_and_Counting\\2025 无人机图像中耕期甘蔗植株检测计数方法——基于改进YOLOv5s_李尚平.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\YOLOv5s-Mid-Tillage-Sugarcane",
+  "total_pages": 8,
+  "total_items": 7,
+  "total_figures": 7,
+  "total_tables": 0,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Fig. 1　Original",
+      "filename": "fig1.png",
+      "page": 2,
+      "bbox": [
+        348.7340087890625,
+        178.29800415039062,
+        450.08135986328125,
+        345.9800109863281
+      ],
+      "width": 283,
+      "height": 467
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Fig. 2　Partial",
+      "filename": "fig2.png",
+      "page": 2,
+      "bbox": [
+        312.3580017089844,
+        364.1281433105469,
+        395.6453552246094,
+        660.469970703125
+      ],
+      "width": 233,
+      "height": 824
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Fig. 3　Structure",
+      "filename": "fig3.png",
+      "page": 3,
+      "bbox": [
+        176.98199462890625,
+        355.4839782714844,
+        280.58900451660156,
+        699.0899658203125
+      ],
+      "width": 289,
+      "height": 955
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4　Structural",
+      "filename": "fig4.png",
+      "page": 4,
+      "bbox": [
+        183.19300842285156,
+        359.0749816894531,
+        288.9063415527344,
+        629.8079833984375
+      ],
+      "width": 295,
+      "height": 753
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Fig. 5　Structure",
+      "filename": "fig5.png",
+      "page": 5,
+      "bbox": [
+        68.01200103759766,
+        146.08201599121094,
+        171.61801147460938,
+        399.8340148925781
+      ],
+      "width": 289,
+      "height": 706
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Fig. 6　Illustration",
+      "filename": "fig6.png",
+      "page": 5,
+      "bbox": [
+        333.5,
+        291.0530090332031,
+        442.49749755859375,
+        479.5970153808594
+      ],
+      "width": 304,
+      "height": 525
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Fig. 7　Comparison",
+      "filename": "fig7.png",
+      "page": 6,
+      "bbox": [
+        312.7460021972656,
+        333.844970703125,
+        424.64251708984375,
+        550.1409912109375
+      ],
+      "width": 312,
+      "height": 602
+    }
+  ]
+}

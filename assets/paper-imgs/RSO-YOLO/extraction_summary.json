@@ -1,0 +1,397 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO Family\\2025 RSO-YOLO A Real-Time Detector for Small and Occluded.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\RSO-YOLO",
+  "total_pages": 24,
+  "total_items": 24,
+  "total_figures": 13,
+  "total_tables": 11,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1. YOLOv12 network structure diagram. Arrows indicate data flow; colors distinguish module\ntypes; dashed boxes denote components; ⊕denotes element-wise addition; the ellipsis “. . .” denotes\nrepeated layers.",
+      "filename": "fig1.png",
+      "page": 3,
+      "bbox": [
+        37.2400016784668,
+        386.55206298828125,
+        557.0,
+        612.7920532226562
+      ],
+      "width": 1445,
+      "height": 630
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2. RSO-YOLO network structure diagram. Arrows indicate data flow; colors distinguish\nmodule types; dashed boxes denote components.",
+      "filename": "fig2.png",
+      "page": 5,
+      "bbox": [
+        163.0229949951172,
+        316.92498779296875,
+        560.1430053710938,
+        577.4849853515625
+      ],
+      "width": 1104,
+      "height": 725
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3. The structure of BiFPN. Arrows indicate data flow; colors distinguish module types; dashed\nbox denotes components.",
+      "filename": "fig3.png",
+      "page": 7,
+      "bbox": [
+        162.65899658203125,
+        109.115966796875,
+        451.77899169921875,
+        392.2359619140625
+      ],
+      "width": 804,
+      "height": 787
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Figure 4. The structure of SPD-Conv: (a) input feature map; (b) spatial partition; (c) spatial-to-\nchannel rearrangement; (d) channel compression; (e) output feature map. Arrows indicate data flow;\ncolors distinguish module types; letters C and S denote the number of channels and the image size,\nrespectively; ⊕denotes concatenation of feature maps along the channel dimension; ★⃝  denotes a\nconvolution operation with a stride of 1.",
+      "filename": "fig4.png",
+      "page": 8,
+      "bbox": [
+        56.13640213012695,
+        68.90106201171875,
+        539.224365234375,
+        253.14105224609375
+      ],
+      "width": 1343,
+      "height": 513
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Figure 5. The structure of FECM. Arrows indicate data flow; colors distinguish module types; letters\nC, H, and W denote the number of channels, height, and width, respectively; ⊕denotes element-wise\naddition; ⊗denotes element-wise multiplication.",
+      "filename": "fig5.png",
+      "page": 9,
+      "bbox": [
+        36.89539337158203,
+        130.56918334960938,
+        560.1113891601562,
+        361.17718505859375
+      ],
+      "width": 1454,
+      "height": 642
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Figure 6. The structure of GCCHead.",
+      "filename": "fig6.png",
+      "page": 9,
+      "bbox": [
+        162.64248657226562,
+        535.69384765625,
+        288.802490234375,
+        707.52587890625
+      ],
+      "width": 352,
+      "height": 478
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Figure 7. The structure of GCCM. Arrows indicate data flow; colors distinguish module types; letters\nC, H, and W denote the number of channels, height, and width, respectively; ⊕denotes element-wise\naddition; ⊗denotes element-wise multiplication.",
+      "filename": "fig7.png",
+      "page": 10,
+      "bbox": [
+        29.565998077392578,
+        108.43801879882812,
+        563.2459716796875,
+        284.9980163574219
+      ],
+      "width": 1483,
+      "height": 491
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1. Ablation experimental results on the SODA10M dataset.",
+      "filename": "table1.png",
+      "page": 12,
+      "bbox": [
+        161.0850067138672,
+        63.7958984375,
+        565.9242553710938,
+        334.9151306152344
+      ],
+      "width": 1126,
+      "height": 754
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "label": "Figure 8",
+      "caption": "Figure 8. Normalized performance of ablation experiment on the SODA10M dataset: (a) normalized\nhistogram of ablation experiments; (b) radar chart of ablation experiment performance.",
+      "filename": "fig8.png",
+      "page": 13,
+      "bbox": [
+        35.805999755859375,
+        358.1320495605469,
+        557.2459716796875,
+        530.85205078125
+      ],
+      "width": 1449,
+      "height": 481
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2. Ablation experimental results on the BDD100K dataset.",
+      "filename": "table2.png",
+      "page": 14,
+      "bbox": [
+        37.94599914550781,
+        312.7845458984375,
+        557.6837158203125,
+        430.27703857421875
+      ],
+      "width": 1445,
+      "height": 328
+    },
+    {
+      "type": "figure",
+      "number": "9",
+      "label": "Figure 9",
+      "caption": "Figure 9. Normalized performance of ablation experiment on the BDD100K dataset: (a) normalized\nhistogram of ablation experiments; (b) radar chart of ablation experiment performance.",
+      "filename": "fig9.png",
+      "page": 15,
+      "bbox": [
+        45.99500274658203,
+        65.25202941894531,
+        549.1950073242188,
+        238.93202209472656
+      ],
+      "width": 1399,
+      "height": 483
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3. Results of Neck Network Comparison Experiment.",
+      "filename": "table3.png",
+      "page": 15,
+      "bbox": [
+        181.7270050048828,
+        462.40020751953125,
+        541.3096313476562,
+        523.1240234375
+      ],
+      "width": 1000,
+      "height": 170
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4. Performance Comparison of Occlusion Object Detection Based on FECM.",
+      "filename": "table4.png",
+      "page": 15,
+      "bbox": [
+        161.11500549316406,
+        462.40020751953125,
+        566.0145263671875,
+        639.339111328125
+      ],
+      "width": 1126,
+      "height": 492
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5. Results of Detection Head Comparison Experiment.",
+      "filename": "table5.png",
+      "page": 16,
+      "bbox": [
+        173.20899963378906,
+        185.7382354736328,
+        541.3096313476562,
+        246.4621124267578
+      ],
+      "width": 1023,
+      "height": 170
+    },
+    {
+      "type": "figure",
+      "number": "10",
+      "label": "Figure 10",
+      "caption": "Figure 10. Training process of different models on SODA10M dataset.",
+      "filename": "fig10.png",
+      "page": 16,
+      "bbox": [
+        159.4739990234375,
+        532.05810546875,
+        467.36962890625,
+        725.8980712890625
+      ],
+      "width": 857,
+      "height": 540
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6. Comparative experiments of different models on SODA10M dataset.",
+      "filename": "table6.png",
+      "page": 17,
+      "bbox": [
+        161.06500244140625,
+        90.40335083007812,
+        565.9315795898438,
+        511.1355285644531
+      ],
+      "width": 1126,
+      "height": 1169
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "label": "Table 7",
+      "caption": "Table 7. Comparative experiments of different models on BDD100K dataset.",
+      "filename": "table7.png",
+      "page": 17,
+      "bbox": [
+        161.06500244140625,
+        90.40335083007812,
+        565.9315795898438,
+        384.08709716796875
+      ],
+      "width": 1126,
+      "height": 816
+    },
+    {
+      "type": "figure",
+      "number": "11",
+      "label": "Figure 11",
+      "caption": "Figure 11. Training process of different models on BDD100K dataset.",
+      "filename": "fig11.png",
+      "page": 18,
+      "bbox": [
+        159.91099548339844,
+        120.84400939941406,
+        463.56793212890625,
+        316.60400390625
+      ],
+      "width": 844,
+      "height": 545
+    },
+    {
+      "type": "table",
+      "number": "8",
+      "label": "Table 8",
+      "caption": "Table 8. Comparative experiments of different models on FLIR ADAS dataset.",
+      "filename": "table8.png",
+      "page": 18,
+      "bbox": [
+        167.78599548339844,
+        354.57135009765625,
+        560.5371704101562,
+        455.1365661621094
+      ],
+      "width": 1092,
+      "height": 281
+    },
+    {
+      "type": "figure",
+      "number": "12",
+      "label": "Figure 12",
+      "caption": "Figure 12. Training process of different models on FLIR ADAS dataset.",
+      "filename": "fig12.png",
+      "page": 18,
+      "bbox": [
+        160.75244140625,
+        459.6014404296875,
+        471.56591796875,
+        673.721435546875
+      ],
+      "width": 864,
+      "height": 596
+    },
+    {
+      "type": "table",
+      "number": "9",
+      "label": "Table 9",
+      "caption": "Table 9. Comparison of other improved models.",
+      "filename": "table9.png",
+      "page": 19,
+      "bbox": [
+        179.3070068359375,
+        157.88319396972656,
+        551.8457641601562,
+        254.47218322753906
+      ],
+      "width": 1035,
+      "height": 269
+    },
+    {
+      "type": "table",
+      "number": "10",
+      "label": "Table 10",
+      "caption": "Table 10. Comparison of Detection Performance under Different Object Scales.",
+      "filename": "table10.png",
+      "page": 19,
+      "bbox": [
+        161.09500122070312,
+        157.88319396972656,
+        565.5244750976562,
+        521.9200439453125
+      ],
+      "width": 1124,
+      "height": 1012
+    },
+    {
+      "type": "table",
+      "number": "11",
+      "label": "Table 11",
+      "caption": "Table 11. Comparison of Detection Performance under Occlusion Conditions.",
+      "filename": "table11.png",
+      "page": 20,
+      "bbox": [
+        168.6510009765625,
+        90.37623596191406,
+        555.7034301757812,
+        167.8571319580078
+      ],
+      "width": 1076,
+      "height": 216
+    },
+    {
+      "type": "figure",
+      "number": "13",
+      "label": "Figure 13",
+      "caption": "Figure 13. Heatmap comparison of detection results between YOLOv12 and YOLOv12 with the\nFECM: (a,d) are the original images; (b,e) are the detection results produced by YOLOv12; (c,f) are\nthe detection results generated by YOLOv12 with the FECM. Colors represent attention intensity,\nwhere red and yellow indicate higher focus, and green indicates lower focus.",
+      "filename": "fig13.png",
+      "page": 20,
+      "bbox": [
+        40.80624008178711,
+        346.69866943359375,
+        554.6392822265625,
+        561.2763671875
+      ],
+      "width": 1428,
+      "height": 597
+    }
+  ]
+}

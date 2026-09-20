@@ -1,0 +1,205 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO Family\\2024 Multi-Branch Auxiliary Fusion YOLO with Re-parameterization Heterogeneous Convolutional for accurate object detection.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\MAF-YOLO",
+  "total_pages": 14,
+  "total_items": 12,
+  "total_figures": 7,
+  "total_tables": 5,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Fig. 1. (a) represents the traditional PAFPN structure, (b) and (c) display the Grad-\nCAM++ visualization results of the neck for YOLOv8n and MAF-YOLOn. These three\nimages represent the output layers of the model for small, medium, and large objects.",
+      "filename": "fig1.png",
+      "page": 2,
+      "bbox": [
+        132.5989990234375,
+        242.4712677001953,
+        482.754638671875,
+        361.8070068359375
+      ],
+      "width": 973,
+      "height": 333
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Fig. 2. Overview of the network architecture of MAF-YOLO.",
+      "filename": "fig2.png",
+      "page": 4,
+      "bbox": [
+        158.3560028076172,
+        441.1282958984375,
+        457.0022277832031,
+        622.0150146484375
+      ],
+      "width": 831,
+      "height": 503
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Fig. 3. The architecture of Superficial Assisted Fusion.",
+      "filename": "fig3.png",
+      "page": 5,
+      "bbox": [
+        206.3000030517578,
+        446.10498046875,
+        409.0537109375,
+        533.510009765625
+      ],
+      "width": 564,
+      "height": 243
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4. The architecture of Advanced Assisted Fusion.",
+      "filename": "fig4.png",
+      "page": 6,
+      "bbox": [
+        206.3000030517578,
+        311.1434631347656,
+        409.05279541015625,
+        392.8399963378906
+      ],
+      "width": 564,
+      "height": 228
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Fig. 5. (a) Overview of the network architecture of RepHELAN, (b) The structure of\nInverted Bottleneck in the training and inferencing phases, which is in the RepHELAN,\n(c) The reparameterization process of a 7×7 RepHDWConv.",
+      "filename": "fig5.png",
+      "page": 7,
+      "bbox": [
+        160.9459991455078,
+        164.0655517578125,
+        454.4112548828125,
+        294.531005859375
+      ],
+      "width": 816,
+      "height": 364
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1. The impact of different computational blocks on the MAF-YOLOn.",
+      "filename": "table1.png",
+      "page": 9,
+      "bbox": [
+        129.76498413085938,
+        87.88749694824219,
+        485.6465759277344,
+        230.861572265625
+      ],
+      "width": 990,
+      "height": 398
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2. Ablation study on RepHELAN structure.",
+      "filename": "table2.png",
+      "page": 9,
+      "bbox": [
+        129.76499938964844,
+        263.3404846191406,
+        485.6495361328125,
+        548.5973510742188
+      ],
+      "width": 990,
+      "height": 793
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3. Ablation study on MAFPN structure.",
+      "filename": "table3.png",
+      "page": 10,
+      "bbox": [
+        129.76499938964844,
+        87.88749694824219,
+        487.35028076171875,
+        302.4156188964844
+      ],
+      "width": 994,
+      "height": 597
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4. Performance of MAFPN on other object detectors and different tasks.",
+      "filename": "table4.png",
+      "page": 10,
+      "bbox": [
+        156.73699951171875,
+        569.3204956054688,
+        458.6121520996094,
+        666.1948852539062
+      ],
+      "width": 839,
+      "height": 270
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5. Ablation study on MAF-YOLOn.",
+      "filename": "table5.png",
+      "page": 11,
+      "bbox": [
+        129.76499938964844,
+        87.88749694824219,
+        485.6466369628906,
+        229.09564208984375
+      ],
+      "width": 990,
+      "height": 393
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Fig. 6. Comparison of state-of-the-art real-time object detectors.",
+      "filename": "fig6.png",
+      "page": 12,
+      "bbox": [
+        151.49099731445312,
+        318.56829833984375,
+        463.9186096191406,
+        452.8179931640625
+      ],
+      "width": 869,
+      "height": 374
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Fig. 7. The detection results of YOLOv6n, YOLOv7t, YOLOv8n, MAF-YOLOn.",
+      "filename": "fig7.png",
+      "page": 13,
+      "bbox": [
+        132.5989990234375,
+        110.83491516113281,
+        482.7654724121094,
+        322.281005859375
+      ],
+      "width": 974,
+      "height": 589
+    }
+  ]
+}

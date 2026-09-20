@@ -1,0 +1,125 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Loss Functions\\2023 Inner-IoU_More Effective Intersection over Union Loss with Auxiliary Bounding Box.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\Inner-IoU",
+  "total_pages": 7,
+  "total_items": 7,
+  "total_figures": 7,
+  "total_tables": 0,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Fig. 2: Detection examples on the test set of PASCAL VOC 2007 using YOLOv7-tiny by LCIoU and LInner−CIoU. From left\nto right, they represent the CIoU method, Inner-CIoU (ratio=0.7), Inner-CIoU (ratio=0.75) and Inner-CIoU (ratio=0.8).",
+      "filename": "fig2.png",
+      "page": 2,
+      "bbox": [
+        87.08499908447266,
+        51.07097625732422,
+        524.9140014648438,
+        312.40997314453125
+      ],
+      "width": 1218,
+      "height": 727
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Fig. 3: Regression change curves for different scale bounding\nboxes(a) IoU-Deviation Curve(b) ABS(Grad)-Deviation Curve",
+      "filename": "fig3.png",
+      "page": 3,
+      "bbox": [
+        25.0,
+        223.27731323242188,
+        257.695068359375,
+        382.70147705078125
+      ],
+      "width": 647,
+      "height": 444
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4: Detection examples on the test set of AI-TOD using YOLOv5s by LSIoU (first row) and LInner−SIoU(second row).",
+      "filename": "fig4.png",
+      "page": 4,
+      "bbox": [
+        67.22599792480469,
+        51.07060241699219,
+        544.7703857421875,
+        360.2449951171875
+      ],
+      "width": 1328,
+      "height": 860
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Fig. 5: Blue points denote the anchors and green bounding\nboxes represent the different sizes of the target box (a) high\nIoU regression sample (b) low IoU regression sample",
+      "filename": "fig5.png",
+      "page": 4,
+      "bbox": [
+        38.40229415893555,
+        458.0155029296875,
+        312.0478820800781,
+        566.4469604492188
+      ],
+      "width": 761,
+      "height": 302
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Fig. 6: Detection examples on the test set of PASCAL VOC 2007 using YOLOv7-tiny by LSIoU and LInner−SIoU. From left\nto right, they represent the SIoU method, Inner-SIoU (ratio=0.7), Inner-SIoU (ratio=0.75) and Inner-SIoU (ratio=0.8).",
+      "filename": "fig6.png",
+      "page": 5,
+      "bbox": [
+        76.28099822998047,
+        51.07201385498047,
+        535.7160034179688,
+        212.27200317382812
+      ],
+      "width": 1278,
+      "height": 449
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Fig. 7: Regression error of Inner-IoU method and several existing methods at iteration. (a) high IoU sample results(ratio=0.8)\n(b) low IoU sample results(ratio=1.2)",
+      "filename": "fig7.png",
+      "page": 5,
+      "bbox": [
+        30.483917236328125,
+        248.55072021484375,
+        566.30224609375,
+        443.11834716796875
+      ],
+      "width": 1490,
+      "height": 541
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "label": "Figure 8",
+      "caption": "Fig. 8: Performance of CIoU and SIoU losses with different ratios.",
+      "filename": "fig8.png",
+      "page": 6,
+      "bbox": [
+        143.32699584960938,
+        53.20790100097656,
+        468.6731872558594,
+        332.3089294433594
+      ],
+      "width": 904,
+      "height": 777
+    }
+  ]
+}

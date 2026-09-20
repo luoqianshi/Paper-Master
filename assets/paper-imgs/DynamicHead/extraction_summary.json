@@ -1,0 +1,189 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Detect Head\\2021 Dynamic Head_Unifying Object Detection Heads with Attentions.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\DynamicHead",
+  "total_pages": 11,
+  "total_items": 11,
+  "total_figures": 4,
+  "total_tables": 7,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1. An illustration of our Dynamic Head approach. It contains three different attention mechanisms, each focusing on a different\nperspective: scale-aware attention, spatial-aware attention, and task-aware attention. We also visualize how the feature maps are improved\nafter each attention module.",
+      "filename": "fig1.png",
+      "page": 3,
+      "bbox": [
+        69.86299896240234,
+        66.99838256835938,
+        525.362548828125,
+        269.36700439453125
+      ],
+      "width": 1266,
+      "height": 563
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2. A detailed design of Dynamic Head. (a) shows the de-\ntailed implementation of each attention module. (b) shows how to\napply our dynamic head blocks to one-stage object detector. (c)\nshows how to apply our dynamic head blocks to two-stage object\ndetector.",
+      "filename": "fig2.png",
+      "page": 4,
+      "bbox": [
+        303.86199951171875,
+        67.003173828125,
+        550.108642578125,
+        318.093994140625
+      ],
+      "width": 685,
+      "height": 698
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3. Ablation study on the effectiveness of our scale-aware\nattention module.",
+      "filename": "fig3.png",
+      "page": 6,
+      "bbox": [
+        303.86199951171875,
+        66.99903869628906,
+        538.30078125,
+        252.1619873046875
+      ],
+      "width": 652,
+      "height": 515
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1. Ablation study on the effectiveness of each attention mod-\nule in our dynamic head block.",
+      "filename": "table1.png",
+      "page": 6,
+      "bbox": [
+        45.11199951171875,
+        69.40748596191406,
+        291.36517333984375,
+        308.16650390625
+      ],
+      "width": 685,
+      "height": 665
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Figure 4. A visualization on the effectiveness of our spatial-aware\nattention module.",
+      "filename": "fig4.png",
+      "page": 6,
+      "bbox": [
+        303.86199951171875,
+        285.3106689453125,
+        550.1107177734375,
+        507.35198974609375
+      ],
+      "width": 685,
+      "height": 618
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3. Ablation study on the generalization of our dynamic head\nwhen applying to popular object detection methods.",
+      "filename": "table3.png",
+      "page": 7,
+      "bbox": [
+        317.6159973144531,
+        70.57095336914062,
+        535.8587036132812,
+        317.18438720703125
+      ],
+      "width": 607,
+      "height": 686
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2. Ablation study on the efﬁciency and effectiveness of\nstacking different number of dynamic head blocks.",
+      "filename": "table2.png",
+      "page": 7,
+      "bbox": [
+        45.1119384765625,
+        225.91754150390625,
+        291.3667907714844,
+        718.4068603515625
+      ],
+      "width": 685,
+      "height": 1369
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4. Comparison with results using different backbones on the MS COCO test-dev set",
+      "filename": "table4.png",
+      "page": 8,
+      "bbox": [
+        52.58399963378906,
+        321.9059753417969,
+        549.1890258789062,
+        602.58837890625
+      ],
+      "width": 1380,
+      "height": 780
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5. Comparison with the state-of-the-art results on the MS COCO test-dev set",
+      "filename": "table5.png",
+      "page": 8,
+      "bbox": [
+        52.58399963378906,
+        321.9059753417969,
+        549.1890258789062,
+        583.9603881835938
+      ],
+      "width": 1380,
+      "height": 729
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6. Comparison with results using transformer backbone on the MS COCO validation set.",
+      "filename": "table6.png",
+      "page": 9,
+      "bbox": [
+        60.24400329589844,
+        194.52200317382812,
+        532.2390747070312,
+        296.28839111328125
+      ],
+      "width": 1312,
+      "height": 284
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "label": "Table 7",
+      "caption": "Table 7. Comparison with latest methods on the MS COCO test-dev set. † demonstrates method with extra data.",
+      "filename": "table7.png",
+      "page": 9,
+      "bbox": [
+        45.11198425292969,
+        312.1541748046875,
+        550.1156616210938,
+        718.4069213867188
+      ],
+      "width": 1404,
+      "height": 1129
+    }
+  ]
+}

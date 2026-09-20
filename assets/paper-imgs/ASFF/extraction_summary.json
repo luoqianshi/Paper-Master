@@ -1,0 +1,157 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Detect Head\\2019 Learning Spatial Fusion for Single-Shot Object Detection.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\ASFF",
+  "total_pages": 10,
+  "total_items": 9,
+  "total_figures": 4,
+  "total_tables": 5,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1. Speed-accuracy trade-off on COCO test-dev for real-time\ndetectors. The proposed ASFF helps YOLOv3 outperform a range\nof state-of-the-art algorithms.",
+      "filename": "fig1.png",
+      "page": 1,
+      "bbox": [
+        304.1664123535156,
+        208.3653564453125,
+        547.9533081054688,
+        393.7055358886719
+      ],
+      "width": 679,
+      "height": 516
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2. Illustration of the adaptively spatial feature fusion mechanism. For each level, the features of all the other levels are resized to the\nsame shape and spatially fused according to the learned weight maps.",
+      "filename": "fig2.png",
+      "page": 3,
+      "bbox": [
+        69.86299896240234,
+        66.99620056152344,
+        525.3690185546875,
+        278.0219421386719
+      ],
+      "width": 1266,
+      "height": 587
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1. Effect of each component on the baseline. Results in terms of AP (%) and FPS are reported on COCO val-2017.",
+      "filename": "table1.png",
+      "page": 6,
+      "bbox": [
+        92.13800048828125,
+        168.98971557617188,
+        503.0794372558594,
+        244.4884490966797
+      ],
+      "width": 1143,
+      "height": 211
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3. Visualization of detection results on COCO val-2017 as well as the learned weight scalar maps at each level. We zoom in the heat\nmaps of level 3 within the red box for better visualization.",
+      "filename": "fig3.png",
+      "page": 6,
+      "bbox": [
+        92.13800048828125,
+        168.98971557617188,
+        503.0794372558594,
+        617.5799560546875
+      ],
+      "width": 1143,
+      "height": 1247
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Figure 4. More qualitative examples when one image has several objects with different sizes.",
+      "filename": "fig4.png",
+      "page": 7,
+      "bbox": [
+        106.18400573730469,
+        66.99778747558594,
+        489.0435791015625,
+        319.6639709472656
+      ],
+      "width": 1065,
+      "height": 702
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2. Improvement by the adjacent ignoring strategy. APs (%)\nare reported on COCO val-2017.",
+      "filename": "table2.png",
+      "page": 7,
+      "bbox": [
+        55.574981689453125,
+        354.605712890625,
+        284.4477844238281,
+        420.7506408691406
+      ],
+      "width": 637,
+      "height": 184
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3. Comparison of ASFF and other fusion operations. APs\n(%) are reported on COCO val-2017.",
+      "filename": "table3.png",
+      "page": 7,
+      "bbox": [
+        44.76300048828125,
+        552.38623046875,
+        291.7149963378906,
+        718.4310302734375
+      ],
+      "width": 687,
+      "height": 462
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4. Detection performance in terms of AP (%) and FPS on COCO test-dev.",
+      "filename": "table4.png",
+      "page": 8,
+      "bbox": [
+        44.862998962402344,
+        399.12744140625,
+        551.8541870117188,
+        718.4310302734375
+      ],
+      "width": 1409,
+      "height": 888
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5. Contribution of ASFF to RetinaNet. APs (%) are reported\non COCO val-2017.",
+      "filename": "table5.png",
+      "page": 8,
+      "bbox": [
+        303.50299072265625,
+        494.8656921386719,
+        551.8541870117188,
+        718.4310302734375
+      ],
+      "width": 690,
+      "height": 622
+    }
+  ]
+}

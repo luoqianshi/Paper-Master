@@ -1,0 +1,173 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Attn Modules\\2021 Coordinate Attention for Efficient Mobile Network Design.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\Coordinate-Attention",
+  "total_pages": 10,
+  "total_items": 10,
+  "total_figures": 1,
+  "total_tables": 9,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1. Performance of different attention methods on three clas-\nsic vision tasks. The y-axis labels from left to right are top-1 ac-\ncuracy, mean IoU, and AP, respectively. Clearly, our approach\nnot only achieves the best result in ImageNet classiﬁcation [33]\nagainst the SE block [18] and CBAM [44] but performs even better\nin down-stream tasks, like semantic segmentation [9] and COCO\nobject detection [21]. Results are based on MobileNetV2 [34].",
+      "filename": "fig1.png",
+      "page": 1,
+      "bbox": [
+        303.86199951171875,
+        208.76751708984375,
+        550.1195068359375,
+        295.885009765625
+      ],
+      "width": 685,
+      "height": 243
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2. Comparisons of different attention methods under differ-\nent weight multipliers when taking MobileNetV2 as the baseline.",
+      "filename": "table2.png",
+      "page": 5,
+      "bbox": [
+        308.5589599609375,
+        94.14999389648438,
+        545.4178466796875,
+        274.41082763671875
+      ],
+      "width": 659,
+      "height": 502
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1. Result comparisons under different experiment settings\nof the proposed coordinate attention. Here, r is the reduction ratio\nand the baseline result is based on the MobileNetV2 model. As\ncan be seen, the model with either the horizontal (X) attention or\nthe vertical (Y) attention added achieves the same performance as\nthe one with SE attention. However, when taking both horizon-\ntal and vertical attentions into account (coordinate attention), our\napproach yields the best result. The latency is tested on a Google\nPixel 4 device.",
+      "filename": "table1.png",
+      "page": 5,
+      "bbox": [
+        48.694976806640625,
+        168.83848571777344,
+        287.77691650390625,
+        253.92286682128906
+      ],
+      "width": 665,
+      "height": 238
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3. Comparisons of different attention methods under differ-\nent weight multipliers when taking MobileNeXt [49] as the base-\nline.",
+      "filename": "table3.png",
+      "page": 6,
+      "bbox": [
+        45.11199951171875,
+        103.27096557617188,
+        291.36322021484375,
+        418.79791259765625
+      ],
+      "width": 685,
+      "height": 878
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4. Comparisons of models equipped with different attention\nblocks under different reduction ratios r. The baseline result is\nbased on the MobileNetV2 model. Obviously, when the reduction\nratio decreases, our approach still yields the best results.",
+      "filename": "table4.png",
+      "page": 6,
+      "bbox": [
+        52.050994873046875,
+        103.27096557617188,
+        284.42669677734375,
+        247.3668975830078
+      ],
+      "width": 647,
+      "height": 402
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table\n5.\nExperimental\nresults\nwhen\ntaking\nthe\npowerful\nEfﬁcientNet-b0 [38] as baseline.\nWe also compare with other\nmethods that have comparable parameters and computations to\nEfﬁcientNet-b0.",
+      "filename": "table5.png",
+      "page": 7,
+      "bbox": [
+        48.07400131225586,
+        114.25198364257812,
+        286.16131591796875,
+        252.71240234375
+      ],
+      "width": 662,
+      "height": 385
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6. Object detection results on the COCO validation set. In all experiments here, we use the SSDLite320 detector. As can be seen, the\nbackbone model with our coordinate attention achieves the best results in terms of all kinds of measuring metrics. Note that all the results\nare based on single-model test. Besides hand-designed mobile networks, we also show results produced by architecture search-based\nmethods (i.e., MobileNetV3 [15] and MnasNet-A1 [37]).",
+      "filename": "table6.png",
+      "page": 8,
+      "bbox": [
+        52.441001892089844,
+        114.76895141601562,
+        540.041015625,
+        249.94140625
+      ],
+      "width": 1356,
+      "height": 377
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "label": "Table 7",
+      "caption": "Table 7. Object detection results on the Pascal VOC 2007 test\nset. We can observe that when the same SSDLite320 detector\nis adopted, MobileNetV2 network with our coordinate attention\nadded achieves better results in terms of mAP.",
+      "filename": "table7.png",
+      "page": 8,
+      "bbox": [
+        52.441001892089844,
+        114.76895141601562,
+        540.041015625,
+        249.94140625
+      ],
+      "width": 1356,
+      "height": 377
+    },
+    {
+      "type": "table",
+      "number": "9",
+      "label": "Table 9",
+      "caption": "Table 9. Semantic segmentation results on the Cityscapes [8] val-\nidation set. We report results on single-model test and full image\nsize (i.e., 1024 × 2048) is used for testing. We do not use any\npost-processing tools.",
+      "filename": "table9.png",
+      "page": 8,
+      "bbox": [
+        52.441001892089844,
+        114.76895141601562,
+        540.041015625,
+        249.94140625
+      ],
+      "width": 1356,
+      "height": 377
+    },
+    {
+      "type": "table",
+      "number": "8",
+      "label": "Table 8",
+      "caption": "Table 8. Semantic segmentation results on the Pascal VOC 2012\nvalidation set. All the results are based on single-model test and\nno post-processing tools are used. We can see that the models\nequipped with all attention methods improve the segmentation re-\nsults. However, when the proposed coordinate attention is used,\nwe achieve the best result, which is much better than models with\nother attention methods. ‘Stride’ here denotes the output stride of\nthe segmentation network.",
+      "filename": "table8.png",
+      "page": 8,
+      "bbox": [
+        50.323001861572266,
+        484.39898681640625,
+        286.15081787109375,
+        610.8043823242188
+      ],
+      "width": 656,
+      "height": 352
+    }
+  ]
+}

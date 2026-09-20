@@ -1,0 +1,141 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO_Sugarcane_Detection_and_Counting\\2025 基于改进YOLOv7的甘蔗幼苗检测方法试验研究_李会.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\YOLOv7-Sugarcane-Seedling",
+  "total_pages": 9,
+  "total_items": 8,
+  "total_figures": 8,
+  "total_tables": 0,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Fig. 1　The",
+      "filename": "fig1.png",
+      "page": 3,
+      "bbox": [
+        143.69699096679688,
+        97.75799560546875,
+        231.0989990234375,
+        511.9100341796875
+      ],
+      "width": 243,
+      "height": 1151
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Fig. 2　Schematic",
+      "filename": "fig2.png",
+      "page": 4,
+      "bbox": [
+        188.4309844970703,
+        178.2969970703125,
+        295.4329833984375,
+        505.7959899902344
+      ],
+      "width": 298,
+      "height": 910
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Fig. 3　Squeeze-and-Excitation",
+      "filename": "fig3.png",
+      "page": 4,
+      "bbox": [
+        193.57298278808594,
+        635.7210693359375,
+        345.94549560546875,
+        734.6051025390625
+      ],
+      "width": 424,
+      "height": 276
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Fig. 5　CoordConv",
+      "filename": "fig5.png",
+      "page": 5,
+      "bbox": [
+        347.3739929199219,
+        146.08200073242188,
+        457.38397216796875,
+        296.49200439453125
+      ],
+      "width": 307,
+      "height": 419
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4　SAConv",
+      "filename": "fig4.png",
+      "page": 5,
+      "bbox": [
+        86.25299072265625,
+        463.0959777832031,
+        187.33599853515625,
+        586.5299682617188
+      ],
+      "width": 282,
+      "height": 344
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Fig. 6　Comparison",
+      "filename": "fig6.png",
+      "page": 6,
+      "bbox": [
+        42.78099060058594,
+        370.5240173339844,
+        154.39849853515625,
+        680.5560302734375
+      ],
+      "width": 311,
+      "height": 862
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "label": "Figure 8",
+      "caption": "Fig. 8　Comparison",
+      "filename": "fig8.png",
+      "page": 7,
+      "bbox": [
+        312.3559875488281,
+        81.65098571777344,
+        416.5874938964844,
+        260.5889892578125
+      ],
+      "width": 291,
+      "height": 498
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Fig. 7　Comparison",
+      "filename": "fig7.png",
+      "page": 7,
+      "bbox": [
+        41.04499816894531,
+        146.08200073242188,
+        148.67349243164062,
+        385.7640075683594
+      ],
+      "width": 299,
+      "height": 667
+    }
+  ]
+}

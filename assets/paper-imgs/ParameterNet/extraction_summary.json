@@ -1,0 +1,205 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Attn Modules\\2024 ParameterNet_Parameters_are_All_You_Need_for_Large-Scale_Visual_Pretraining_of_Mobile_Networks.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\ParameterNet",
+  "total_pages": 11,
+  "total_items": 12,
+  "total_figures": 4,
+  "total_tables": 8,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1. Results on ImageNet-1K validation set. The original GhostNet falls into the low FLOPs pitfall. The proposed ParameterNet\novercomes the low FLOPs pitfall.",
+      "filename": "fig1.png",
+      "page": 3,
+      "bbox": [
+        69.86299896240234,
+        66.99853515625,
+        525.3549194335938,
+        233.92901611328125
+      ],
+      "width": 1266,
+      "height": 464
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2. Low FLOPs pitfall. Swin Transformer results on ImageNet-1K validation set. The red and blue lines denote ImageNet-22K and\nImageNet-1K pretraining, respectively.",
+      "filename": "fig2.png",
+      "page": 3,
+      "bbox": [
+        60.058998107910156,
+        267.7650146484375,
+        317.5604553222656,
+        443.0409851074219
+      ],
+      "width": 717,
+      "height": 488
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3. Low FLOPs pitfall. EfficientNetV2 results on ImageNet-1K validation set. The red and blue lines denote ImageNet-22K and\nImageNet-1K pretraining, respectively.",
+      "filename": "fig3.png",
+      "page": 4,
+      "bbox": [
+        60.05799865722656,
+        67.00003051757812,
+        317.5594482421875,
+        242.2760009765625
+      ],
+      "width": 717,
+      "height": 487
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1. Training hyper-parameters on ImageNet datasets.",
+      "filename": "table1.png",
+      "page": 5,
+      "bbox": [
+        305.990966796875,
+        93.84201049804688,
+        547.9854125976562,
+        298.6333923339844
+      ],
+      "width": 674,
+      "height": 570
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2. ParameterNet results on ImageNet-1K val set by pretraining on ImageNet-1K and ImageNet-22K respectively.",
+      "filename": "table2.png",
+      "page": 6,
+      "bbox": [
+        45.11199951171875,
+        93.84201049804688,
+        550.1109619140625,
+        436.7983703613281
+      ],
+      "width": 1404,
+      "height": 954
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3. Comparison of ParameterNet and other SOTA models on ImageNet-1K val set. All the models are pretrained on large-scale visual\ndatasets such as ImageNet-22K, JFT-300M and IG-1B-Targeted.",
+      "filename": "table3.png",
+      "page": 6,
+      "bbox": [
+        126.35499572753906,
+        263.1699523925781,
+        466.624267578125,
+        436.7983703613281
+      ],
+      "width": 947,
+      "height": 483
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Figure 4. Performance comparison of the representative visual backbone networks with ImageNet-22K pretraining.",
+      "filename": "fig4.png",
+      "page": 7,
+      "bbox": [
+        49.09700012207031,
+        69.98902893066406,
+        562.0684814453125,
+        244.989990234375
+      ],
+      "width": 1426,
+      "height": 487
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4. ImageNet-1K val set results w.r.t. #Expert. The base\nnetwork architecture is GhostNet-300M.",
+      "filename": "table4.png",
+      "page": 7,
+      "bbox": [
+        54.69002914428711,
+        332.6669921875,
+        281.78802490234375,
+        468.08038330078125
+      ],
+      "width": 632,
+      "height": 377
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5. Results on ImageNet-1K val set of other neural network\narchitectures.",
+      "filename": "table5.png",
+      "page": 7,
+      "bbox": [
+        49.097015380859375,
+        586.9869384765625,
+        292.7528381347656,
+        695.0244140625
+      ],
+      "width": 678,
+      "height": 301
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6. Comparison of different approaches to construct ParameterNet on ImageNet-1K val set. The base network architecture is\nGhostNet-300M.",
+      "filename": "table6.png",
+      "page": 8,
+      "bbox": [
+        45.11199951171875,
+        104.80099487304688,
+        550.1112060546875,
+        355.2253723144531
+      ],
+      "width": 1404,
+      "height": 696
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "label": "Table 7",
+      "caption": "Table 7. ParameterNet (sparse-activated MoE) on LLaMA-1B. Given the SwiGLU activation function in LLaMA, there are three linear\nprojections in the FFN module. We added parameters at each linear projection, and we present the corresponding zero-shot results, except\nfor SST-2 (where we fine-tuned the classifier). The best results are in bold and the second best are underlined.",
+      "filename": "table7.png",
+      "page": 8,
+      "bbox": [
+        52.08599853515625,
+        231.86697387695312,
+        545.6504516601562,
+        355.2253723144531
+      ],
+      "width": 1372,
+      "height": 343
+    },
+    {
+      "type": "table",
+      "number": "8",
+      "label": "Table 8",
+      "caption": "Table 8. Network architecture of LLaMA-1B.",
+      "filename": "table8.png",
+      "page": 8,
+      "bbox": [
+        45.11199951171875,
+        231.86697387695312,
+        545.6504516601562,
+        478.5870056152344
+      ],
+      "width": 1391,
+      "height": 686
+    }
+  ]
+}

@@ -1,0 +1,141 @@
+{
+  "pdf_path": "pdf-papers/Improve YOLO12/YOLO_Crop_Detection_and_Counting/2023 基于TPH-YOLO的无人机图像麦穗计数方法.pdf",
+  "output_dir": "assets\\paper-imgs\\TPH-YOLO",
+  "total_pages": 7,
+  "total_items": 8,
+  "total_figures": 6,
+  "total_tables": 2,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "图3  TPH-YOLO 模型结构图  Fig.3  Structure of TPH-YOLO model",
+      "filename": "fig3.png",
+      "page": 3,
+      "bbox": [
+        201.55999755859375,
+        437.0799560546875,
+        395.8616943359375,
+        661.3999633789062
+      ],
+      "width": 541,
+      "height": 624
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "图4  迁移学习示意图  Fig.4  Diagram of transfer learning",
+      "filename": "fig4.png",
+      "page": 4,
+      "bbox": [
+        207.44000244140625,
+        234.8799285888672,
+        390.11358642578125,
+        389.35992431640625
+      ],
+      "width": 508,
+      "height": 430
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "表1  数据增强对检测结果的影响  Table 1  Effects of data enhancement on detection results",
+      "filename": "table1.png",
+      "page": 4,
+      "bbox": [
+        303.2799987792969,
+        479.4237060546875,
+        555.7718505859375,
+        552.9957885742188
+      ],
+      "width": 702,
+      "height": 206
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "表3  本研究模型与主流模型对比结果  Table 3  Comparisons between this model and the mainstream",
+      "filename": "table3.png",
+      "page": 5,
+      "bbox": [
+        37.599998474121094,
+        61.020606994628906,
+        292.0404052734375,
+        265.2713623046875
+      ],
+      "width": 708,
+      "height": 568
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "图6  不同模型在重叠问题上的检测结果示例  Fig.6  Examples of the results of different models detecting wheat",
+      "filename": "fig6.png",
+      "page": 5,
+      "bbox": [
+        308.55999755859375,
+        95.31993103027344,
+        552.3200073242188,
+        193.3999481201172
+      ],
+      "width": 678,
+      "height": 274
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "图7  麦穗数量计数值与真实值的拟合结果  Fig.7  Fitting result of counted value and true value of wheat ears",
+      "filename": "fig7.png",
+      "page": 5,
+      "bbox": [
+        360.2799987792969,
+        238.95993041992188,
+        500.5999755859375,
+        335.11993408203125
+      ],
+      "width": 391,
+      "height": 268
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "图5  部分图像麦穗检测结果  Fig.5  Examples of the results of different models",
+      "filename": "fig5.png",
+      "page": 5,
+      "bbox": [
+        48.19999694824219,
+        450.99993896484375,
+        286.6400146484375,
+        614.1199340820312
+      ],
+      "width": 664,
+      "height": 454
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "label": "Figure 8",
+      "caption": "图8  部分图像麦穗计数结果  Fig.8  Examples of the wheat ear counted results",
+      "filename": "fig8.png",
+      "page": 5,
+      "bbox": [
+        315.55999755859375,
+        504.63995361328125,
+        547.6718139648438,
+        693.3199462890625
+      ],
+      "width": 646,
+      "height": 525
+    }
+  ]
+}

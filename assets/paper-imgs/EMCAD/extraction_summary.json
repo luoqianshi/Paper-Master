@@ -1,0 +1,269 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Neck Feature Fusion\\2024 EMCAD Efficient Multi-scale Convolutional Attention Decoding for Medica Image Segmentation.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\EMCAD",
+  "total_pages": 14,
+  "total_items": 16,
+  "total_figures": 5,
+  "total_tables": 11,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1. Average DICE scores vs. #FLOPs for different methods\nover 10 binary medical image segmentation datasets. As shown,\nour approaches (PVT-EMCAD-B0 and PVT-EMCAD-B2) have\nthe lowest #FLOPs, yet the highest DICE scores.",
+      "filename": "fig1.png",
+      "page": 2,
+      "bbox": [
+        62.83000183105469,
+        66.99644470214844,
+        273.6495361328125,
+        223.0469970703125
+      ],
+      "width": 587,
+      "height": 434
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2. Hierarchical encoder with newly proposed EMCAD decoder architecture. (a) CNN or transformer encoder with four hierarchical\nstages, (b) EMCAD decoder, (c) Efficient up-convolution block (EUCB), (d) Multi-scale convolutional attention module (MSCAM), (e)\nMulti-scale convolution block (MSCB), (f) Multi-scale (parallel) depth-wise convolution (MSDC), (g) Large-kernel grouped attention gate\n(LGAG), (h) Channel attention block (CAB), and (i) Spatial attention block (SAB). X1, X2, X3, and X4 are the features from the four\nstages of the hierarchical encoder. p1, p2, p3, and p4 are output segmentation maps from four stages of our decoder.",
+      "filename": "fig2.png",
+      "page": 4,
+      "bbox": [
+        69.86299896240234,
+        67.00146484375,
+        525.3507690429688,
+        286.7239990234375
+      ],
+      "width": 1266,
+      "height": 611
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1. Results of binary medical image segmentation (i.e., polyp, skin lesion, cell, and breast cancer). We reproduce the results of SOTA\nmethods using their publicly available implementation with our train-val-test splits of 80:10:10. #FLOPs of all the methods are reported\nfor 256 × 256 inputs, except Swin-UNet (224 × 224). All results are averaged over five runs. Best results are shown in bold.",
+      "filename": "table1.png",
+      "page": 6,
+      "bbox": [
+        45.111968994140625,
+        300.4479675292969,
+        550.1150512695312,
+        718.4071044921875
+      ],
+      "width": 1404,
+      "height": 1162
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2. Results of abdomen organ segmentation on Synapse Multi-organ dataset. DICE scores are reported for individual organs. Results\nof UNet, AttnUNet, PolypPVT, SSFormerPVT, TransUNet, and SwinUNet are taken from [42]. ↑(↓) denotes the higher (lower) the better.\n‘−’ means missing data from the source. EMCAD results are averaged over five runs. Best results are shown in bold.",
+      "filename": "table2.png",
+      "page": 6,
+      "bbox": [
+        45.111968994140625,
+        533.3688354492188,
+        550.1150512695312,
+        718.4071044921875
+      ],
+      "width": 1404,
+      "height": 515
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3. Average DICE scores vs. #Params for different methods\nover 10 binary medical image segmentation datasets. As shown,\nour proposed approaches (PVT-EMCAD-B0 and PVT-EMCAD-\nB2) have the fewest parameters, yet the highest DICE scores.",
+      "filename": "fig3.png",
+      "page": 7,
+      "bbox": [
+        62.83000183105469,
+        66.99653625488281,
+        273.6466369628906,
+        227.6090087890625
+      ],
+      "width": 587,
+      "height": 447
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4. Effect of different components of EMCAD with PVTv2-\nb2 encoder on Synapse multi-organ dataset. #FLOPs are reported\nfor input resolution of 224 × 224 and 256 × 256. All results are\naveraged over five runs. Best results are shown in bold.",
+      "filename": "table4.png",
+      "page": 7,
+      "bbox": [
+        303.86199951171875,
+        199.82337951660156,
+        550.1152954101562,
+        718.4067993164062
+      ],
+      "width": 685,
+      "height": 1441
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3. Results of cardiac organ segmentation on ACDC dataset.\nDICE scores (%) are reported for individual organs. We get the\nresults of SwinUNet from [42]. Best results are shown in bold.",
+      "filename": "table3.png",
+      "page": 7,
+      "bbox": [
+        45.11199951171875,
+        477.7574462890625,
+        291.3651123046875,
+        718.4070434570312
+      ],
+      "width": 685,
+      "height": 669
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5. Effect of multi-scale kernels in the depth-wise convolution of MSDC on ClinicDB and Synapse multi-organ datasets. We use the\nPVTv2-b2 encoder for these experiments. All results are averaged over five runs. Best results are highlighted in bold.",
+      "filename": "table5.png",
+      "page": 8,
+      "bbox": [
+        45.11199951171875,
+        149.0385284423828,
+        550.1155395507812,
+        718.4067993164062
+      ],
+      "width": 1404,
+      "height": 1583
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6. Comparison with the baseline decoder on Synapse Multi-\norgan dataset. We only report the #FLOPs (with input resolution\nof 224 × 224) and the #parameters of the decoders. All the results\nare averaged over five runs. Best results are shown in bold.",
+      "filename": "table6.png",
+      "page": 8,
+      "bbox": [
+        45.11199951171875,
+        259.6043701171875,
+        291.3651428222656,
+        718.4067993164062
+      ],
+      "width": 685,
+      "height": 1275
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Figure 4. Qualitative results of multi-organ segmentation on Synapse Multi-organ dataset. The red rectangular box highlights incorrectly\nsegmented organs by SOTA methods.",
+      "filename": "fig4.png",
+      "page": 13,
+      "bbox": [
+        57.487998962402344,
+        67.00048828125,
+        537.7379760742188,
+        166.06298828125
+      ],
+      "width": 1335,
+      "height": 276
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Figure 5. Qualitative results of polyp segmentation. The red rectangular box highlights incorrectly segmented polyps by SOTA methods.",
+      "filename": "fig5.png",
+      "page": 13,
+      "bbox": [
+        106.98699951171875,
+        199.89794921875,
+        488.23797607421875,
+        481.74798583984375
+      ],
+      "width": 1060,
+      "height": 784
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "label": "Table 7",
+      "caption": "Table 7. Results of parallel and sequential depth-wise convolution\nin MSDC on Synapse multi-organ and ClinicDB datasets. All re-\nsults are averaged over five runs. Best results are in bold.",
+      "filename": "table7.png",
+      "page": 13,
+      "bbox": [
+        49.77672576904297,
+        516.02685546875,
+        288.05291748046875,
+        578.9229125976562
+      ],
+      "width": 663,
+      "height": 176
+    },
+    {
+      "type": "table",
+      "number": "8",
+      "label": "Table 8",
+      "caption": "Table 8. LGAG vs. AG (Attention gate) [41] on Synapse multi-\norgan dataset. The total #Params and #FLOPs of three AG/LGAGs\nin our decoder are reported for an input resolution of 256 × 256.\nAll results are averaged over five runs. Best results are in bold.",
+      "filename": "table8.png",
+      "page": 13,
+      "bbox": [
+        308.8835754394531,
+        516.2899780273438,
+        546.4365234375,
+        583.2314453125
+      ],
+      "width": 660,
+      "height": 187
+    },
+    {
+      "type": "table",
+      "number": "9",
+      "label": "Table 9",
+      "caption": "Table 9. Effect of transfer learning from ImageNet pre-trained weights on Synapse multi-organ dataset. ↑(↓) denotes the higher (lower)\nthe better. All results are averaged over five runs. Best results are in bold.",
+      "filename": "table9.png",
+      "page": 14,
+      "bbox": [
+        45.11199951171875,
+        210.97727966308594,
+        550.1157836914062,
+        718.406982421875
+      ],
+      "width": 1404,
+      "height": 1410
+    },
+    {
+      "type": "table",
+      "number": "10",
+      "label": "Table 10",
+      "caption": "Table 10. Effect of deep supervision (DS). PVT-EMCAD-B2 with\nDS achieves slightly better DICE scores in 6 out of 7 datasets.",
+      "filename": "table10.png",
+      "page": 14,
+      "bbox": [
+        45.11199951171875,
+        289.1255798339844,
+        291.358642578125,
+        446.22637939453125
+      ],
+      "width": 685,
+      "height": 437
+    },
+    {
+      "type": "table",
+      "number": "11",
+      "label": "Table 11",
+      "caption": "Table 11.\nEffect of input resolutions on Synapse multi-organ\ndataset. All results are averaged over five runs.",
+      "filename": "table11.png",
+      "page": 14,
+      "bbox": [
+        45.11199951171875,
+        455.1234436035156,
+        291.36517333984375,
+        718.406982421875
+      ],
+      "width": 685,
+      "height": 732
+    }
+  ]
+}

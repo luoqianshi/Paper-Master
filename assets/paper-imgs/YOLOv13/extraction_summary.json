@@ -1,0 +1,109 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO Family\\2025 YOLOv13 Real-Time Object Detection with Hypergraph-Enhanced Adaptive Visual Perception.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\YOLOv13",
+  "total_pages": 12,
+  "total_items": 6,
+  "total_figures": 6,
+  "total_tables": 0,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Fig. 1. Comparison of our proposed YOLOv13 model with previous YOLO\nmodels on the MS COCO dataset. Our proposed model can achieve higher\ndetection accuracy with lower computational complexity.",
+      "filename": "fig1.png",
+      "page": 1,
+      "bbox": [
+        352.4996032714844,
+        202.71054077148438,
+        498.59454345703125,
+        349.04400634765625
+      ],
+      "width": 406,
+      "height": 407
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Fig. 2. The network architecture of our proposed YOLOv13 model. Taking multi-scale features extracted from the backbone as input, HyperACE adaptively\nexplores high-order correlations and achieves feature enhancement and fusion. Then, the correlation-enhanced features are distributed to the entire network\nby FullPAD tunnels to achieve accurate object detection in complex scenes. The detailed structure of HyperACE is shown on the right.",
+      "filename": "fig2.png",
+      "page": 3,
+      "bbox": [
+        60.245872497558594,
+        47.226898193359375,
+        550.2151489257812,
+        354.8277893066406
+      ],
+      "width": 1362,
+      "height": 855
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Fig. 3. Details of the adaptive hypergraph construction and convolution.",
+      "filename": "fig3.png",
+      "page": 4,
+      "bbox": [
+        306.9779968261719,
+        51.07086181640625,
+        567.9682006835938,
+        264.0182189941406
+      ],
+      "width": 726,
+      "height": 593
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4. Detailed architecture of our proposed DS-series blocks.",
+      "filename": "fig4.png",
+      "page": 6,
+      "bbox": [
+        286.9779968261719,
+        45.0,
+        545.5794677734375,
+        243.64654541015625
+      ],
+      "width": 719,
+      "height": 552
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Fig. 5.\nQualitative comparison on MS COCO dataset [22]. From left to right: detection results generated from YOLOv10-N/S [16], YOLO11-N/S [17],\nYOLOv12-N/S [18], and our YOLOv13-N/S models, respectively. Our method can achieve better detection performance in complex scenes.",
+      "filename": "fig5.png",
+      "page": 8,
+      "bbox": [
+        43.9640007019043,
+        51.07011413574219,
+        567.9894409179688,
+        311.19488525390625
+      ],
+      "width": 1456,
+      "height": 724
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Fig. 6. Visualization of adaptive hyperedges. The hyperedges in the first and\nsecond columns mainly focus on the high-order interactions among objects in\nthe foreground. The third column mainly focuses on the interactions between\nthe background and the foreground targets. The visualization of these adaptive\nhyperedges can intuitively reflect the high-order visual correlations modeled\nby our YOLOv13.",
+      "filename": "fig6.png",
+      "page": 9,
+      "bbox": [
+        306.9779968261719,
+        51.068756103515625,
+        567.9910278320312,
+        244.3295440673828
+      ],
+      "width": 726,
+      "height": 538
+    }
+  ]
+}

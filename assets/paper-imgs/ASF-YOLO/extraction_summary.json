@@ -1,0 +1,205 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\UpSample Modules\\2024 ASF-YOLO A novel YOLO model with attentional scale sequence fusion for cell instance segmentation.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\ASF-YOLO",
+  "total_pages": 9,
+  "total_items": 12,
+  "total_figures": 7,
+  "total_tables": 5,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Fig. 1. Different cell images (left) and their feature maps (right).",
+      "filename": "fig1.png",
+      "page": 2,
+      "bbox": [
+        167.69900512695312,
+        50.939002990722656,
+        431.802978515625,
+        139.41900634765625
+      ],
+      "width": 735,
+      "height": 247
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Fig. 2. An abridged general view of the framework of YOLOv5 v7.0 and \nYOLOv8 for segmentation task. P1, P2, P3, P4, P5 represent different levels of \nfeatures output by the backbone. The head part clips the segmentation masks to \nbind them inside each of the detected bounding boxes, which ensures that the \nsegmentation masks do not flow out of the bounding boxes. The neck part is \nintentionally abridged due to the different structures between YOLOv5 \nand YOLOv8.",
+      "filename": "fig2.png",
+      "page": 2,
+      "bbox": [
+        35.67879867553711,
+        170.8059844970703,
+        290.31280517578125,
+        407.0099792480469
+      ],
+      "width": 708,
+      "height": 657
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Fig. 3. The overview of the proposed ASF-YOLO model. The framework is mainly comprised of the Scale Sequence Feature Fusion (SSFF) module, the Triple Feature \nEncoder (TFE) module, and the Channel and Position Attention Model (CPAM) based on the CSPDarkNet backbone and the YOLO head. CSP and Concat modules \ncome from YOLOv5.",
+      "filename": "fig3.png",
+      "page": 3,
+      "bbox": [
+        94.18589782714844,
+        50.514984130859375,
+        501.03692626953125,
+        319.4189758300781
+      ],
+      "width": 1131,
+      "height": 748
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4. The structure of TFE module. C represents the number of channels, and S represents the feature map size. Each triple feature encoder module uses three \nfeature maps of different sizes as input.",
+      "filename": "fig4.png",
+      "page": 4,
+      "bbox": [
+        121.6520004272461,
+        50.61799621582031,
+        473.2200012207031,
+        195.40199279785156
+      ],
+      "width": 978,
+      "height": 403
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Fig. 5. The structure of CPAM module. It contains channel and position attention networks. w and h represent width and height, respectively. ⊗denotes the \noperation of the Hadamard product.",
+      "filename": "fig5.png",
+      "page": 5,
+      "bbox": [
+        117.11699676513672,
+        50.64500427246094,
+        477.4779968261719,
+        239.4250030517578
+      ],
+      "width": 1002,
+      "height": 526
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1 \nPerformance comparison of different models for cell instance segmentation on \nthe DSB2018 dataset. The best results are in bold.",
+      "filename": "table1.png",
+      "page": 6,
+      "bbox": [
+        307.6050109863281,
+        80.74838256835938,
+        560.4048461914062,
+        221.7563934326172
+      ],
+      "width": 703,
+      "height": 392
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2 \nPerformance comparison of different models for cell instance segmentation on \nthe BCC dataset. The best results are in bold.",
+      "filename": "table2.png",
+      "page": 6,
+      "bbox": [
+        307.6050109863281,
+        80.74838256835938,
+        560.4048461914062,
+        221.7563934326172
+      ],
+      "width": 703,
+      "height": 392
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Fig. 6. Qualitative comparison of different instance segmentation models on the DSB2018 dataset.",
+      "filename": "fig6.png",
+      "page": 7,
+      "bbox": [
+        113.78399658203125,
+        50.623992919921875,
+        485.6895446777344,
+        347.42498779296875
+      ],
+      "width": 1034,
+      "height": 826
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3 \nAblation study of main components of the ASF-YOLO on the DSB2018 dataset.",
+      "filename": "table3.png",
+      "page": 7,
+      "bbox": [
+        38.5968017578125,
+        397.03741455078125,
+        564.0450439453125,
+        430.6822814941406
+      ],
+      "width": 1460,
+      "height": 95
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4 \nEffect of different attention mechanisms.",
+      "filename": "table4.png",
+      "page": 7,
+      "bbox": [
+        38.5968017578125,
+        397.03741455078125,
+        564.0450439453125,
+        495.1307067871094
+      ],
+      "width": 1460,
+      "height": 274
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Fig. 7. Qualitative comparison of different attentional mechanisms, for instance, segmentation on the DSB2018 dataset.",
+      "filename": "fig7.png",
+      "page": 8,
+      "bbox": [
+        122.19200134277344,
+        50.74596405029297,
+        473.16400146484375,
+        126.40596771240234
+      ],
+      "width": 976,
+      "height": 212
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5 \nEffect of different convolution modules in the backbone of the proposed ASF- \nYOLO. The best results are in bold.",
+      "filename": "table5.png",
+      "page": 8,
+      "bbox": [
+        38.5968017578125,
+        185.40341186523438,
+        288.4986267089844,
+        219.0482940673828
+      ],
+      "width": 695,
+      "height": 94
+    }
+  ]
+}

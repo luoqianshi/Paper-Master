@@ -1,0 +1,173 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Loss Functions\\2023 Wise-IoUv3_Bounding Box Regression Loss with Dynamic Focusing Mechanism.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\Wise-IoU",
+  "total_pages": 8,
+  "total_items": 10,
+  "total_figures": 10,
+  "total_tables": 0,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Fig. 1: The smallest enclosing box (green) and the central\npoints’ connection (red), where the area of the union is\nSu = wh + wgthgt −WiHi.",
+      "filename": "fig1.png",
+      "page": 1,
+      "bbox": [
+        351.864990234375,
+        170.62054443359375,
+        523.1489868164062,
+        306.697998046875
+      ],
+      "width": 477,
+      "height": 379
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Fig. 2: Some target boxes in 1-a, 1-b, and 1-c do not accurately label the instances. Our FM effectively blocks the inﬂuence\nof these low-quality examples and achieves ideal predictions. (a-c) Training data. (d-f) LW IoUv3.",
+      "filename": "fig2.png",
+      "page": 2,
+      "bbox": [
+        47.62200164794922,
+        61.03196716308594,
+        564.376953125,
+        312.6340026855469
+      ],
+      "width": 1436,
+      "height": 700
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Fig. 3: Regression results with different BBR losses guiding. It is clear that WIoU is optimal.",
+      "filename": "fig3.png",
+      "page": 3,
+      "bbox": [
+        81.15299987792969,
+        60.57221984863281,
+        530.8422241210938,
+        288.92401123046875
+      ],
+      "width": 1250,
+      "height": 635
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4: Anchor points (blue) and target boxes (purple) in\nsimulation experiments. (a) All cases. (b) Major cases.",
+      "filename": "fig4.png",
+      "page": 3,
+      "bbox": [
+        313.8190002441406,
+        344.3043212890625,
+        561.195556640625,
+        467.7080078125
+      ],
+      "width": 688,
+      "height": 344
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Fig. 5: Training results of BBR losses with different FMs. (a,d) Training data. (b,e) LW IoUv2. (c,f) LW IoUv3.",
+      "filename": "fig5.png",
+      "page": 5,
+      "bbox": [
+        47.62200164794922,
+        61.032005310058594,
+        564.376953125,
+        380.1700134277344
+      ],
+      "width": 1436,
+      "height": 888
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Fig. 6: LIoU curves of BBR losses without FMs in\nsimulation experiments. (a) All cases. (b) Major cases.",
+      "filename": "fig6.png",
+      "page": 5,
+      "bbox": [
+        37.345001220703125,
+        507.0135498046875,
+        301.5324401855469,
+        610.77099609375
+      ],
+      "width": 735,
+      "height": 289
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Fig. 7: The partial labels of the dataset. (a-c) Controversial label. (d) Error label. (e-f) Incomplete label.",
+      "filename": "fig7.png",
+      "page": 6,
+      "bbox": [
+        47.62200164794922,
+        61.032005310058594,
+        564.376953125,
+        339.8500061035156
+      ],
+      "width": 1436,
+      "height": 776
+    },
+    {
+      "type": "figure",
+      "number": "9",
+      "label": "Figure 9",
+      "caption": "Fig. 9: The epoch t when AP’s ascension slowed\nsigniﬁcantly.",
+      "filename": "fig9.png",
+      "page": 6,
+      "bbox": [
+        373.88800048828125,
+        385.8381652832031,
+        484.68988037109375,
+        489.3299865722656
+      ],
+      "width": 309,
+      "height": 289
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "label": "Figure 8",
+      "caption": "Fig. 8: The mapping of outlier degree β and gradient gain r,\nwhich is controlled by the hyper-parameters α, δ.",
+      "filename": "fig8.png",
+      "page": 6,
+      "bbox": [
+        55.266998291015625,
+        551.4736328125,
+        281.2652587890625,
+        688.4559936523438
+      ],
+      "width": 629,
+      "height": 382
+    },
+    {
+      "type": "figure",
+      "number": "10",
+      "label": "Figure 10",
+      "caption": "Fig. 10: AP curves of the models during training, where the difference of AP is the leading value of the model trained by\nWIoU v3.",
+      "filename": "fig10.png",
+      "page": 7,
+      "bbox": [
+        40.78099822998047,
+        51.06764221191406,
+        554.7877197265625,
+        189.885009765625
+      ],
+      "width": 1429,
+      "height": 387
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO12_Applications\\2026_改进YOLOv12的水面垃圾检测方法_朱宇凡.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\YOLOv12-Water-Debris",
+  "total_pages": 11,
+  "total_items": 3,
+  "total_figures": 0,
+  "total_tables": 3,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1\nModel parameters",
+      "filename": "table1.png",
+      "page": 6,
+      "bbox": [
+        347.7043762207031,
+        518.60009765625,
+        502.96380615234375,
+        629.0269775390625
+      ],
+      "width": 433,
+      "height": 308
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3\nResults of ablation experimen",
+      "filename": "table3.png",
+      "page": 7,
+      "bbox": [
+        302.7357482910156,
+        113.7423095703125,
+        549.14599609375,
+        433.06658935546875
+      ],
+      "width": 686,
+      "height": 888
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4\nComparison of experimental results of different models",
+      "filename": "table4.png",
+      "page": 8,
+      "bbox": [
+        46.12165069580078,
+        113.74224853515625,
+        554.1654663085938,
+        534.256591796875
+      ],
+      "width": 1412,
+      "height": 1170
+    }
+  ]
+}

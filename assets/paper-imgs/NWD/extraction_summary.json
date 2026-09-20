@@ -1,0 +1,109 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Loss Functions\\2021 A Normalized Gaussian Wasserstein Distance for Tiny Object Detection.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\NWD",
+  "total_pages": 12,
+  "total_items": 6,
+  "total_figures": 2,
+  "total_tables": 4,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2: A comparison between IoU-Deviation Curve and NWD-Deviation Curve in two different\nscenarios. The abscissa value denotes the number of pixels deviation between the center points of A\nand B, the ordinate value denotes the corresponding metric value. Note that the location of bounding\nbox can only change discretely, the Value-Deviation curve is presented in the form of scatter diagram.",
+      "filename": "fig2.png",
+      "page": 5,
+      "bbox": [
+        106.1619873046875,
+        71.98088073730469,
+        504.59033203125,
+        321.46600341796875
+      ],
+      "width": 1108,
+      "height": 694
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2: Ablation experiments when NWD is applied to single module.",
+      "filename": "table2.png",
+      "page": 8,
+      "bbox": [
+        155.68600463867188,
+        90.03047180175781,
+        453.82354736328125,
+        198.06210327148438
+      ],
+      "width": 829,
+      "height": 301
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3: Ablation experiments when NWD is applied to multiple modules.",
+      "filename": "table3.png",
+      "page": 8,
+      "bbox": [
+        102.25299835205078,
+        224.87147521972656,
+        510.24530029296875,
+        727.3828735351562
+      ],
+      "width": 1134,
+      "height": 1397
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3: Visualization of detection results using IoU-based detector (ﬁrst row) and NWD-based\ndetector (second row) of AI-TOD dataset. The green, blue and red boxes denote true positive (TP),\nfalse positive (FP) and false negative (FN) predictions, respectively.",
+      "filename": "fig3.png",
+      "page": 9,
+      "bbox": [
+        106.052001953125,
+        71.97901153564453,
+        505.9500732421875,
+        271.0110168457031
+      ],
+      "width": 1112,
+      "height": 554
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4: Quantitative comparison of the baselines and NWD (with *) on AI-TOD test set.\nMethod\nBackbone\nAP\nAP0.5\nAP0.75\nAPvt\nAPt\nAPs\nAPm\nSSD-512 [18]\nResNet-50\n7.0\n21.7\n2.8\n1.0\n4.7\n11.5\n13.5\nTridentNet [13]\nResNet-50\n7.5\n20.9\n3.6\n1.0\n5.8\n12.6\n14.0\nFoveaBox [11]\nResNet-50\n8.1\n19.8\n5.1\n0.9\n5.8\n13.4\n15.9\nPepPonits [33]\nResNet-50\n9.2\n23.6\n5.3\n2.5\n9.2\n12.9\n14.4\nFCOS [27]\nResNet-50\n9.8\n24.1\n5.9\n1.4\n8.0\n15.1\n17.4\nCenterNet [39]\nDLA-34\n13.4\n39.2\n5.0\n3.8\n12.1\n17.7\n18.9\nM-CenterNet [29]\nDLA-34\n14.5\n40.7\n6.4\n6.1\n15.0\n19.4\n20.4\nRetinaNet [15]\nResNet-50\n4.7\n13.6\n2.1\n2.0\n5.4\n6.3\n7.6\nRetinaNet*\nResNet-50\n9.2\n24.9\n5.0\n3.2\n10.0\n13.1\n16.9\nATSS [36]\nResNet-50\n12.8\n30.6\n8.5\n1.9\n11.6\n19.5\n29.2\nATSS*\nResNet-50\n13.5\n33.2\n8.6\n2.1\n11.1\n20.9\n31.9\nFaster R-CNN [21]\nResNet-50\n11.1\n26.3\n7.6\n0.0\n7.2\n23.3\n33.6\nFaster R-CNN*\nResNet-50\n17.8\n43.8\n11.0\n2.5\n17.0\n26.1\n34.3\nCascade R-CNN [2]\nResNet-50\n13.8\n30.8\n10.5\n0.0\n10.6\n25.5\n36.6\nCascade R-CNN*\nResNet-50\n18.7\n44.2\n12.9\n3.6\n17.4\n26.5\n35.6\nDetectoRS [20]\nResNet-50\n14.8\n32.8\n11.4\n0.0\n10.8\n28.3\n38.0\nDetectoRS*\nResNet-50\n20.8\n49.3\n14.3\n6.4\n19.7\n29.6\n38.3",
+      "filename": "table4.png",
+      "page": 9,
+      "bbox": [
+        102.67105865478516,
+        559.89306640625,
+        510.246826171875,
+        727.4070434570312
+      ],
+      "width": 1133,
+      "height": 466
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5: Quantitative comparison of the baselines and NWD (with *) on VisDrone2019 val set.",
+      "filename": "table5.png",
+      "page": 10,
+      "bbox": [
+        102.64099884033203,
+        79.61048889160156,
+        510.2421569824219,
+        260.6560974121094
+      ],
+      "width": 1133,
+      "height": 504
+    }
+  ]
+}

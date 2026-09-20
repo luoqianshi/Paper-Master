@@ -1,0 +1,429 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO_Crop_Detection_and_Counting\\2023 UAV remote sensing detection of tea leaf blight based on DDMA-YOLO.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\DDMA-YOLO",
+  "total_pages": 17,
+  "total_items": 26,
+  "total_figures": 22,
+  "total_tables": 4,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Fig. 1. Data acquisition area.",
+      "filename": "fig1.png",
+      "page": 2,
+      "bbox": [
+        225.12899780273438,
+        496.39569091796875,
+        374.38824462890625,
+        731.1796875
+      ],
+      "width": 415,
+      "height": 654
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Fig. 2. Examples of UAV tea images.",
+      "filename": "fig2.png",
+      "page": 3,
+      "bbox": [
+        212.88299560546875,
+        50.4029541015625,
+        386.62152099609375,
+        217.93896484375
+      ],
+      "width": 483,
+      "height": 466
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Fig. 3. Examples of cut tea images. (a) Image examples of healthy tea. (b) Image examples of TLB.",
+      "filename": "fig3.png",
+      "page": 3,
+      "bbox": [
+        112.99000549316406,
+        516.2763671875,
+        486.48150634765625,
+        731.2363891601562
+      ],
+      "width": 1039,
+      "height": 598
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4. RCAN network structure of the image super resolution algorithm.",
+      "filename": "fig4.png",
+      "page": 4,
+      "bbox": [
+        154.7729949951172,
+        50.418975830078125,
+        444.68328857421875,
+        292.5469970703125
+      ],
+      "width": 807,
+      "height": 673
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Fig. 5. Super resolution results of some images. (a) Low resolution images: 640 × 640. (b) High resolution images: 1280 × 1280.",
+      "filename": "fig5.png",
+      "page": 4,
+      "bbox": [
+        108.38600158691406,
+        507.5404052734375,
+        486.88201904296875,
+        731.2364501953125
+      ],
+      "width": 1052,
+      "height": 623
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Fig. 6. Schematic of Retinex.",
+      "filename": "fig6.png",
+      "page": 5,
+      "bbox": [
+        90.8239974975586,
+        50.398956298828125,
+        239.65574645996094,
+        151.55096435546875
+      ],
+      "width": 414,
+      "height": 282
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Fig. 7. Overall algorithm flow of Retinex.",
+      "filename": "fig7.png",
+      "page": 5,
+      "bbox": [
+        205.0030059814453,
+        616.2603759765625,
+        394.4826965332031,
+        731.2363891601562
+      ],
+      "width": 527,
+      "height": 321
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "label": "Figure 8",
+      "caption": "Fig. 8. Images before and after Retinex processing. (a) Original images. (b) Images processed by Retinex.",
+      "filename": "fig8.png",
+      "page": 6,
+      "bbox": [
+        108.44300079345703,
+        50.407989501953125,
+        486.8429870605469,
+        266.8079833984375
+      ],
+      "width": 1052,
+      "height": 602
+    },
+    {
+      "type": "figure",
+      "number": "9",
+      "label": "Figure 9",
+      "caption": "Fig. 9. Data augmentation. (a) Offline data augmentation. (b) Online data augmentation.",
+      "filename": "fig9.png",
+      "page": 6,
+      "bbox": [
+        128.69400024414062,
+        295.4930114746094,
+        470.8302001953125,
+        544.7730102539062
+      ],
+      "width": 951,
+      "height": 694
+    },
+    {
+      "type": "figure",
+      "number": "10",
+      "label": "Figure 10",
+      "caption": "Fig. 10. Size distribution of diseased tea leave.",
+      "filename": "fig10.png",
+      "page": 7,
+      "bbox": [
+        62.023597717285156,
+        50.42901611328125,
+        268.4645690917969,
+        254.1090087890625
+      ],
+      "width": 574,
+      "height": 566
+    },
+    {
+      "type": "figure",
+      "number": "11",
+      "label": "Figure 11",
+      "caption": "Fig. 11. Overall frame structure of the DDMA-YOLO network model.",
+      "filename": "fig11.png",
+      "page": 7,
+      "bbox": [
+        161.406005859375,
+        313.8840026855469,
+        438.05487060546875,
+        555.1480102539062
+      ],
+      "width": 769,
+      "height": 672
+    },
+    {
+      "type": "figure",
+      "number": "12",
+      "label": "Figure 12",
+      "caption": "Fig. 12. RFB structure.",
+      "filename": "fig12.png",
+      "page": 7,
+      "bbox": [
+        235.16400146484375,
+        582.996337890625,
+        364.3546142578125,
+        731.236328125
+      ],
+      "width": 360,
+      "height": 413
+    },
+    {
+      "type": "figure",
+      "number": "13",
+      "label": "Figure 13",
+      "caption": "Fig. 13. CBAM structure.",
+      "filename": "fig13.png",
+      "page": 8,
+      "bbox": [
+        231.59201049804688,
+        50.4439697265625,
+        367.86883544921875,
+        128.98797607421875
+      ],
+      "width": 379,
+      "height": 219
+    },
+    {
+      "type": "figure",
+      "number": "14",
+      "label": "Figure 14",
+      "caption": "Fig. 14. DDMA module. (a) DDMA structure. (b) Channel attention module. (c) Spatial attention module. (d) Coordinate attention module.",
+      "filename": "fig14.png",
+      "page": 8,
+      "bbox": [
+        94.26930236816406,
+        157.01898193359375,
+        500.98931884765625,
+        541.9949951171875
+      ],
+      "width": 1131,
+      "height": 1070
+    },
+    {
+      "type": "figure",
+      "number": "15",
+      "label": "Figure 15",
+      "caption": "Fig. 15. The curves of the model training.",
+      "filename": "fig15.png",
+      "page": 9,
+      "bbox": [
+        204.26600646972656,
+        50.441986083984375,
+        395.20538330078125,
+        375.6579895019531
+      ],
+      "width": 531,
+      "height": 904
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3 \nInfluence of super resolution RCAN on test results.",
+      "filename": "table3.png",
+      "page": 11,
+      "bbox": [
+        32.587398529052734,
+        71.22341918945312,
+        296.02142333984375,
+        222.8538818359375
+      ],
+      "width": 733,
+      "height": 423
+    },
+    {
+      "type": "figure",
+      "number": "16",
+      "label": "Figure 16",
+      "caption": "Fig. 16. Effect of super resolution RCAN on detection. (a) Examples of the detection results before super resolution. (b) To better observe the results of (a), simply \nenlarge the image of (a). (c) Examples of the detection results after super resolution.",
+      "filename": "fig16.png",
+      "page": 11,
+      "bbox": [
+        86.95590209960938,
+        229.68728637695312,
+        508.3638916015625,
+        721.6552734375
+      ],
+      "width": 1172,
+      "height": 1367
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4 \nAblation experiments of different modules.",
+      "filename": "table4.png",
+      "page": 12,
+      "bbox": [
+        38.5968017578125,
+        71.22341918945312,
+        558.560302734375,
+        130.4817123413086
+      ],
+      "width": 1445,
+      "height": 166
+    },
+    {
+      "type": "figure",
+      "number": "17",
+      "label": "Figure 17",
+      "caption": "Fig. 17. Test results of different modules. (a) Examples of detection results with YOLOv5. (b) Examples of detection results with YOLOv5 + RFB. (c) Examples of \ndetection results with YOLOv5 + DDMA. (d) Examples of detection results with YOLOv5 + RFB + DDMA(DDMA-YOLO).",
+      "filename": "fig17.png",
+      "page": 12,
+      "bbox": [
+        108.38600158691406,
+        145.1199951171875,
+        486.88201904296875,
+        693.5360107421875
+      ],
+      "width": 1052,
+      "height": 1524
+    },
+    {
+      "type": "figure",
+      "number": "18",
+      "label": "Figure 18",
+      "caption": "Fig. 18. Comparative results of our proposed model with Faster R-CNN, RetinaNet and SSD. The blue box represents the label, and the red box represents the test \nresult. (a) – (d) Examples of detection results with Faster R-CNN, RetinaNet, SSD, and our proposed model. (For interpretation of the references to color in this figure \nlegend, the reader is referred to the web version of this article.)",
+      "filename": "fig18.png",
+      "page": 13,
+      "bbox": [
+        108.38600158691406,
+        52.6160888671875,
+        486.88201904296875,
+        606.0579833984375
+      ],
+      "width": 1052,
+      "height": 1538
+    },
+    {
+      "type": "figure",
+      "number": "19",
+      "label": "Figure 19",
+      "caption": "Fig. 19. Comparative results of our proposed model with YOLOv3, YOLOv4 and YOLOv5. The blue box represents the label, and the red box represents the test \nresult. (a) – (d) Examples of detection results with YOLOv3, YOLOv4, YOLOv5 and our proposed model. (For interpretation of the references to color in this figure \nlegend, the reader is referred to the web version of this article.)",
+      "filename": "fig19.png",
+      "page": 14,
+      "bbox": [
+        108.38600158691406,
+        60.55303955078125,
+        486.88201904296875,
+        613.93896484375
+      ],
+      "width": 1052,
+      "height": 1538
+    },
+    {
+      "type": "figure",
+      "number": "20",
+      "label": "Figure 20",
+      "caption": "Fig. 20. Comparison of the AP values of different detection models.",
+      "filename": "fig20.png",
+      "page": 15,
+      "bbox": [
+        39.10710144042969,
+        50.43798828125,
+        287.13909912109375,
+        224.74200439453125
+      ],
+      "width": 690,
+      "height": 485
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5 \nComparison of test results of different attention modules.",
+      "filename": "table5.png",
+      "page": 15,
+      "bbox": [
+        32.587398529052734,
+        273.4474182128906,
+        296.0317687988281,
+        603.9422607421875
+      ],
+      "width": 733,
+      "height": 919
+    },
+    {
+      "type": "figure",
+      "number": "21",
+      "label": "Figure 21",
+      "caption": "Fig. 21. Heap map of some detection images.",
+      "filename": "fig21.png",
+      "page": 15,
+      "bbox": [
+        198.82400512695312,
+        610.5869750976562,
+        400.6814270019531,
+        716.905029296875
+      ],
+      "width": 562,
+      "height": 296
+    },
+    {
+      "type": "figure",
+      "number": "22",
+      "label": "Figure 22",
+      "caption": "Fig. 22. Visualization results of some tea images.",
+      "filename": "fig22.png",
+      "page": 16,
+      "bbox": [
+        192.81399536132812,
+        50.40496826171875,
+        406.63385009765625,
+        192.59698486328125
+      ],
+      "width": 595,
+      "height": 395
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6 \nRCAN reconstruction results.",
+      "filename": "table6.png",
+      "page": 16,
+      "bbox": [
+        108.38600158691406,
+        50.40496826171875,
+        158.69984436035156,
+        192.59698486328125
+      ],
+      "width": 140,
+      "height": 395
+    }
+  ]
+}

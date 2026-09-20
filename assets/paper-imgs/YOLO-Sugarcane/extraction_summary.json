@@ -1,0 +1,61 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO_Sugarcane_Detection_and_Counting\\2025 YOLO—Sugarcane_用于快速检测复杂背景下甘蔗植株的轻量级神经网络_张志鹏.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\YOLO-Sugarcane",
+  "total_pages": 8,
+  "total_items": 3,
+  "total_figures": 3,
+  "total_tables": 0,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Fig. 2 Sugarcane data set",
+      "filename": "fig2.png",
+      "page": 3,
+      "bbox": [
+        100.80772399902344,
+        193.2880096435547,
+        245.9649200439453,
+        377.0078125
+      ],
+      "width": 404,
+      "height": 512
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4 Workflow of Bneck module",
+      "filename": "fig4.png",
+      "page": 4,
+      "bbox": [
+        83.95771789550781,
+        81.20309448242188,
+        262.7427215576172,
+        361.923095703125
+      ],
+      "width": 497,
+      "height": 781
+    },
+    {
+      "type": "figure",
+      "number": "9",
+      "label": "Figure 9",
+      "caption": "Fig. 9 Actual detection results for different network models",
+      "filename": "fig9.png",
+      "page": 7,
+      "bbox": [
+        344.09259033203125,
+        81.2031021118164,
+        534.0925903320312,
+        448.0110168457031
+      ],
+      "width": 529,
+      "height": 1020
+    }
+  ]
+}

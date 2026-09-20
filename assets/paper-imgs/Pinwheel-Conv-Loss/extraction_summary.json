@@ -1,0 +1,189 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Loss Functions\\2025 Pinwheel-shaped Convolution and Scale-based Dynamic Loss for Infrared Small Target Detection.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\Pinwheel-Conv-Loss",
+  "total_pages": 9,
+  "total_items": 11,
+  "total_figures": 7,
+  "total_tables": 4,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1: Grayscale 3D view of infrared small target.",
+      "filename": "fig1.png",
+      "page": 1,
+      "bbox": [
+        314.5,
+        211.0005645751953,
+        562.9989624023438,
+        394.2019958496094
+      ],
+      "width": 691,
+      "height": 510
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2: Visualization of BBox and mask label errors.",
+      "filename": "fig2.png",
+      "page": 2,
+      "bbox": [
+        72.8499984741211,
+        49.00163269042969,
+        273.64056396484375,
+        207.718994140625
+      ],
+      "width": 559,
+      "height": 441
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3: Architecture of the pinwheel-shaped convolutional module. Best viewed in color.",
+      "filename": "fig3.png",
+      "page": 3,
+      "bbox": [
+        100.04499816894531,
+        48.99937438964844,
+        511.97119140625,
+        190.8709716796875
+      ],
+      "width": 1146,
+      "height": 395
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Figure 5: (a) The value of weight βB in Sloss and Lloss con-\ncerning the target BBox area. (b) The value of weight βM in\nSloss and Lloss concerning the target mask area.",
+      "filename": "fig5.png",
+      "page": 4,
+      "bbox": [
+        314.5,
+        48.99981689453125,
+        562.9927368164062,
+        167.35400390625
+      ],
+      "width": 691,
+      "height": 329
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Figure 4: Visualization of PConv and Conv output results.",
+      "filename": "fig4.png",
+      "page": 4,
+      "bbox": [
+        49.0,
+        49.000640869140625,
+        297.4927062988281,
+        207.7349853515625
+      ],
+      "width": 691,
+      "height": 442
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1: We evaluate various convolution modules by replacing the first two standard layers in YOLOv8n-p2 (using CIoU loss)\ndetection and MSHNet (using SLS loss) segmentation frameworks. PConv uses different ”fanleaf” lengths (e.g., ’4, 3’ means\nthe first PConv kernel is 4 and the second is 3). Detection results are evaluated by P(%), R(%), and mAP50(%). Params(M)\nindicates the number of parameters. Segmentation results are evaluated by IoU(%), Pd(%), and Fa(10−6) ↓(where ↓means\nlower is better). Results are highlighted in bold for the best performance and underlined for the second-best performance.",
+      "filename": "table1.png",
+      "page": 6,
+      "bbox": [
+        49.0,
+        311.9111633300781,
+        563.0146484375,
+        709.4071044921875
+      ],
+      "width": 1428,
+      "height": 1105
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2: Comparative experiments are conducted on\nYOLOv8n-p2 using various BBox loss and our SDB(δ) loss.",
+      "filename": "table2.png",
+      "page": 6,
+      "bbox": [
+        58.22099304199219,
+        311.9111633300781,
+        288.280029296875,
+        451.4681701660156
+      ],
+      "width": 640,
+      "height": 389
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3: Comparative experiments are conducted on MSH-\nNet using various mask loss and our SDM(δ) loss.",
+      "filename": "table3.png",
+      "page": 6,
+      "bbox": [
+        324.16400146484375,
+        311.9111633300781,
+        553.3367309570312,
+        418.5911865234375
+      ],
+      "width": 638,
+      "height": 297
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4: Ablation study on detection and segmentation models. The baseline losses are CIoU for detection and SLS for seg-\nmentation. ”\"” indicates that our method is used, while ”%” means the original method is used.",
+      "filename": "table4.png",
+      "page": 7,
+      "bbox": [
+        49.0,
+        320.95513916015625,
+        562.9921264648438,
+        465.78399658203125
+      ],
+      "width": 1428,
+      "height": 403
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Figure 7: Result visualization of IRST segmentation models.",
+      "filename": "fig7.png",
+      "page": 7,
+      "bbox": [
+        314.5,
+        320.95513916015625,
+        562.9921264648438,
+        455.64898681640625
+      ],
+      "width": 691,
+      "height": 375
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Figure 6: Result visualization of IRST detection models.",
+      "filename": "fig6.png",
+      "page": 7,
+      "bbox": [
+        49.0,
+        320.9556884765625,
+        297.4964294433594,
+        465.78399658203125
+      ],
+      "width": 691,
+      "height": 403
+    }
+  ]
+}

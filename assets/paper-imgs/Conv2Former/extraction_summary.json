@@ -1,0 +1,285 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Attn Modules\\2024 Conv2Former A Simple Transformer-Style ConvNet for Visual Recognition.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\Conv2Former",
+  "total_pages": 12,
+  "total_items": 17,
+  "total_figures": 4,
+  "total_tables": 13,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1. Comparison between the self-attention mechanism and\nthe proposed convolutional modulation operation. Instead of gen-\nerating attention matrices via a matrix multiplication between the\nquery and key, we directly produce weights using a k × k depth-\nwise convolution to reweigh the value via the Hadamard product\n(⊙: Hadamard product; ⊗: matrix multiplication).",
+      "filename": "fig1.png",
+      "page": 1,
+      "bbox": [
+        314.1775817871094,
+        219.77920532226562,
+        539.0414428710938,
+        399.41485595703125
+      ],
+      "width": 626,
+      "height": 500
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2. Overall architecture of Conv2Former. Like most previous ConvNets and Swin Transformer, we adopt a pyramid structure with\nfour stages. In each stage, different numbers of convolutional blocks are used. This ﬁgure shows the setting of the proposed Conv2Former-\nT, where {L1, L2, L3, L4} = {3, 3, 12, 3}.",
+      "filename": "fig2.png",
+      "page": 3,
+      "bbox": [
+        43.21526336669922,
+        65.1661148071289,
+        552.9700317382812,
+        180.40097045898438
+      ],
+      "width": 1417,
+      "height": 321
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1. Brief conﬁgurations of the proposed Conv2Former. We\nimplement 5 variants with numbers of parameters 15M, 27M,\n50M, 90M, and 199M, respectively.",
+      "filename": "table1.png",
+      "page": 3,
+      "bbox": [
+        45.11199951171875,
+        360.66485595703125,
+        291.3651428222656,
+        718.4069213867188
+      ],
+      "width": 685,
+      "height": 995
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2. Stage comparison with three popular models. Slightly\nadjusting the number of convolutional blocks as shown in the last\nrow improves the performance.",
+      "filename": "table2.png",
+      "page": 3,
+      "bbox": [
+        303.86199951171875,
+        360.7054748535156,
+        550.1163330078125,
+        718.4069213867188
+      ],
+      "width": 685,
+      "height": 995
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3. Spatial encoding process comparison with self-attention and typical convolutional blocks. Our method uses the convolutional\nfeatures from the depthwise convolution as weights to modulate the value representations, as shown in the right linear layer in (d).",
+      "filename": "fig3.png",
+      "page": 4,
+      "bbox": [
+        66.1068344116211,
+        64.85137939453125,
+        526.9517211914062,
+        219.3217315673828
+      ],
+      "width": 1281,
+      "height": 430
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4. Top-1 accuracy results on ImageNet [15] with pretraining\non the ImageNet-22k dataset. We can observe consistent improve-\nment compared to ConvNeXt. Our Conv2Former-L also performs\nbetter than EfﬁcientNetV2-XL and CoAtNet-3.",
+      "filename": "table4.png",
+      "page": 5,
+      "bbox": [
+        303.8619384765625,
+        367.9464111328125,
+        550.1151733398438,
+        718.4070434570312
+      ],
+      "width": 685,
+      "height": 974
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3.\nTop-1 accuracy result comparison on ImageNet [15].\nCompared to previous popular Transformers and ConvNets, our\nConv2Former achieves a surprisingly good results for network\nvariants with different model sizes.",
+      "filename": "table3.png",
+      "page": 5,
+      "bbox": [
+        45.11198043823242,
+        370.0163879394531,
+        291.3663635253906,
+        718.4068603515625
+      ],
+      "width": 685,
+      "height": 969
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5. Comparison with the recent state-of-the-art ConvNets\nwith different kernel sizes. We can see that without any other train-\ning techniques, like re-parameterization or using sparse weights,\nour Conv2Former with kernel size 11×11 achieves the best result.\nThese experiments indicate that our convolutional modulation op-\neration can more efﬁciently encode the spatial information. More\nresults with different kernel sizes can be found in Sec. 4.3.",
+      "filename": "table5.png",
+      "page": 6,
+      "bbox": [
+        303.8618469238281,
+        254.13336181640625,
+        550.11572265625,
+        718.40673828125
+      ],
+      "width": 685,
+      "height": 1291
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Figure 4. Ablative experiments. For both Conv2Former-T and Conv2Former-B, we can observe a consistent performance improvement\nwhen increasing the kernel size from 5×5 to 21×21. When replacing the Hadamard product with the element-wise summation operation,\nthe performance drops for all four variants of our Conv2Former.",
+      "filename": "fig4.png",
+      "page": 7,
+      "bbox": [
+        62.75800323486328,
+        67.00091552734375,
+        532.4681396484375,
+        236.63702392578125
+      ],
+      "width": 1306,
+      "height": 472
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6. Performance comparison when different fusion strate-\ngies are used in our convolutional modulation block. All results\nare based on Conv2Former-T. We can see that using the simple\nHadamard product yields the best result.",
+      "filename": "table6.png",
+      "page": 7,
+      "bbox": [
+        45.11199951171875,
+        449.16082763671875,
+        291.3651428222656,
+        718.406982421875
+      ],
+      "width": 685,
+      "height": 749
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "label": "Table 7",
+      "caption": "Table 7. Comparisons among our isotropic Conv2Former, Con-\nvNeXt, and ViT. ‘3 Convs’ means that we use three convolutional\nlayers for patch embedding at the beginning of the network as done\nin [14,43,99]. For both the small-sized and base-sized models, our\nConv2Former achieves better results with comparable parameters\nand computations to other methods.",
+      "filename": "table7.png",
+      "page": 7,
+      "bbox": [
+        303.86199951171875,
+        508.51544189453125,
+        550.1151733398438,
+        718.4070434570312
+      ],
+      "width": 685,
+      "height": 584
+    },
+    {
+      "type": "table",
+      "number": "8",
+      "label": "Table 8",
+      "caption": "Table 8. COCO [48] object detection and instance segmentation\nresults using Mask R-CNN [29] and Cascade Mask R-CNN [6].\nWe report results using the ImageNet-1k dataset pretrained mod-\nels.",
+      "filename": "table8.png",
+      "page": 8,
+      "bbox": [
+        48.5419921875,
+        68.03097534179688,
+        287.4337158203125,
+        273.41351318359375
+      ],
+      "width": 665,
+      "height": 572
+    },
+    {
+      "type": "table",
+      "number": "9",
+      "label": "Table 9",
+      "caption": "Table 9. Comparisons with Swin-T and ConvNeXt on the ADE20k\ndataset [97]. For all results, we use UperNet [82] as the decoder.\nAt all model sizes, our Conv2Former achieves the best results.",
+      "filename": "table9.png",
+      "page": 8,
+      "bbox": [
+        305.96600341796875,
+        71.83999633789062,
+        548.0075073242188,
+        248.8963623046875
+      ],
+      "width": 674,
+      "height": 493
+    },
+    {
+      "type": "table",
+      "number": "10",
+      "label": "Table 10",
+      "caption": "Table 10. Stochastic depth rate for (pre)training on ImageNet-\n1k/22k.",
+      "filename": "table10.png",
+      "page": 9,
+      "bbox": [
+        45.11199951171875,
+        67.78716278076172,
+        291.3651123046875,
+        275.74237060546875
+      ],
+      "width": 685,
+      "height": 578
+    },
+    {
+      "type": "table",
+      "number": "13",
+      "label": "Table 13",
+      "caption": "Table 13. Stochastic depth rate for ﬁnetuning on Ade20k.",
+      "filename": "table13.png",
+      "page": 9,
+      "bbox": [
+        307.135009765625,
+        71.45596313476562,
+        546.8353271484375,
+        117.34234619140625
+      ],
+      "width": 666,
+      "height": 128
+    },
+    {
+      "type": "table",
+      "number": "11",
+      "label": "Table 11",
+      "caption": "Table 11. Stochastic depth rate for pretraining on ImageNet22k\nand ﬁnetuning on ImageNet-1k.",
+      "filename": "table11.png",
+      "page": 9,
+      "bbox": [
+        45.11199951171875,
+        439.9278564453125,
+        291.3651123046875,
+        574.4553833007812
+      ],
+      "width": 685,
+      "height": 374
+    },
+    {
+      "type": "table",
+      "number": "12",
+      "label": "Table 12",
+      "caption": "Table 12. Stochastic depth rate for ﬁnetuning on COCO.",
+      "filename": "table12.png",
+      "page": 9,
+      "bbox": [
+        45.11199951171875,
+        439.9278564453125,
+        291.3651123046875,
+        556.0023803710938
+      ],
+      "width": 685,
+      "height": 323
+    }
+  ]
+}

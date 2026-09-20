@@ -1,0 +1,221 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO Family\\2025 FBRT-YOLO_Faster and Better for Real-Time Aerial Image Detection.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\FBRT-YOLO",
+  "total_pages": 9,
+  "total_items": 13,
+  "total_figures": 5,
+  "total_tables": 8,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1: The previous method overlooked the embedding\nof spatial information in deeper layers of the backbone net-\nwork during feature extraction, leading to spatial semantic\ninconsistencies. Our method aims to transfer shallow spa-\ntial location information into deeper layers of the network\nduring the feature extraction process, thereby enhancing the\nexpression of semantic information.",
+      "filename": "fig1.png",
+      "page": 1,
+      "bbox": [
+        314.5,
+        210.998779296875,
+        562.9927978515625,
+        355.1510009765625
+      ],
+      "width": 691,
+      "height": 401
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2: Our FBRT-YOLO is compared with other real-\ntime detectors in terms of accuracy and efficiency on Vis-\nDrone dataset. The radius of the circle represents GFLOPs.",
+      "filename": "fig2.png",
+      "page": 2,
+      "bbox": [
+        31.82317352294922,
+        45.0,
+        317.504638671875,
+        231.06446838378906
+      ],
+      "width": 794,
+      "height": 517
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3: Framework of FBRT-YOLO. FCM module is embedded into each stage of the backbone network to integrate spatial\npositional information into deeper semantic information. In the final (fourth) stage of the backbone network, MKP units are\nintroduced along with multi-scale convolutions to enhance perception of targets at various scales. It’s worth noting that MKP\nreplaces the final downsampling layer while also reducing the corresponding detection heads.",
+      "filename": "fig3.png",
+      "page": 3,
+      "bbox": [
+        49.0,
+        48.9959716796875,
+        563.0,
+        342.4959716796875
+      ],
+      "width": 1428,
+      "height": 816
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1: Comparison of AP(%) and Params/FPS on VisDrone by using our methods with different real-time object detectors.",
+      "filename": "table1.png",
+      "page": 5,
+      "bbox": [
+        84.02300262451172,
+        52.6771354675293,
+        527.9772338867188,
+        271.1024169921875
+      ],
+      "width": 1234,
+      "height": 608
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2: Comparison of AP(%) with state-of-the-art detec-\ntors on VisDrone.",
+      "filename": "table2.png",
+      "page": 5,
+      "bbox": [
+        63.69898986816406,
+        308.9610900878906,
+        282.3016052246094,
+        407.75238037109375
+      ],
+      "width": 609,
+      "height": 275
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Figure 4: Visualization of the detection results and heatmaps on VisDrone. The highlighted areas represent the regions that the\nnetwork is focusing on.",
+      "filename": "fig4.png",
+      "page": 6,
+      "bbox": [
+        36.88844680786133,
+        45.0,
+        575.3204345703125,
+        241.83546447753906
+      ],
+      "width": 1497,
+      "height": 547
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3: Comparison of AP(%) with state-of-the-art detec-\ntors on UAVDT.",
+      "filename": "table3.png",
+      "page": 6,
+      "bbox": [
+        36.88844680786133,
+        252.75704956054688,
+        317.504638671875,
+        320.33154296875
+      ],
+      "width": 780,
+      "height": 188
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5: Ablation on FCM, MKP and RR Module on Vis-\nDrone. ’RR’ represents operations aimed at reducing inher-\nent redundancy in the network. Replace the final downsam-\npling layer with MKP and remove the corresponding detec-\ntion head.",
+      "filename": "table5.png",
+      "page": 6,
+      "bbox": [
+        294.5,
+        252.75704956054688,
+        575.3204345703125,
+        320.33154296875
+      ],
+      "width": 781,
+      "height": 188
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4: Comparison of AP(%) and Params/FPS on AI-TOD\nby using our methods with baseline.",
+      "filename": "table4.png",
+      "page": 6,
+      "bbox": [
+        55.99598693847656,
+        409.8141174316406,
+        290.5082092285156,
+        453.7893981933594
+      ],
+      "width": 652,
+      "height": 123
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Figure 5: Visualizations of the detection results of baseline\nand our proposed method under low light and similar back-\nground conditions on UAVDT. The blue boxes represent the\nprediction results using the baseline model, while the red\nboxes represent the prediction results using our method.",
+      "filename": "fig5.png",
+      "page": 7,
+      "bbox": [
+        29.0,
+        45.0,
+        317.504638671875,
+        215.99244689941406
+      ],
+      "width": 802,
+      "height": 475
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "label": "Table 7",
+      "caption": "Table 7: Experimental verification of the impact of the spa-\ntial and channel feature partition ratio of α in the FCM mod-\nule at each stage of the backbone network.",
+      "filename": "table7.png",
+      "page": 7,
+      "bbox": [
+        294.5,
+        156.85305786132812,
+        412.6394958496094,
+        239.84539794921875
+      ],
+      "width": 329,
+      "height": 232
+    },
+    {
+      "type": "table",
+      "number": "8",
+      "label": "Table 8",
+      "caption": "Table 8: Experiments with different kernel size in MKP.",
+      "filename": "table8.png",
+      "page": 7,
+      "bbox": [
+        302.39898681640625,
+        156.85305786132812,
+        412.6394958496094,
+        258.24049377441406
+      ],
+      "width": 308,
+      "height": 283
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6: The experiment validates the optimal configuration\nof the mapping relationship.",
+      "filename": "table6.png",
+      "page": 7,
+      "bbox": [
+        59.8489990234375,
+        276.25909423828125,
+        286.151611328125,
+        340.0784912109375
+      ],
+      "width": 629,
+      "height": 178
+    }
+  ]
+}

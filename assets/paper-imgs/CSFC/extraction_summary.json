@@ -1,0 +1,189 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Neck Feature Fusion\\2023 Context_and_Spatial_Feature_Calibration_for_Real-Time_Semantic_Segmentation.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\CSFC",
+  "total_pages": 13,
+  "total_items": 11,
+  "total_figures": 11,
+  "total_tables": 0,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Fig. 1.\nSpeed-accuracy performance comparisons on the Cityscapes test\ndataset. The speed of all methods is measured on a single GTX 1080Ti.",
+      "filename": "fig1.png",
+      "page": 1,
+      "bbox": [
+        330.7130126953125,
+        165.72901916503906,
+        544.2930297851562,
+        316.6700134277344
+      ],
+      "width": 594,
+      "height": 420
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Fig. 2.\nIllustration of two challenges in semantic segmentation. (a) The spatial scope of different context modeling methods. Most existing methods\n(e.g., PPM [4] and ASPP [5]) model spatial-dependent contexts for all pixels in a fixed rectangle region. By contrast, our method aggregates semantic-dependent\ncontexts and further refines them. (b) Visualization of feature misalignment and grouping. The blue and red grids indicate the region correctly and incorrectly\npredicted, respectively. For calibration, we replace the features at the red dot with the features at the green dot to get the output. Besides, we group the\nfeatures for calibration since the features exhibit grouping properties.",
+      "filename": "fig2.png",
+      "page": 2,
+      "bbox": [
+        65.86519622802734,
+        49.1068115234375,
+        546.109619140625,
+        218.642822265625
+      ],
+      "width": 1335,
+      "height": 472
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Fig. 3. Overview of CSFCN. Given an input image, we first use the backbone network to extract features of different stages. Then we adopt a 3×3 convolution\nlayer (green arrow) with a reduction ratio r (r = 2 by default) to squeeze the features to reduce the computation cost. Afterward, we use CFC and SFC to\ncalibrate features to produce more robust and discriminative features. Finally, we employ an output layer (red arrow) containing a convolutional layer and an\nupsampling layer to generate the final output. For 2D offsets, we visualize them by color coding. Best viewed in color and zoom in.",
+      "filename": "fig3.png",
+      "page": 4,
+      "bbox": [
+        76.7658462524414,
+        49.49208068847656,
+        535.2269897460938,
+        249.0312957763672
+      ],
+      "width": 1274,
+      "height": 555
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4.\n(a) Demonstration of our cascade pyramid pooling layer. We first\nemploy several cascade adaptive pooling layers to generate pooling results,\nthen flatten and concatenate them to obtain the pyramid multi-scale contexts.\n(b) The implementation procedure of the Context Feature Calibration module.",
+      "filename": "fig4.png",
+      "page": 4,
+      "bbox": [
+        58.198299407958984,
+        295.47021484375,
+        290.38909912109375,
+        472.43548583984375
+      ],
+      "width": 646,
+      "height": 493
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Fig. 5.\nThe details of the Spatial Feature Calibration module.",
+      "filename": "fig5.png",
+      "page": 5,
+      "bbox": [
+        46.14900207519531,
+        49.720680236816406,
+        302.8270568847656,
+        145.78268432617188
+      ],
+      "width": 714,
+      "height": 267
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Fig. 6.\nQualitative comparison against different context modeling modules. Best viewed in color.",
+      "filename": "fig6.png",
+      "page": 7,
+      "bbox": [
+        134.1120147705078,
+        49.197452545166016,
+        476.87811279296875,
+        184.79754638671875
+      ],
+      "width": 953,
+      "height": 378
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Fig. 7.\nVisualization results of various methods. We denote CFC and\nCFC* as not performing and performing context recalibration, respectively.\nWe randomly sample a point and compute its similarity against the whole\nfeature map. We visualize the semantic segmentation output for several\nchallenging regions in the second row. Hot colors represent larger values and\nvice versa. Best viewed in color and zoom in.",
+      "filename": "fig7.png",
+      "page": 7,
+      "bbox": [
+        47.28208541870117,
+        219.2667236328125,
+        301.980712890625,
+        335.46063232421875
+      ],
+      "width": 708,
+      "height": 323
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "label": "Figure 8",
+      "caption": "Fig. 8.\nVisual results of the SFC module. For offset visualization, we visualize it using the color coding in the third column. For a clear comparison, we crop\nrepresentative patches (yellow dashed boxes) from the original image and visualize their prediction errors, where the correctly predicted pixels are displayed\nwith the white background, and the incorrectly predicted pixels are colored with their ground truth color. Best viewed in color and zoom in.",
+      "filename": "fig8.png",
+      "page": 8,
+      "bbox": [
+        49.80690383911133,
+        45.0,
+        587.0,
+        204.8146514892578
+      ],
+      "width": 1493,
+      "height": 444
+    },
+    {
+      "type": "figure",
+      "number": "9",
+      "label": "Figure 9",
+      "caption": "Fig. 9.\nVisualization results of output feature maps from different methods.",
+      "filename": "fig9.png",
+      "page": 8,
+      "bbox": [
+        44.99075698852539,
+        236.97398376464844,
+        304.2492370605469,
+        341.5300598144531
+      ],
+      "width": 722,
+      "height": 291
+    },
+    {
+      "type": "figure",
+      "number": "10",
+      "label": "Figure 10",
+      "caption": "Fig. 10.\nVisual comparison of various methods on the Cityscapes validation set. Best viewed in color and zoom in.",
+      "filename": "fig10.png",
+      "page": 9,
+      "bbox": [
+        52.76115798950195,
+        291.74237060546875,
+        559.173095703125,
+        482.885498046875
+      ],
+      "width": 1408,
+      "height": 532
+    },
+    {
+      "type": "figure",
+      "number": "11",
+      "label": "Figure 11",
+      "caption": "Fig. 11.\nComparisons of the speed (FPS) and accuracy (mIoU) obtained\nby different methods at different resolution inputs. We use bars and points to\ndenote the speed and accuracy of different methods, respectively.",
+      "filename": "fig11.png",
+      "page": 11,
+      "bbox": [
+        317.10198974609375,
+        217.73001098632812,
+        557.9029541015625,
+        398.0530090332031
+      ],
+      "width": 670,
+      "height": 502
+    }
+  ]
+}

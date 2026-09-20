@@ -1,0 +1,221 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\2025 Efficient Deformable ConvNets_Rethinking Dynamic and Sparse Operator for Vision Applications.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\Efficient-Deformable-ConvNets",
+  "total_pages": 14,
+  "total_items": 13,
+  "total_figures": 3,
+  "total_tables": 10,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2. Comparisons of core operators in spatial aggregation\nfor query pixels on different locations within the same channel.\n(a) Attention and (b) DCNv3 use bounded (range from 0 ∼1)\ndynamic weights to aggregate spatial features, while the window\n(sampling point set) for attention is the same, and DCNv3 uses a\ndedicated window for each location. (c) Convolution has a more\nflexible unbounded value range for aggregation weights and uses\na dedicated sliding window for each location, but the window\nshape and aggregation weights are input-independent. (d) DCNv4\ncombines their advantages, using an adaptive aggregation window\nand dynamic aggregation weights with an unbounded value range.",
+      "filename": "fig2.png",
+      "page": 3,
+      "bbox": [
+        283.5660095214844,
+        45.0,
+        571.6781005859375,
+        205.90869140625
+      ],
+      "width": 801,
+      "height": 447
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3. Illustration of our optimization. In DCNv4, we use one\nthread to process multiple channels in the same group that shares\nsampling offset and aggregation weights. Workloads like memory\nreading and bilinear interpolation coefficient computation can be\nreduced, and multiple memory access instructions can be merged.",
+      "filename": "fig3.png",
+      "page": 4,
+      "bbox": [
+        283.86199951171875,
+        45.0,
+        570.425537109375,
+        184.51126098632812
+      ],
+      "width": 797,
+      "height": 388
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2. Op-level benchmark on standard input shape with various downsample rates. FP32/FP16 results are reported when the\nimplementation is available. Our new DCNv4 can surpass all other commonly used operators under different input resolutions.",
+      "filename": "table2.png",
+      "page": 5,
+      "bbox": [
+        44.3650016784668,
+        217.90029907226562,
+        551.7701416015625,
+        718.4166870117188
+      ],
+      "width": 1410,
+      "height": 1391
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3. Op-level benchmark on high-resolution input shape with various downsample rates. DCNv4 performs well as a sparse operator,\nsurpassing all other baselines, while dense global attention is slow under this scenario.",
+      "filename": "table3.png",
+      "page": 6,
+      "bbox": [
+        44.75299835205078,
+        220.9557647705078,
+        551.8555297851562,
+        718.4070434570312
+      ],
+      "width": 1409,
+      "height": 1383
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5. Object detection and instance segmentation perfor-\nmance on COCO val2017. APb and APm denotes box AP and\nmask AP, respectively. “MS” means multi-scale training. FlashIn-\nternImage w/ DCNv4 models converge faster, clearly outperform\nother baselines with 1× training schedule, and still maintain a\nleading position when training 3× longer while being significantly\nfaster than InternImage.",
+      "filename": "table5.png",
+      "page": 7,
+      "bbox": [
+        310.7314147949219,
+        70.79054260253906,
+        544.9616088867188,
+        338.133544921875
+      ],
+      "width": 651,
+      "height": 744
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4. Image classification performance on ImageNet-1K. We\nshow relative speedup between FlashInternImage w/ DCNv4 and\nits InternImage counterparts. DCNv4 significantly improves the\nspeed while shows state-of-the-art performance.",
+      "filename": "table4.png",
+      "page": 7,
+      "bbox": [
+        62.784423828125,
+        70.923583984375,
+        273.42095947265625,
+        314.78662109375
+      ],
+      "width": 586,
+      "height": 678
+    },
+    {
+      "type": "table",
+      "number": "8",
+      "label": "Table 8",
+      "caption": "Table 8. DCNv4 in other architecture. We show supervised\nlearning results on ImageNet-1K and throughput. DCNv4 achieves\nhigher throughput with comparable accuracy. † denotes testing\nwith the advanced FlashAttention-2 implementation.",
+      "filename": "table8.png",
+      "page": 8,
+      "bbox": [
+        303.3940124511719,
+        212.8365020751953,
+        551.8553466796875,
+        718.4094848632812
+      ],
+      "width": 691,
+      "height": 1405
+    },
+    {
+      "type": "table",
+      "number": "9",
+      "label": "Table 9",
+      "caption": "Table 9. Class conditional generation on ImageNet 256x256.\nLatent diffusion models are trained from scratch with U-Net. We\nreplace the convolution layer in the models with DCNv4. DCNv4\ncan achieve better FID results without any hyperparameter tuning.",
+      "filename": "table9.png",
+      "page": 8,
+      "bbox": [
+        303.3940124511719,
+        309.06280517578125,
+        551.8553466796875,
+        718.4094848632812
+      ],
+      "width": 691,
+      "height": 1138
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6. Semantic segmentation performance on the ADE20K\nvalidation set. All models are trained with UperNet. “SS” and\n“MS” denote single-scale and multi-scale testing, respectively. FPS\nis reported with single-scale testing. FlashInternImage w/ DCNv4\nachieves superior performance with competitive speed.",
+      "filename": "table6.png",
+      "page": 8,
+      "bbox": [
+        44.75299835205078,
+        359.6698913574219,
+        293.1026306152344,
+        718.4070434570312
+      ],
+      "width": 691,
+      "height": 997
+    },
+    {
+      "type": "table",
+      "number": "10",
+      "label": "Table 10",
+      "caption": "Table 10. Ablation studies of DCN’s runtime (ms). We show how\nto achieve DCNv4 (gray row) from the original DCNv3 implemen-\ntation and how different design choices affect the speed.",
+      "filename": "table10.png",
+      "page": 8,
+      "bbox": [
+        303.3940124511719,
+        439.4655456542969,
+        551.8553466796875,
+        718.4094848632812
+      ],
+      "width": 691,
+      "height": 776
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "label": "Table 7",
+      "caption": "Table 7.\n3D detection performance of BEVFormer v2 on\nnuScenes test set. We report FPS for the backbone (denoted with\n†), overall FPS results with underoptimized head implementation\nare also added for reference. With on-par NDS and higher mAP\nresults, FlashInternImage can be 50 −90% faster than InternImage\nbaselines or 200% −300% when only considering the backbone.",
+      "filename": "table7.png",
+      "page": 8,
+      "bbox": [
+        44.75299835205078,
+        512.4503173828125,
+        293.1026306152344,
+        718.4070434570312
+      ],
+      "width": 691,
+      "height": 573
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1. Object detection performance with DINO on COCO\nval2017. APS, APM, and APL indicate the results for small, mid-\ndle, and large bounding boxes. FPS metrics are reported based\non single-scale testing. FlashInternImage, when integrated with\nDCNv4, not only achieves superior performance but also maintains\na competitive inference speed. All experimental results were ob-\ntained with our codebase.",
+      "filename": "table1.png",
+      "page": 10,
+      "bbox": [
+        303.114990234375,
+        412.45343017578125,
+        551.853271484375,
+        718.4286499023438
+      ],
+      "width": 692,
+      "height": 851
+    },
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1. ImageNet 256 × 256 generation results of U-Net + DCNv4 latent diffusion model.",
+      "filename": "fig1.png",
+      "page": 12,
+      "bbox": [
+        106.28500366210938,
+        204.6295166015625,
+        488.94219970703125,
+        453.2349853515625
+      ],
+      "width": 1064,
+      "height": 691
+    }
+  ]
+}

@@ -1,0 +1,301 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\UpSample Modules\\2025 FADE_A Task-Agnostic Upsampling Operator for Encoder–Decoder Architectures.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\FADE",
+  "total_pages": 22,
+  "total_items": 18,
+  "total_figures": 10,
+  "total_tables": 8,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Fig. 1 Inferred segmentation masks and alpha mattes with different\nupsampling operators. The compared operators include IndexNet (Lu\net al., 2019), A2U (Dai et al., 2021), CARAFE (Wang et al., 2019), and\nour proposed FADE. Among competitors, only FADE generates both\nthe high-quality mask and the alpha matte",
+      "filename": "fig1.png",
+      "page": 2,
+      "bbox": [
+        303.6820068359375,
+        51.53803253173828,
+        546.2780151367188,
+        153.134033203125
+      ],
+      "width": 675,
+      "height": 283
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Fig. 3 Naive implementation for generating upsampling kernels using\nencoder and decoder features. The kernel prediction using high-res\nencoder and low-res decoder features requires matching resolution with\nexplicit feature interpolation and concatenation, followed by channel\ncompression and convolution",
+      "filename": "fig3.png",
+      "page": 6,
+      "bbox": [
+        49.071998596191406,
+        51.92802429199219,
+        290.2279968261719,
+        187.1240234375
+      ],
+      "width": 671,
+      "height": 376
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4 Technical pipeline of FADE. From b the overview of FADE,\nFADE upsamples the low-res decoder feature with the help of the high-\nres encoder features. The two types of features are fed into two key\nmodules. In a dynamic feature upsampling, the features are used to\ngenerate upsampling kernels using a semi-shift convolutional operator",
+      "filename": "fig4.png",
+      "page": 7,
+      "bbox": [
+        50.8380012512207,
+        82.17901611328125,
+        300.4049987792969,
+        220.08905029296875
+      ],
+      "width": 694,
+      "height": 384
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Fig. 5 Visualizations of inferred mask and reconstructed results on\nSUN RGBD and Fashion-MNIST. The decoder-only model gener-\nates semantically consistent mask predictions but poor reconstructions,\nwhile the encoder-only one is on the contrary. When both encoder and\ndecoder features are considered, the model generates reasonable masks\nas the decoder-only model and clear reconstructions as the encoder-only\none (cf. the table lamp and the stripes on clothes)",
+      "filename": "fig5.png",
+      "page": 7,
+      "bbox": [
+        306.2019958496094,
+        441.1180419921875,
+        543.5180053710938,
+        515.5940551757812
+      ],
+      "width": 660,
+      "height": 208
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Fig. 6 Upsampling kernel generation using semi-shift convolution with\nboth encoder and decoder features. In contrast to naive implementation\n(Fig. 3), semi-shift convolution carefully controls the per-point contri-\nbution to the kernel (see how each decoder feature point corresponds to\neach encoder feature point) and uniﬁes feature interpolation, concate-\nnation, channel compression, and kernel prediction",
+      "filename": "fig6.png",
+      "page": 8,
+      "bbox": [
+        57.082000732421875,
+        51.898040771484375,
+        284.7980041503906,
+        148.45404052734375
+      ],
+      "width": 634,
+      "height": 269
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2 Results on the Weizmann Horse dataset",
+      "filename": "table2.png",
+      "page": 9,
+      "bbox": [
+        301.15899658203125,
+        68.91681671142578,
+        549.2516479492188,
+        171.06849670410156
+      ],
+      "width": 690,
+      "height": 285
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "label": "Figure 8",
+      "caption": "Fig. 8 Gradient maps and gate maps of horses",
+      "filename": "fig8.png",
+      "page": 10,
+      "bbox": [
+        50.09199905395508,
+        51.65801239013672,
+        233.72230529785156,
+        119.17401123046875
+      ],
+      "width": 511,
+      "height": 189
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3 Semantic segmentation and image matting results on the ADE20K and Adobe Composition-1K data sets",
+      "filename": "table3.png",
+      "page": 11,
+      "bbox": [
+        46.035980224609375,
+        70.43830871582031,
+        549.2722778320312,
+        367.9349670410156
+      ],
+      "width": 1399,
+      "height": 828
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4 Semantic segmentation\nresults on the ADE20K data set\nwith different SegFormer\nbackbones",
+      "filename": "table4.png",
+      "page": 11,
+      "bbox": [
+        46.035980224609375,
+        70.43830871582031,
+        549.2722778320312,
+        231.87977600097656
+      ],
+      "width": 1399,
+      "height": 450
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6 Semantic segmentation results with UPerNet",
+      "filename": "table6.png",
+      "page": 12,
+      "bbox": [
+        46.0359992980957,
+        174.0368194580078,
+        294.0635070800781,
+        279.37310791015625
+      ],
+      "width": 690,
+      "height": 294
+    },
+    {
+      "type": "figure",
+      "number": "9",
+      "label": "Figure 9",
+      "caption": "Fig. 9 Learned upsampled feature maps with increased iterations. The\nlearning process between CARAFE and FADE is different. FADE ﬁrst\ndelineates the outlines of objects and then ﬁlls the interior regions, while\nCARAFE starts from the interior and then spreads outside",
+      "filename": "fig9.png",
+      "page": 12,
+      "bbox": [
+        59.18199920654297,
+        286.97802734375,
+        289.7779846191406,
+        355.93402099609375
+      ],
+      "width": 641,
+      "height": 192
+    },
+    {
+      "type": "figure",
+      "number": "10",
+      "label": "Figure 10",
+      "caption": "Fig. 10 Qualitative results of different upsampling operators on differ-\nent dense prediction tasks. Among all competitors, only FADE produces\nvisually pleasing visualizations on both region- and detail-sensitive",
+      "filename": "fig10.png",
+      "page": 13,
+      "bbox": [
+        49.641998291015625,
+        303.47802734375,
+        314.13897705078125,
+        656.9540405273438
+      ],
+      "width": 736,
+      "height": 983
+    },
+    {
+      "type": "figure",
+      "number": "11",
+      "label": "Figure 11",
+      "caption": "Fig. 11 Upsampled feature maps of different upsampling operators on\nFaster R-CNN",
+      "filename": "fig11.png",
+      "page": 14,
+      "bbox": [
+        51.59199905395508,
+        51.148048400878906,
+        288.4280090332031,
+        113.0240478515625
+      ],
+      "width": 659,
+      "height": 172
+    },
+    {
+      "type": "figure",
+      "number": "12",
+      "label": "Figure 12",
+      "caption": "Fig. 12 Visualizations of upsampled feature maps generated by dif-\nferent methods. The feature maps are extracted from the output of\nupsamplers in Mask R-CNN-R50 (He et al., 2017). The quality of fea-\nture maps generally provides an implication of performance",
+      "filename": "fig12.png",
+      "page": 16,
+      "bbox": [
+        305.1820068359375,
+        51.47802734375,
+        544.8980102539062,
+        325.5140380859375
+      ],
+      "width": 667,
+      "height": 763
+    },
+    {
+      "type": "table",
+      "number": "9",
+      "label": "Table 9",
+      "caption": "Table 9 Monocular depth estimation results on NYU Depth V2 with BTS",
+      "filename": "table9.png",
+      "page": 17,
+      "bbox": [
+        46.0359992980957,
+        70.43830871582031,
+        549.2481079101562,
+        212.3141632080078
+      ],
+      "width": 1399,
+      "height": 395
+    },
+    {
+      "type": "table",
+      "number": "10",
+      "label": "Table 10",
+      "caption": "Table 10 Ablation study on the source of features, the way for upsampling kernel generation, and the effect of the gating mechanism",
+      "filename": "table10.png",
+      "page": 18,
+      "bbox": [
+        46.0359992980957,
+        70.43830871582031,
+        549.2534790039062,
+        199.0031280517578
+      ],
+      "width": 1399,
+      "height": 358
+    },
+    {
+      "type": "table",
+      "number": "11",
+      "label": "Table 11",
+      "caption": "Table 11 Computational\ncomplexity and parameters of\nFADE and other upsampling\noperators",
+      "filename": "table11.png",
+      "page": 19,
+      "bbox": [
+        46.0359992980957,
+        51.81557083129883,
+        294.166015625,
+        297.5871276855469
+      ],
+      "width": 691,
+      "height": 684
+    },
+    {
+      "type": "table",
+      "number": "12",
+      "label": "Table 12",
+      "caption": "Table 12 Comparison of\ninference time among different\nupsampling operators",
+      "filename": "table12.png",
+      "page": 20,
+      "bbox": [
+        46.0001335144043,
+        124.80055236816406,
+        294.16900634765625,
+        445.872802734375
+      ],
+      "width": 691,
+      "height": 893
+    }
+  ]
+}

@@ -1,0 +1,221 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO12_Applications\\2026_基于改进YOLOv12n的VD炉真空下钢水液面高度检测_东鹏涛.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\YOLOv12n-VD-Furnace",
+  "total_pages": 12,
+  "total_items": 13,
+  "total_figures": 10,
+  "total_tables": 3,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Fig. 1  Architecture of the YOLOv12n module",
+      "filename": "fig1.png",
+      "page": 4,
+      "bbox": [
+        182.25999450683594,
+        245.91998291015625,
+        415.3699951171875,
+        420.740966796875
+      ],
+      "width": 648,
+      "height": 486
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Fig. 2  Architecture of the EMD-YOLO module",
+      "filename": "fig2.png",
+      "page": 5,
+      "bbox": [
+        179.3800048828125,
+        245.91998291015625,
+        418.25,
+        405.1209716796875
+      ],
+      "width": 664,
+      "height": 443
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Fig. 3  Structure of the ECA module",
+      "filename": "fig3.png",
+      "page": 5,
+      "bbox": [
+        201.22000122070312,
+        405.083984375,
+        396.3500061035156,
+        629.9599609375
+      ],
+      "width": 543,
+      "height": 625
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4  Structure of the ECAConv module",
+      "filename": "fig4.png",
+      "page": 5,
+      "bbox": [
+        190.72000122070312,
+        663.760009765625,
+        406.8500061035156,
+        738.739990234375
+      ],
+      "width": 602,
+      "height": 210
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Fig. 5  Structure of the MRA module",
+      "filename": "fig5.png",
+      "page": 6,
+      "bbox": [
+        209.02000427246094,
+        245.91998291015625,
+        406.9849853515625,
+        466.2044982910156
+      ],
+      "width": 551,
+      "height": 613
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Fig. 6  Structure of the DRS module",
+      "filename": "fig6.png",
+      "page": 6,
+      "bbox": [
+        210.52000427246094,
+        467.8280029296875,
+        405.4849853515625,
+        650.3599853515625
+      ],
+      "width": 543,
+      "height": 508
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Fig. 7  Structure of the DA module",
+      "filename": "fig7.png",
+      "page": 7,
+      "bbox": [
+        213.27999877929688,
+        245.91998291015625,
+        402.4100036621094,
+        420.740966796875
+      ],
+      "width": 526,
+      "height": 486
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "label": "Figure 8",
+      "caption": "Fig. 8  Structure of the MSF module",
+      "filename": "fig8.png",
+      "page": 7,
+      "bbox": [
+        210.22000122070312,
+        420.7039794921875,
+        405.4700012207031,
+        584.9199829101562
+      ],
+      "width": 544,
+      "height": 457
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1  Model training parameter setting",
+      "filename": "table1.png",
+      "page": 8,
+      "bbox": [
+        112.86000061035156,
+        145.88096618652344,
+        481.6099853515625,
+        228.72396850585938
+      ],
+      "width": 1025,
+      "height": 231
+    },
+    {
+      "type": "figure",
+      "number": "9",
+      "label": "Figure 9",
+      "caption": "Fig. 9  Images in different environments",
+      "filename": "fig9.png",
+      "page": 8,
+      "bbox": [
+        193.66000366210938,
+        245.91998291015625,
+        403.9100036621094,
+        578.2410278320312
+      ],
+      "width": 585,
+      "height": 924
+    },
+    {
+      "type": "figure",
+      "number": "10",
+      "label": "Figure 10",
+      "caption": "Fig. 10  Comparison diagrams of different schemes for the same frame",
+      "filename": "fig10.png",
+      "page": 9,
+      "bbox": [
+        135.33999633789062,
+        245.91998291015625,
+        462.30999755859375,
+        529.9409790039062
+      ],
+      "width": 910,
+      "height": 790
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2  Ablation experimental results of the EMD-YOLO model",
+      "filename": "table2.png",
+      "page": 10,
+      "bbox": [
+        86.87999725341797,
+        130.28099060058594,
+        500.1499938964844,
+        213.72396850585938
+      ],
+      "width": 1149,
+      "height": 233
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3  Comparative experimental results of the EMD-YOLO model",
+      "filename": "table3.png",
+      "page": 10,
+      "bbox": [
+        137.55999755859375,
+        245.91998291015625,
+        460.4649963378906,
+        584.9199829101562
+      ],
+      "width": 898,
+      "height": 942
+    }
+  ]
+}

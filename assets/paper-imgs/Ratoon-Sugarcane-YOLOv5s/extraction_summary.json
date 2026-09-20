@@ -1,0 +1,162 @@
+{
+  "pdf_path": "pdf-papers/Improve YOLO12/YOLO_Sugarcane_Detection_and_Counting/2024 基于无人机RGB图像与改进YOLO+v5s的宿根蔗缺苗定位方法.pdf",
+  "output_dir": "assets\\paper-imgs\\Ratoon-Sugarcane-YOLOv5s",
+  "total_pages": 14,
+  "total_items": 22,
+  "items": [
+    {
+      "page": 2,
+      "index": 4,
+      "filename": "fig_002_004.png",
+      "width": 460,
+      "height": 233
+    },
+    {
+      "page": 3,
+      "index": 2,
+      "filename": "fig_003_002.png",
+      "width": 460,
+      "height": 195
+    },
+    {
+      "page": 3,
+      "index": 3,
+      "filename": "fig_003_003.png",
+      "width": 821,
+      "height": 218
+    },
+    {
+      "page": 4,
+      "index": 2,
+      "filename": "fig_004_002.png",
+      "width": 853,
+      "height": 294
+    },
+    {
+      "page": 4,
+      "index": 3,
+      "filename": "fig_004_003.png",
+      "width": 913,
+      "height": 148
+    },
+    {
+      "page": 4,
+      "index": 4,
+      "filename": "fig_004_004.png",
+      "width": 925,
+      "height": 647
+    },
+    {
+      "page": 5,
+      "index": 6,
+      "filename": "fig_005_006.png",
+      "width": 460,
+      "height": 195
+    },
+    {
+      "page": 5,
+      "index": 7,
+      "filename": "fig_005_007.png",
+      "width": 460,
+      "height": 300
+    },
+    {
+      "page": 5,
+      "index": 8,
+      "filename": "fig_005_008.png",
+      "width": 460,
+      "height": 241
+    },
+    {
+      "page": 6,
+      "index": 14,
+      "filename": "fig_006_014.png",
+      "width": 460,
+      "height": 885
+    },
+    {
+      "page": 9,
+      "index": 2,
+      "filename": "fig_009_002.png",
+      "width": 631,
+      "height": 777
+    },
+    {
+      "page": 9,
+      "index": 3,
+      "filename": "fig_009_003.png",
+      "width": 460,
+      "height": 312
+    },
+    {
+      "page": 9,
+      "index": 4,
+      "filename": "fig_009_004.png",
+      "width": 460,
+      "height": 206
+    },
+    {
+      "page": 10,
+      "index": 2,
+      "filename": "fig_010_002.png",
+      "width": 460,
+      "height": 273
+    },
+    {
+      "page": 10,
+      "index": 3,
+      "filename": "fig_010_003.png",
+      "width": 854,
+      "height": 276
+    },
+    {
+      "page": 10,
+      "index": 4,
+      "filename": "fig_010_004.png",
+      "width": 460,
+      "height": 273
+    },
+    {
+      "page": 11,
+      "index": 2,
+      "filename": "fig_011_002.png",
+      "width": 845,
+      "height": 275
+    },
+    {
+      "page": 11,
+      "index": 3,
+      "filename": "fig_011_003.png",
+      "width": 460,
+      "height": 292
+    },
+    {
+      "page": 11,
+      "index": 4,
+      "filename": "fig_011_004.png",
+      "width": 460,
+      "height": 234
+    },
+    {
+      "page": 12,
+      "index": 2,
+      "filename": "fig_012_002.png",
+      "width": 460,
+      "height": 564
+    },
+    {
+      "page": 12,
+      "index": 3,
+      "filename": "fig_012_003.png",
+      "width": 460,
+      "height": 307
+    },
+    {
+      "page": 12,
+      "index": 4,
+      "filename": "fig_012_004.png",
+      "width": 460,
+      "height": 523
+    }
+  ]
+}

@@ -1,0 +1,253 @@
+{
+  "pdf_path": "pdf-papers/Improve YOLO12/YOLO12_Applications/2026_融合SFAR-Net图像增强与YOLOv12-DMFA的高铁接触网支持装置故障检测方法_顾桂梅.pdf",
+  "output_dir": "assets/paper-imgs/YOLOv12-DMFA-Catenary",
+  "total_pages": 12,
+  "total_items": 15,
+  "total_figures": 11,
+  "total_tables": 4,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "图1 SFAR-Net+YOLOv12-DMFA 两阶段框架",
+      "filename": "fig1.png",
+      "page": 4,
+      "bbox": [
+        184.36000061035156,
+        222.79368591308594,
+        411.6499938964844,
+        330.0332946777344
+      ],
+      "width": 632,
+      "height": 299
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "图2 空频双分支特征提取模块",
+      "filename": "fig2.png",
+      "page": 5,
+      "bbox": [
+        221.27999877929688,
+        215.3680419921875,
+        356.8385009765625,
+        270.2017822265625
+      ],
+      "width": 378,
+      "height": 153
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "图3 FFTSA 模块",
+      "filename": "fig3.png",
+      "page": 5,
+      "bbox": [
+        364.20001220703125,
+        386.1156005859375,
+        481.75,
+        556.2815551757812
+      ],
+      "width": 328,
+      "height": 474
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "图4 YOLOv12 结构图",
+      "filename": "fig4.png",
+      "page": 6,
+      "bbox": [
+        229.1999969482422,
+        75.46382141113281,
+        492.7471923828125,
+        244.19216918945312
+      ],
+      "width": 733,
+      "height": 470
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "图5 YOLOv12-DMFA 结构图",
+      "filename": "fig5.png",
+      "page": 6,
+      "bbox": [
+        214.97999572753906,
+        418.96380615234375,
+        369.83819580078125,
+        593.4931640625
+      ],
+      "width": 431,
+      "height": 486
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "图6 DMFA 模块结构示意图  Fig.6 Architecture of the DMFA module",
+      "filename": "fig6.png",
+      "page": 7,
+      "bbox": [
+        199.4199981689453,
+        132.10137939453125,
+        394.2350158691406,
+        198.29087829589844
+      ],
+      "width": 543,
+      "height": 185
+    },
+    {
+      "type": "figure",
+      "number": "9",
+      "label": "Figure 9",
+      "caption": "图9 Mona 结构图",
+      "filename": "fig9.png",
+      "page": 7,
+      "bbox": [
+        364.6199951171875,
+        254.72576904296875,
+        515.3844604492188,
+        755.4844970703125
+      ],
+      "width": 420,
+      "height": 1392
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "图7 DFFN 结构图",
+      "filename": "fig7.png",
+      "page": 7,
+      "bbox": [
+        110.74000549316406,
+        402.0835876464844,
+        233.25,
+        489.60699462890625
+      ],
+      "width": 341,
+      "height": 245
+    },
+    {
+      "type": "figure",
+      "number": "11",
+      "label": "Figure 11",
+      "caption": "图11 借鉴BSRGAN 的实用退化模型示意图  Fig.11 Schematic of the BSRGAN-inspired practical",
+      "filename": "fig11.png",
+      "page": 8,
+      "bbox": [
+        303.8999938964844,
+        200.20887756347656,
+        527.8099365234375,
+        516.7409973144531
+      ],
+      "width": 623,
+      "height": 880
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "表1  训练超参数设置  Tab.1 Training hyperparameter settings",
+      "filename": "table1.png",
+      "page": 8,
+      "bbox": [
+        200.6199951171875,
+        529.6639404296875,
+        395.3299865722656,
+        584.9199829101562
+      ],
+      "width": 542,
+      "height": 154
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "表2  不同图像增强方法的定量对比  Tab.2 Quantitative comparison of different image enhancement methods",
+      "filename": "table2.png",
+      "page": 9,
+      "bbox": [
+        141.16000366210938,
+        484.4839782714844,
+        454.8699951171875,
+        577.9199829101562
+      ],
+      "width": 872,
+      "height": 261
+    },
+    {
+      "type": "figure",
+      "number": "13",
+      "label": "Figure 13",
+      "caption": "图13 不同算法的图像增强效果对比（结构级部件）",
+      "filename": "fig13.png",
+      "page": 10,
+      "bbox": [
+        172.0234832763672,
+        90.42617797851562,
+        419.7406005859375,
+        249.82057189941406
+      ],
+      "width": 689,
+      "height": 443
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "表3  消融实验结果  Tab.3 Results of ablation experiments",
+      "filename": "table3.png",
+      "page": 11,
+      "bbox": [
+        63.63999938964844,
+        114.25751495361328,
+        540.0950317382812,
+        207.41497802734375
+      ],
+      "width": 1325,
+      "height": 260
+    },
+    {
+      "type": "figure",
+      "number": "14",
+      "label": "Figure 14",
+      "caption": "图14 消融实验中各模块对检测性能增益的视觉对比（(a)-(e)依次为各阶段累加效果）",
+      "filename": "fig14.png",
+      "page": 11,
+      "bbox": [
+        104.02000427246094,
+        223.09463500976562,
+        491.95001220703125,
+        399.6009826660156
+      ],
+      "width": 1079,
+      "height": 492
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "表4  不同算法检测性能对比  Tab.4 Comparison of detection performance of different algorithms",
+      "filename": "table4.png",
+      "page": 11,
+      "bbox": [
+        150.22000122070312,
+        399.5639953613281,
+        448.05999755859375,
+        584.9199829101562
+      ],
+      "width": 828,
+      "height": 516
+    }
+  ]
+}

@@ -1,0 +1,189 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Loss Functions\\2020 Generalized Focal Loss_Learning Qualified and Distributed Bounding Boxes for Dense Object Detection.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\Generalized-Focal-Loss",
+  "total_pages": 11,
+  "total_items": 11,
+  "total_figures": 8,
+  "total_tables": 3,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1: Comparisons between existing separate representation and proposed joint representation of classiﬁcation and localization quality\nestimation. (a): Current practices [12, 26, 29, 35, 31] for the separate usage of the quality branch (i.e., IoU or centerness score) during training\nand test. (b): Our joint representation of classiﬁcation and localization quality enables high consistency between training and inference.",
+      "filename": "fig1.png",
+      "page": 2,
+      "bbox": [
+        98.07523345947266,
+        61.28125,
+        515.5803527832031,
+        142.48513793945312
+      ],
+      "width": 1161,
+      "height": 226
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3: Due to occlusion, shadow, blur, etc., the boundaries of many objects are not clear enough, so that the ground-truth labels (white\nboxes) are sometimes not credible and Dirac delta distribution is limited to indicate such issues. Instead, the proposed learned representation\nof General distribution for bounding boxes can reﬂect the underlying information by its shape, where a ﬂatten distribution denotes the unclear\nand ambiguous boundaries (see red circles) and a sharp one stands for the clear cases. The predicted boxes by our model are marked green.",
+      "filename": "fig3.png",
+      "page": 3,
+      "bbox": [
+        101.1416015625,
+        45.0,
+        533.6139526367188,
+        158.63613891601562
+      ],
+      "width": 1203,
+      "height": 316
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Figure 4: The comparisons between conventional methods and our proposed GFL in the head of dense detectors. GFL includes QFL and DFL.\nQFL effectively learns a joint representation of classiﬁcation score and localization quality estimation. DFL models the locations of bounding\nboxes as General distributions whilst forcing the networks to rapidly focus on learning the probabilities of values close to the target coordinates.",
+      "filename": "fig4.png",
+      "page": 4,
+      "bbox": [
+        96.79541778564453,
+        67.9105224609375,
+        587.0,
+        196.45217895507812
+      ],
+      "width": 1363,
+      "height": 358
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Figure 5: (a): The illustration of QFL under quality label y = 0.5. (b): Different ﬂexible distributions can obtain the same integral target\naccording to Eq. (4), thus we need to focus on learning probabilities of values around the target for more reasonable and conﬁdent predictions\n(e.g., (3)). (c): The histogram of bounding box regression targets of ATSS over all training samples on COCO trainval35k.",
+      "filename": "fig5.png",
+      "page": 5,
+      "bbox": [
+        51.29804992675781,
+        46.588409423828125,
+        587.0,
+        166.0717315673828
+      ],
+      "width": 1489,
+      "height": 333
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Figure 6: Illustrations of modiﬁed versions for separate/implicit and joint representation. The baseline without quality branch is also provided.",
+      "filename": "fig6.png",
+      "page": 5,
+      "bbox": [
+        51.29804992675781,
+        179.32151794433594,
+        587.0,
+        259.9921569824219
+      ],
+      "width": 1489,
+      "height": 225
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1: Study on QFL (ResNet-50 backbone). All experiments are reproduced in mmdetection [3] and validated on COCO minival.",
+      "filename": "table1.png",
+      "page": 6,
+      "bbox": [
+        102.64099884033203,
+        295.9648132324219,
+        510.9349365234375,
+        728.9010620117188
+      ],
+      "width": 1135,
+      "height": 1203
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Figure 7: Single-model single-scale speed (ms) vs. accuracy\n(AP) on COCO test-dev among state-of-the-art approaches.\nGFL achieves better speed-accuracy trade-off than many com-\npetitive counterparts.",
+      "filename": "fig7.png",
+      "page": 7,
+      "bbox": [
+        304.52899169921875,
+        316.06671142578125,
+        506.32232666015625,
+        504.650146484375
+      ],
+      "width": 562,
+      "height": 525
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3: The effect of QFL and DFL on ATSS: The\neffects of QFL and DFL are orthogonal, whilst utilizing\nboth can boost 1% AP over the strong ATSS baseline,\nwithout introducing additional overhead practically.",
+      "filename": "table3.png",
+      "page": 7,
+      "bbox": [
+        82.7490005493164,
+        316.06671142578125,
+        292.2676086425781,
+        556.7709350585938
+      ],
+      "width": 583,
+      "height": 670
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4: Comparisons between state-of-the-art detectors (single-model and single-scale results) on COCO test-dev. “MStrain” denotes multi-\nscale training. FPS values with ∗are from [33], while others are measured on the same machine with a single GeForce RTX 2080Ti GPU under\nthe same mmdetection [3] framework, using a batch size of 1 whenever possible. “n/a” means that both trained models and timing results from\noriginal papers are not available. R: ResNet. X: ResNeXt. HG: Hourglass. DCN: Deformable Convolutional Network.",
+      "filename": "table4.png",
+      "page": 8,
+      "bbox": [
+        102.64099884033203,
+        500.1148986816406,
+        510.74407958984375,
+        727.4070434570312
+      ],
+      "width": 1134,
+      "height": 632
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "label": "Figure 8",
+      "caption": "Figure 8: We demonstrate possible cases of ground-truth/predicted bounding box along with the positive points. The matrix points denote the\nfeature pyramid layer with stride = 8. Centerness label is easier to get very small values by its deﬁnition, whilst IoU label is more reliable as\nthe supervisions from bounding boxes will always push it close to 1.0.",
+      "filename": "fig8.png",
+      "page": 9,
+      "bbox": [
+        121.96129608154297,
+        195.9833526611328,
+        587.0,
+        359.1171569824219
+      ],
+      "width": 1293,
+      "height": 454
+    },
+    {
+      "type": "figure",
+      "number": "9",
+      "label": "Figure 9",
+      "caption": "Figure 9: Label distributions over all positive training samples on COCO, based on pretrained GFL detector (ResNet-50 backbone).",
+      "filename": "fig9.png",
+      "page": 9,
+      "bbox": [
+        121.96129608154297,
+        372.03094482421875,
+        587.0,
+        563.2760009765625
+      ],
+      "width": 1293,
+      "height": 532
+    }
+  ]
+}

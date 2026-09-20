@@ -1,0 +1,61 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Attn Modules\\2023_Efficient_Multi-Scale_Attention_Module_with_Cross-Spatial_Learning.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\EMA",
+  "total_pages": 5,
+  "total_items": 3,
+  "total_figures": 0,
+  "total_tables": 3,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1: Comparison of various attention methods on CIFAR100.\nNote that all of the attention modules are embedded into the \nbottelneck blocks of ResNet50/101.",
+      "filename": "table1.png",
+      "page": 3,
+      "bbox": [
+        362.3077087402344,
+        206.3546142578125,
+        406.07037353515625,
+        321.73968505859375
+      ],
+      "width": 122,
+      "height": 321
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2: Object detection results of different attention methods \non COCO and VisDrone val datasets.",
+      "filename": "table2.png",
+      "page": 4,
+      "bbox": [
+        96.36940002441406,
+        150.39852905273438,
+        139.01605224609375,
+        256.8644714355469
+      ],
+      "width": 120,
+      "height": 297
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3: Ablation on relative training configuration settings.",
+      "filename": "table3.png",
+      "page": 4,
+      "bbox": [
+        309.69000244140625,
+        447.6160583496094,
+        565.5899658203125,
+        719.0873413085938
+      ],
+      "width": 712,
+      "height": 755
+    }
+  ]
+}

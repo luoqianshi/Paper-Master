@@ -1,0 +1,29 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Loss Functions\\2024 Focaler-IoU_More Focused Intersection over Union Loss.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\Focaler-IoU",
+  "total_pages": 4,
+  "total_items": 1,
+  "total_figures": 1,
+  "total_tables": 0,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Fig. 1: As shown in the figure: (a) and (b) represent the linear interval mapping curves for difficult and simple samples,\nrespectively.",
+      "filename": "fig1.png",
+      "page": 3,
+      "bbox": [
+        25.0,
+        45.0,
+        531.7031860351562,
+        308.13946533203125
+      ],
+      "width": 1408,
+      "height": 731
+    }
+  ]
+}

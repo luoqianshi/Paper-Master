@@ -1,0 +1,125 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\Attn Modules\\2023 DilateFormer_Multi-Scale_Dilated_Transformer_for_Visual_Recognition.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\DilateFormer",
+  "total_pages": 14,
+  "total_items": 7,
+  "total_figures": 7,
+  "total_tables": 0,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Fig. 1.\nPerformance comparisons with respect to FLOPs on ImageNet-1 K\nclassiﬁcation. Without extra training data, our DilateFormer variants achieve\ncomparable or even better performance with fewer FLOPs.",
+      "filename": "fig1.png",
+      "page": 2,
+      "bbox": [
+        66.05000305175781,
+        61.72198486328125,
+        279.34100341796875,
+        236.75897216796875
+      ],
+      "width": 593,
+      "height": 487
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Fig. 2.\nVisualization of attention maps of the third Multi-Head Self-Attention block of ViT-Small.1 We visualize the activations in attention maps of the query\npatches (in the red box). The attention maps show that patches with high attention scores sparsely scatter around the query patch, and other patches have low\nattention scores.",
+      "filename": "fig2.png",
+      "page": 3,
+      "bbox": [
+        42.15999984741211,
+        61.477027893066406,
+        556.1599731445312,
+        169.51702880859375
+      ],
+      "width": 1428,
+      "height": 301
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Fig. 3.\nThe overall architecture of our DilateFormer. The top part shows the proposed Multi-Scale Dilated Attention (MSDA) block, consisting of DwConv,\nMulti-Scale Sliding Window Dilated Attention operation (SWDA) and MLP. The bottom part shows DilateFormer, consisting of Overlapping Tokenizer, Overlapping\nDownsampler, Multi-Scale Dilated Attention (MSDA) block and Multi-Head Self-Attention (MHSA) block.",
+      "filename": "fig3.png",
+      "page": 5,
+      "bbox": [
+        51.74800109863281,
+        65.03699493408203,
+        535.8319091796875,
+        254.65896606445312
+      ],
+      "width": 1346,
+      "height": 528
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4.\nIllustration of Multi-Scale Dilated Attention (MSDA). First, the\nchannels of the feature map are split into different heads. Then, the self-attention\noperation is performed among the colored patches in the window surrounding\nthe red query patch, using different dilation rates in different heads. Besides,\nfeatures in different heads are concatenated together and then fed into a linear\nlayer. By default, we use a 3 × 3 kernel size with dilation rates r = 1, 2 and 3,\nand the sizes of attended receptive ﬁelds in different heads are 3 × 3, 5 × 5 and\n7 × 7.",
+      "filename": "fig4.png",
+      "page": 5,
+      "bbox": [
+        56.90793991088867,
+        387.5680236816406,
+        215.39894104003906,
+        433.5920104980469
+      ],
+      "width": 441,
+      "height": 129
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Fig. 5.\nPerformance comparisons with respect to model parameters on\nImageNet-1 K classiﬁcation. Without extra training data, our DilateFormer\nvariants achieve comparable or even better performance with fewer model\nparameters.",
+      "filename": "fig5.png",
+      "page": 6,
+      "bbox": [
+        70.39972686767578,
+        307.71575927734375,
+        274.3927307128906,
+        475.20574951171875
+      ],
+      "width": 568,
+      "height": 467
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Fig. 6.\nGrad-CAM Visualization of the last layer of DeiT-Tiny, Swin-Tiny and\nDilate-Tiny. Images are from the validation set of ImageNet-1 k.",
+      "filename": "fig6.png",
+      "page": 11,
+      "bbox": [
+        45.80500030517578,
+        61.571990966796875,
+        289.4049987792969,
+        377.4169921875
+      ],
+      "width": 677,
+      "height": 878
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Fig. 7.\nMore Visualization of attention maps of shallow layers of ViT-Small.\nWe visualize the activations in attention maps of the query patches (in the red\nbox). The attention maps show that patches with high attention scores sparsely\nscatter around the query patch, and other patches have low attention scores.",
+      "filename": "fig7.png",
+      "page": 11,
+      "bbox": [
+        45.80500030517578,
+        410.072021484375,
+        289.4049987792969,
+        696.06201171875
+      ],
+      "width": 677,
+      "height": 795
+    }
+  ]
+}

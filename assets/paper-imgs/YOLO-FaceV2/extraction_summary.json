@@ -1,0 +1,237 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO Family\\2024 YOLO-FaceV2_A scale and occlusion aware face detector.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\YOLO-FaceV2",
+  "total_pages": 10,
+  "total_items": 14,
+  "total_figures": 7,
+  "total_tables": 7,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Fig. 1. Network architecture of YOLO-FaceV2. (a) Backbone: a feed-forward CSPDarknet53 architecture extracts the multi-scale feature maps. To expand the receptive field, the\nCSP block in P5 is replaced by the receptive field enhancement module (RFE) which is shown in the blue dotted box. (b) Neck: a Spatial Pyramid Pooling (SPP) separates out\nthe most significant context features and increases the receptive field and a Path Aggregation Network (PAN) aggregates parameter from different backbone levels for different\ndetector levels. To compensate for increased receptive field loss of resolution, the P2 layer is fused into PAN which is shown between (a) and (b). (c) a Separated and Enhancement\nAttention Module (SEAM) uses the relationship between feature maps to recall occluded features which is shown in the red dotted box. (For interpretation of the references to\ncolor in this figure legend, the reader is referred to the web version of this article.)",
+      "filename": "fig1.png",
+      "page": 3,
+      "bbox": [
+        82.80999755859375,
+        50.78900146484375,
+        512.5700073242188,
+        283.5780029296875
+      ],
+      "width": 1194,
+      "height": 647
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Fig. 2. Modified CSP block and RFE module. For CSP block in P5, we replace bottleneck with RFE. The right figure shows the detailed architecture of the RFE. It consists of\n1 × 1 convolution, 3 × 3 convolution with different dilated rate and average pooling layer.",
+      "filename": "fig2.png",
+      "page": 4,
+      "bbox": [
+        82.80999755859375,
+        50.78900146484375,
+        512.5700073242188,
+        275.3489990234375
+      ],
+      "width": 1194,
+      "height": 624
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Fig. 3. (a) Effective receptive field: The whole black box is the theoretical receptive field (TRF) and the while circle with Gaussian distribution is the effective receptive field\n(ERF). The figure is from [8]. (b) A special example: The whole box is the origin anchor box setting by TRF and the blue box is the new anchor estimated by the red circle\nwhich is the ERF. (For interpretation of the references to color in this figure legend, the reader is referred to the web version of this article.)",
+      "filename": "fig3.png",
+      "page": 4,
+      "bbox": [
+        144.6269989013672,
+        323.2869873046875,
+        450.7869873046875,
+        486.95599365234375
+      ],
+      "width": 852,
+      "height": 455
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1\nThe three detection layers and nine anchor scales.",
+      "filename": "table1.png",
+      "page": 4,
+      "bbox": [
+        37.119998931884766,
+        546.8118896484375,
+        289.14410400390625,
+        592.2059326171875
+      ],
+      "width": 701,
+      "height": 128
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4. Illustration of SEAM. The left is the architecture of the SEAM, the right part is the structure of CSMM(channel and spatial mixing module). The CSMM utilizes different\npatch to multi-scale feature and uses depth separable convolution to learn the correlation of spatial dimensions and channels.",
+      "filename": "fig4.png",
+      "page": 5,
+      "bbox": [
+        106.05500030517578,
+        50.78900146484375,
+        489.2550048828125,
+        352.697998046875
+      ],
+      "width": 1066,
+      "height": 839
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2\nResults of the ablation experiments for scale-invariance verification on the Widerface validation\ndataset.",
+      "filename": "table2.png",
+      "page": 6,
+      "bbox": [
+        159.13800048828125,
+        75.40386962890625,
+        437.1648864746094,
+        177.88351440429688
+      ],
+      "width": 773,
+      "height": 286
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Fig. 5. We propose a novel loss we term the Slide Loss that adaptively learns the\npositive and negative sample threshold parameters 𝜇. Setting high weights near 𝜇\nincreases the relative loss for hard-classified examples, putting more focus on hard,\nmisclassified examples.",
+      "filename": "fig5.png",
+      "page": 6,
+      "bbox": [
+        48.17499542236328,
+        175.91519165039062,
+        278.2550048828125,
+        355.4241943359375
+      ],
+      "width": 640,
+      "height": 500
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Fig. 6. Detection results on the WiderFace validation dataset. (a) results on the Easy\ndataset (b) results on the Medium dataset (c) results on the Hard dataset.",
+      "filename": "fig6.png",
+      "page": 7,
+      "bbox": [
+        315.8410339355469,
+        64.63287353515625,
+        548.4930419921875,
+        584.1439819335938
+      ],
+      "width": 647,
+      "height": 1444
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3\nResults\nof\nthe\nablation\nexperiments\nfor\nocclusion-aware\nverification on the WiderFace validation dataset.",
+      "filename": "table3.png",
+      "page": 7,
+      "bbox": [
+        54.11107635498047,
+        75.40386962890625,
+        267.6184997558594,
+        223.9805450439453
+      ],
+      "width": 594,
+      "height": 414
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4\nResults of the mAP metric on the FDDB dataset.",
+      "filename": "table4.png",
+      "page": 7,
+      "bbox": [
+        70.6240005493164,
+        75.40386962890625,
+        252.35137939453125,
+        143.5849609375
+      ],
+      "width": 505,
+      "height": 190
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5\nAblation study results on the WiderFace validation dataset.",
+      "filename": "table5.png",
+      "page": 7,
+      "bbox": [
+        37.12007522583008,
+        251.81689453125,
+        289.1451110839844,
+        305.7945556640625
+      ],
+      "width": 701,
+      "height": 151
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Fig. 7. (a), (c) and (e) are some examples of detected small faces using YOLO-FaceV2. (b), (d) and (f) are the visualization of feature maps produced by models with occlusion-aware\nmethods.",
+      "filename": "fig7.png",
+      "page": 8,
+      "bbox": [
+        66.20198822021484,
+        50.729949951171875,
+        529.1739501953125,
+        502.1019592285156
+      ],
+      "width": 1287,
+      "height": 1255
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6\nA series of YOLO models with different parameters.",
+      "filename": "table6.png",
+      "page": 9,
+      "bbox": [
+        37.119998931884766,
+        69.75189208984375,
+        289.1505126953125,
+        123.72950744628906
+      ],
+      "width": 701,
+      "height": 151
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "label": "Table 7",
+      "caption": "Table 7\nComparison of our YOLO-FaceV2 and existing face detectors on the WiderFace\nvalidation dataset.",
+      "filename": "table7.png",
+      "page": 9,
+      "bbox": [
+        37.119998931884766,
+        69.75189208984375,
+        289.1505126953125,
+        123.72950744628906
+      ],
+      "width": 701,
+      "height": 151
+    }
+  ]
+}

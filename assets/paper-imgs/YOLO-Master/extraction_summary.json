@@ -1,0 +1,205 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO Family\\2026 YOLO-Master MOE-Accelerated with Specialized Transformers for Enhanced.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\YOLO-Master",
+  "total_pages": 11,
+  "total_items": 12,
+  "total_figures": 4,
+  "total_tables": 8,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1.\nAccuracy-latency trade-off on MS COCO. YOLO-\nMaster-N achieves 42.4% AP at 1.62ms latency, outperforming\nbaselines on the Pareto frontier.",
+      "filename": "fig1.png",
+      "page": 1,
+      "bbox": [
+        312.25,
+        243.63494873046875,
+        558.5055541992188,
+        420.8330078125
+      ],
+      "width": 685,
+      "height": 493
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2. The framework of YOLO-Master. The architecture integrates ES-MoE modules into the Backbone and Neck for enhanced feature\nextraction and fusion. Input features are processed through a Dynamic Routing Network with Softmax Gating, selecting top-K experts for\nweighted aggregation. The framework adaptively switches between Standard, Soft Top-K (training), and Hard Top-K (inference) routing\nstrategies for efficient multi-scale object detection across P3, P4, and P5 prediction layers.",
+      "filename": "fig2.png",
+      "page": 3,
+      "bbox": [
+        54.8849983215332,
+        67.0000228881836,
+        556.9974975585938,
+        181.7750244140625
+      ],
+      "width": 1396,
+      "height": 319
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1. Comparison with state-of-the-art Nano-scale detectors across five benchmarks.",
+      "filename": "table1.png",
+      "page": 6,
+      "bbox": [
+        101.1969985961914,
+        92.29608917236328,
+        522.4291381835938,
+        138.1825408935547
+      ],
+      "width": 1171,
+      "height": 128
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2. Comparison of detection performance across Small scales\non MS COCO.",
+      "filename": "table2.png",
+      "page": 7,
+      "bbox": [
+        53.5,
+        101.94532012939453,
+        299.7467346191406,
+        557.0244140625
+      ],
+      "width": 685,
+      "height": 1265
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "label": "Table 7",
+      "caption": "Table 7. Ablation study on top-K selection with 4 experts.",
+      "filename": "table7.png",
+      "page": 7,
+      "bbox": [
+        312.25,
+        155.57667541503906,
+        558.4969482421875,
+        290.5469970703125
+      ],
+      "width": 685,
+      "height": 376
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3. Loss ablation study across configurations. (a) DFL loss\nComparison. (b) MoE Loss Comparison. (c) Validation mAP. (d)\nTotal loss. (e) MoE loss Evolution. (f) mAP convergence.",
+      "filename": "fig3.png",
+      "page": 7,
+      "bbox": [
+        312.25,
+        155.57667541503906,
+        558.4969482421875,
+        290.5469970703125
+      ],
+      "width": 685,
+      "height": 376
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3. Comparison of classification performance on ImageNet\ndataset.",
+      "filename": "table3.png",
+      "page": 7,
+      "bbox": [
+        53.5,
+        208.4730987548828,
+        299.7467346191406,
+        557.0244140625
+      ],
+      "width": 685,
+      "height": 969
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4. Comparison of segmentation performance on MS COCO\nat 640×640.",
+      "filename": "table4.png",
+      "page": 7,
+      "bbox": [
+        72.46800231933594,
+        301.1333312988281,
+        278.5416259765625,
+        557.0244140625
+      ],
+      "width": 573,
+      "height": 712
+    },
+    {
+      "type": "table",
+      "number": "8",
+      "label": "Table 8",
+      "caption": "Table 8 and Figure 3 analyze five loss configurations. Sur-\nprisingly, removing DFL loss entirely and using MoE-only\nloss (weight=1.5) yields the best performance at 62.2%\nmAP (+0.3% over baseline). The training dynamics (Fig-\nure 3) explain this: Config 4 (DFL + strong MoEλ=1.5) ex-\nhibits severe oscillations, while Config 5 (MoE-only) con-",
+      "filename": "table8.png",
+      "page": 7,
+      "bbox": [
+        312.25,
+        341.1934509277344,
+        558.503173828125,
+        643.0249633789062
+      ],
+      "width": 685,
+      "height": 840
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5. Ablation study on ES-MoE placement.",
+      "filename": "table5.png",
+      "page": 7,
+      "bbox": [
+        76.4219970703125,
+        391.0331115722656,
+        274.59088134765625,
+        557.0244140625
+      ],
+      "width": 551,
+      "height": 462
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6. Ablation study on expert numbers.",
+      "filename": "table6.png",
+      "page": 7,
+      "bbox": [
+        87.20600128173828,
+        484.3360900878906,
+        247.8622283935547,
+        557.0244140625
+      ],
+      "width": 447,
+      "height": 203
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Figure 4. Qualitative comparison across four challenging scenarios. All test images are from the MS COCO [24] ane PASCAL VOC.\n2007+2012 [6] test set",
+      "filename": "fig4.png",
+      "page": 8,
+      "bbox": [
+        53.5,
+        67.0015869140625,
+        558.4342041015625,
+        375.38543701171875
+      ],
+      "width": 1404,
+      "height": 857
+    }
+  ]
+}

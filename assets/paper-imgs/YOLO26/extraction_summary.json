@@ -1,0 +1,301 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO Family\\2026 Ultralytics YOLO26 Unified Real-Time End-to-End Vision Models.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\YOLO26",
+  "total_pages": 31,
+  "total_items": 18,
+  "total_figures": 6,
+  "total_tables": 12,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1. Accuracy–latency trade-off on COCO val2017. YOLO26 variants sit on or advance the Pareto front over prior YOLO versions\nand other real-time detectors, with the strongest AP–latency trade-off at the medium, large, and extra-large scales. Latency is measured on\nan NVIDIA T4 GPU with TensorRT FP16.",
+      "filename": "fig1.png",
+      "page": 1,
+      "bbox": [
+        53.5,
+        233.67697143554688,
+        558.513671875,
+        465.9280090332031
+      ],
+      "width": 1404,
+      "height": 646
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2. Training pipeline of Ultralytics YOLO26. The shared backbone and neck feed the dual detection heads, STAL improves\nassignment robustness for tiny targets, Progressive Loss reweights the one-to-many and one-to-one objectives over training, and MuSGD\nperforms the final parameter updates.",
+      "filename": "fig2.png",
+      "page": 6,
+      "bbox": [
+        124.45912170410156,
+        92.3975601196289,
+        398.7614440917969,
+        213.86383056640625
+      ],
+      "width": 763,
+      "height": 339
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1. Main YOLO26 detection components and their corre-\nsponding implementation names in the Ultralytics repository.",
+      "filename": "table1.png",
+      "page": 6,
+      "bbox": [
+        57.046688079833984,
+        279.8160400390625,
+        294.2185974121094,
+        351.0890197753906
+      ],
+      "width": 660,
+      "height": 199
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3. Deployment pipeline of Ultralytics YOLO26. A trained model supports two inference paths: the default one-to-one NMS-free\npath and the optional one-to-many path with NMS, while preserving compatibility with a broad set of export targets.",
+      "filename": "fig3.png",
+      "page": 10,
+      "bbox": [
+        111.55955505371094,
+        102.31151580810547,
+        500.3643493652344,
+        337.0262145996094
+      ],
+      "width": 1081,
+      "height": 653
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2. Step-by-step ablation from the YOLO11s baseline to the final YOLO26s configuration. Replacing DFL with direct box regres-\nsion and L1 loss reduces complexity with limited accuracy change, STAL and the backbone/neck refinement recover and improve the\nNMS-based AP, and end-to-end training with Progressive Loss improves the one-to-one branch. MuSGD, Objects365 pretraining, and\nhyperparameter search provide the remaining gains to the final result.",
+      "filename": "table2.png",
+      "page": 12,
+      "bbox": [
+        53.499977111816406,
+        278.49627685546875,
+        558.5130615234375,
+        718.4070434570312
+      ],
+      "width": 1404,
+      "height": 1223
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3.\nControlled DFL removal ablation on COCO using\nYOLO26s at 640 and 1280 resolution. Removing DFL improves\nAP at both resolutions, with the gain increasing from +0.3 AP /\n+1.0 APL at 640 to +1.3 AP / +2.2 APL at 1280.",
+      "filename": "table3.png",
+      "page": 12,
+      "bbox": [
+        90.84500122070312,
+        278.49627685546875,
+        259.6630401611328,
+        351.62640380859375
+      ],
+      "width": 470,
+      "height": 204
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4. MuSGD improves convergence speed and final accuracy\nwhen training YOLO26 from scratch on COCO. MuSGD reaches\n47.4 mAP in 500 epochs versus 47.0 mAP for SGD in 600 epochs\n(16.7% fewer epochs).",
+      "filename": "table4.png",
+      "page": 12,
+      "bbox": [
+        312.25,
+        397.14849853515625,
+        558.5130615234375,
+        718.4069213867188
+      ],
+      "width": 685,
+      "height": 893
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Figure 4. Qualitative comparison for large-object localization at\n1280 resolution. From left to right, each row shows predictions\nfrom the model with DFL, predictions from the counterpart with-\nout DFL, and the ground-truth annotations. The DFL-free head\nbetter preserves full-object extent on large targets, supporting the\nquantitative gains reported in Table 3.",
+      "filename": "fig4.png",
+      "page": 13,
+      "bbox": [
+        59.40699768066406,
+        66.99656677246094,
+        293.83819580078125,
+        446.43994140625
+      ],
+      "width": 652,
+      "height": 1055
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6. Ablation of the STAL reference size sref on COCO using\nYOLO11s as the baseline. Vanilla TAL achieves 46.6 AP. STAL\nwith sref = 16 yields the best overall result at 46.8 AP (+0.2), with\nnotable gains in APS (29.6 vs. 29.0). Both sref = 8 and sref = 32\nmatch or slightly underperform the baseline, confirming that the\nnext-stride reference size is the most effective choice.",
+      "filename": "table6.png",
+      "page": 13,
+      "bbox": [
+        312.25,
+        236.305419921875,
+        558.5032348632812,
+        718.4067993164062
+      ],
+      "width": 685,
+      "height": 1340
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5. Ablation of Progressive Loss schedules on COCO us-\ning YOLO11s as the baseline. The default schedule (0.8, 0.2) →\n(0.1, 0.9) gives the best end-to-end mAP.",
+      "filename": "table5.png",
+      "page": 13,
+      "bbox": [
+        76.8030014038086,
+        529.4432373046875,
+        274.2097473144531,
+        624.4913330078125
+      ],
+      "width": 549,
+      "height": 265
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "label": "Table 7",
+      "caption": "Table 7. Released YOLO26 detection benchmarks on COCO from the Ultralytics repository [76]. ‘mAP‘ denotes standard validation of\nthe one-to-many branch with NMS (‘end2end=False‘), whereas ‘mAP (E2E)‘ denotes true end-to-end validation of the default one-to-one\nbranch. Speed values are the published CPU ONNX (Intel Xeon CPU @ 2.00 GHz) and T4 TensorRT10 benchmarks for the released\nmodels.",
+      "filename": "table7.png",
+      "page": 14,
+      "bbox": [
+        59.40699768066406,
+        230.5293426513672,
+        293.81658935546875,
+        328.21539306640625
+      ],
+      "width": 652,
+      "height": 272
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Figure 5. Qualitative comparison between TAL baseline (left),\nSTAL with sref = 16 (middle), and ground-truth annotations\n(right) on COCO validation images. All predictions are generated\nat a confidence threshold of 0.25. STAL improves small-object\ndetection by ensuring sufficient anchor coverage for tiny ground-\ntruth boxes, leading to fewer missed detections and tighter local-\nization that more closely matches the ground truth.",
+      "filename": "fig5.png",
+      "page": 14,
+      "bbox": [
+        59.40699768066406,
+        230.5293426513672,
+        293.8452453613281,
+        558.2509765625
+      ],
+      "width": 652,
+      "height": 911
+    },
+    {
+      "type": "table",
+      "number": "8",
+      "label": "Table 8",
+      "caption": "Table 8. Effectiveness of module modification and auxiliary loss\nfor instance segmentation on COCO.",
+      "filename": "table8.png",
+      "page": 14,
+      "bbox": [
+        312.25,
+        341.689453125,
+        558.503173828125,
+        718.4069213867188
+      ],
+      "width": 685,
+      "height": 1047
+    },
+    {
+      "type": "table",
+      "number": "9",
+      "label": "Table 9",
+      "caption": "Table 9. Ablation study on different weight configurations of the\nOKS and RLE loss, evaluated with YOLO26s pose model on the\nCOCO keypoints validation set.",
+      "filename": "table9.png",
+      "page": 15,
+      "bbox": [
+        53.5,
+        69.40748596191406,
+        299.7530822753906,
+        227.611328125
+      ],
+      "width": 685,
+      "height": 441
+    },
+    {
+      "type": "table",
+      "number": "10",
+      "label": "Table 10",
+      "caption": "Table 10. Comparison of different angle definitions for OBB de-\ntection on DOTA-v1.0 validation set, using YOLO26s model with-\nout the angle loss as the backbone.",
+      "filename": "table10.png",
+      "page": 15,
+      "bbox": [
+        312.25,
+        171.8593292236328,
+        559.03857421875,
+        458.4339294433594
+      ],
+      "width": 686,
+      "height": 797
+    },
+    {
+      "type": "table",
+      "number": "11",
+      "label": "Table 11",
+      "caption": "Table 11. Ablation study of different λ values used in the an-\ngle loss on the DOTA-v1.0 validation set, using YOLO26s as the\nbackbone. ”—” indicates no angle loss is used.",
+      "filename": "table11.png",
+      "page": 15,
+      "bbox": [
+        312.25,
+        315.8749694824219,
+        559.03857421875,
+        458.4339294433594
+      ],
+      "width": 686,
+      "height": 397
+    },
+    {
+      "type": "table",
+      "number": "12",
+      "label": "Table 12",
+      "caption": "Table 12.\nAblation study of YOLOE-26s-TP on the LVIS\nminival split. Starting from the YOLOE-11s-TP baseline, we\nprogressively introduce the YOLOE-26 modifications described in\nSec. 3.6 and report AP (mAP50:95) under both end-to-end (E2E)\nand non-end-to-end (non-E2E) evaluation protocols.",
+      "filename": "table12.png",
+      "page": 15,
+      "bbox": [
+        315.239013671875,
+        383.6361389160156,
+        559.03857421875,
+        458.4339294433594
+      ],
+      "width": 678,
+      "height": 209
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Figure 6. Qualitative comparisons between YOLO26x-obb and\nYOLO11x-obb models for square rotated objects detection. Green\nboxes are ground truth, while red boxes indicate predictions.\nYOLO26 demonstrates better angle predictions over YOLO11 on\nsquare objects.",
+      "filename": "fig6.png",
+      "page": 16,
+      "bbox": [
+        55.73500061035156,
+        66.9996566772461,
+        297.50531005859375,
+        539.5249633789062
+      ],
+      "width": 673,
+      "height": 1313
+    }
+  ]
+}

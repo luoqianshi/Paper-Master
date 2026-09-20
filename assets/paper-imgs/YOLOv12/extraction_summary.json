@@ -1,0 +1,205 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\YOLO Family\\2025 YOLOv12 Attention-Centric Real-Time Object Detectors.pdf",
+  "output_dir": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\YOLOv12",
+  "total_pages": 13,
+  "total_items": 12,
+  "total_figures": 5,
+  "total_tables": 7,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Figure 1. Comparisons with other popular methods in terms of latency-accuracy (left) and FLOPs-accuracy (right) trade-offs.",
+      "filename": "fig1.png",
+      "page": 1,
+      "bbox": [
+        30.407093048095703,
+        203.08233642578125,
+        581.2135009765625,
+        448.30511474609375
+      ],
+      "width": 1531,
+      "height": 682
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Figure 2. Comparison of the representative local attention mechanisms with our area attention. Area Attention adopts the most\nstraightforward equal partitioning way to divide the feature map into l areas vertically or horizontally. (default is 4). This avoids complex\noperations while ensuring a large receptive field, resulting in high efficiency.",
+      "filename": "fig2.png",
+      "page": 3,
+      "bbox": [
+        52.366539001464844,
+        45.0,
+        556.6801147460938,
+        190.2180938720703
+      ],
+      "width": 1402,
+      "height": 404
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Figure 3. The architecture comparison with popular modules including (a): CSPNet [55], (b) ELAN [56], (c) C3K2 (a case of\nGELAN) [28, 58], and (d) the proposed R-ELAN (residual efficient layer aggregation networks).",
+      "filename": "fig3.png",
+      "page": 4,
+      "bbox": [
+        55.9739990234375,
+        45.0,
+        566.3067626953125,
+        229.12110900878906
+      ],
+      "width": 1419,
+      "height": 512
+    },
+    {
+      "type": "table",
+      "number": "1",
+      "label": "Table 1",
+      "caption": "Table 1. Comparison with popular state-of-the-art real-time object detectors. All results are obtained using 640 × 640 inputs.",
+      "filename": "table1.png",
+      "page": 5,
+      "bbox": [
+        76.15799713134766,
+        90.89979553222656,
+        533.3511352539062,
+        628.2390747070312
+      ],
+      "width": 1271,
+      "height": 1494
+    },
+    {
+      "type": "table",
+      "number": "2",
+      "label": "Table 2",
+      "caption": "Table 2. Ablation on the proposed residual efficient layer aggregation networks (R-ELAN). Vanilla: Uses the original ELAN design;\nRe-Aggre.: Employs our proposed feature integration method; Resi.: Utilizes the residual block technique; Scaling: The scaling factor for\nthe residual connection.",
+      "filename": "table2.png",
+      "page": 7,
+      "bbox": [
+        79.89700317382812,
+        112.90430450439453,
+        529.861083984375,
+        307.86737060546875
+      ],
+      "width": 1251,
+      "height": 543
+    },
+    {
+      "type": "table",
+      "number": "3",
+      "label": "Table 3",
+      "caption": "Table 3. Ablation on the proposed area attention. With area at-\ntention (\"), YOLOv12-N/S/X models run significantly faster on\nboth GPU (CUDA) and CPU. CUDA results are measured on RTX\n3080/A5000. Inference latency: milliseconds (ms) for FP32 and\nFP16 precision. (All results are obtained without using FlashAt-\ntention [13, 14].)",
+      "filename": "table3.png",
+      "page": 7,
+      "bbox": [
+        79.89700317382812,
+        112.90430450439453,
+        529.861083984375,
+        307.86737060546875
+      ],
+      "width": 1251,
+      "height": 543
+    },
+    {
+      "type": "table",
+      "number": "4",
+      "label": "Table 4",
+      "caption": "Table 4. Comparative analysis of inference speed across differ-\nent GPUs (RTX 3080, RTX A5000, and RTX A6000). Inference\nlatency: milliseconds (ms) for FP32 and FP16 precision.",
+      "filename": "table4.png",
+      "page": 7,
+      "bbox": [
+        317.5480041503906,
+        368.6401062011719,
+        550.9625244140625,
+        626.8743896484375
+      ],
+      "width": 649,
+      "height": 718
+    },
+    {
+      "type": "table",
+      "number": "5",
+      "label": "Table 5",
+      "caption": "Table 5. Diagnostic studies. We only show the factor(s) to be diagnosed in each subtable to save space. The default parameters are (unless\notherwise specified): training for 600 epochs from scratch, using YOLOv12-N model.",
+      "filename": "table5.png",
+      "page": 8,
+      "bbox": [
+        25.0,
+        216.28594970703125,
+        587.0,
+        262.2286376953125
+      ],
+      "width": 1562,
+      "height": 129
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Figure 4. Comparison with popular methods in terms of accuracy-parameters (left) and accuracy-latency trade-off on CPU (right).",
+      "filename": "fig4.png",
+      "page": 8,
+      "bbox": [
+        25.0,
+        216.28594970703125,
+        587.0,
+        475.8330993652344
+      ],
+      "width": 1562,
+      "height": 722
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Figure 5. Comparison of heat maps between YOLOv10 [53], YOLOv11 [28], and the proposed YOLOv12. Compared to the advanced\nYOLOv10 and YOLOv11, YOLOv12 demonstrates a clearer perception of objects in the image. All the results are obtained using the X\nscale models. Zoom in to compare the details.",
+      "filename": "fig5.png",
+      "page": 9,
+      "bbox": [
+        44.8154411315918,
+        67.0008544921875,
+        587.0,
+        341.2890930175781
+      ],
+      "width": 1507,
+      "height": 763
+    },
+    {
+      "type": "table",
+      "number": "6",
+      "label": "Table 6",
+      "caption": "Table 6. Detailed performance of YOLOv12 on COCO.",
+      "filename": "table6.png",
+      "page": 10,
+      "bbox": [
+        86.45600128173828,
+        90.98596954345703,
+        523.3030395507812,
+        171.42938232421875
+      ],
+      "width": 1214,
+      "height": 225
+    },
+    {
+      "type": "table",
+      "number": "7",
+      "label": "Table 7",
+      "caption": "Table 7. Hyperparameters for fine-tuning the YOLOv12 fam-\nily on COCO [36].",
+      "filename": "table7.png",
+      "page": 10,
+      "bbox": [
+        317.35198974609375,
+        221.176513671875,
+        554.9093627929688,
+        567.071044921875
+      ],
+      "width": 661,
+      "height": 962
+    }
+  ]
+}
