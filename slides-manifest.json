@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-08T18:12:00+08:00",
+  "generatedAt": "2026-09-06T23:11:05.431469+08:00",
   "slides": [
     {
       "title": "Attention Is All You Need",
@@ -72,6 +72,38 @@
       "kind": "arXiv 预印本",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/YOLO-PEFT.png"
+    },
+    {
+      "title": "YOLO-Master: MOE-Accelerated with Specialized Transformers for Enhanced Real-time Detection",
+      "file": "paper-slides/YOLO-Master.html",
+      "description": "arXiv 2025 论文演示，聚焦首个面向实时目标检测的混合专家条件计算框架：ES-MoE 多尺度专家与动态路由、软/硬 Top-K 分阶段路由、负载均衡监督，COCO 42.4% AP @ 1.62ms 五基准 SOTA。",
+      "kind": "arXiv 预印本",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLO-Master.png"
+    },
+    {
+      "title": "SimAM: A Simple, Parameter-Free Attention Module for Convolutional Neural Networks",
+      "file": "paper-slides/SimAM.html",
+      "description": "ICML 2021 论文演示，聚焦基于空间抑制理论的零参数注意力模块：以线性可分性定义能量函数并推导闭式解，直接推断全 3-D 注意力权重，不足十行代码在分类、检测与分割上取得精度-效率双赢。",
+      "kind": "会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/SimAM.png"
+    },
+    {
+      "title": "Dynamic Head: Unifying Object Detection Heads with Attentions",
+      "file": "paper-slides/Dynamic-Head.html",
+      "description": "CVPR 2021 Dynamic Head 论文演示，聚焦把检测头输入统一为层级 × 空间 × 通道三维张量，以尺度感知、空间感知与任务感知三个串联注意力统一检测头，即插即用提升 1.2 ∼ 3.2 AP 并将 COCO 推至 60.6 AP。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Dynamic-Head.png"
+    },
+    {
+      "title": "FreqFusion: Frequency-Aware Feature Fusion for Dense Image Prediction",
+      "file": "paper-slides/FreqFusion.html",
+      "description": "TPAMI 2024 论文演示，聚焦特征融合中的类内不一致与边界位移，用 ALPF/AHPF/偏移三大生成器实现频率感知融合，四大密集预测任务全面领先。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/FreqFusion.png"
     }
   ]
 }

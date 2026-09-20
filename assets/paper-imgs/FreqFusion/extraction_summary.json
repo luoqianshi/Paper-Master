@@ -1,0 +1,253 @@
+{
+  "pdf_path": "D:\\trae_projects\\Accumulate-PPTs\\pdf-papers\\Improve YOLO12\\UpSample Modules\\2024 Frequency-Aware_Feature_Fusion_for_Dense_Image_Prediction.pdf",
+  "output_dir": "D:\\trae_projects\\Accumulate-PPTs\\assets\\paper-imgs\\FreqFusion",
+  "total_pages": 18,
+  "total_items": 15,
+  "total_figures": 15,
+  "total_tables": 0,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "items": [
+    {
+      "type": "figure",
+      "number": "1",
+      "label": "Figure 1",
+      "caption": "Fig. 1.\nFeature intra-category similarity (IntraSim) and prediction visualiza-\ntion. The brighter color indicates a higher IntraSim for the bus (left two columns)\nand truck (right two columns). The standard feature fusion demonstrates low\nIntraSim within objects and at their boundaries. We observe rapid changes\nor variations in feature values within objects, i.e., disturbed high-frequency\nfeatures leading to relatively low intra-category similarity [11] and resulting in\nintra-category inconsistency. Furthermore, the blurred boundary lacks accurate\nhigh frequency, leading to boundary displacement. The proposed FreqFusion\nshows more consistent features and clear boundaries, contributing to more\nconsistent prediction with ﬁner boundaries.",
+      "filename": "fig1.png",
+      "page": 2,
+      "bbox": [
+        40.15299987792969,
+        61.75901794433594,
+        294.9530029296875,
+        311.5190124511719
+      ],
+      "width": 709,
+      "height": 695
+    },
+    {
+      "type": "figure",
+      "number": "2",
+      "label": "Figure 2",
+      "caption": "Fig. 2.\nIllustration of intra-category similarity, inter-category similarity, and\nsimilarity margin. Different colors indicate different categories.",
+      "filename": "fig2.png",
+      "page": 2,
+      "bbox": [
+        40.15299987792969,
+        427.20098876953125,
+        294.9530029296875,
+        511.4809875488281
+      ],
+      "width": 709,
+      "height": 235
+    },
+    {
+      "type": "figure",
+      "number": "3",
+      "label": "Figure 3",
+      "caption": "Fig. 3.\nThe illustration of FreqFusion. Pixel unshufﬂe involves resizing the spatial dimensions of the feature by half and expanding the channel by a factor of 4×,\ndividing them into 4 groups, such as from C × 2H × 2W to 4 × C × H × W. Pixel shufﬂe [62] is the reverse operation, transitioning from 4 × C × H × W\nto C × 2H × 2W. The Adaptive Low-Pass Filter (ALPF) generator and Adaptive High-Pass in the initial fusion share the same parameters as those in the ﬁnal\nfusion.",
+      "filename": "fig3.png",
+      "page": 5,
+      "bbox": [
+        49.94499969482422,
+        61.795013427734375,
+        539.9450073242188,
+        279.5150146484375
+      ],
+      "width": 1362,
+      "height": 606
+    },
+    {
+      "type": "figure",
+      "number": "4",
+      "label": "Figure 4",
+      "caption": "Fig. 4.\nThe illustration of generators in FreqFusion. ⊗represents element-wise multiplication, and ⊖represents subtraction.",
+      "filename": "fig4.png",
+      "page": 6,
+      "bbox": [
+        45.15700149536133,
+        61.88197326660156,
+        553.156982421875,
+        146.52197265625
+      ],
+      "width": 1412,
+      "height": 237
+    },
+    {
+      "type": "figure",
+      "number": "5",
+      "label": "Figure 5",
+      "caption": "Fig. 5.\nFrequency analysis of the learned convolutional kernel in the ALHPF\ngenerator is presented. In (a), the nine learned kernels for generating 3 × 3\nspatial-variant low-pass ﬁlters are displayed. A brighter color indicates a higher\nlearned weight. (b) illustrates their corresponding Fourier-transformed kernels.\nTo further analyze their characteristics, we average their frequency amplitudes\nand present the frequency spectrum in (c), demonstrating higher power for high-\nfrequency components, indicating reliance on high-frequency components in the\nfeature for ﬁlter prediction.",
+      "filename": "fig5.png",
+      "page": 7,
+      "bbox": [
+        35.941001892089844,
+        61.63599395751953,
+        290.7409973144531,
+        152.5159912109375
+      ],
+      "width": 709,
+      "height": 253
+    },
+    {
+      "type": "figure",
+      "number": "6",
+      "label": "Figure 6",
+      "caption": "Fig. 6.\nVisualization for initial fusion. In comparison with (a), the FreqFusion\nrecovers more detailed features in (b). Moreover, with enhanced initial fusion,\n(c) exhibits clearer boundaries. (e) and (f) depict the standard variance of\npredicted low-pass ﬁlters (LPF), (f) demonstrates a more effective maintenance\nof boundaries.",
+      "filename": "fig6.png",
+      "page": 7,
+      "bbox": [
+        35.941001892089844,
+        236.46697998046875,
+        290.7409973144531,
+        351.9469909667969
+      ],
+      "width": 709,
+      "height": 322
+    },
+    {
+      "type": "figure",
+      "number": "7",
+      "label": "Figure 7",
+      "caption": "Fig. 7.\nVisualization for intra-category similarity of features. We illustrate\nthe intra-category similarity for the car category, and a brighter color indicates\na higher similarity. The bilinear upsampled results exhibit severe inconsisten-\ncies in features and displacements along the boundaries. Our proposed ALPF\ngenerator addresses these inconsistencies, enhancing feature consistency and\nreﬁning boundaries. Furthermore, the offset generator not only further improves\nfeature consistency but also contributes to achieving more accurate boundary\ndelineations.",
+      "filename": "fig7.png",
+      "page": 8,
+      "bbox": [
+        40.15299987792969,
+        61.27897644042969,
+        294.9530029296875,
+        212.51898193359375
+      ],
+      "width": 709,
+      "height": 421
+    },
+    {
+      "type": "figure",
+      "number": "8",
+      "label": "Figure 8",
+      "caption": "Fig. 8.\nIllustration of how local similarity guides the offset prediction for\nresampling. The brighter color indicates a higher intra-category similarity. The\n3 × 3 gray grid indicates the cosine similarity Si,j between the pixel at (i, j)\nand its 8 local neighbors, including itself, for better visualization. A brighter\ncolor indicates a higher similarity. Local similarity guides the offset generator\nto sample towards features with high intra-category similarity, thereby reducing\nthe ambiguity in boundary or intra-category inconsistent areas.",
+      "filename": "fig8.png",
+      "page": 8,
+      "bbox": [
+        305.6619873046875,
+        61.76197052001953,
+        555.6619873046875,
+        155.52197265625
+      ],
+      "width": 695,
+      "height": 262
+    },
+    {
+      "type": "figure",
+      "number": "9",
+      "label": "Figure 9",
+      "caption": "Fig. 9.\nVisualization for resampling offsets predicted by the offset generator.\nThe offsets at the inside boundaries of the buses and cars are toward the interior\nplaces where the features are more consistent and clear, while the offsets at the\ninside boundaries are towards the contrary direction, which makes the boundary\nclearer.",
+      "filename": "fig9.png",
+      "page": 8,
+      "bbox": [
+        303.1600036621094,
+        285.1004638671875,
+        557.9600219726562,
+        376.04901123046875
+      ],
+      "width": 708,
+      "height": 254
+    },
+    {
+      "type": "figure",
+      "number": "11",
+      "label": "Figure 11",
+      "caption": "Fig. 11.\nQuantitative frequency analysis. We present the results on a logarith-\nmic scale for better visualization. It indicates that the AHPF generator enhances\nhigh-frequency power, thereby improving the level of detail in the features and\nproducing clearer boundaries.",
+      "filename": "fig11.png",
+      "page": 9,
+      "bbox": [
+        298.947998046875,
+        61.39599609375,
+        553.7479858398438,
+        242.5159912109375
+      ],
+      "width": 709,
+      "height": 504
+    },
+    {
+      "type": "figure",
+      "number": "10",
+      "label": "Figure 10",
+      "caption": "Fig. 10.\nVisualization of low-level features. The AHPF generator signiﬁcantly\nenhances boundaries by dynamically extracting high-frequency information\nfrom the low level, resulting in clearer object boundaries. The red box indicates\nthe zoom-in area.",
+      "filename": "fig10.png",
+      "page": 9,
+      "bbox": [
+        35.941001892089844,
+        61.88197326660156,
+        290.7409973144531,
+        209.52197265625
+      ],
+      "width": 709,
+      "height": 412
+    },
+    {
+      "type": "figure",
+      "number": "12",
+      "label": "Figure 12",
+      "caption": "Fig. 12.\nVisualization for feature fusion. In comparison with standard feature\nfusion, the fused features obtained by FreqFusion exhibit more consistent\nfeatures with sharper boundaries. The red boxes indicate the zoom-in areas.",
+      "filename": "fig12.png",
+      "page": 11,
+      "bbox": [
+        298.947998046875,
+        247.96900939941406,
+        553.7479858398438,
+        390.4490051269531
+      ],
+      "width": 709,
+      "height": 397
+    },
+    {
+      "type": "figure",
+      "number": "13",
+      "label": "Figure 13",
+      "caption": "Fig. 13.\nVisualization on the Cityscapes [96] validation set. Compared with the vanilla model SegNeXt [31] (row one), the proposed FreqFusion (row two)\nconsiderably improves the segmentation accuracy and consistency.",
+      "filename": "fig13.png",
+      "page": 12,
+      "bbox": [
+        45.15700149536133,
+        61.675018310546875,
+        553.156982421875,
+        315.5150146484375
+      ],
+      "width": 1412,
+      "height": 706
+    },
+    {
+      "type": "figure",
+      "number": "14",
+      "label": "Figure 14",
+      "caption": "Fig. 14.\nVisualization on the ADE20K [33] validation set. Compared with the vanilla model SegFormer [30] (row one), the proposed FreqFusion (row two)\nconsiderably improves the segmentation accuracy and consistency.",
+      "filename": "fig14.png",
+      "page": 12,
+      "bbox": [
+        45.15700149536133,
+        347.96197509765625,
+        553.156982421875,
+        539.281982421875
+      ],
+      "width": 1412,
+      "height": 533
+    },
+    {
+      "type": "figure",
+      "number": "15",
+      "label": "Figure 15",
+      "caption": "Fig. 15.\nVisualization on the COCO [34] validation set. We select the top two best-performing methods, CARAFE [94] (row one) and Dysample [71] (row two),\nexcluding our proposed FreqFusion. In comparison, our FreqFusion (row three) demonstrates superior prediction accuracy and consistency.",
+      "filename": "fig15.png",
+      "page": 13,
+      "bbox": [
+        40.94499969482422,
+        61.71998596191406,
+        548.9450073242188,
+        319.5199890136719
+      ],
+      "width": 1412,
+      "height": 717
+    }
+  ]
+}

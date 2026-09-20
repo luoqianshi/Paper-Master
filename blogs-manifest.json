@@ -1,6 +1,30 @@
 {
-  "generatedAt": "2026-09-04T02:50:28.649244+08:00",
+  "generatedAt": "2026-09-06T23:06:23.521306+08:00",
   "blogs": [
+    {
+      "title": "FreqFusion: Frequency-Aware Feature Fusion for Dense Image Prediction",
+      "file": "paper-blogs/FreqFusion.md",
+      "category": "特征融合",
+      "date": "2026-09-06",
+      "source_url": "https://github.com/ying-fu/FreqFusion",
+      "thumbnail": "assets/paper-imgs/FreqFusion/fig3.png"
+    },
+    {
+      "title": "SimAM: A Simple, Parameter-Free Attention Module for Convolutional Neural Networks",
+      "file": "paper-blogs/SimAM.md",
+      "category": "注意力机制",
+      "date": "2026-09-06",
+      "source_url": "https://proceedings.mlr.press/v139/yang21o.html",
+      "thumbnail": "assets/paper-imgs/SimAM/fig2.png"
+    },
+    {
+      "title": "Dynamic Head: Unifying Object Detection Heads with Attentions",
+      "file": "paper-blogs/Dynamic-Head.md",
+      "category": "目标检测",
+      "date": "2026-09-06",
+      "source_url": "https://github.com/microsoft/DynamicHead",
+      "thumbnail": "assets/paper-imgs/Dynamic-Head/dyhead_fig1_overview.png"
+    },
     {
       "title": "5%>100%: Breaking Performance Shackles of Full Fine-Tuning on Visual Recognition Tasks",
       "file": "paper-blogs/Mona.md",
@@ -40,6 +64,14 @@
       "date": "2026-09-04",
       "source_url": "https://github.com/fppccc/Powerful-IoU",
       "thumbnail": "assets/paper-imgs/Powerful-IoU/piou_fig1_regression_process.png"
+    },
+    {
+      "title": "YOLO-Master: MOE-Accelerated with Specialized Transformers for Enhanced Real-time Detection",
+      "file": "paper-blogs/YOLO-Master.md",
+      "category": "目标检测",
+      "date": "2026-09-06",
+      "source_url": "https://arxiv.org/abs/2512.23273",
+      "thumbnail": "assets/paper-imgs/YOLO-Master/ym_fig1_pareto.png"
     }
   ]
 }

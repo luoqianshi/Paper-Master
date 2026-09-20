@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>FreqFusion: Frequency-Aware Feature Fusion for Dense Image Prediction</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --title: #3966A2;
+  --accent: #132843;
+  --dim: #6191D3;
+  --card-bg: #f7f9fc;
+  --border: #e2e8f0;
+  --radius: 12px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  height: 100vh;
+  cursor: default;
+  user-select: none;
+}
+
+/* ═══════════ SLIDE ENGINE ═══════════ */
+.deck {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5vh 7vw;
+  background: var(--bg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(60px) scale(0.97);
+  transition: opacity 0.6s cubic-bezier(.4,0,.2,1),
+              transform 0.6s cubic-bezier(.4,0,.2,1),
+              visibility 0.6s;
+  will-change: opacity, transform;
+}
+
+.slide.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+.slide.exit-up {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-60px) scale(0.97);
+}
+
+/* ═══════════ CONTROLS / PROGRESS / DOTS / HINT ═══════════ */
+.controls {
+  position: fixed;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 100;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 8px 20px;
+}
+.controls button {
+  background: none;
+  border: none;
+  color: var(--title);
+  font-size: 18px;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s, color 0.2s;
+}
+.controls button:hover { background: rgba(57,102,162,0.08); color: var(--accent); }
+.controls button:disabled { opacity: 0.25; cursor: default; }
+.controls button:disabled:hover { background: none; }
+.controls .counter {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--dim);
+  min-width: 52px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+}
+
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--title), var(--accent));
+  z-index: 100;
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  border-radius: 0 1px 1px 0;
+}
+
+.dots {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #d3dce8;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+
+.hint {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #999;
+  z-index: 90;
+  opacity: 1;
+  transition: opacity 1s;
+  pointer-events: none;
+}
+.hint.hidden { opacity: 0; }
+
+/* ═══════════ TYPOGRAPHY ═══════════ */
+.slide-label {
+  font-size: clamp(11px, 1.1vw, 14px);
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 12px;
+}
+
+h1 {
+  font-size: clamp(32px, 4.5vw, 58px);
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--text);
+  letter-spacing: -1.5px;
+}
+h1 .highlight { color: var(--title); }
+h1 .accent { color: var(--accent); }
+
+h2 {
+  font-size: clamp(24px, 2.9vw, 40px);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--title);
+  letter-spacing: -1px;
+}
+
+h3 {
+  font-size: clamp(16px, 1.7vw, 24px);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: clamp(16px, 1.7vw, 22px);
+  font-weight: 400;
+  color: #555;
+  line-height: 1.55;
+  margin-top: 16px;
+  max-width: 760px;
+}
+
+.body-text {
+  font-size: clamp(14px, 1.4vw, 19px);
+  font-weight: 400;
+  color: #333;
+  line-height: 1.65;
+}
+
+.small-text {
+  font-size: clamp(12px, 1.1vw, 15px);
+  color: #777;
+  line-height: 1.5;
+}
+
+.divider {
+  width: 48px;
+  height: 3px;
+  background: var(--title);
+  border-radius: 2px;
+  margin: 16px 0;
+}
+.divider-accent { background: var(--accent); }
+
+/* ═══════════ BADGE / COVER ═══════════ */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(57,102,162,0.08);
+  border: 1px solid rgba(57,102,162,0.15);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--title);
+  letter-spacing: 0.06em;
+  margin-bottom: 40px;
+  text-transform: uppercase;
+  width: fit-content;
+}
+.badge .dot-yellow {
+  width: 7px; height: 7px;
+  background: var(--accent);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.badge .dot-gray {
+  width: 4px; height: 4px;
+  background: rgba(57,102,162,0.3);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.cover-meta {
+  margin-top: 32px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.cover-tag {
+  font-size: clamp(11px, 1vw, 14px);
+  font-weight: 500;
+  color: var(--dim);
+  background: rgba(57,102,162,0.06);
+  border: 1px solid rgba(57,102,162,0.12);
+  padding: 5px 14px;
+  border-radius: 100px;
+}
+
+.contributors {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.contributors .author {
+  font-size: clamp(14px, 1.4vw, 19px);
+  color: #444;
+  font-weight: 500;
+}
+.contributors .affil {
+  font-size: clamp(12px, 1.1vw, 15px);
+  color: #888;
+  font-weight: 400;
+}
+
+/* ═══════════ CARDS ═══════════ */
+.card-grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+  flex: 0;
+}
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(16px, 2vw, 26px);
+  display: flex;
+  flex-direction: column;
+}
+.card .card-num {
+  font-size: clamp(26px, 3vw, 42px);
+  font-weight: 800;
+  color: var(--title);
+  opacity: 0.25;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+
+/* ═══════════ HIGHLIGHT BAR ═══════════ */
+.highlight-bar {
+  background: rgba(57,102,162,0.06);
+  border-left: 3px solid var(--dim);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px);
+  margin-top: 14px;
+}
+.highlight-bar p {
+  font-size: clamp(14px, 1.4vw, 19px);
+  color: var(--text);
+  line-height: 1.6;
+}
+.highlight-bar .accent-word {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* ═══════════ BULLET LIST ═══════════ */
+.bullet-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 12px;
+}
+.bullet-list li {
+  font-size: clamp(13px, 1.35vw, 18px);
+  color: #333;
+  line-height: 1.65;
+  padding: 4px 0 4px 22px;
+  position: relative;
+}
+.bullet-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 13px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--title);
+}
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.bullet-list.tight li { padding: 2px 0 2px 20px; line-height: 1.55; font-size: clamp(12px, 1.25vw, 17px); }
+
+/* ═══════════ QUOTE BLOCK ═══════════ */
+.quote-block {
+  border-left: 3px solid var(--accent);
+  padding: 14px 22px;
+  background: rgba(19,40,67,0.03);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  margin: 14px 0;
+}
+.quote-block p {
+  font-size: clamp(14px, 1.4vw, 19px);
+  font-weight: 500;
+  color: var(--accent);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* ═══════════ STEPS ═══════════ */
+.steps {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+  align-items: stretch;
+}
+.step {
+  flex: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.step .step-num {
+  font-size: clamp(10px, 0.9vw, 13px);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
+.step .small-text { font-size: clamp(11px, 1vw, 14px); }
+.step-arrow {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  color: #b8c4d4;
+  flex-shrink: 0;
+}
+
+/* ═══════════ PROMPT BOX (深色公式盒) ═══════════ */
+.prompt-box {
+  background: var(--accent);
+  border-radius: var(--radius);
+  padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px);
+  margin-top: 16px;
+}
+.prompt-box .prompt-label {
+  font-size: clamp(9px, 0.85vw, 12px);
+  font-weight: 600;
+  color: #9db8d9;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.prompt-box p {
+  font-size: clamp(13px, 1.3vw, 17px);
+  color: #dce6f2;
+  line-height: 1.6;
+}
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula {
+  font-size: clamp(18px, 2.1vw, 28px);
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.5;
+  letter-spacing: 0.5px;
+}
+.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
+.prompt-box .formula-note {
+  font-size: clamp(11px, 1.05vw, 14px);
+  color: #9db8d9;
+  margin-top: 6px;
+}
+
+/* 行内公式强调 */
+.fx-inline {
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+.fx-inline i { font-style: italic; }
+
+/* ═══════════ GLOW ═══════════ */
+.glow {
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.10;
+  pointer-events: none;
+}
+.glow-blue { background: var(--title); }
+.glow-navy { background: var(--accent); }
+.glow.tl { top: -100px; left: -100px; }
+.glow.tr { top: -120px; right: -120px; }
+.glow.br { bottom: -120px; right: -100px; }
+.glow.bl { bottom: -120px; left: -100px; }
+.glow.sm { width: 280px; height: 280px; }
+
+/* ═══════════ FIGURE ═══════════ */
+.figure-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 14px;
+  min-width: 0;
+}
+.figure-box img {
+  max-width: 100%;
+  max-height: 42vh;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 2px 16px rgba(19,40,67,0.08);
+}
+.figure-caption {
+  text-align: center;
+  font-size: clamp(10px, 0.95vw, 13px);
+  color: #8a94a3;
+  margin-top: 8px;
+  line-height: 1.55;
+  max-width: 900px;
+}
+.figure-caption .cap-em { color: var(--title); font-weight: 600; }
+
+/* 左右分栏（左文右图） */
+.split {
+  display: flex;
+  gap: clamp(20px, 3vw, 44px);
+  align-items: center;
+  margin-top: 16px;
+  min-height: 0;
+}
+.split .col-text { flex: 1.1; min-width: 0; }
+.split .col-fig { flex: 1; min-width: 0; }
+.split .col-text-wide { flex: 1.3; min-width: 0; }
+.split .col-fig-narrow { flex: 0.85; min-width: 0; }
+.split .figure-box { margin-top: 0; }
+.split .figure-caption { margin-top: 10px; }
+
+/* ═══════════ END CARD ═══════════ */
+.end-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+.end-card .divider { margin: 16px auto; }
+.end-card .subtitle { max-width: 600px; text-align: center; margin: 0 auto; }
+.end-card .cover-meta { margin-top: 28px; justify-content: center; }
+
+/* ═══════════ ANIMATIONS ═══════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+.slide.active .anim:nth-child(7) { animation-delay: 0.56s; }
+.slide.active .anim:nth-child(8) { animation-delay: 0.64s; }
+
+/* ═══════════ RESPONSIVE ═══════════ */
+@media (max-width: 900px) {
+  .slide { padding: 4vh 5vw; }
+  .card-grid.cols-2, .card-grid.cols-3, .card-grid.cols-4 { grid-template-columns: 1fr; }
+  .steps { flex-direction: column; }
+  .step-arrow { transform: rotate(90deg); }
+  .dots { display: none; }
+  .split { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 键盘 / 触摸滑动 翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- ═══════════ Slide 1: 封面 ═══════════ -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    Paper Reading · 特征融合
+    <span class="dot-gray"></span>
+    TPAMI 2024
+  </div>
+  <div class="anim">
+    <h1>
+      <span class="highlight">FreqFusion:</span><br>
+      <span class="accent">Frequency-Aware Feature Fusion</span><br>
+      for Dense Image Prediction
+    </h1>
+  </div>
+  <p class="anim subtitle">用频率视角统一特征融合的两大缺陷——对类内不一致做低通减法，对边界位移做高通加法</p>
+  <div class="anim contributors">
+    <span class="author">Linwei Chen · Ying Fu · Lin Gu · Chenggang Yan · Tatsuya Harada · Gao Huang</span>
+    <span class="affil">北京理工大学 · RIKEN AIP / 东京大学 · 杭州电子科技大学 · 清华大学</span>
+  </div>
+  <div class="anim cover-meta">
+    <span class="cover-tag">TPAMI 2024</span>
+    <span class="cover-tag">CCF-A</span>
+    <span class="cover-tag">github.com/ying-fu/FreqFusion</span>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 2: 概述 · 核心贡献 ═══════════ -->
+<section class="slide">
+  <div class="glow glow-blue tr sm"></div>
+  <div class="anim slide-label">Overview · Contributions</div>
+  <div class="anim"><h2>核心贡献</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-2">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>特征相似性分析</h3>
+      <p class="body-text">把「类内不一致」与「边界位移」从经验观察升级为<b>可量化的指标</b>（IntraSim、SimMargin、SimAcc），设计前定位问题、设计后验证收益，形成完整闭环</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>频率视角统一两大缺陷</h3>
+      <p class="body-text">类内不一致 = <b>无效高频过剩</b> → ALPF 做减法；边界位移 = <b>有效高频缺失</b> → AHPF 做加法，一低一高互补</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>偏移重采样居中协调</h3>
+      <p class="body-text">沿局部相似度方向<span class="em">重采样</span>，用一致特征替换不一致特征，兼顾大面积不一致区域与细窄边界</p>
+    </div>
+    <div class="card">
+      <span class="card-num">04</span>
+      <h3>四大任务全面领先</h3>
+      <p class="body-text">在<span class="em">语义分割、目标检测、实例分割、全景分割</span>上全面超越 CARAFE、FADE、SAPA 与 DySample 等先前最优方法</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 3: 研究动机 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>研究动机：标准特征融合的两大缺陷</h2></div>
+  <div class="anim divider divider-accent"></div>
+  <div class="anim split">
+    <div class="col-text">
+      <ul class="bullet-list tight">
+        <li>现代分层架构<b>多次下采样</b>，边界细节持续丢失 → 特征融合把<span class="em">深层粗糙特征（类别信息）</span>与<span class="em">浅层高分辨率特征（边界细节）</span>相加或拼接</li>
+        <li>标准融合只是把深层特征用<b>最近邻 / 双线性插值</b>放大后直接叠加，存在两个长期未被清晰定义的缺陷：</li>
+        <li><span class="em">类内不一致</span>：物体各部件（车轮 vs 车窗）特征本就差异明显，插值把单个不一致特征复制到多个像素，受扰动的高频进一步压低类内相似度 → <b>物体内部错分</b></li>
+        <li><span class="em">边界位移</span>：插值倾向过度平滑，边界缺乏准确高频成分 → <b>预测边界偏移</b></li>
+        <li>此前工作只有经验观察，<span class="em">缺少可量化度量的支撑</span></li>
+      </ul>
+    </div>
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/fig1.png" alt="特征类内相似度与预测可视化对比"></div>
+      <div class="figure-caption">特征类内相似度（IntraSim）与预测可视化：<span class="cap-em">标准融合物体内部 IntraSim 低、边界模糊位移</span>；FreqFusion 特征更一致、边界更清晰</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 4: 特征相似性分析 ═══════════ -->
+<section class="slide">
+  <div class="glow glow-navy br sm"></div>
+  <div class="anim slide-label">Method · Feature Similarity Analysis</div>
+  <div class="anim"><h2>特征相似性分析：把缺陷变成标尺</h2></div>
+  <div class="anim split">
+    <div class="col-text">
+      <div class="prompt-box">
+        <div class="prompt-label">类内相似度 · IntraSim</div>
+        <p class="formula"><i>IntraSim</i>(<i>Y</i>) = CosSim(<i>Y</i>, 类别中心)</p>
+        <p class="formula-note">特征向量与其类别中心的余弦相似度 · 类间相似度 InterSim 同理（中心换成另一类）</p>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-label">相似度裕度 · SimMargin</div>
+        <p class="formula"><i>SimMargin</i>(<i>Y</i>) = <i>IntraSim</i>(<i>Y</i>) − <i>InterSim</i>(<i>Y</i>)</p>
+        <p class="formula-note">另按最近类别中心归类统计出相似度精度 SimAcc</p>
+      </div>
+      <div class="highlight-bar">
+        <p>直观上：<span class="accent-word">类内相似度低</span> → 物体内部特征涣散；<span class="accent-word">裕度小</span> → 特征靠近类别边界、容易错分。三个指标共同构成衡量特征判别力的标尺，贯穿全文的设计与验证</p>
+      </div>
+    </div>
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/fig2.png" alt="类内相似度、类间相似度与相似度裕度的示意"></div>
+      <div class="figure-caption">类内相似度、类间相似度与相似度裕度的示意：<span class="cap-em">不同颜色代表不同类别</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 5: 方法总览 ═══════════ -->
+<section class="slide">
+  <div class="glow glow-blue tl sm"></div>
+  <div class="anim slide-label">Method · Overview</div>
+  <div class="anim"><h2>总体结构：从标准融合到频率感知融合</h2></div>
+  <div class="anim split">
+    <div class="col-text">
+      <div class="prompt-box">
+        <div class="prompt-label">标准特征融合</div>
+        <p class="formula"><i>Y</i><sub>l</sub> = <i>F</i><sub>UP</sub>(<i>Y</i><sub>l+1</sub>) + <i>X</i><sub>l</sub></p>
+        <p class="formula-note">F<sub>UP</sub>：2× 最近邻 / 双线性插值</p>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-label">FreqFusion</div>
+        <p class="formula"><i>Y</i><sup>l</sup><sub>i,j</sub> = &#7928;<sup>l+1</sup><sub>i+u,j+v</sub> + X&#771;<sup>l</sup><sub>i,j</sub></p>
+        <p class="formula-note">&#7928;<sup>l+1</sup> = F<sub>UP</sub>(F<sub>LP</sub>(Y<sup>l+1</sup>)) 低通平滑后上采样 · X&#771;<sup>l</sup> = F<sub>HP</sub>(X<sup>l</sup>) + X<sup>l</sup> 高通残差增强 · (u,v) 为偏移</p>
+      </div>
+      <ul class="bullet-list tight">
+        <li>三个生成器都以<span class="em">压缩融合特征 <span class="fx-inline"><i>Z</i><sub>l</sub></span></span> 为输入：<span class="fx-inline"><i>Z</i><sub>l</sub> = F<sub>UP</sub>(Conv<sub>1×1</sub>(Y<sub>l+1</sub>)) + Conv<sub>1×1</sub>(X<sub>l</sub>)</span>，<i>r</i> 为通道压缩率</li>
+      </ul>
+    </div>
+    <div class="col-fig-narrow">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/fig3.png" alt="FreqFusion 整体结构"></div>
+      <div class="figure-caption">FreqFusion 整体结构：<span class="cap-em">初始融合 + 最终融合两级</span>，初始融合中的 ALPF / AHPF 生成器与最终融合共享参数</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 6: 初始融合的增强 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Method · Enhanced Initial Fusion</div>
+  <div class="anim"><h2>初始融合的增强</h2></div>
+  <div class="anim split">
+    <div class="col-text">
+      <ul class="bullet-list tight">
+        <li><span class="em">次优 ①</span>：朴素初始融合仍用简单插值上采样压缩特征，<b>继承边界模糊</b>问题</li>
+        <li><span class="em">次优 ②</span>：频率分析显示 ALPF 生成器<b>强烈依赖 <span class="fx-inline"><i>Z</i><sub>l</sub></span> 中的高频</b>，而传统卷积层只能捕获固定模式的高频</li>
+        <li><span class="em">方案</span>：把最终融合的 ALPF / AHPF 生成器<b>复用到初始融合</b>（共享参数）——初始低通核借浅层高分辨率结构引导上采样，初始高通核动态补频</li>
+        <li>增强后的中间特征<span class="em">边界更清晰</span>，预测的低通滤波器在边界处方差更小——滤波器能更有效地「守住」边界，为三个生成器提供更可靠的输入</li>
+      </ul>
+    </div>
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/fig5.png" alt="ALPF 生成器学到的卷积核及其频谱"></div>
+      <div class="figure-caption">ALPF 生成器学到的卷积核（a）及其傅里叶频谱（b/c）：<span class="cap-em">高频段功率更高，印证其对特征高频信息的依赖</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 7: ALPF 生成器 ═══════════ -->
+<section class="slide">
+  <div class="glow glow-navy tr sm"></div>
+  <div class="anim slide-label">Method · ALPF Generator</div>
+  <div class="anim"><h2>ALPF 生成器：空间可变的低通滤波上采样</h2></div>
+  <div class="anim split">
+    <div class="col-text">
+      <div class="prompt-box">
+        <div class="prompt-label">滤波器预测</div>
+        <p class="formula">W&#772;<sup>l,p,q</sup><sub>i,j</sub> = Softmax(Conv<sub>3×3</sub>(<i>Z</i><sub>l</sub>))</p>
+        <p class="formula-note">kernel-wise softmax 约束每个位置的滤波器权重全正且和为 1 → 天然是平滑的低通滤波器</p>
+      </div>
+      <ul class="bullet-list tight">
+        <li>把 W&#772;<sub>l</sub> 按 <span class="em">pixel unshuffle</span> 分成 4 组，各自与深层特征卷积，再 <span class="em">Pixel Shuffle</span> 重排成 2× 上采样结果</li>
+        <li>类内相似度 <span class="fx-inline">0.727 → 0.799</span>、相似度精度 <span class="fx-inline">0.918 → 0.941</span>，特征更一致</li>
+        <li>但对<span class="em">大面积不一致区域与细窄边界仍有限</span> → 引出偏移生成器</li>
+      </ul>
+    </div>
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/fig7.png" alt="类内相似度可视化对比"></div>
+      <div class="figure-caption">类内相似度可视化：(a) 双线性内部涣散、边界位移 → (b) +ALPF 一致性与锐度同步改善 → (c) +Offset 进一步增强</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 8: Offset 生成器 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Method · Offset Generator</div>
+  <div class="anim"><h2>Offset 生成器：沿局部相似度重采样</h2></div>
+  <div class="anim split">
+    <div class="col-text">
+      <ul class="bullet-list tight">
+        <li><span class="em">两难</span>：低通核大 → 能修大面积不一致但伤细边界；核小 → 反之</li>
+        <li><span class="em">观察</span>：类内相似度低的特征，其邻居中往往存在相似度高的特征 → <b>重采样「就地取材」</b></li>
+      </ul>
+      <div class="prompt-box">
+        <div class="prompt-label">偏移预测</div>
+        <p class="formula"><i>O</i><sub>l</sub> = <i>D</i><sub>l</sub> · <i>A</i><sub>l</sub></p>
+        <p class="formula-note">D<sub>l</sub> = Conv<sub>3×3</sub>(Concat(Z<sub>l</sub>, S<sub>l</sub>)) 方向 · A<sub>l</sub> = Sigmoid(Conv<sub>3×3</sub>(Concat(Z<sub>l</sub>, S<sub>l</sub>))) 幅度 · S<sub>l</sub>：与 8 邻域像素的局部余弦相似度</p>
+      </div>
+      <ul class="bullet-list tight">
+        <li>类内相似度 <span class="fx-inline">0.760 → 0.799</span>，边界相似度精度 <span class="fx-inline">0.720 → 0.728</span></li>
+      </ul>
+    </div>
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/fig8.png" alt="局部相似度引导偏移预测的机制"></div>
+      <div class="figure-caption">局部相似度引导偏移指向：<span class="cap-em">采样方向始终偏向类内相似度更高的一侧</span></div>
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/fig9.png" alt="偏移场可视化"></div>
+      <div class="figure-caption">偏移场可视化：内边界偏移指向一致的内部、外边界指向相反方向，<span class="cap-em">一推一拒使边界更清晰</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 9: AHPF 生成器 ═══════════ -->
+<section class="slide">
+  <div class="glow glow-blue br sm"></div>
+  <div class="anim slide-label">Method · AHPF Generator</div>
+  <div class="anim"><h2>AHPF 生成器：补回下采样丢失的高频</h2></div>
+  <div class="anim split">
+    <div class="col-text">
+      <ul class="bullet-list tight">
+        <li><span class="em">Nyquist-Shannon 采样定理</span>：下采样时高于奈奎斯特频率（采样率一半）的分量被混叠并<b>永久丢失</b>——2× 下采样后高于 1/4 的频率全部损失，无法从深层特征找回</li>
+      </ul>
+      <div class="prompt-box">
+        <div class="prompt-label">高通滤波预测</div>
+        <p class="formula">W&#770;<sup>l,p,q</sup><sub>i,j</sub> = E − Softmax(Conv<sub>3×3</sub>(<i>Z</i><sub>l</sub>))</p>
+        <p class="formula-note">先用 softmax 造低通核，再用恒等核 E（中心 1、其余 0）反转 → 结果必为高通核；增强后残差并回：X&#771;<sup>l</sup><sub>i,j</sub> = X<sup>l</sup><sub>i,j</sub> + Σ W&#770; · X<sup>l</sup></p>
+      </div>
+      <div class="highlight-bar">
+        <p><span class="accent-word">数值例子</span>：softmax 输出低通核 [[0.1, 0.2, 0.1], [0.2, 0.2, 0.2], [0.1, 0.2, 0.1]]，用 E 减去它得 [[−0.1, −0.2, −0.1], [−0.2, 0.8, −0.2], [−0.1, −0.2, −0.1]]——9 个权重之和为 0，直流分量完全抵消，只保留邻域差分信号，正是高通特性</p>
+      </div>
+    </div>
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/fig10.png" alt="AHPF 增强浅层特征边界细节"></div>
+      <div class="figure-caption">浅层特征增强前后对比：<span class="cap-em">巴士轮廓与人物头部等边界细节明显更清楚</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 10: 频域验证与三模块协同 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Method · Synergy</div>
+  <div class="anim"><h2>频域验证与三生成器协同</h2></div>
+  <div class="anim steps">
+    <div class="step">
+      <span class="step-num">STEP 01</span>
+      <h3>ALPF 低通平滑</h3>
+      <p class="small-text">削弱物体内部无效高频</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">STEP 02</span>
+      <h3>Offset 重采样</h3>
+      <p class="small-text">一致特征替换不一致特征</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">STEP 03</span>
+      <h3>AHPF 高通增强</h3>
+      <p class="small-text">补回浅层边界高频细节</p>
+    </div>
+  </div>
+  <div class="anim split">
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/fig11.png" alt="定量频率分析"></div>
+      <div class="figure-caption">定量频率分析（对数尺度）：<span class="cap-em">AHPF 提升了奈奎斯特频率之上的高频功率</span></div>
+    </div>
+    <div class="col-text">
+      <ul class="bullet-list tight">
+        <li>边界相似度裕度 <span class="fx-inline">0.228 → 0.239</span>、边界相似度精度 <span class="fx-inline">0.718 → 0.728</span>，边界位移得到实质性缓解</li>
+        <li>至此深层特征「<b>内部一致、边界对齐</b>」，浅层特征「<b>高频充盈</b>」，为最终融合做好准备</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 11: 实验设置 ═══════════ -->
+<section class="slide">
+  <div class="glow glow-blue bl sm"></div>
+  <div class="anim slide-label">Experiments · Setup</div>
+  <div class="anim"><h2>实验设置：四大密集预测任务</h2></div>
+  <div class="anim divider divider-accent"></div>
+  <div class="anim card-grid cols-2">
+    <div class="card">
+      <h3>语义分割</h3>
+      <p class="body-text">Cityscapes / ADE20K / COCO-Stuff，SegFormer、Mask2Former、SegNeXt，指标 <b>mIoU 与 bIoU</b></p>
+    </div>
+    <div class="card">
+      <h3>目标检测</h3>
+      <p class="body-text">MS COCO，Faster R-CNN（R50 / R101），指标 <b>AP 系列</b>，仅修改 FPN 特征融合环节</p>
+    </div>
+    <div class="card">
+      <h3>实例分割</h3>
+      <p class="body-text">MS COCO，Mask R-CNN（R50 / R101），指标 <b>box AP 与 mask AP</b></p>
+    </div>
+    <div class="card">
+      <h3>全景分割</h3>
+      <p class="body-text">MS COCO，Panoptic FPN（R50），指标 <b>PQ / SQ / RQ</b></p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>对比上采样器：<span class="accent-word">Deconv、Pixel Shuffle、CARAFE、IndexNet、A2U、FADE、SAPA-B、Dysample-S+ / +</span>；消融以 SegNeXt-T 为基线在 ADE20K 上展开</p>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 12: 语义分割主结果 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · Semantic Segmentation</div>
+  <div class="anim"><h2>语义分割：ADE20K 全面领先</h2></div>
+  <div class="anim split">
+    <div class="col-text">
+      <ul class="bullet-list tight">
+        <li>SegFormer-B1 上取得 <span class="em">44.5 mIoU / 32.8 bIoU</span>，较基线提升 <b>2.8 mIoU</b>，领先第二名 Dysample-S+ 达 <b>1.2 mIoU</b></li>
+        <li>SegNeXt-T 跨库验证：Cityscapes <span class="em">+1.0</span>、ADE20K <span class="em">+2.4</span>、COCO-Stuff <span class="em">+2.0</span> mIoU，仅增加 <b>0.18M 参数 / 0.44G FLOPs</b></li>
+        <li>推理 <span class="em">23.0 FPS</span>，与最快的 Dysample（25.9 FPS）接近，但涨点（<b>+2.4 对 +1.1</b> mIoU）高出一倍多——精度收益远大于速度代价</li>
+      </ul>
+    </div>
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/TABLEII.png" alt="ADE20K 验证集对比"></div>
+      <div class="figure-caption">ADE20K 验证集与近期最优方法对比：<span class="cap-em">FreqFusion 以 +0.34M 参数取得 44.5 mIoU</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 13: 结构泛化与多数据集 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · Generalization</div>
+  <div class="anim"><h2>结构不挑剔：跨解码器与跨数据集</h2></div>
+  <div class="anim split">
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/TABLEIV.png" alt="与多种模型结构组合的结果"></div>
+      <div class="figure-caption">与 UPerNet / SegFormer / SegNeXt 组合（Cityscapes）：<span class="cap-em">三种解码器均 +1.0 以上 mIoU，参数与 FLOPs 增加极少</span></div>
+    </div>
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/TABLEVI.png" alt="多个数据集上的结果"></div>
+      <div class="figure-caption">SegNeXt-T 在 Cityscapes / ADE20K / COCO-Stuff：<span class="cap-em">80.8 / 43.5 / 40.7，全部稳定涨点</span></div>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>CNN（UPerNet）与 Transformer（SegFormer）结构差异巨大，FreqFusion <span class="accent-word">无需改动主结构即可无缝插入</span>，泛化能力出色</p>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 14: 目标检测与实例分割 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · Detection &amp; Instance</div>
+  <div class="anim"><h2>目标检测与实例分割：COCO 双线告捷</h2></div>
+  <div class="anim split">
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/TABLEIX.png" alt="Faster R-CNN 检测结果"></div>
+      <div class="figure-caption">Faster R-CNN（COCO）：<span class="cap-em">R50 +1.9 AP 至 39.4，领先 DySample+ 0.7 AP；R101 +1.6 AP 至 41.0</span></div>
+    </div>
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/TABLEX.png" alt="Mask R-CNN 实例分割结果"></div>
+      <div class="figure-caption">Mask R-CNN（COCO）：<span class="cap-em">R50 +1.7 box AP / +1.3 mask AP；R101 领先 DySample+ 0.6 / 0.6</span></div>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>R50 + FreqFusion（39.4 AP）<span class="accent-word">与更重的 R101 最近邻基线持平</span>——融合质量的提升可以兑换骨干容量</p>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 15: 全景分割 ═══════════ -->
+<section class="slide">
+  <div class="glow glow-navy tr sm"></div>
+  <div class="anim slide-label">Experiments · Panoptic Segmentation</div>
+  <div class="anim"><h2>全景分割：PQ 显著提升</h2></div>
+  <div class="anim split">
+    <div class="col-text">
+      <ul class="bullet-list tight">
+        <li>Panoptic FPN R50：<span class="em">40.2 → 42.7 PQ（+2.5）</span>，领先第二名 DySample+ <b>1.2 PQ</b></li>
+        <li>同时取得更优的 <span class="fx-inline">SQ 79.0 / RQ 51.9</span>， Stuff 与 Thing 两类区域同步受益</li>
+        <li>四大任务、两种骨干上的<span class="em">一致涨点</span>，验证了类内不一致与边界位移问题在先进模型中广泛存在</li>
+      </ul>
+    </div>
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/TABLEXI.png" alt="Panoptic FPN 全景分割结果"></div>
+      <div class="figure-caption">Panoptic FPN（MS COCO）：<span class="cap-em">FreqFusion 以 +0.3M 参数取得 42.7 PQ，R101 达 44.0</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 16: 消融实验 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · Ablation</div>
+  <div class="anim"><h2>消融：每个模块各司其职</h2></div>
+  <div class="anim steps">
+    <div class="step">
+      <span class="step-num">基线</span>
+      <h3>标准特征融合</h3>
+      <p class="small-text">41.1 mIoU</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">+ ALPF</span>
+      <h3>低通平滑</h3>
+      <p class="small-text">42.0（+0.9）</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">+ AHPF</span>
+      <h3>高通增强</h3>
+      <p class="small-text">42.9（+1.8）</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">+ Offset</span>
+      <h3>偏移重采样</h3>
+      <p class="small-text">43.5（+2.4）</p>
+    </div>
+  </div>
+  <div class="anim split">
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/TABLEXII.png" alt="三个生成器的消融"></div>
+      <div class="figure-caption">最终融合三生成器消融（ADE20K）：<span class="cap-em">低通、高通与重采样三条路径互补</span></div>
+    </div>
+    <div class="col-text">
+      <ul class="bullet-list tight">
+        <li><span class="em">核大小</span>：低通核 K&#772; 3→5 再涨 1.0 mIoU；高通核 K&#770; 3→5 反而 42.9→42.4 → 定为 <b>K&#772;=5、K&#770;=3</b>——平滑需要大感受野、锐化只需小邻域</li>
+        <li><span class="em">偏移分组</span>：4 组最优（43.5），继续增大不再受益甚至略有回落</li>
+        <li><span class="em">初始融合</span>：43.1 → 叠加初始 ALPF 43.4 → 再叠加初始 AHPF <b>43.5</b>——被广泛沿用简单插值的中间环节本身就是一块可观红利</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 17: 可视化分析 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · Visualization</div>
+  <div class="anim"><h2>定性可视化：更一致的特征与更准的边界</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/FreqFusion/fig12.png" alt="特征融合可视化对比" style="max-height:30vh;"></div>
+  <div class="anim figure-caption">特征融合结果对比：<span class="cap-em">FreqFusion 融合后的特征内部更一致、边界更锐利</span>（红框为放大区域）</div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/FreqFusion/fig13.png" alt="Cityscapes 分割可视化对比" style="max-height:26vh;"></div>
+  <div class="anim figure-caption">Cityscapes 验证集（上：SegNeXt 基线，下：+FreqFusion）：<span class="cap-em">错分与破碎区域明显减少，预测一致性显著提高</span></div>
+</section>
+
+<!-- ═══════════ Slide 18: 总结 · 优点与创新点 ═══════════ -->
+<section class="slide">
+  <div class="glow glow-navy tr sm"></div>
+  <div class="anim slide-label">Summary · Strengths</div>
+  <div class="anim"><h2>优点与创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>问题量化闭环</h3>
+      <p class="body-text">特征相似性分析（IntraSim、SimMargin、SimAcc）把两大缺陷升级为可量化问题——<b>设计前定位问题、设计后验证收益</b>，说服力强</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>频率视角统一矛盾</h3>
+      <p class="body-text">无效高频过剩做 <b>ALPF 减法</b>、有效高频缺失做 <b>AHPF 加法</b>、偏移重采样居中协调——一低一高的互补设计十分巧妙</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>即插即用泛化出色</h3>
+      <p class="body-text">不改动主干，仅 <b>+0.18M 参数</b>即可在 CNN 与 Transformer 两类解码器、四大密集预测任务上一致涨点，实验丰富、可直接复用</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 19: 结尾 ═══════════ -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
+  <div class="end-card">
+    <div class="anim">
+      <h2><span class="highlight">谢谢观看</span></h2>
+    </div>
+    <div class="anim divider divider-accent"></div>
+    <div class="anim subtitle">
+      Questions &amp; Discussion
+    </div>
+    <div class="anim cover-meta">
+      <span class="cover-tag">TPAMI 2024</span>
+      <span class="cover-tag">CCF-A</span>
+      <span class="cover-tag">github.com/ying-fu/FreqFusion</span>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<!-- ═══════════ CONTROLS（隐藏，仅保留键盘/触摸翻页） ═══════════ -->
+<div class="controls" style="display:none;">
+  <button id="prevBtn" title="上一页">‹</button>
+  <span class="counter" id="counter">01 / 19</span>
+  <button id="nextBtn" title="下一页">›</button>
+</div>
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const counter = document.getElementById('counter');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+
+  // Build dots
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+  }
+  const dots = dotsWrap.querySelectorAll('.dot');
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= total || idx === current) return;
+    const prev = slides[current];
+    const next = slides[idx];
+
+    prev.classList.remove('active');
+    prev.classList.add('exit-up');
+
+    requestAnimationFrame(() => {
+      next.classList.remove('exit-up');
+      next.classList.add('active');
+    });
+
+    setTimeout(() => {
+      prev.classList.remove('exit-up');
+    }, 700);
+
+    dots[current].classList.remove('active');
+    current = idx;
+    dots[current].classList.add('active');
+    counter.textContent = pad(current + 1) + ' / ' + pad(total);
+    progress.style.width = ((current + 1) / total * 100) + '%';
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  slides[0].classList.add('active');
+  prevBtn.disabled = true;
+  progress.style.width = (1 / total * 100) + '%';
+
+  prevBtn.addEventListener('click', prev);
+  nextBtn.addEventListener('click', next);
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+
+  // Touch / swipe
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchX = e.changedTouches[0].screenX;
+    touchY = e.changedTouches[0].screenY;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].screenX - touchX;
+    const dy = e.changedTouches[0].screenY - touchY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      dx < 0 ? next() : prev();
+    }
+  }, { passive: true });
+
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
+})();
+</script>
+
+</body>
+</html>

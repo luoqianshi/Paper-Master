@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YOLO-Master 论文精读</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --title: #3966A2;
+  --accent: #132843;
+  --dim: #6191D3;
+  --card-bg: #f7f9fc;
+  --card-border: #e3e9f2;
+  --dark-card: #f7f9fc;
+  --border: #e3e9f2;
+  --radius: 16px;
+}
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  height: 100vh;
+  cursor: default;
+  user-select: none;
+}
+
+/* ═══════════ SLIDE ENGINE ═══════════ */
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5vh 7vw;
+  background: var(--bg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(60px) scale(0.97);
+  transition: opacity 0.6s cubic-bezier(.4,0,.2,1),
+              transform 0.6s cubic-bezier(.4,0,.2,1),
+              visibility 0.6s;
+  will-change: opacity, transform;
+  overflow: hidden;
+}
+
+.slide.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+}
+
+.slide.exit-up {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-60px) scale(0.97);
+}
+
+/* ═══════════ CONTROLS ═══════════ */
+.progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--title), var(--dim));
+  z-index: 100;
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  border-radius: 0 1px 1px 0;
+}
+
+.dots {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  z-index: 100;
+}
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #d5dce8;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: var(--dim); }
+
+.hint {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #9aa7bd;
+  z-index: 90;
+  opacity: 1;
+  transition: opacity 1s;
+  pointer-events: none;
+}
+.hint.hidden { opacity: 0; }
+
+/* ═══════════ TYPOGRAPHY ═══════════ */
+.slide-label {
+  font-size: clamp(11px, 1.1vw, 14px);
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 12px;
+}
+
+h1 {
+  font-size: clamp(32px, 4.5vw, 58px);
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--text);
+  letter-spacing: -1.5px;
+}
+h1 .highlight { color: var(--title); }
+h1 .accent { color: var(--accent); }
+
+h2 {
+  font-size: clamp(26px, 3.2vw, 44px);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--title);
+  letter-spacing: -1px;
+}
+
+h3 {
+  font-size: clamp(16px, 1.7vw, 24px);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.subtitle {
+  font-size: clamp(16px, 1.7vw, 22px);
+  font-weight: 400;
+  color: #55627a;
+  line-height: 1.55;
+  margin-top: 16px;
+  max-width: 780px;
+}
+
+.body-text {
+  font-size: clamp(15px, 1.5vw, 20px);
+  font-weight: 400;
+  color: #333a48;
+  line-height: 1.65;
+}
+
+.small-text {
+  font-size: clamp(12px, 1.1vw, 15px);
+  color: #5a6b85;
+  line-height: 1.5;
+}
+
+sup { font-size: 0.62em; }
+sub { font-size: 0.62em; }
+sub sub { font-size: 0.75em; }
+i, .it { font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif; }
+
+/* ═══════════ COMPONENTS ═══════════ */
+.divider {
+  width: 48px;
+  height: 3px;
+  background: var(--title);
+  border-radius: 2px;
+  margin: 16px 0;
+}
+.divider-accent { background: var(--accent); }
+
+/* Badge */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(57,102,162,0.08);
+  border: 1px solid rgba(57,102,162,0.20);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--title);
+  letter-spacing: 0.06em;
+  margin-bottom: 36px;
+  text-transform: uppercase;
+  width: fit-content;
+}
+.badge .dot-yellow {
+  width: 7px; height: 7px;
+  background: var(--title);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.badge .dot-gray {
+  width: 4px; height: 4px;
+  background: rgba(57,102,162,0.35);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Cards */
+.card-grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+  flex: 0;
+}
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: clamp(16px, 2vw, 28px);
+  display: flex;
+  flex-direction: column;
+}
+.card .card-num {
+  font-size: clamp(28px, 3vw, 42px);
+  font-weight: 800;
+  color: var(--title);
+  opacity: 0.35;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.card h3 { font-size: clamp(15px, 1.5vw, 21px); margin-bottom: 8px; color: var(--accent); }
+.card .body-text { font-size: clamp(13px, 1.25vw, 16px); color: #44506a; }
+
+/* Quote Block */
+.quote-block {
+  border-left: 3px solid var(--title);
+  padding: 14px 22px;
+  background: rgba(57,102,162,0.05);
+  border-radius: 0 12px 12px 0;
+  margin: 14px 0;
+}
+.quote-block p {
+  font-size: clamp(15px, 1.5vw, 20px);
+  font-weight: 500;
+  color: var(--accent);
+  line-height: 1.6;
+}
+
+/* VS */
+.vs-row {
+  display: flex;
+  align-items: stretch;
+  gap: 24px;
+  margin-top: 16px;
+}
+.vs-col {
+  flex: 1;
+  border-radius: 18px;
+  padding: clamp(16px, 1.8vw, 26px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.vs-col.left-col { background: var(--card-bg); border: 1px solid var(--card-border); }
+.vs-col.right-col {
+  background: linear-gradient(135deg, rgba(57,102,162,0.10), rgba(57,102,162,0.03));
+  border: 1px solid rgba(57,102,162,0.32);
+}
+.vs-col .vs-tag {
+  display: inline-block;
+  font-size: clamp(10px, 0.9vw, 12px);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  width: fit-content;
+}
+.vs-col.left-col .vs-tag { background: rgba(19,40,67,0.08); color: #44506a; }
+.vs-col.right-col .vs-tag { background: rgba(57,102,162,0.15); color: var(--title); }
+.vs-col h3 { font-size: clamp(16px, 1.6vw, 22px); margin-bottom: 10px; }
+.vs-col ul { list-style: none; padding: 0; }
+.vs-col ul li {
+  font-size: clamp(13px, 1.2vw, 16px);
+  color: #333a48;
+  line-height: 1.55;
+  padding: 4px 0 4px 22px;
+  position: relative;
+}
+.vs-col ul li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+.vs-col.left-col ul li::before { background: #b3c2da; }
+.vs-col.right-col ul li::before { background: var(--title); }
+
+/* Steps */
+.steps {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+  align-items: stretch;
+}
+.step {
+  flex: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: clamp(16px, 2vw, 26px) clamp(12px, 1.5vw, 22px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.step .step-num {
+  font-size: clamp(10px, 0.9vw, 14px);
+  font-weight: 700;
+  color: var(--dim);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.step h3 { font-size: clamp(14px, 1.3vw, 18px); margin-bottom: 4px; }
+.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b3c2da; }
+
+/* Prompt Box (算例) */
+.prompt-box {
+  background: #f2f6fc;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: clamp(14px, 1.8vw, 22px) clamp(18px, 2.2vw, 28px);
+  margin-top: 16px;
+}
+.prompt-box .prompt-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--title);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.prompt-box p {
+  font-size: clamp(14px, 1.35vw, 17px);
+  color: #333a48;
+  line-height: 1.7;
+}
+.prompt-box p em { color: var(--title); font-style: normal; font-weight: 600; }
+
+/* Highlight Bar */
+.highlight-bar {
+  background: linear-gradient(135deg, rgba(57,102,162,0.12), rgba(57,102,162,0.04));
+  border: 1px solid rgba(57,102,162,0.22);
+  border-radius: 12px;
+  padding: clamp(13px, 1.6vw, 20px) clamp(18px, 2.2vw, 28px);
+  margin-top: 14px;
+}
+.highlight-bar p {
+  font-size: clamp(15px, 1.5vw, 19px);
+  color: var(--text);
+  line-height: 1.6;
+}
+.highlight-bar .accent-word { color: var(--title); font-weight: 700; }
+
+/* Bullet List */
+.bullet-list { list-style: none; padding: 0; margin-top: 10px; }
+.bullet-list li {
+  font-size: clamp(14px, 1.4vw, 19px);
+  color: #333a48;
+  line-height: 1.65;
+  padding: 5px 0 5px 24px;
+  position: relative;
+}
+.bullet-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 14px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--title);
+}
+.bullet-list li .em { color: var(--title); font-weight: 600; }
+
+/* Glow */
+.glow {
+  position: absolute;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  filter: blur(130px);
+  opacity: 0.07;
+  pointer-events: none;
+}
+.glow-purple { background: var(--title); }
+.glow-yellow { background: var(--dim); }
+
+/* Cover Meta */
+.cover-meta {
+  margin-top: 30px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.cover-tag {
+  font-size: clamp(11px, 1vw, 14px);
+  font-weight: 500;
+  color: #44506a;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  padding: 5px 14px;
+  border-radius: 100px;
+}
+
+/* Figure */
+.fig-frame {
+  background: #fbfcfe;
+  border: 1px solid var(--card-border);
+  border-radius: 14px;
+  padding: clamp(8px, 1.2vw, 16px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+.fig-frame img {
+  max-width: 100%;
+  max-height: 46vh;
+  object-fit: contain;
+  border-radius: 6px;
+}
+.fig-frame.sm img { max-height: 30vh; }
+.fig-cap {
+  font-size: clamp(12px, 1.1vw, 15px);
+  color: #5a6b85;
+  margin-top: 10px;
+  line-height: 1.55;
+  text-align: center;
+}
+.fig-cap .em { color: var(--title); font-weight: 600; }
+
+/* Formula */
+.formula {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 28px);
+  margin: 12px 0;
+  font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif;
+  font-size: clamp(16px, 1.7vw, 23px);
+  color: var(--accent);
+  line-height: 1.5;
+  text-align: center;
+}
+.formula .tag {
+  font-family: 'Inter', 'Noto Sans SC', sans-serif;
+  font-size: 0.65em;
+  color: #8fa3c4;
+  margin-left: 14px;
+}
+.frac { display: inline-flex; flex-direction: column; text-align: center; vertical-align: middle; margin: 0 5px; }
+.frac .num { border-bottom: 1.5px solid var(--accent); padding: 0 6px 3px; }
+.frac .den { padding-top: 3px; }
+
+/* Symbol Table */
+.sym-table { border-collapse: collapse; margin-top: 12px; width: 100%; }
+.sym-table td {
+  padding: 7px 14px;
+  font-size: clamp(12.5px, 1.15vw, 16px);
+  border-bottom: 1px solid #edf1f7;
+  color: #44506a;
+  line-height: 1.5;
+}
+.sym-table td:first-child {
+  font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif;
+  color: var(--title);
+  font-weight: 600;
+  white-space: nowrap;
+  width: 34%;
+}
+
+/* Meta Table (概况) */
+.meta-table { border-collapse: collapse; width: 100%; margin-top: 8px; }
+.meta-table th, .meta-table td {
+  padding: clamp(9px, 1.2vw, 14px) 16px;
+  text-align: left;
+  font-size: clamp(13px, 1.3vw, 17px);
+  line-height: 1.55;
+}
+.meta-table th {
+  background: rgba(57,102,162,0.08);
+  color: var(--title);
+  font-weight: 700;
+  white-space: nowrap;
+  width: 160px;
+  border-bottom: 1px solid var(--card-border);
+}
+.meta-table td { color: #333a48; border-bottom: 1px solid #edf1f7; }
+.meta-table tr:last-child th, .meta-table tr:last-child td { border-bottom: none; }
+
+/* Big Num */
+.big-num {
+  font-size: clamp(80px, 10vw, 150px);
+  font-weight: 900;
+  color: var(--title);
+  opacity: 0.10;
+  position: absolute;
+  top: 30px;
+  right: 60px;
+  line-height: 1;
+}
+
+/* End Card */
+.end-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .slide { padding: 4vh 5vw; }
+  .card-grid.cols-2, .card-grid.cols-3, .card-grid.cols-5 { grid-template-columns: 1fr; }
+  .vs-row { flex-direction: column; gap: 12px; }
+  .steps { flex-direction: column; }
+  .dots { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 方向键或点击右侧圆点翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- 01 封面 -->
+<section class="slide">
+  <div class="glow glow-purple" style="top:-120px;left:-120px;"></div>
+  <div class="glow glow-yellow" style="bottom:-120px;right:-120px;"></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    Paper Reading
+    <span class="dot-gray"></span>
+    目标检测
+    <span class="dot-gray"></span>
+    2025
+  </div>
+  <div class="anim" style="font-size: clamp(2.6rem, 5.5vw, 4rem); font-weight: 900; line-height: 1.12; letter-spacing: -1.5px;">
+    <span class="highlight">YOLO-Master</span>
+  </div>
+  <p class="anim subtitle" style="font-weight:500;color:#132843;">
+    MOE-Accelerated with Specialized Transformers for Enhanced Real-time Detection
+  </p>
+  <p class="anim body-text" style="margin-top:14px;max-width:760px;">
+    把混合专家（MoE）条件计算引入 YOLO 流水线，按场景复杂度动态分配计算资源，
+    在 MS COCO 上以 1.62 ms 延迟取得 42.4% AP。
+  </p>
+  <div class="anim cover-meta">
+    <span class="cover-tag">Xu Lin · Jinlong Peng · Zhenye Gan · Jiawen Zhu · Jun Liu</span>
+    <span class="cover-tag">arXiv:2512.23273</span>
+  </div>
+</section>
+
+<!-- 02 论文概况 -->
+<section class="slide">
+  <div class="anim slide-label">Overview</div>
+  <div class="anim"><h2>论文概况</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim">
+    <table class="meta-table">
+      <tr><th>标题</th><td>YOLO-Master: MOE-Accelerated with Specialized Transformers for Enhanced Real-time Detection</td></tr>
+      <tr><th>作者</th><td>Xu Lin、Jinlong Peng、Zhenye Gan、Jiawen Zhu、Jun Liu（前两位同等贡献）</td></tr>
+      <tr><th>发表</th><td>未获取（arXiv 预印本，编号 arXiv:2512.23273，2025-12-29）</td></tr>
+      <tr><th>作者单位</th><td>1. Tencent Youtu Lab（腾讯优图实验室）&nbsp;&nbsp;2. Singapore Management University（新加坡管理大学）</td></tr>
+      <tr><th>论文代码</th><td>github.com/isLinXu/YOLO-Master</td></tr>
+    </table>
+  </div>
+  <div class="anim highlight-bar" style="margin-top:22px;">
+    <p>在 <span class="accent-word">MS COCO / PASCAL VOC / VisDrone / KITTI / SKU-110K</span> 五个基准上全面领先同级别实时检测器。</p>
+  </div>
+</section>
+
+<!-- 03 研究动机 -->
+<section class="slide">
+  <div class="glow glow-purple" style="top:-100px;right:-100px;"></div>
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>研究动机：静态密集计算的代价</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim body-text" style="max-width:860px;">
+    实时目标检测广泛服务于自动驾驶、视频监控与机器人系统，YOLO 系列凭借单阶段框架长期占据主导地位。
+    <b style="color:#132843;">但是，现有 YOLO 架构全部采用静态密集计算</b>——无论输入简单还是复杂，所有特征都流经完全相同的网络通路、消耗统一的计算资源。
+  </div>
+  <div class="anim steps">
+    <div class="step">
+      <span class="step-num">起因</span>
+      <h3>静态密集计算</h3>
+      <p class="small-text">计算预算与网络容量在设计阶段即被固定，与输入内容无关</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">后果</span>
+      <h3>资源错配</h3>
+      <p class="small-text">简单场景计算冗余，复杂场景表征容量不足</p>
+    </div>
+    <div class="step-arrow">→</div>
+    <div class="step">
+      <span class="step-num">表现</span>
+      <h3>性能与效率同损</h3>
+      <p class="small-text">为复杂城市场景设计的模型在简单高速路上过参数化，反之容量不足</p>
+    </div>
+  </div>
+</section>
+
+<!-- 04 切入点 -->
+<section class="slide">
+  <div class="anim slide-label">Insight</div>
+  <div class="anim"><h2>来自大语言模型的启示</h2></div>
+  <div class="anim divider divider-accent"></div>
+  <div class="anim quote-block">
+    <p>LLM 研究揭示：不同输入选择性地激活不同的参数子集（稀疏激活），可以同时改善效率与适应性。</p>
+  </div>
+  <ul class="anim bullet-list" style="margin-top:16px;">
+    <li>历代 YOLO 改进集中在<span class="em">骨干结构、多尺度融合与训练策略的静态设计</span>，缺乏按输入特性分配资源的机制</li>
+    <li>这一条件计算范式<span class="em">尚未在轻量级 CNN 实时检测器上得到系统验证</span></li>
+    <li>暂未有工作把混合专家框架引入实时目标检测，依据场景复杂度自适应地分配计算资源</li>
+  </ul>
+  <div class="anim highlight-bar">
+    <p>本文切入点：把 <span class="accent-word">MoE 条件计算</span>植入 YOLO 流水线，让简单输入走短路径、复杂输入获得大容量。</p>
+  </div>
+</section>
+
+<!-- 05 核心贡献 -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-2">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>首个面向 RTOD 的 MoE 框架</h3>
+      <p class="body-text">把 MoE 条件计算引入实时目标检测，通过动态专家激活使模型容量适配输入复杂度，突破静态精度-效率权衡。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>ES-MoE 模块</h3>
+      <p class="body-text">多尺度专家 + 动态路由网络：训练用软 Top-K 保持梯度流动，推理用硬 Top-K 实现真实稀疏，训练稳定且部署高效。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>负载均衡监督</h3>
+      <p class="body-text">面向检测任务定制的均衡损失抑制专家坍缩，训练期间保持均匀的专家利用，且不牺牲推理稀疏性。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">04</span>
+      <h3>五基准 SOTA</h3>
+      <p class="body-text">COCO 42.4% AP @ 1.62 ms，超 YOLOv13-N 0.8% mAP 且推理快 17.8%；VisDrone、KITTI 增益最大。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 06 方法总览 -->
+<section class="slide">
+  <div class="anim slide-label">Method</div>
+  <div class="anim"><h2>YOLO-Master 整体框架</h2></div>
+  <div class="anim fig-frame" style="margin-top:14px;">
+    <img src="../assets/paper-imgs/YOLO-Master/ym_fig2_framework.png" alt="YOLO-Master 整体框架">
+  </div>
+  <p class="anim fig-cap">
+    左上：骨干与颈部插入 <span class="em">ES-MoE</span> 的 Backbone-Neck-Head 主干通路；左下：ES-MoE 内部信息流；右侧：动态路由网络在标准 Softmax、<span class="em">软 Top-K（训练）</span>与<span class="em">硬 Top-K（推理）</span>三种决策逻辑间切换。
+  </p>
+</section>
+
+<!-- 07 ES-MoE 信息流 -->
+<section class="slide">
+  <div class="anim slide-label">Method</div>
+  <div class="anim"><h2>ES-MoE 信息流</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim body-text">给定输入特征图 <i>X</i> ∈ ℝ<sup>C×H×W</sup>，路由网络产生路由特征，Softmax 门控计算各专家的权重分布，门控权重计算为：</div>
+  <div class="anim formula">
+    <i>w<sub>i</sub></i> = <span class="frac"><span class="num">exp(<i>g<sub>i</sub></i>(X))</span><span class="den">∑<sub>j=1</sub><sup>E</sup> exp(<i>g<sub>j</sub></i>(X))</span></span>
+    ,&nbsp; <i>i</i> = 1, 2, …, <i>E</i>
+  </div>
+  <div class="anim body-text">选出权重最高的 top-<i>K</i> 个专家（<i>K</i> ≪ <i>E</i> 保证稀疏），输出经加权聚合：</div>
+  <div class="anim formula">
+    <i>Y</i> = Norm( ∑<sub><i>i</i>∈<i>T<sub>K</sub></i></sub> <i>w<sub>i</sub></i> · Expert<sub><i>i</i></sub>(<i>X</i>) )
+  </div>
+  <table class="anim sym-table">
+    <tr><td><i>X</i> ∈ ℝ<sup>C×H×W</sup></td><td>输入特征图，<i>C</i>、<i>H</i>、<i>W</i> 为通道数、高与宽</td></tr>
+    <tr><td><i>E</i> / <i>g<sub>i</sub></i>(·)</td><td>专家总数 / 第 <i>i</i> 个专家的门控函数</td></tr>
+    <tr><td><i>T<sub>K</sub></i> / Norm(·)</td><td>top-<i>K</i> 专家索引集合 / 稳定聚合特征的归一化操作</td></tr>
+  </table>
+  <div class="anim highlight-bar">
+    <p>直观上，每个输入只为<span class="accent-word">自己「点名」少数最匹配的专家</span>：简单输入路径短，复杂输入容量大。</p>
+  </div>
+</section>
+
+<!-- 08 专家网络 -->
+<section class="slide">
+  <div class="glow glow-yellow" style="bottom:-100px;left:-100px;"></div>
+  <div class="anim slide-label">Method</div>
+  <div class="anim"><h2>专家网络：多尺度感受野</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim body-text">每个专家以深度可分离卷积为基本构件，代替标准卷积，把空间滤波与通道整合解耦，大幅压缩参数量与 FLOPs：</div>
+  <div class="anim formula">
+    Expert<sub><i>i</i></sub>(<i>X</i>) = DWConv<sub><i>k<sub>i</sub></i>, C<sub>in</sub>→C<sub>out</sub></sub>(<i>X</i>)
+  </div>
+  <ul class="anim bullet-list">
+    <li>核大小 <i>k<sub>i</sub></i> 取互不相同的奇数（<span class="em">3, 5, 7, …</span>），让专家组覆盖从小到大一系列感受野</li>
+    <li>即使 <i>E</i> 较大，专家网络整体的参数量与计算成本仍然可控，保持 Nano 级模型的轻量本 性</li>
+  </ul>
+  <div class="anim body-text" style="margin-top:10px;">全部专家输出按路由权重 Ω = [ω<sub>1</sub>, …, ω<sub>E</sub>] 聚合成 ES-MoE 的最终输出：</div>
+  <div class="anim formula">
+    <i>Y</i><sub>MoE</sub> = ∑<sub><i>i</i>=1</sub><sup>E</sup> <i>ω<sub>i</sub></i> · <i>Y<sub>i</sub></i>
+  </div>
+  <div class="anim highlight-bar">
+    <p>这等价于用路由权重对一组<span class="accent-word">多尺度滤波器做凸组合</span>，比单一固定核卷积块更能自适应地聚合不同空间范围的上下文。</p>
+  </div>
+</section>
+
+<!-- 09 门控网络 -->
+<section class="slide">
+  <div class="anim slide-label">Method</div>
+  <div class="anim"><h2>门控网络：轻量路由决策</h2></div>
+  <div class="anim divider divider-accent"></div>
+  <div class="anim body-text">设计前提是路由决策本身不能成为计算瓶颈。先用全局平均池化把输入压缩成全局描述子，为整张特征图提供统一指引：</div>
+  <div class="anim formula">
+    <i>P</i> = GAP(<i>X</i>) ,&nbsp; <i>P</i> ∈ ℝ<sup>C×1×1</sup>
+  </div>
+  <div class="anim body-text">再经两层 1×1 卷积（C<sub>in</sub> → C<sub>red</sub> → E）与 SiLU 激活生成 E 个专家的 logits：</div>
+  <div class="anim formula">
+    Λ = Conv<sup>1×1</sup><sub>out=E</sub>( SiLU( Conv<sup>1×1</sup><sub>out=C<sub>red</sub></sub>(<i>P</i>) ) )
+  </div>
+  <ul class="anim bullet-list">
+    <li>通道缩减率 <span class="em">γ = 8</span>，中间通道 <span class="em">C<sub>red</sub> = max(C/γ, 8)</span>，约束门控开销</li>
+    <li>整条通路只作用于通道维，logits 计算量<span class="em">只依赖 C 与 E、与空间尺寸 H×W 无关</span></li>
+  </ul>
+  <div class="anim highlight-bar">
+    <p>门控因此在骨干与颈部的<span class="accent-word">高分辨率特征图</span>上都能高效运行，随后交给分阶段路由策略完成专家选择。</p>
+  </div>
+</section>
+
+<!-- 10 分阶段路由 -->
+<section class="slide">
+  <div class="anim slide-label">Method</div>
+  <div class="anim"><h2>分阶段路由：软训练，硬推理</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim vs-row">
+    <div class="vs-col left-col">
+      <span class="vs-tag">Training · 软 Top-K</span>
+      <h3>梯度可流动的稀疏</h3>
+      <ul>
+        <li>logits 经 Softmax 得到选择概率 Ω′</li>
+        <li>构造 top-K 二值掩码 M<sub>K</sub>，屏蔽非 top-K 项</li>
+        <li>对非零权重重归一化得 Ω<sup>train</sup>（防除零项 ε）</li>
+        <li>被选权重仍由 Ω′ 连续计算，梯度可流回门控网络</li>
+      </ul>
+    </div>
+    <div class="vs-col right-col">
+      <span class="vs-tag">Inference · 硬 Top-K</span>
+      <h3>真实的计算稀疏</h3>
+      <ul>
+        <li>直接选 top-K logits，只对它们做 Softmax</li>
+        <li>其余 E−K 个专家权重严格置 0</li>
+        <li>前向传播只调用 K 个专家模块</li>
+        <li>在实际硬件上获得确定性加速</li>
+      </ul>
+    </div>
+  </div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">算例 · E=4, K=2</div>
+    <p>Λ = [2.1, 0.9, 0.3, −0.5] → Softmax 得 Ω′ ≈ <em>[0.65, 0.20, 0.11, 0.05]</em> → 掩码 top-2 并重归一化 →
+    Ω<sup>train</sup> ≈ <em>[0.77, 0.23, 0, 0]</em>：只有两个专家参与聚合，路由依然可微、可学习。</p>
+  </div>
+</section>
+
+<!-- 11 损失函数 -->
+<section class="slide">
+  <div class="anim slide-label">Method</div>
+  <div class="anim"><h2>损失函数与负载均衡</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim formula">
+    <i>L</i><sub>Total</sub> = <i>L</i><sub>YOLO</sub> + λ<sub>LB</sub> · <i>L</i><sub>LB</sub>
+    <span class="tag">λ<sub>LB</sub> &gt; 0 控制均衡项权重</span>
+  </div>
+  <div class="anim body-text">检测损失沿用 YOLOv8 三分量形式；负载均衡损失针对<b style="color:#132843;">专家坍缩</b>——路由网络倾向把多数输入分给少数「更强」的专家：</div>
+  <div class="anim formula">
+    <i>L</i><sub>YOLO</sub> = <i>L</i><sub>cls</sub> + <i>L</i><sub>loc</sub> + <i>L</i><sub>DFL</sub>
+    <span class="tag">分类 / CIoU·DIoU 定位 / 边界框分布</span>
+  </div>
+  <div class="anim formula">
+    <i>L</i><sub>LB</sub> = <span class="frac"><span class="num">1</span><span class="den">E</span></span>
+    ∑<sub><i>i</i>=1</sub><sup>E</sup> ( <i>μ<sub>i</sub></i> − <span class="frac"><span class="num">1</span><span class="den">E</span></span> )<sup>2</sup>
+    <span class="tag">μ<sub>i</sub>：专家 i 的平均利用率</span>
+  </div>
+  <ul class="anim bullet-list">
+    <li>μ<sub>i</sub> 是专家 i 的训练期软权重在 batch 与全部空间位置上的平均占比</li>
+    <li>最小化 L<sub>LB</sub> 等价于<span class="em">约束各专家被均匀使用</span>，充分利用全部 E 个专家的容量</li>
+    <li>只通过训练期软权重 Ω<sup>train</sup> 反传，<span class="em">不牺牲推理期的硬稀疏</span></li>
+  </ul>
+</section>
+
+<!-- 12 实验设置 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments</div>
+  <div class="anim"><h2>实验设置：五个差异明显的基准</h2></div>
+  <div class="anim divider divider-accent"></div>
+  <div class="anim card-grid cols-5">
+    <div class="card" style="text-align:center;align-items:center;">
+      <h3>MS COCO</h3>
+      <p class="body-text">118k 图<br>80 类</p>
+    </div>
+    <div class="card" style="text-align:center;align-items:center;">
+      <h3>PASCAL VOC</h3>
+      <p class="body-text">16.5k 图<br>20 类</p>
+    </div>
+    <div class="card" style="text-align:center;align-items:center;">
+      <h3>VisDrone</h3>
+      <p class="body-text">6.5k 图<br>10 类</p>
+    </div>
+    <div class="card" style="text-align:center;align-items:center;">
+      <h3>KITTI</h3>
+      <p class="body-text">7.5k 图<br>3 类</p>
+    </div>
+    <div class="card" style="text-align:center;align-items:center;">
+      <h3>SKU-110K</h3>
+      <p class="body-text">8.2k 图<br>1 类</p>
+    </div>
+  </div>
+  <ul class="anim bullet-list" style="margin-top:20px;">
+    <li>基线 <span class="em">YOLOv12-Nano</span>（宽度缩放因子 0.50），640×640 分辨率，SGD 训练 600 epoch，总 batch size 256</li>
+    <li>数据增强：Mosaic（p=1.0）、Copy-Paste（p=0.1），Nano 变体禁用 MixUp</li>
+    <li>指标：mAP50:95 与 mAP50；延迟为专用推理加速器上 FP16、batch size=1 的实测值</li>
+  </ul>
+</section>
+
+<!-- 13 主对比 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments</div>
+  <div class="anim"><h2>主对比：五基准全面领先</h2></div>
+  <div class="anim fig-frame" style="margin-top:14px;">
+    <img src="../assets/paper-imgs/YOLO-Master/ym_table1.png" alt="五个基准上与 Nano 级检测器的定量对比">
+  </div>
+  <p class="anim fig-cap">
+    YOLO-Master-N 在全部五个数据集上同时取得最高的 mAP 与 mAP<sub>50</sub>；增益最大的 <span class="em">VisDrone +2.1%</span>、<span class="em">KITTI +1.5%</span>，可见自适应专家路由对小目标检测与精确定位的收益最明显；在平均 147 个目标/图的 SKU-110K 上取得 <span class="em">58.2% mAP</span>，密集拥挤场景下专家特化依然有效。
+  </p>
+</section>
+
+<!-- 14 精度-延迟 -->
+<section class="slide">
+  <div class="big-num">Pareto</div>
+  <div class="anim slide-label">Experiments</div>
+  <div class="anim"><h2>精度-延迟权衡</h2></div>
+  <div class="anim fig-frame" style="margin-top:14px;">
+    <img src="../assets/paper-imgs/YOLO-Master/ym_fig1_pareto.png" alt="MS COCO 上的精度-延迟 Pareto 前沿" style="max-height:52vh;">
+  </div>
+  <p class="anim fig-cap">
+    YOLO-Master-N 位于 Pareto 前沿左上角（<span class="em">42.4% AP @ 1.62 ms</span>）：比 YOLOv13-N 快 <span class="em">17.8%</span>，仅比最快的 YOLOv11-N 慢 8%——精度提升没有以牺牲实时性为代价。
+  </p>
+</section>
+
+<!-- 15 消融 I -->
+<section class="slide">
+  <div class="anim slide-label">Ablation</div>
+  <div class="anim"><h2>消融 I：放置位置与专家数量</h2></div>
+  <div class="anim vs-row" style="margin-top:12px;">
+    <div class="fig-frame sm" style="flex:1;">
+      <img src="../assets/paper-imgs/YOLO-Master/ym_table5.png" alt="ES-MoE 放置位置消融">
+      <p class="fig-cap">仅骨干 <span class="em">62.1%</span>（+1.3%）；仅颈部 58.2%；双处插入 54.9%</p>
+    </div>
+    <div class="fig-frame sm" style="flex:1;">
+      <img src="../assets/paper-imgs/YOLO-Master/ym_table6.png" alt="专家数量消融">
+      <p class="fig-cap">4 专家 <span class="em">62.3%</span>（2.76M）；2 专家 61.0%；8 专家 62.0% 且参数 +33%</p>
+    </div>
+  </div>
+  <ul class="anim bullet-list" style="margin-top:14px;">
+    <li>级联路由在反向传播中产生<span class="em">相互冲突的路由梯度</span>：更多 ES-MoE 并不保证更好性能，本文采用仅骨干的默认配置</li>
+    <li>2 专家容量不足，8 专家收益递减——<span class="em">适度的专家多样性</span>已足以覆盖多尺度变化</li>
+  </ul>
+</section>
+
+<!-- 16 消融 II -->
+<section class="slide">
+  <div class="anim slide-label">Ablation</div>
+  <div class="anim"><h2>消融 II：Top-K 与损失配置</h2></div>
+  <div class="anim vs-row" style="margin-top:12px;">
+    <div class="fig-frame sm" style="flex:1;">
+      <img src="../assets/paper-imgs/YOLO-Master/ym_table7.png" alt="top-K 选择策略消融">
+      <p class="fig-cap">K=2 在 <span class="em">50% 稀疏度</span>下最优（61.8%）；K=1 表征不足低 0.5%</p>
+    </div>
+    <div class="fig-frame sm" style="flex:1;">
+      <img src="../assets/paper-imgs/YOLO-Master/ym_table8.png" alt="DFL 与 MoE 损失配置消融">
+      <p class="fig-cap">Config 5（无 DFL、仅权重 1.5 的 MoE 损失）<span class="em">62.2%</span> 最优</p>
+    </div>
+  </div>
+  <ul class="anim bullet-list" style="margin-top:14px;">
+    <li>两个互补专家即可<span class="em">兼顾特征多样性与计算效率</span>，K 继续增大收益消失</li>
+    <li>DFL 与强 MoE 并存的 Config 4 最差（61.4%）——两者存在<span class="em">梯度竞争</span></li>
+  </ul>
+</section>
+
+<!-- 17 损失动态 -->
+<section class="slide">
+  <div class="anim slide-label">Ablation</div>
+  <div class="anim"><h2>损失配置的训练动态</h2></div>
+  <div class="anim fig-frame" style="margin-top:14px;">
+    <img src="../assets/paper-imgs/YOLO-Master/ym_fig3_loss_ablation.png" alt="五种损失配置的训练动态对比">
+  </div>
+  <p class="anim fig-cap">
+    Config 4（DFL + 强 MoE）的损失曲线<span class="em">大幅振荡</span>，Config 5（MoE-only）<span class="em">平滑收敛</span>：DFL 强制的均匀分布精炼与 MoE 损失鼓励的实例自适应专家特化存在梯度竞争，移除 DFL 后 MoE 损失同时承担回归引导与专家特化，训练更稳定。
+  </p>
+</section>
+
+<!-- 18 下游泛化 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments</div>
+  <div class="anim"><h2>下游任务泛化</h2></div>
+  <div class="anim vs-row" style="margin-top:12px;">
+    <div class="fig-frame sm" style="flex:1;">
+      <img src="../assets/paper-imgs/YOLO-Master/ym_table2.png" alt="Small 规模检测对比">
+      <p class="fig-cap">检测（COCO S）：<span class="em">49.1% mAP</span>，超 YOLOv13-S 的 48.0%</p>
+    </div>
+    <div class="fig-frame sm" style="flex:1;">
+      <img src="../assets/paper-imgs/YOLO-Master/ym_table3.png" alt="ImageNet 分类对比">
+      <p class="fig-cap">分类（ImageNet）：Top-1 <span class="em">76.6%</span>，比 YOLOv12-cls-N 高 4.9%</p>
+    </div>
+    <div class="fig-frame sm" style="flex:1;">
+      <img src="../assets/paper-imgs/YOLO-Master/ym_table4.png" alt="MS COCO 实例分割对比">
+      <p class="fig-cap">分割（COCO）：mAP mask <span class="em">35.6%</span>，比 YOLOv12-seg-N 高 2.8%</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar" style="margin-top:16px;">
+    <p>检测、分类、分割三个任务的一致增益表明 <span class="accent-word">ES-MoE 学到的骨干表征具备跨任务通用性</span>。</p>
+  </div>
+</section>
+
+<!-- 19 可视化分析 -->
+<section class="slide">
+  <div class="anim slide-label">Qualitative</div>
+  <div class="anim"><h2>可视化分析：四个挑战场景</h2></div>
+  <div class="anim fig-frame" style="margin-top:14px;">
+    <img src="../assets/paper-imgs/YOLO-Master/ym_fig4_qualitative.png" alt="四个挑战场景上的定性对比">
+  </div>
+  <p class="anim fig-cap">
+    ① 草地小动物：v12 置信度仅 0.47，YOLO-Master-N 达 <span class="em">0.65-0.82</span>；② 海岸伪装：v10-v12 漏检遮挡目标，本文精准定位；③ 剪毛场景：平均置信度 <span class="em">0.85</span>（v13 为 0.77）；④ 密集餐桌：以 <span class="em">0.87-0.97</span> 的高置信度补全大量被漏检的小物件——尺度自适应路由的优势能稳定迁移到真实画面。
+  </p>
+</section>
+
+<!-- 20 总结与优点 -->
+<section class="slide">
+  <div class="glow glow-purple" style="top:-100px;right:-100px;"></div>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>总结与优点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid" style="grid-template-columns:1fr;gap:14px;">
+    <div class="card" style="flex-direction:row;gap:18px;align-items:flex-start;">
+      <span class="card-num" style="margin-bottom:0;">1</span>
+      <p class="body-text"><b style="color:#132843;">范式创新</b>——把混合专家条件计算引入实时目标检测，将静态的精度-效率权衡改造成按输入复杂度动态分配表征容量的可微机制，小目标与密集场景受益最明显（VisDrone +2.1%、KITTI +1.5%）。</p>
+    </div>
+    <div class="card" style="flex-direction:row;gap:18px;align-items:flex-start;">
+      <span class="card-num" style="margin-bottom:0;">2</span>
+      <p class="body-text"><b style="color:#132843;">设计干净利落</b>——软/硬 Top-K 分阶段路由：训练期掩码重归一化保住梯度流动，推理期严格稀疏换来真实加速；门控开销与分辨率无关，条件计算在 Nano 级模型上真正可部署。</p>
+    </div>
+    <div class="card" style="flex-direction:row;gap:18px;align-items:flex-start;">
+      <span class="card-num" style="margin-bottom:0;">3</span>
+      <p class="body-text"><b style="color:#132843;">消融有指导意义</b>——仅骨干放置 ES-MoE 最佳、双处插入因路由梯度冲突反而退化；MoE-only 损失替代 DFL 有训练曲线佐证；五基准加三类下游任务的覆盖说服力强。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 21 结尾 -->
+<section class="slide">
+  <div class="glow glow-purple" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="end-card">
+    <div class="anim"><h2 style="color:var(--title);">Thanks</h2></div>
+    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
+    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">
+      YOLO-Master：让实时检测器学会<br>
+      <span style="color:var(--title);font-weight:600;">「看场景下菜」——按复杂度分配算力</span>
+    </div>
+    <div class="anim cover-meta" style="margin-top:28px;justify-content:center;">
+      <span class="cover-tag">arXiv:2512.23273</span>
+      <span class="cover-tag">github.com/isLinXu/YOLO-Master</span>
+      <span class="cover-tag">感谢观看</span>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+  }
+  const dots = dotsWrap.querySelectorAll('.dot');
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= total || idx === current) return;
+    const prev = slides[current];
+    const next = slides[idx];
+
+    prev.classList.remove('active');
+    prev.classList.add('exit-up');
+
+    requestAnimationFrame(() => {
+      next.classList.remove('exit-up');
+      next.classList.add('active');
+    });
+
+    setTimeout(() => {
+      prev.classList.remove('exit-up');
+    }, 700);
+
+    dots[current].classList.remove('active');
+    current = idx;
+    dots[current].classList.add('active');
+    progress.style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchX = e.changedTouches[0].screenX;
+    touchY = e.changedTouches[0].screenY;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].screenX - touchX;
+    const dy = e.changedTouches[0].screenY - touchY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      dx < 0 ? next() : prev();
+    }
+  }, { passive: true });
+
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
+})();
+</script>
+
+</body>
+</html>
