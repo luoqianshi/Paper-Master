@@ -14,7 +14,7 @@
       "number": "2",
       "label": "Figure 2",
       "caption": "Fig. 2 Sugarcane data set",
-      "filename": "fig2.png",
+      "filename": "fig2_page003.png",
       "page": 3,
       "bbox": [
         100.80772399902344,
@@ -30,7 +30,7 @@
       "number": "4",
       "label": "Figure 4",
       "caption": "Fig. 4 Workflow of Bneck module",
-      "filename": "fig4.png",
+      "filename": "fig4_page004.png",
       "page": 4,
       "bbox": [
         83.95771789550781,
@@ -46,7 +46,7 @@
       "number": "9",
       "label": "Figure 9",
       "caption": "Fig. 9 Actual detection results for different network models",
-      "filename": "fig9.png",
+      "filename": "fig9_page007.png",
       "page": 7,
       "bbox": [
         344.09259033203125,

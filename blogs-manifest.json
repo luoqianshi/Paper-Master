@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T11:50:01.741859+00:00",
+  "generatedAt": "2026-09-23T21:19:12.210587+00:00",
   "blogs": [
     {
       "title": "UAV remote sensing detection of tea leaf blight based on DDMA-YOLO",
@@ -55,7 +55,7 @@
       "category": "YOLO 应用",
       "date": "2026-09-20",
       "source_url": "http://www.tcsae.org",
-      "thumbnail": "assets/paper-imgs/CBP-YOLO/page6_img7.jpeg"
+      "thumbnail": "assets/paper-imgs/CBP-YOLO/fig1.png"
     },
     {
       "title": "Conv2Former: A Simple Transformer-Style ConvNet for Visual Recognition",
@@ -175,7 +175,7 @@
       "category": "YOLO 应用",
       "date": "2026-09-20",
       "source_url": "http://www.tcsae.org",
-      "thumbnail": "assets/paper-imgs/gcmd-yolo/page7_img11.jpeg"
+      "thumbnail": "assets/paper-imgs/gcmd-yolo/fig2.png"
     },
     {
       "title": "Generalized Focal Loss: Learning Qualified and Distributed Bounding Boxes for Dense Object Detection",
@@ -239,7 +239,7 @@
       "category": "YOLO 应用",
       "date": "2026-09-20",
       "source_url": "http://www.tcsae.org",
-      "thumbnail": "assets/paper-imgs/psmf-yolo/page7_img7.jpeg"
+      "thumbnail": "assets/paper-imgs/psmf-yolo/fig02_network_structure.png"
     },
     {
       "title": "基于无人机 RGB 图像与改进 YOLO+v5s 的宿根蔗缺苗定位方法",
@@ -247,7 +247,7 @@
       "category": "YOLO 应用",
       "date": "2026-09-20",
       "source_url": " ",
-      "thumbnail": "assets/paper-imgs/Ratoon-Sugarcane-YOLOv5s/fig_003_003.png"
+      "thumbnail": "assets/paper-imgs/Ratoon-Sugarcane-YOLOv5s/fig_004_003.png"
     },
     {
       "title": "RSO-YOLO: A Real-Time Detector for Small and Occluded Objects in Autonomous Driving Scenarios",
@@ -287,7 +287,7 @@
       "category": "YOLO 应用",
       "date": "2026-09-20",
       "source_url": "https://doi.org/10.11975/j.issn.1002-6819.202509289",
-      "thumbnail": "assets/paper-imgs/YOLO-GESCW/tab1.png"
+      "thumbnail": "assets/paper-imgs/YOLO-GESCW/fig1.png"
     },
     {
       "title": "YOLO-Master: MOE-Accelerated with Specialized Transformers for Enhanced Real-time Detection",
@@ -383,7 +383,7 @@
       "category": "YOLO 应用",
       "date": "2026-09-20",
       "source_url": "https://doi.org/10.11975/j.issn.1002-6819.202512131",
-      "thumbnail": "assets/paper-imgs/YOLOv12n-RCL-Sunflower/fig8.png"
+      "thumbnail": "assets/paper-imgs/YOLOv12n-RCL-Sunflower/fig1.png"
     },
     {
       "title": "基于改进YOLOv12n的VD炉真空下钢水液面高度检测",
@@ -439,7 +439,7 @@
       "category": "模型微调",
       "date": "2026-09-02",
       "source_url": "https://github.com/Leiyi-Hu/mona",
-      "thumbnail": "assets/paper-imgs/Mona/mona_fig1_comparison.png"
+      "thumbnail": "assets/paper-imgs/Mona/mona_fig2_arch.png"
     },
     {
       "title": "VarifocalNet: An IoU-aware Dense Object Detector",
@@ -455,7 +455,7 @@
       "category": "上采样",
       "date": "2026-08-30",
       "source_url": "https://arxiv.org/abs/2308.15085",
-      "thumbnail": "assets/paper-imgs/DySample/dysample_fig1.png"
+      "thumbnail": "assets/paper-imgs/DySample/dysample_fig2.png"
     },
     {
       "title": "YOLO-PEFT: Parameter-Efficient Fine-Tuning on YOLO Family",

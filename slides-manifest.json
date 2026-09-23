@@ -1,110 +1,6 @@
 {
-  "generatedAt": "2026-09-06T23:11:05.431469+08:00",
+  "generatedAt": "2026-09-23T21:19:12.213264+00:00",
   "slides": [
-    {
-      "title": "Attention Is All You Need",
-      "file": "paper-slides/Attention_Is_All_You_Need.html",
-      "description": "Transformer 经典论文演示，聚焦完全基于注意力机制的全新序列转导架构、多头自注意力、位置编码与机器翻译 SOTA 结果。",
-      "kind": "期刊/会议",
-      "accent": "rgba(57,102,162,.18)",
-      "thumbnail": "assets/thumbnails/Attention_Is_All_You_Need.png"
-    },
-    {
-      "title": "YOLO-Master Presentation",
-      "file": "paper-slides/YOLO-Master_Presentation.html",
-      "description": "YOLO-Master 论文演示，聚焦基于 MoE 加速的专业化 Transformer 实时目标检测方法。",
-      "kind": "期刊/会议",
-      "accent": "rgba(97,145,211,.18)",
-      "thumbnail": "assets/thumbnails/YOLO-Master_Presentation.png"
-    },
-    {
-      "title": "DETRs Beat YOLOs on Real-time Object Detection",
-      "file": "paper-slides/DETRs_Beat_YOLOs_on_Real-time_Object_Detection.html",
-      "description": "CVPR 2024 Oral，RT-DETR论文演示，聚焦首个实时端到端目标检测器、高效混合编码器与不确定性最小查询选择。",
-      "kind": "期刊/会议",
-      "accent": "rgba(57,102,162,.18)",
-      "thumbnail": "assets/thumbnails/DETRs_Beat_YOLOs_on_Real-time_Object_Detection.png"
-    },
-    {
-      "title": "Boosting Long-tailed Object Detection via Step-wise Learning",
-      "file": "paper-slides/smooth-tail_learning.html",
-      "description": "ICCV 2023 长尾目标检测论文演示，聚焦平滑尾部数据构建、逐步学习框架与知识迁移策略。",
-      "kind": "期刊/会议",
-      "accent": "rgba(57,102,162,.18)",
-      "thumbnail": "assets/thumbnails/smooth-tail_learning.png"
-    },
-    {
-      "title": "Dialogue Director 论文精读",
-      "file": "paper-slides/Dialogue_Director.html",
-      "description": "Dialogue Director 论文精读演示，聚焦对话可视化新任务、免训练三智能体框架（Script Director + Cinematographer + Storyboard Maker）与电影知识整合。",
-      "kind": "期刊/会议",
-      "accent": "rgba(57,102,162,.18)",
-      "thumbnail": "assets/thumbnails/Dialogue_Director.png"
-    },
-    {
-      "title": "YOLOv12: Attention-Centric Real-Time Object Detectors",
-      "file": "paper-slides/YOLOv12_Attention-Centric.html",
-      "description": "YOLOv12 论文演示，聚焦以注意力机制为核心的实时目标检测框架，包括 Area Attention、R-ELAN 与多项架构优化。",
-      "kind": "期刊/会议",
-      "accent": "rgba(57,102,162,.18)",
-      "thumbnail": "assets/thumbnails/YOLOv12_Attention-Centric.png"
-    },
-    {
-      "title": "Ultralytics YOLO26: Unified Real-Time End-to-End Vision Models",
-      "file": "paper-slides/YOLO26_Unified_Real-Time_Vision.html",
-      "description": "YOLO26 论文演示，聚焦统一实时端到端视觉模型家族，包括 DFL-free 双头架构、MuSGD、Progressive Loss、STAL 及多任务扩展。",
-      "kind": "期刊/会议",
-      "accent": "rgba(57,102,162,.18)",
-      "thumbnail": "assets/thumbnails/YOLO26_Unified_Real-Time_Vision.png"
-    },
-    {
-      "title": "DySample: Learning to Upsample by Learning to Sample",
-      "file": "paper-slides/DySample_Learning_to_Upsample.html",
-      "description": "ICCV 2023 DySample 论文演示，聚焦从点采样视角设计的超轻量动态上采样器，绕过动态卷积，仅用 PyTorch 内置函数，在五项密集预测任务上全面领先。",
-      "kind": "期刊/会议",
-      "accent": "rgba(57,102,162,.18)",
-      "thumbnail": "assets/thumbnails/DySample_Learning_to_Upsample.png"
-    },
-    {
-      "title": "YOLO-PEFT: Parameter-Efficient Fine-Tuning on YOLO Family",
-      "file": "paper-slides/YOLO-PEFT.html",
-      "description": "arXiv 2026 论文演示，聚焦把 adapter 放置建模为可审计的约束规划问题：角色感知图解析与十维架构指纹、固定顺序硬约束过滤与预算化秩分配、校准拒绝机制（Refuse 回退 Full-SFT）与训练-保存-合并-导出端到端契约。",
-      "kind": "arXiv 预印本",
-      "accent": "rgba(57,102,162,.18)",
-      "thumbnail": "assets/thumbnails/YOLO-PEFT.png"
-    },
-    {
-      "title": "YOLO-Master: MOE-Accelerated with Specialized Transformers for Enhanced Real-time Detection",
-      "file": "paper-slides/YOLO-Master.html",
-      "description": "arXiv 2025 论文演示，聚焦首个面向实时目标检测的混合专家条件计算框架：ES-MoE 多尺度专家与动态路由、软/硬 Top-K 分阶段路由、负载均衡监督，COCO 42.4% AP @ 1.62ms 五基准 SOTA。",
-      "kind": "arXiv 预印本",
-      "accent": "rgba(57,102,162,.18)",
-      "thumbnail": "assets/thumbnails/YOLO-Master.png"
-    },
-    {
-      "title": "SimAM: A Simple, Parameter-Free Attention Module for Convolutional Neural Networks",
-      "file": "paper-slides/SimAM.html",
-      "description": "ICML 2021 论文演示，聚焦基于空间抑制理论的零参数注意力模块：以线性可分性定义能量函数并推导闭式解，直接推断全 3-D 注意力权重，不足十行代码在分类、检测与分割上取得精度-效率双赢。",
-      "kind": "会议",
-      "accent": "rgba(57,102,162,.18)",
-      "thumbnail": "assets/thumbnails/SimAM.png"
-    },
-    {
-      "title": "Dynamic Head: Unifying Object Detection Heads with Attentions",
-      "file": "paper-slides/Dynamic-Head.html",
-      "description": "CVPR 2021 Dynamic Head 论文演示，聚焦把检测头输入统一为层级 × 空间 × 通道三维张量，以尺度感知、空间感知与任务感知三个串联注意力统一检测头，即插即用提升 1.2 ∼ 3.2 AP 并将 COCO 推至 60.6 AP。",
-      "kind": "期刊/会议",
-      "accent": "rgba(57,102,162,.18)",
-      "thumbnail": "assets/thumbnails/Dynamic-Head.png"
-    },
-    {
-      "title": "FreqFusion: Frequency-Aware Feature Fusion for Dense Image Prediction",
-      "file": "paper-slides/FreqFusion.html",
-      "description": "TPAMI 2024 论文演示，聚焦特征融合中的类内不一致与边界位移，用 ALPF/AHPF/偏移三大生成器实现频率感知融合，四大密集预测任务全面领先。",
-      "kind": "期刊/会议",
-      "accent": "rgba(57,102,162,.18)",
-      "thumbnail": "assets/thumbnails/FreqFusion.png"
-    },
     {
       "title": "ASF-YOLO: A novel YOLO model with attentional scale sequence fusion for cell instance segmentation",
       "file": "paper-slides/ASF-YOLO.html",
@@ -120,6 +16,14 @@
       "kind": "期刊/会议",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/ASFF.png"
+    },
+    {
+      "title": "Attention Is All You Need",
+      "file": "paper-slides/Attention_Is_All_You_Need.html",
+      "description": "Transformer 经典论文演示，聚焦完全基于注意力机制的全新序列转导架构、多头自注意力、位置编码与机器翻译 SOTA 结果。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Attention_Is_All_You_Need.png"
     },
     {
       "title": "CARAFE: Content-Aware ReAssembly of FEatures",
@@ -170,6 +74,14 @@
       "thumbnail": "assets/thumbnails/DDMA-YOLO.png"
     },
     {
+      "title": "DETRs Beat YOLOs on Real-time Object Detection",
+      "file": "paper-slides/DETRs_Beat_YOLOs_on_Real-time_Object_Detection.html",
+      "description": "CVPR 2024 Oral，RT-DETR论文演示，聚焦首个实时端到端目标检测器、高效混合编码器与不确定性最小查询选择。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/DETRs_Beat_YOLOs_on_Real-time_Object_Detection.png"
+    },
+    {
       "title": "基于 DFR-SN-YOLO 的棉花顶芽识别方法",
       "file": "paper-slides/DFR-SN-YOLO.html",
       "description": "基于 DFR-SN-YOLO 的棉花顶芽识别方法 论文演示文稿，基于阅读笔记生成。",
@@ -178,12 +90,36 @@
       "thumbnail": "assets/thumbnails/DFR-SN-YOLO.png"
     },
     {
+      "title": "Dialogue Director 论文精读",
+      "file": "paper-slides/Dialogue_Director.html",
+      "description": "Dialogue Director 论文精读演示，聚焦对话可视化新任务、免训练三智能体框架（Script Director + Cinematographer + Storyboard Maker）与电影知识整合。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Dialogue_Director.png"
+    },
+    {
       "title": "DilateFormer: Multi-Scale Dilated Transformer for Visual Recognition",
       "file": "paper-slides/DilateFormer.html",
       "description": "DilateFormer: Multi-Scale Dilated Transformer for Visual Recognition 论文演示文稿，基于阅读笔记生成。",
       "kind": "期刊/会议",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/DilateFormer.png"
+    },
+    {
+      "title": "Dynamic Head: Unifying Object Detection Heads with Attentions",
+      "file": "paper-slides/Dynamic-Head.html",
+      "description": "CVPR 2021 Dynamic Head 论文演示，聚焦把检测头输入统一为层级 × 空间 × 通道三维张量，以尺度感知、空间感知与任务感知三个串联注意力统一检测头，即插即用提升 1.2 ∼ 3.2 AP 并将 COCO 推至 60.6 AP。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/Dynamic-Head.png"
+    },
+    {
+      "title": "DySample: Learning to Upsample by Learning to Sample",
+      "file": "paper-slides/DySample_Learning_to_Upsample.html",
+      "description": "ICCV 2023 DySample 论文演示，聚焦从点采样视角设计的超轻量动态上采样器，绕过动态卷积，仅用 PyTorch 内置函数，在五项密集预测任务上全面领先。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/DySample_Learning_to_Upsample.png"
     },
     {
       "title": "Efficient Deformable ConvNets: Rethinking Dynamic and Sparse Operator for Vision Applications",
@@ -240,6 +176,14 @@
       "kind": "期刊/会议",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/Focaler-IoU.png"
+    },
+    {
+      "title": "FreqFusion: Frequency-Aware Feature Fusion for Dense Image Prediction",
+      "file": "paper-slides/FreqFusion.html",
+      "description": "TPAMI 2024 论文演示，聚焦特征融合中的类内不一致与边界位移，用 ALPF/AHPF/偏移三大生成器实现频率感知融合，四大密集预测任务全面领先。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/FreqFusion.png"
     },
     {
       "title": "基于 GCMD-YOLO 的轻量化多尺度中药材检测方法",
@@ -346,6 +290,22 @@
       "thumbnail": "assets/thumbnails/RSO-YOLO.png"
     },
     {
+      "title": "SimAM: A Simple, Parameter-Free Attention Module for Convolutional Neural Networks",
+      "file": "paper-slides/SimAM.html",
+      "description": "ICML 2021 论文演示，聚焦基于空间抑制理论的零参数注意力模块：以线性可分性定义能量函数并推导闭式解，直接推断全 3-D 注意力权重，不足十行代码在分类、检测与分割上取得精度-效率双赢。",
+      "kind": "会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/SimAM.png"
+    },
+    {
+      "title": "Boosting Long-tailed Object Detection via Step-wise Learning",
+      "file": "paper-slides/smooth-tail_learning.html",
+      "description": "ICCV 2023 长尾目标检测论文演示，聚焦平滑尾部数据构建、逐步学习框架与知识迁移策略。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/smooth-tail_learning.png"
+    },
+    {
       "title": "基于TPH-YOLO的无人机图像麦穗计数方法",
       "file": "paper-slides/TPH-YOLO.html",
       "description": "基于TPH-YOLO的无人机图像麦穗计数方法 论文演示文稿，基于阅读笔记生成。",
@@ -386,6 +346,30 @@
       "thumbnail": "assets/thumbnails/YOLO-GESCW.png"
     },
     {
+      "title": "YOLO-Master: MOE-Accelerated with Specialized Transformers for Enhanced Real-time Detection",
+      "file": "paper-slides/YOLO-Master.html",
+      "description": "arXiv 2025 论文演示，聚焦首个面向实时目标检测的混合专家条件计算框架：ES-MoE 多尺度专家与动态路由、软/硬 Top-K 分阶段路由、负载均衡监督，COCO 42.4% AP @ 1.62ms 五基准 SOTA。",
+      "kind": "arXiv 预印本",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLO-Master.png"
+    },
+    {
+      "title": "YOLO-Master Presentation",
+      "file": "paper-slides/YOLO-Master_Presentation.html",
+      "description": "YOLO-Master 论文演示，聚焦基于 MoE 加速的专业化 Transformer 实时目标检测方法。",
+      "kind": "期刊/会议",
+      "accent": "rgba(97,145,211,.18)",
+      "thumbnail": "assets/thumbnails/YOLO-Master_Presentation.png"
+    },
+    {
+      "title": "YOLO-PEFT: Parameter-Efficient Fine-Tuning on YOLO Family",
+      "file": "paper-slides/YOLO-PEFT.html",
+      "description": "arXiv 2026 论文演示，聚焦把 adapter 放置建模为可审计的约束规划问题：角色感知图解析与十维架构指纹、固定顺序硬约束过滤与预算化秩分配、校准拒绝机制（Refuse 回退 Full-SFT）与训练-保存-合并-导出端到端契约。",
+      "kind": "arXiv 预印本",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLO-PEFT.png"
+    },
+    {
       "title": "自然光环境下番茄穴盘苗缺苗检测的 YOLO-SFEP 模型",
       "file": "paper-slides/YOLO-SFEP.html",
       "description": "自然光环境下番茄穴盘苗缺苗检测的 YOLO-SFEP 模型 论文演示文稿，基于阅读笔记生成。",
@@ -418,6 +402,14 @@
       "thumbnail": "assets/thumbnails/YOLO11n-EWL-Sugarcane-Bud.png"
     },
     {
+      "title": "Ultralytics YOLO26: Unified Real-Time End-to-End Vision Models",
+      "file": "paper-slides/YOLO26_Unified_Real-Time_Vision.html",
+      "description": "YOLO26 论文演示，聚焦统一实时端到端视觉模型家族，包括 DFL-free 双头架构、MuSGD、Progressive Loss、STAL 及多任务扩展。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLO26_Unified_Real-Time_Vision.png"
+    },
+    {
       "title": "基于改进 YOLOv10n 的复杂田间小麦幼苗检测和计数方法",
       "file": "paper-slides/YOLOv10n-Wheat-Seedling.html",
       "description": "基于改进 YOLOv10n 的复杂田间小麦幼苗检测和计数方法 论文演示文稿，基于阅读笔记生成。",
@@ -448,6 +440,14 @@
       "kind": "期刊/会议",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/YOLOv12-Water-Debris.png"
+    },
+    {
+      "title": "YOLOv12: Attention-Centric Real-Time Object Detectors",
+      "file": "paper-slides/YOLOv12_Attention-Centric.html",
+      "description": "YOLOv12 论文演示，聚焦以注意力机制为核心的实时目标检测框架，包括 Area Attention、R-ELAN 与多项架构优化。",
+      "kind": "期刊/会议",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/YOLOv12_Attention-Centric.png"
     },
     {
       "title": "基于改进 YOLOv12n 的 PCB 缺陷检测算法研究",

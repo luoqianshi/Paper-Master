@@ -14,7 +14,7 @@
       "number": "1",
       "label": "Figure 1",
       "caption": "Figure 1. YOLOv12 network structure diagram. Arrows indicate data flow; colors distinguish module\ntypes; dashed boxes denote components; ⊕denotes element-wise addition; the ellipsis “. . .” denotes\nrepeated layers.",
-      "filename": "fig1.png",
+      "filename": "fig1_page003.png",
       "page": 3,
       "bbox": [
         37.2400016784668,
@@ -30,7 +30,7 @@
       "number": "2",
       "label": "Figure 2",
       "caption": "Figure 2. RSO-YOLO network structure diagram. Arrows indicate data flow; colors distinguish\nmodule types; dashed boxes denote components.",
-      "filename": "fig2.png",
+      "filename": "fig2_page005.png",
       "page": 5,
       "bbox": [
         163.0229949951172,
@@ -46,7 +46,7 @@
       "number": "3",
       "label": "Figure 3",
       "caption": "Figure 3. The structure of BiFPN. Arrows indicate data flow; colors distinguish module types; dashed\nbox denotes components.",
-      "filename": "fig3.png",
+      "filename": "fig3_page007.png",
       "page": 7,
       "bbox": [
         162.65899658203125,
@@ -62,7 +62,7 @@
       "number": "4",
       "label": "Figure 4",
       "caption": "Figure 4. The structure of SPD-Conv: (a) input feature map; (b) spatial partition; (c) spatial-to-\nchannel rearrangement; (d) channel compression; (e) output feature map. Arrows indicate data flow;\ncolors distinguish module types; letters C and S denote the number of channels and the image size,\nrespectively; ⊕denotes concatenation of feature maps along the channel dimension; ★⃝  denotes a\nconvolution operation with a stride of 1.",
-      "filename": "fig4.png",
+      "filename": "fig4_page008.png",
       "page": 8,
       "bbox": [
         56.13640213012695,
@@ -78,7 +78,7 @@
       "number": "5",
       "label": "Figure 5",
       "caption": "Figure 5. The structure of FECM. Arrows indicate data flow; colors distinguish module types; letters\nC, H, and W denote the number of channels, height, and width, respectively; ⊕denotes element-wise\naddition; ⊗denotes element-wise multiplication.",
-      "filename": "fig5.png",
+      "filename": "fig5_page009.png",
       "page": 9,
       "bbox": [
         36.89539337158203,
@@ -94,7 +94,7 @@
       "number": "6",
       "label": "Figure 6",
       "caption": "Figure 6. The structure of GCCHead.",
-      "filename": "fig6.png",
+      "filename": "fig6_page009.png",
       "page": 9,
       "bbox": [
         162.64248657226562,
@@ -110,7 +110,7 @@
       "number": "7",
       "label": "Figure 7",
       "caption": "Figure 7. The structure of GCCM. Arrows indicate data flow; colors distinguish module types; letters\nC, H, and W denote the number of channels, height, and width, respectively; ⊕denotes element-wise\naddition; ⊗denotes element-wise multiplication.",
-      "filename": "fig7.png",
+      "filename": "fig7_page010.png",
       "page": 10,
       "bbox": [
         29.565998077392578,
@@ -126,7 +126,7 @@
       "number": "1",
       "label": "Table 1",
       "caption": "Table 1. Ablation experimental results on the SODA10M dataset.",
-      "filename": "table1.png",
+      "filename": "table1_page012.png",
       "page": 12,
       "bbox": [
         161.0850067138672,
@@ -142,7 +142,7 @@
       "number": "8",
       "label": "Figure 8",
       "caption": "Figure 8. Normalized performance of ablation experiment on the SODA10M dataset: (a) normalized\nhistogram of ablation experiments; (b) radar chart of ablation experiment performance.",
-      "filename": "fig8.png",
+      "filename": "fig8_page013.png",
       "page": 13,
       "bbox": [
         35.805999755859375,
@@ -158,7 +158,7 @@
       "number": "2",
       "label": "Table 2",
       "caption": "Table 2. Ablation experimental results on the BDD100K dataset.",
-      "filename": "table2.png",
+      "filename": "table2_page014.png",
       "page": 14,
       "bbox": [
         37.94599914550781,
@@ -174,7 +174,7 @@
       "number": "9",
       "label": "Figure 9",
       "caption": "Figure 9. Normalized performance of ablation experiment on the BDD100K dataset: (a) normalized\nhistogram of ablation experiments; (b) radar chart of ablation experiment performance.",
-      "filename": "fig9.png",
+      "filename": "fig9_page015.png",
       "page": 15,
       "bbox": [
         45.99500274658203,
@@ -190,7 +190,7 @@
       "number": "3",
       "label": "Table 3",
       "caption": "Table 3. Results of Neck Network Comparison Experiment.",
-      "filename": "table3.png",
+      "filename": "table3_page015.png",
       "page": 15,
       "bbox": [
         181.7270050048828,
@@ -206,7 +206,7 @@
       "number": "4",
       "label": "Table 4",
       "caption": "Table 4. Performance Comparison of Occlusion Object Detection Based on FECM.",
-      "filename": "table4.png",
+      "filename": "table4_page015.png",
       "page": 15,
       "bbox": [
         161.11500549316406,
@@ -222,7 +222,7 @@
       "number": "5",
       "label": "Table 5",
       "caption": "Table 5. Results of Detection Head Comparison Experiment.",
-      "filename": "table5.png",
+      "filename": "table5_page016.png",
       "page": 16,
       "bbox": [
         173.20899963378906,
@@ -238,7 +238,7 @@
       "number": "10",
       "label": "Figure 10",
       "caption": "Figure 10. Training process of different models on SODA10M dataset.",
-      "filename": "fig10.png",
+      "filename": "fig10_page016.png",
       "page": 16,
       "bbox": [
         159.4739990234375,
@@ -254,7 +254,7 @@
       "number": "6",
       "label": "Table 6",
       "caption": "Table 6. Comparative experiments of different models on SODA10M dataset.",
-      "filename": "table6.png",
+      "filename": "table6_page017.png",
       "page": 17,
       "bbox": [
         161.06500244140625,
@@ -270,7 +270,7 @@
       "number": "7",
       "label": "Table 7",
       "caption": "Table 7. Comparative experiments of different models on BDD100K dataset.",
-      "filename": "table7.png",
+      "filename": "table7_page017.png",
       "page": 17,
       "bbox": [
         161.06500244140625,
@@ -286,7 +286,7 @@
       "number": "11",
       "label": "Figure 11",
       "caption": "Figure 11. Training process of different models on BDD100K dataset.",
-      "filename": "fig11.png",
+      "filename": "fig11_page018.png",
       "page": 18,
       "bbox": [
         159.91099548339844,
@@ -302,7 +302,7 @@
       "number": "8",
       "label": "Table 8",
       "caption": "Table 8. Comparative experiments of different models on FLIR ADAS dataset.",
-      "filename": "table8.png",
+      "filename": "table8_page018.png",
       "page": 18,
       "bbox": [
         167.78599548339844,
@@ -318,7 +318,7 @@
       "number": "12",
       "label": "Figure 12",
       "caption": "Figure 12. Training process of different models on FLIR ADAS dataset.",
-      "filename": "fig12.png",
+      "filename": "fig12_page018.png",
       "page": 18,
       "bbox": [
         160.75244140625,
@@ -334,7 +334,7 @@
       "number": "9",
       "label": "Table 9",
       "caption": "Table 9. Comparison of other improved models.",
-      "filename": "table9.png",
+      "filename": "table9_page019.png",
       "page": 19,
       "bbox": [
         179.3070068359375,
@@ -350,7 +350,7 @@
       "number": "10",
       "label": "Table 10",
       "caption": "Table 10. Comparison of Detection Performance under Different Object Scales.",
-      "filename": "table10.png",
+      "filename": "table10_page019.png",
       "page": 19,
       "bbox": [
         161.09500122070312,
@@ -366,7 +366,7 @@
       "number": "11",
       "label": "Table 11",
       "caption": "Table 11. Comparison of Detection Performance under Occlusion Conditions.",
-      "filename": "table11.png",
+      "filename": "table11_page020.png",
       "page": 20,
       "bbox": [
         168.6510009765625,
@@ -382,7 +382,7 @@
       "number": "13",
       "label": "Figure 13",
       "caption": "Figure 13. Heatmap comparison of detection results between YOLOv12 and YOLOv12 with the\nFECM: (a,d) are the original images; (b,e) are the detection results produced by YOLOv12; (c,f) are\nthe detection results generated by YOLOv12 with the FECM. Colors represent attention intensity,\nwhere red and yellow indicate higher focus, and green indicates lower focus.",
-      "filename": "fig13.png",
+      "filename": "fig13_page020.png",
       "page": 20,
       "bbox": [
         40.80624008178711,
