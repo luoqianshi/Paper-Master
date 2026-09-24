@@ -166,6 +166,8 @@ YOLOv10n 在三类场景中存在漏检、单个目标错检为多个目标以�
 
 ![小目标检测性能对比](../assets/paper-imgs/YOLOv10n-Wheat-Seedling/table4_small_target.png)
 
+表中 YOLOv10n 的平均精度均值为 79.6%、漏检率和错检率分别为 15.3% 与 6.5%，改进模型三项指标全面占优，可见小目标上的漏检与错检被同步压缩，与上图的定性表现一致。
+
 ### 对比试验
 
 本文将其与 RetinaNet、Faster-RCNN、SSD、YOLOv8n、YOLOv10n 等主流目标检测算法在同一数据集上进行对比，结果如下表所示。

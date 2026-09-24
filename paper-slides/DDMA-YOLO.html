@@ -120,10 +120,14 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 <section class="slide">
   <div class="anim slide-label">Method 01</div>
   <div class="anim"><h2>「切块-超分-增强-增广-训练-检测-拼图」流水线</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig3.png" alt="切块样例" style="max-height: 38vh;"></div>
+  <div class="anim split">
+    <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig1.png" alt="数据采集区域与茶园位置"></div>
+    <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig3.png" alt="切块样例"></div>
+  </div>
   <div class="anim figure-caption">
-    132 幅无人机茶图像被切为 640x640 图像块，小区 1-3 中含 TLB 的 300 个图像块训练，小区 4 中 55 幅测试；
-    <span class="cap-em">训练图像先经 RCAN 超分与 Retinex 增强再做离线与在线数据增广</span>。
+    左：上部为试验茶园的无人机航拍影像、下部为采集区域的地理位置，四个试验小区的图像即采集自该区域；右：(a) 健康茶图像块、(b) TLB 图像块。
+    132 幅无人机茶图像被切为 640x640 图像块，<span class="cap-em">小区 1-3 中含 TLB 的 300 个图像块训练，小区 4 中 55 幅测试</span>；
+    训练图像先经 RCAN 超分与 Retinex 增强再做离线与在线数据增广——数据组织是后续所有模块的输入前提。
   </div>
 </section>
 
@@ -139,6 +143,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
         <li>借助残差中的残差构建极深可训练网络，<span class="em">通道注意力</span>增强特征表达</li>
         <li>RCAN 重建使基线 AP@0.5 提高 <span class="em">7.8%</span></li>
         <li>PSNR 41.90、SSIM 0.9779，优于 bicubic 与 SRCNN</li>
+        <li>等价于把「模糊—清晰」映射整体交给深度残差网络拟合，<span class="em">局部与全局残差耦合</span>保证信息流顺畅传递</li>
       </ul>
     </div>
     <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig4.png" alt="RCAN 结构"></div>
@@ -149,16 +154,36 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 <section class="slide">
   <div class="anim slide-label">Method 03</div>
   <div class="anim"><h2>Retinex 对比度增强：去除光照、保留反射属性</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig6.png" alt="Retinex 原理" style="max-height: 36vh;"></div>
+  <div class="anim split">
+    <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig6.png" alt="Retinex 原理"></div>
+    <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig7.png" alt="Retinex 算法总体流程"></div>
+  </div>
   <div class="anim figure-caption">
-    图像被视为入射光图像 L 与反射图像 R 的乘积。取对数把乘性光照变为加性项再减去，
-    <span class="cap-em">剩下的就是与光照无关的物体反射属性</span>。
+    左（原理）：图像被视为入射光图像 L 与反射图像 R 的乘积，取对数把乘性光照变为加性项再减去，
+    <span class="cap-em">剩下的就是与光照无关的物体反射属性</span>；
+    右（流程）：观测图像的对数 log S 与照射分量近似的对数 log[F*S] 相减，得到反射分量的对数 log R，即上式的逐步执行过程。
+  </div>
+</section>
+
+<!-- 5.5 CBAM 对照 -->
+<section class="slide">
+  <div class="anim slide-label">Method 04</div>
+  <div class="anim"><h2>对照 CBAM：串联注意力缺少非局部信息</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>特征先经<span class="em">通道注意力</span>加权、再与原特征相乘送入<span class="em">空间注意力</span>，两级串联</li>
+        <li>两级编码相互独立，只能捕获特征的<span class="em">局部相关性</span></li>
+        <li>缺少解决密集分布问题所需的<span class="em">非局部信息</span></li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig13.png" alt="CBAM 模块结构"></div>
   </div>
 </section>
 
 <!-- 6 RFB + DDMA -->
 <section class="slide">
-  <div class="anim slide-label">Method 04</div>
+  <div class="anim slide-label">Method 05</div>
   <div class="anim"><h2>多尺度 RFB 与 DDMA 双维混合注意力</h2></div>
   <div class="anim split">
     <div class="split-text">
@@ -197,7 +222,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   <div class="anim figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/table4.png" alt="消融实验" style="max-height: 42vh;"></div>
   <div class="anim figure-caption">
     只加 RFB 召回率提高 7.5% 但精确率下降（RFB 同时增强了背景感受野）；只加 DDMA 精确率提高 1%、召回率提高 4.4%；
-    <span class="cap-em">两者齐备时 AP@0.5 达到 76.8%</span>，RFB 弥补了 DDMA 感受野的不足。
+    <span class="cap-em">两者齐备时 AP@0.5 达到 76.8%</span>，RFB 弥补了 DDMA 感受野的不足；逐模块累加后密集病叶的检出逐步完整。
   </div>
 </section>
 
@@ -208,7 +233,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   <div class="anim figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig20.png" alt="AP 对比" style="max-height: 40vh;"></div>
   <div class="anim figure-caption">
     DDMA-YOLO 的 AP 达到最高值 76.8%；Faster R-CNN、RetinaNet 与 SSD 存在更多漏检框；
-    <span class="cap-em">YOLOv3、YOLOv4、YOLOv5 同样存在更多漏检</span>。
+    <span class="cap-em">YOLOv3、YOLOv4、YOLOv5 同样存在更多漏检</span>，多尺度 RFB 与 DDMA 的组合取得了最好的检测效果。
   </div>
 </section>
 

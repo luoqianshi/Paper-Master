@@ -27,7 +27,7 @@
 | B4 | `paper-blogs/Conv2Former.md` | `Attn Modules/2024 Conv2Former A Simple Transformer-Style ConvNet for Visual Recognition.pdf` | 12/17 张提取图未用（table1、table10–13 等关键表缺失，定量仅 1 张表）；全文 2997 字偏短；1 张裸图 |
 | B5 | `paper-blogs/RSO-YOLO.md` | `YOLO Family/2025 RSO-YOLO A Real-Time Detector for Small and Occluded.pdf` | fig14/15/16 死链（引用了不存在的图，需重跑 pdf_extractor 补提或改用已有切片）；7/24 张未用 |
 
-## C 档 · 可修补、不必整篇重做（本批不整篇重生成，顺手修补或下批处理）
+## C 档 · 可修补、不必整篇重做（✅ 已于 2026-09-24 全部修补完成，含对应 17 套 HTML 幻灯片同步）
 
 - `MAF-YOLO`：fig5 一张图顶两个小节不同图注复用；table1/3/4/5 未进笔记；公式「其中」解释仅 1 处
 - `YOLO26`：tab3/4/8/10/11 等 6 张消融分析表未用；全篇无语义收束句

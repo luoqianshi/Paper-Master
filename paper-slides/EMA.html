@@ -141,11 +141,11 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
     <div class="card">
       <span class="card-num">03</span>
       <h3>极致轻量</h3>
-      <p class="body-text">参数增量仅 <span style="color:var(--title);font-weight:600;">0.01M 至 0.22M</span>，在分类与检测上稳定超过 CBAM、SA、ECA、CA。</p>
+      <p class="body-text">参数增量仅 <span style="color:var(--title);font-weight:600;">0.01M 至 0.26M</span>，在分类与检测上稳定超过 CBAM、SA、ECA、CA。</p>
     </div>
   </div>
   <div class="anim highlight-bar">
-    <p>CIFAR100 上 ResNet50 Top-1 从 77.26% 提升到 <span class="accent-word">80.69%</span>（+3.43%），参数量与 FLOPs 低于 CA。</p>
+    <p>CIFAR100 上 ResNet50 Top-1 从 77.26% 提升到 <span class="accent-word">80.69%</span>（+3.43%），参数量（23.85M 对 25.57M）与 FLOPs 低于 CA。</p>
   </div>
 </section>
 
@@ -224,7 +224,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   <div class="anim figure-box"><img src="../assets/paper-imgs/EMA/table1.png" alt="分类结果"></div>
   <div class="anim figure-caption">
     ResNet50 嵌入 EMA 后 Top-1 从 77.26% 到 <span class="cap-em">80.69%</span>（+3.43%），Top-5 从 93.63% 到 95.59%。
-    在几乎相同计算复杂度下，EMA 的 Top-1 比 CA 高 0.52%，参数量与 FLOPs 更低。
+    在几乎相同计算复杂度下，EMA 的 Top-1 比 CA 高 0.52%，参数量（23.85M 对 25.57M）与 FLOPs（1.32G 对 1.36G）更低。
   </div>
 </section>
 
@@ -271,7 +271,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
     <div class="card">
       <span class="card-num">3</span>
       <h3>轻量即插即用</h3>
-      <p class="body-text">参数增量仅 0.01M 至 0.22M，在分类与无人机航拍检测上稳定超过 CBAM、SA、ECA、CA。</p>
+      <p class="body-text">参数增量仅 0.01M 至 0.26M，在分类与无人机航拍检测上稳定超过 CBAM、SA、ECA、CA。</p>
     </div>
   </div>
 </section>

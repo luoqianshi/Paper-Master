@@ -141,8 +141,14 @@ def main():
             add('PASS' if req in names[:2] else 'FAIL', '骨架·%s' % req,
                 '位置正确' if req in names[:2] else '%s 必须在前两节，实际: %s' % (req, ' > '.join(names[:3])))
         if '优点和创新点' in names:
-            add('PASS' if names[-1] == '优点和创新点' else 'FAIL', '骨架·优点和创新点',
-                '末节' if names[-1] == '优点和创新点' else '必须是末节，实际末节是「%s」' % names[-1])
+            i = len(names) - 1 - names[::-1].index('优点和创新点')
+            tail = names[i + 1:]
+            # §7 允许「批判性增补节」标注后追加在笔记末尾
+            if all('增补' in n for n in tail):
+                add('PASS', '骨架·优点和创新点',
+                    '末节' if not tail else '末节（其后为 §7 批判性增补节）')
+            else:
+                add('FAIL', '骨架·优点和创新点', '必须是末节，实际末节是「%s」' % names[-1])
         else:
             add('WARN', '骨架·优点和创新点', '缺失（仅 survey 与短文可省略）')
     add('INFO', 'H2 序列', ' > '.join(names))

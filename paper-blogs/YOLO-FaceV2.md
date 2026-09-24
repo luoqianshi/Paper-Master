@@ -58,6 +58,8 @@ anchor 设计策略用于为各检测层提供匹配人脸形状与有效感受�
 
 ![理论感受野与有效感受野及 anchor 重估计示意（原文 Fig 3）](../assets/paper-imgs/YOLO-FaceV2/fig3.png)
 
+图中黑框是理论感受野、白色高斯圆是有效感受野，蓝框为按有效感受野收缩后重新估计的 anchor，直观展示了 anchor 尺寸相对理论值的收缩过程。完整配置如下表所示。
+
 | 检测层 | 步长 | 宽高比 | anchor 尺寸 |
 | --- | --- | --- | --- |
 | P2 | 4 | 1.2 | 16, 20.16, 25.40 |
@@ -124,7 +126,11 @@ $$f(x) = \begin{cases} 1 & x \leq \mu - 0.1 \\ e^{1-\mu} & \mu - 0.1 < x < \mu \
 
 ### 实验设置
 
-实验主要在 WiderFace 上进行：训练集训练、验证集评测，easy、medium、hard 三个子集大致对应大、中、小人脸，hard 子集召回率超过 90% 即被认为性能相当好。FDDB 数据集含 2845 张图像、共 5171 张人脸，姿态角度困难、失焦与遮挡广泛，用于在不重新训练的前提下测试遮挡感知模块的有效性，以 mAP 为指标，mAP 达到 95% 以上即认为遮挡问题被有效解决。实现以 YOLOv5 为基线、PyTorch 实现，数据增强、训练与后处理超参数与 YOLOv5 相同（mosaic 概率、学习率、NMS 的 IoU 阈值）；完整模型先在 ImageNet 上预训练，再以 batch size 16 在 3090Ti 上微调约 50 个 iteration。
+实验主要在 WiderFace 上进行：训练集训练、验证集评测，easy、medium、hard 三个子集大致对应大、中、小人脸，hard 子集召回率超过 90% 即被认为性能相当好。FDDB 数据集含 2845 张图像、共 5171 张人脸，姿态角度困难、失焦与遮挡广泛，用于在不重新训练的前提下测试遮挡感知模块的有效性，以 mAP 为指标，mAP 达到 95% 以上即认为遮挡问题被有效解决。实现以 YOLOv5 为基线、PyTorch 实现，数据增强、训练与后处理超参数与 YOLOv5 相同（mosaic 概率、学习率、NMS 的 IoU 阈值）；完整模型先在 ImageNet 上预训练，再以 batch size 16 在 3090Ti 上微调约 50 个 iteration。三个检测层与九个 anchor 尺寸的完整配置见原文 Table 1，截图如下。
+
+![三个检测层与九个 anchor 尺寸配置（原文 Table 1）](../assets/paper-imgs/YOLO-FaceV2/table1.png)
+
+anchor 按 1:1.2 的宽高比与有效感受野收缩后的尺寸估计得到，P2、P3、P4 三层的尺寸随步长 4、8、16 逐级翻倍，可见 anchor 先验与三层检测头一一对应。
 
 ### 对比实验
 
@@ -132,25 +138,37 @@ $$f(x) = \begin{cases} 1 & x \leq \mu - 0.1 \\ e^{1-\mu} & \mu - 0.1 < x < \mu \
 
 ![YOLO-FaceV2 的小脸检测示例（原文 Fig 7 左列）](../assets/paper-imgs/YOLO-FaceV2/fig7_det.png)
 
-与主流人脸检测器在 WiderFace 验证集上的定量对比见原文 Table 7，截图如下。
-
-![与现有人脸检测器在 WiderFace 验证集上的对比（原文 Table 7）](../assets/paper-imgs/YOLO-FaceV2/table7.png)
+图中数百张小脸被逐张框出、漏检很少，可见按有效感受野设计的 anchor 与并入 PAN 的 P2 检测层确实改善了极端密集场景下的小脸召回。与主流人脸检测器在 WiderFace 验证集上的定量对比见原文 Table 7。
 
 YOLO-FaceV2l 在 easy、medium、hard 三个子集上取得 98.6%、97.9%、91.9%，超过此前 SOTA 2.3、2.5、1.1 个百分点；在参数量大于 3M、FLOPs 大于 5G 的 YOLO 系模型中也全面领先 YOLOv5l-Face 与 YOLOv7。hard 子集上略逊于采用两阶段分类与回归的 RetinaNet 系最佳检测器，但后者以更多计算资源为代价。FDDB 上模型不重训即取得 98.71% mAP，超过 PyramidBox 的 0.9869 与 YOLO5Face 的 0.9843，达到 SOTA。各检测器的 PR 曲线如下图所示。
 
 ![YOLO-FaceV2 与对比方法的 PR 曲线（原文 Fig 6）](../assets/paper-imgs/YOLO-FaceV2/fig6.png)
 
-PR 曲线显示该检测器在小、中子集上超过 SOTA，hard 子集优于 YOLO 系方法。按 nano、small、medium、large 四档扩展模型规模（原文 Table 6），精度随参数增加持续上升（hard 子集从 0.812 升到 0.919），表明该架构的容量潜力仍未释放完毕。
+PR 曲线显示该检测器在小、中子集上超过 SOTA，hard 子集优于 YOLO 系方法。按 nano、small、medium、large 四档扩展模型规模的完整结果如下表所示。
+
+![各档模型规模的 WiderFace 精度对比（原文 Table 6）](../assets/paper-imgs/YOLO-FaceV2/table7.png)
+
+表中精度随参数增加持续上升（hard 子集从 0.812 升到 0.919），表明该架构的容量潜力仍未释放完毕。
 
 ### 消融实验
 
-尺度不变性消融（原文 Table 2）显示，单独使用 RFE 时 hard 子集提升 0.57%，把 P2 并入 PAN 后 easy、medium、hard 升到 95.06、93.60、85.47，参数量反而从 7.063M 降到 5.097M；单独用 NWD 替换 IoU 时精度骤降，两者按 1:1 组合后三个子集分别提升 0.17%、0.87%、1.01%，表明 NWD 与 IoU 在大、小目标上互补；按有效感受野估计的 anchor 相比理论感受野 anchor 在三个子集上提升 0.24%、0.75%、0.9%。
+尺度不变性消融（原文 Table 2）显示，单独使用 RFE 时 hard 子集提升 0.57%，把 P2 并入 PAN 后 easy、medium、hard 升到 95.06、93.60、85.47，参数量反而从 7.063M 降到 5.097M；单独用 NWD 替换 IoU 时精度骤降，两者按 1:1 组合后三个子集分别提升 0.17%、0.87%、1.01%，表明 NWD 与 IoU 在大、小目标上互补；按有效感受野估计的 anchor 相比理论感受野 anchor 在三个子集上提升 0.24%、0.75%、0.9%。三项尺度消融的完整结果如下表所示。
 
 ![尺度不变性消融实验（原文 Table 2）](../assets/paper-imgs/YOLO-FaceV2/table2.png)
 
-遮挡感知消融（原文 Table 3）显示，SEAM 相比基线在三个子集上提升 0.88%、0.82%、1.06%，超过 SE、CBAM、EMA 等主流注意力模块；Repulsion Loss 分别提升 0.71%、0.63%、0.5%。样本不平衡与模块组合消融（原文 Table 5）显示，SWF 单独加入即提升 medium 与 hard 子集，SWF、RFE、SEAM 依次叠加后三个子集达到 98.39、97.07、89.39，三个模块均带来正向增益。
+表中 baseline 的三个子集精度为 94.65、93.00、83.30，NWD 单独替换 IoU 时 hard 子集掉到 75.77，可见三项改动的增益主要落在 hard 子集，且 NWD 必须与 IoU 组合使用。
+
+遮挡感知消融（原文 Table 3）显示，SEAM 相比基线在三个子集上提升 0.88%、0.82%、1.06%，超过 SE、CBAM、EMA 等主流注意力模块；Repulsion Loss 分别提升 0.71%、0.63%、0.5%。两个遮挡感知组件的完整结果如下表所示。
 
 ![遮挡感知消融实验（原文 Table 3）](../assets/paper-imgs/YOLO-FaceV2/table3.png)
+
+表上部 SEAM 以 95.53、93.82、84.36 全面超过 SE、CBAM、EMA 等注意力模块，下部 FDDB 的对比中 YOLO-FaceV2 取得 0.9871 mAP，可见遮挡感知模块的收益同时体现在 WiderFace 与 FDDB 两个数据集上。
+
+样本不平衡与模块组合消融（原文 Table 5）显示，SWF 单独加入即提升 medium 与 hard 子集，SWF、RFE、SEAM 依次叠加后三个子集达到 98.39、97.07、89.39，三个模块均带来正向增益，逐项叠加的完整结果如下表所示。
+
+![SWF、RFE、SEAM 的组合消融（原文 Table 5）](../assets/paper-imgs/YOLO-FaceV2/table5.png)
+
+表中四个变体从 96.30、94.71、86.11 逐步升到 98.39、97.07、89.39，可见三个模块的增益可以稳定叠加。
 
 ### 可视化分析
 

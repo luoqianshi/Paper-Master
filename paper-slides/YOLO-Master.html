@@ -708,7 +708,7 @@ i, .it { font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif; }
   <div class="anim slide-label">Method</div>
   <div class="anim"><h2>YOLO-Master 整体框架</h2></div>
   <div class="anim fig-frame" style="margin-top:14px;">
-    <img src="../assets/paper-imgs/YOLO-Master/ym_fig2_framework.png" alt="YOLO-Master 整体框架">
+    <img src="../assets/paper-imgs/YOLO-Master/fig2.png" alt="YOLO-Master 整体框架">
   </div>
   <p class="anim fig-cap">
     左上：骨干与颈部插入 <span class="em">ES-MoE</span> 的 Backbone-Neck-Head 主干通路；左下：ES-MoE 内部信息流；右侧：动态路由网络在标准 Softmax、<span class="em">软 Top-K（训练）</span>与<span class="em">硬 Top-K（推理）</span>三种决策逻辑间切换。
@@ -811,10 +811,14 @@ i, .it { font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif; }
       </ul>
     </div>
   </div>
+  <div class="anim formula">
+    Ω = Ω<sup>train</sup>（<i>Training</i>）&nbsp;/&nbsp; Ω<sup>infer</sup>（<i>Inference</i>）
+    <span class="tag">式 (10)：按 self.training 标志在两种路由权重间动态切换</span>
+  </div>
   <div class="anim prompt-box">
     <div class="prompt-label">算例 · E=4, K=2</div>
-    <p>Λ = [2.1, 0.9, 0.3, −0.5] → Softmax 得 Ω′ ≈ <em>[0.65, 0.20, 0.11, 0.05]</em> → 掩码 top-2 并重归一化 →
-    Ω<sup>train</sup> ≈ <em>[0.77, 0.23, 0, 0]</em>：只有两个专家参与聚合，路由依然可微、可学习。</p>
+    <p>Λ = (2.0, 1.0, 0.5, 0.2) → Softmax 得 Ω′ ≈ <em>(0.569, 0.209, 0.127, 0.094)</em> → 掩码 top-2 并重归一化 →
+    Ω<sup>train</sup> ≈ <em>(0.732, 0.268, 0, 0)</em>，硬 Top-K 只对前两个 logits 做 Softmax 得 Ω<sup>infer</sup> ≈ <em>(0.731, 0.269, 0, 0)</em>：两种模式权重接近，训练期权重经 Ω′ 保持对 logits 的连续梯度，推理期只真实调用 2 个专家、实现 50% 稀疏。</p>
   </div>
 </section>
 
@@ -831,6 +835,11 @@ i, .it { font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif; }
   <div class="anim formula">
     <i>L</i><sub>YOLO</sub> = <i>L</i><sub>cls</sub> + <i>L</i><sub>loc</sub> + <i>L</i><sub>DFL</sub>
     <span class="tag">分类 / CIoU·DIoU 定位 / 边界框分布</span>
+  </div>
+  <div class="anim formula">
+    <i>μ<sub>i</sub></i> = 𝔼
+    <span class="frac"><span class="num">∑<sub>h=1</sub><sup>H</sup> ∑<sub>w=1</sub><sup>W</sup> (Ω<sup>train</sup>)<sub>i,h,w</sub></span><span class="den">∑<sub>j=1</sub><sup>E</sup> ∑<sub>h=1</sub><sup>H</sup> ∑<sub>w=1</sub><sup>W</sup> (Ω<sup>train</sup>)<sub>j,h,w</sub></span></span>
+    <span class="tag">式 (12)：专家 i 的平均利用频率</span>
   </div>
   <div class="anim formula">
     <i>L</i><sub>LB</sub> = <span class="frac"><span class="num">1</span><span class="den">E</span></span>
@@ -883,7 +892,7 @@ i, .it { font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif; }
   <div class="anim slide-label">Experiments</div>
   <div class="anim"><h2>主对比：五基准全面领先</h2></div>
   <div class="anim fig-frame" style="margin-top:14px;">
-    <img src="../assets/paper-imgs/YOLO-Master/ym_table1.png" alt="五个基准上与 Nano 级检测器的定量对比">
+    <img src="../assets/paper-imgs/YOLO-Master/tab1_fivebench.png" alt="五个基准上与 Nano 级检测器的定量对比">
   </div>
   <p class="anim fig-cap">
     YOLO-Master-N 在全部五个数据集上同时取得最高的 mAP 与 mAP<sub>50</sub>；增益最大的 <span class="em">VisDrone +2.1%</span>、<span class="em">KITTI +1.5%</span>，可见自适应专家路由对小目标检测与精确定位的收益最明显；在平均 147 个目标/图的 SKU-110K 上取得 <span class="em">58.2% mAP</span>，密集拥挤场景下专家特化依然有效。
@@ -896,10 +905,10 @@ i, .it { font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif; }
   <div class="anim slide-label">Experiments</div>
   <div class="anim"><h2>精度-延迟权衡</h2></div>
   <div class="anim fig-frame" style="margin-top:14px;">
-    <img src="../assets/paper-imgs/YOLO-Master/ym_fig1_pareto.png" alt="MS COCO 上的精度-延迟 Pareto 前沿" style="max-height:52vh;">
+    <img src="../assets/paper-imgs/YOLO-Master/fig1.png" alt="MS COCO 上的精度-延迟 Pareto 前沿" style="max-height:52vh;">
   </div>
   <p class="anim fig-cap">
-    YOLO-Master-N 位于 Pareto 前沿左上角（<span class="em">42.4% AP @ 1.62 ms</span>）：比 YOLOv13-N 快 <span class="em">17.8%</span>，仅比最快的 YOLOv11-N 慢 8%——精度提升没有以牺牲实时性为代价。
+    YOLO-Master-N 位于 Pareto 前沿<span class="em">之上（左上角）</span>（<span class="em">42.4% AP @ 1.62 ms</span>）：比 YOLOv13-N 快 <span class="em">17.8%</span>，仅比最快的 YOLOv11-N 慢 8%——精度提升没有以牺牲实时性为代价。
   </p>
 </section>
 
@@ -909,12 +918,12 @@ i, .it { font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif; }
   <div class="anim"><h2>消融 I：放置位置与专家数量</h2></div>
   <div class="anim vs-row" style="margin-top:12px;">
     <div class="fig-frame sm" style="flex:1;">
-      <img src="../assets/paper-imgs/YOLO-Master/ym_table5.png" alt="ES-MoE 放置位置消融">
+      <img src="../assets/paper-imgs/YOLO-Master/tab5_placement.png" alt="ES-MoE 放置位置消融">
       <p class="fig-cap">仅骨干 <span class="em">62.1%</span>（+1.3%）；仅颈部 58.2%；双处插入 54.9%</p>
     </div>
     <div class="fig-frame sm" style="flex:1;">
-      <img src="../assets/paper-imgs/YOLO-Master/ym_table6.png" alt="专家数量消融">
-      <p class="fig-cap">4 专家 <span class="em">62.3%</span>（2.76M）；2 专家 61.0%；8 专家 62.0% 且参数 +33%</p>
+      <img src="../assets/paper-imgs/YOLO-Master/tab6_experts.png" alt="专家数量消融">
+      <p class="fig-cap">4 专家 <span class="em">62.3%</span>（2.76M）；2 专家 61.0%；8 专家无增益且参数 +33%</p>
     </div>
   </div>
   <ul class="anim bullet-list" style="margin-top:14px;">
@@ -929,11 +938,11 @@ i, .it { font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif; }
   <div class="anim"><h2>消融 II：Top-K 与损失配置</h2></div>
   <div class="anim vs-row" style="margin-top:12px;">
     <div class="fig-frame sm" style="flex:1;">
-      <img src="../assets/paper-imgs/YOLO-Master/ym_table7.png" alt="top-K 选择策略消融">
+      <img src="../assets/paper-imgs/YOLO-Master/tab7_topk.png" alt="top-K 选择策略消融">
       <p class="fig-cap">K=2 在 <span class="em">50% 稀疏度</span>下最优（61.8%）；K=1 表征不足低 0.5%</p>
     </div>
     <div class="fig-frame sm" style="flex:1;">
-      <img src="../assets/paper-imgs/YOLO-Master/ym_table8.png" alt="DFL 与 MoE 损失配置消融">
+      <img src="../assets/paper-imgs/YOLO-Master/tab8_losscfg.png" alt="DFL 与 MoE 损失配置消融">
       <p class="fig-cap">Config 5（无 DFL、仅权重 1.5 的 MoE 损失）<span class="em">62.2%</span> 最优</p>
     </div>
   </div>
@@ -948,7 +957,7 @@ i, .it { font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif; }
   <div class="anim slide-label">Ablation</div>
   <div class="anim"><h2>损失配置的训练动态</h2></div>
   <div class="anim fig-frame" style="margin-top:14px;">
-    <img src="../assets/paper-imgs/YOLO-Master/ym_fig3_loss_ablation.png" alt="五种损失配置的训练动态对比">
+    <img src="../assets/paper-imgs/YOLO-Master/fig3_losscurves.png" alt="五种损失配置的训练动态对比">
   </div>
   <p class="anim fig-cap">
     Config 4（DFL + 强 MoE）的损失曲线<span class="em">大幅振荡</span>，Config 5（MoE-only）<span class="em">平滑收敛</span>：DFL 强制的均匀分布精炼与 MoE 损失鼓励的实例自适应专家特化存在梯度竞争，移除 DFL 后 MoE 损失同时承担回归引导与专家特化，训练更稳定。
@@ -961,15 +970,15 @@ i, .it { font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif; }
   <div class="anim"><h2>下游任务泛化</h2></div>
   <div class="anim vs-row" style="margin-top:12px;">
     <div class="fig-frame sm" style="flex:1;">
-      <img src="../assets/paper-imgs/YOLO-Master/ym_table2.png" alt="Small 规模检测对比">
-      <p class="fig-cap">检测（COCO S）：<span class="em">49.1% mAP</span>，超 YOLOv13-S 的 48.0%</p>
+      <img src="../assets/paper-imgs/YOLO-Master/tab2_det_s.png" alt="Small 规模检测对比">
+      <p class="fig-cap">检测（COCO S）：<span class="em">49.1% mAP</span>（9.64M 参数），刷新 small 规模纪录</p>
     </div>
     <div class="fig-frame sm" style="flex:1;">
-      <img src="../assets/paper-imgs/YOLO-Master/ym_table3.png" alt="ImageNet 分类对比">
+      <img src="../assets/paper-imgs/YOLO-Master/tab3_cls.png" alt="ImageNet 分类对比">
       <p class="fig-cap">分类（ImageNet）：Top-1 <span class="em">76.6%</span>，比 YOLOv12-cls-N 高 4.9%</p>
     </div>
     <div class="fig-frame sm" style="flex:1;">
-      <img src="../assets/paper-imgs/YOLO-Master/ym_table4.png" alt="MS COCO 实例分割对比">
+      <img src="../assets/paper-imgs/YOLO-Master/tab4_seg.png" alt="MS COCO 实例分割对比">
       <p class="fig-cap">分割（COCO）：mAP mask <span class="em">35.6%</span>，比 YOLOv12-seg-N 高 2.8%</p>
     </div>
   </div>
@@ -983,10 +992,10 @@ i, .it { font-family: 'Cambria Math', 'STIX Two Math', Georgia, serif; }
   <div class="anim slide-label">Qualitative</div>
   <div class="anim"><h2>可视化分析：四个挑战场景</h2></div>
   <div class="anim fig-frame" style="margin-top:14px;">
-    <img src="../assets/paper-imgs/YOLO-Master/ym_fig4_qualitative.png" alt="四个挑战场景上的定性对比">
+    <img src="../assets/paper-imgs/YOLO-Master/fig4_qual.png" alt="四个挑战场景上的定性对比">
   </div>
   <p class="anim fig-cap">
-    ① 草地小动物：v12 置信度仅 0.47，YOLO-Master-N 达 <span class="em">0.65-0.82</span>；② 海岸伪装：v10-v12 漏检遮挡目标，本文精准定位；③ 剪毛场景：平均置信度 <span class="em">0.85</span>（v13 为 0.77）；④ 密集餐桌：以 <span class="em">0.87-0.97</span> 的高置信度补全大量被漏检的小物件——尺度自适应路由的优势能稳定迁移到真实画面。
+    ① 草地小动物：v10 与 v11 完全漏检、v12 置信度仅 0.47，YOLO-Master-N 达 <span class="em">0.65-0.82</span>；② 海岸伪装：仅 v11 与本文方法检出遮挡目标，<span class="em">本文定位更准</span>；③ 剪毛场景：平均置信度 <span class="em">0.85</span>（v13 为 0.77）；④ 密集餐桌：以 <span class="em">0.87-0.97</span> 的高置信度补全大量被漏检的小物件——尺度自适应路由的优势能稳定迁移到真实画面。
   </p>
 </section>
 

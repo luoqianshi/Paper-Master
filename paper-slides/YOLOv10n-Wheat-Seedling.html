@@ -206,13 +206,29 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 
 <section class="slide">
   <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>小目标补充试验：漏检与错检同步压缩</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>在 <span class="em">350 张小目标占比 90% 以上</span>的图像上进行小目标补充试验</li>
+        <li>YOLOv10n 在幼苗重叠场景中存在<span class="em">较多漏检和错检</span></li>
+        <li>DSM-YOLOv10 的平均精度均值达到 <span class="em">86.3%</span>，漏检率和错检率分别为 9.1% 和 3.8%</li>
+      </ul>
+      <div class="highlight-bar"><p>表中 YOLOv10n 的平均精度均值为 <span class="accent-word">79.6%</span>、漏检率和错检率分别为 <span class="accent-word">15.3% 与 6.5%</span>，改进模型三项指标全面占优——小目标上的漏检与错检被同步压缩，与定性表现一致，改进模型对小目标具有更强的特征提取能力。</p></div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLOv10n-Wheat-Seedling/table4_small_target.png" alt="小目标检测性能对比"></div>
+  </div>
+</section>
+
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
   <div class="anim"><h2>消融实验：三模块增益叠加</h2></div>
   <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv10n-Wheat-Seedling/table2_ablation.png" alt="消融实验结果" style="max-height: 50vh;"></div>
   <div class="anim figure-caption">单独引入 DCC2f 后参数量和浮点运算量分别减少 6.5% 和 17.9%；SDI 提升 mAP 3.4 个百分点；MSDA 提升 1.8 个百分点；<span class="cap-em">三项齐备时 mAP 达 91.4%</span>，参数量减少 4.7%、浮点运算量减少 10.7%。</div>
 </section>
 
 <section class="slide">
-  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim slide-label">Experiments 04</div>
   <div class="anim"><h2>计数结果分析：R² = 0.92</h2></div>
   <div class="anim figure-box"><img src="../assets/paper-imgs/YOLOv10n-Wheat-Seedling/fig11_counting_fitting.png" alt="计数拟合" style="max-height: 50vh;"></div>
   <div class="anim figure-caption">决定系数 R² 达 0.92，RMSE 和 MAE 分别降至 5.68 株和 4.33 株，<span class="cap-em">较 YOLOv10n 的 R² 提升 6.98%</span>，RMSE 和 MAE 分别降低 35.23% 和 40.44%。</div>

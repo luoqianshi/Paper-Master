@@ -175,15 +175,27 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   <div class="glow glow-blue tr"></div>
   <div class="anim slide-label">Method 01</div>
   <div class="anim"><h2>Retinex 图像增强：削弱光照不均匀影响</h2></div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">Retinex 理论</div>
-    <p class="formula">
-      <i>S</i>(<i>x</i>, <i>y</i>) = <i>R</i>(<i>x</i>, <i>y</i>) × <i>L</i>(<i>x</i>, <i>y</i>)
-    </p>
-    <p class="formula-note">把乘性的光照分量在对数域中减掉，剩下的就是与光照无关的物体反射属性。</p>
+  <div class="anim split">
+    <div class="split-text">
+      <div class="prompt-box">
+        <div class="prompt-label">分解与求解</div>
+        <p class="formula"><i>S</i>(<i>x</i>, <i>y</i>) = <i>R</i>(<i>x</i>, <i>y</i>) × <i>L</i>(<i>x</i>, <i>y</i>)　，　<i>R</i> = <i>S</i> / <i>L</i></p>
+        <p class="formula-note">观测图像由入射图像与反射图像组成，增强只针对光照项下手，难点归结为估计 L(x, y)。</p>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-label">对数域分解</div>
+        <p class="formula">ln <i>R</i>(<i>x</i>, <i>y</i>) = ln <i>S</i>(<i>x</i>, <i>y</i>) − ln <i>L</i>(<i>x</i>, <i>y</i>)</p>
+        <p class="formula-note">取对数把乘性的光照影响变为减性项，照度估计的误差以减法形式进入结果。</p>
+      </div>
+      <div class="prompt-box">
+        <div class="prompt-label">照度估计</div>
+        <p class="formula"><i>L</i>(<i>x</i>, <i>y</i>) = <i>F</i>(<i>x</i>, <i>y</i>) · <i>S</i>(<i>x</i>, <i>y</i>)</p>
+        <p class="formula-note">F 为中心环绕函数，以加权平均估计照度；代回对数式得 ln R = ln S − ln[F · S]，剩下的就是与光照无关的物体反射属性。</p>
+      </div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/TPH-YOLO/fig2.png" alt="Retinex 增强效果"></div>
   </div>
-  <div class="anim figure-box" style="margin-top:12px;"><img src="../assets/paper-imgs/TPH-YOLO/fig2.png" alt="Retinex 增强效果" style="max-height: 40vh;"></div>
-  <div class="anim figure-caption">增强后麦穗与背景的对比更清晰，作为检测网络的输入。增强后 P 提升至 87.2%、AP 提升至 88.8%。</div>
+  <div class="anim figure-caption">图中 (a) 为原始图像、(b) 为 Retinex 增强后的图像，<span class="cap-em">增强后麦穗与背景的对比更清晰，作为检测网络的输入</span>。增强后 P 提升至 87.2%、AP 提升至 88.8%。</div>
 </section>
 
 <!-- ═══════ 5 TPH-YOLO 结构 ═══════ -->
@@ -281,7 +293,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   <div class="anim slide-label">Experiments 03</div>
   <div class="anim"><h2>检测与计数可视化</h2></div>
   <div class="anim figure-box"><img src="../assets/paper-imgs/TPH-YOLO/fig5.png" alt="麦穗检测结果" style="max-height: 38vh;"></div>
-  <div class="anim figure-caption">本文模型在稠密重叠区域能更加注意到麦穗信息、准确定位麦穗，重叠现象带来的漏检误检被有效缓解。</div>
+  <div class="anim figure-caption">图中 (a) 为原图、(b) 与 (c) 分别为 YOLOv5 与本文模型的检测结果，方框表示预测框；YOLOv5 在稠密重叠区域存在明显的漏检与误检框，<span class="cap-em">本文模型能更加注意到麦穗信息、准确定位麦穗，重叠现象带来的漏检误检被有效缓解</span>。</div>
 </section>
 
 <!-- ═══════ 12 计数拟合 ═══════ -->

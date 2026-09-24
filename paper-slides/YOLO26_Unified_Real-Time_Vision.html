@@ -963,6 +963,58 @@ h3 {
   </div>
 </section>
 
+<!-- ═══════════ Slide 14b: 消融补充 - DFL / MuSGD / 分割 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Ablation</div>
+  <div class="anim"><h2>消融补充（一）：DFL 移除 · MuSGD · 分割原型</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:start;">
+    <div>
+      <div class="figure-box" style="margin-top:6px;"><img src="../assets/paper-imgs/YOLO26/tab3_dfl.png" alt="去 DFL 的受控消融" style="max-height:24vh;"></div>
+      <p class="figure-caption">Table 3：去 DFL 在两种分辨率下均提升 AP</p>
+    </div>
+    <div>
+      <div class="figure-box" style="margin-top:6px;"><img src="../assets/paper-imgs/YOLO26/tab4_musgd.png" alt="MuSGD 与 SGD 从头训练对比" style="max-height:24vh;"></div>
+      <p class="figure-caption">Table 4：MuSGD 同时改善收敛速度与最终精度</p>
+    </div>
+    <div>
+      <div class="figure-box" style="margin-top:6px;"><img src="../assets/paper-imgs/YOLO26/tab8_seg.png" alt="实例分割模块与辅助损失消融" style="max-height:24vh;"></div>
+      <p class="figure-caption">Table 8：多尺度原型与辅助损失的收益可以叠加</p>
+    </div>
+  </div>
+  <div class="anim bullet-list" style="margin-top:12px;">
+    <li>去 DFL：640 下 AP 从 <span class="em">46.0 升到 46.3</span>，1280 下从 <span class="em">49.8 升到 51.1</span>，APL 增益从 +1.0 扩大到 +2.2</li>
+    <li>MuSGD 从头训练 500 个 epoch 达到 <span class="em">47.4 mAP</span>，超过 SGD 600 个 epoch 的 47.0，epoch 数减少 16.7%</li>
+    <li>多尺度原型把 mask mAP 从 32.0 提到 32.4，加辅助损失后达到 <span class="em">32.7</span>，AP50 也从 51.1 升到 52.0</li>
+  </div>
+</section>
+
+<!-- ═══════════ Slide 14c: 消融补充 - 姿态 / 旋转框 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Ablation</div>
+  <div class="anim"><h2>消融补充（二）：姿态权重 · 角度定义 · λ 消融</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:start;">
+    <div>
+      <div class="figure-box" style="margin-top:6px;"><img src="../assets/paper-imgs/YOLO26/tab9_pose.png" alt="OKS 与 RLE 损失权重消融" style="max-height:24vh;"></div>
+      <p class="figure-caption">Table 9：RLE 需与 OKS 按恰当配比联合使用</p>
+    </div>
+    <div>
+      <div class="figure-box" style="margin-top:6px;"><img src="../assets/paper-imgs/YOLO26/tab10_angle.png" alt="旋转框角度定义对比" style="max-height:24vh;"></div>
+      <p class="figure-caption">Table 10：长边定义缓解了边交换造成的回归不连续</p>
+    </div>
+    <div>
+      <div class="figure-box" style="margin-top:6px;"><img src="../assets/paper-imgs/YOLO26/tab11_lambda.png" alt="角度损失超参 λ 的消融" style="max-height:24vh;"></div>
+      <p class="figure-caption">Table 11：λ 需要取适中值才能兼顾各宽高比目标</p>
+    </div>
+  </div>
+  <div class="anim bullet-list" style="margin-top:12px;">
+    <li>姿态：w_OKS=24、w_RLE=1 组合取得 <span class="em">63.0 mAP</span>，其余六组落在 60.8 到 62.6 之间</li>
+    <li>角度定义从 (0, 90°] 换成 [−45°, 135°)：mAP 从 <span class="em">47.7 升到 49.0</span>、AP50 从 75.0 升到 75.4</li>
+    <li>λ 取 1 到 4 的配置均优于不用角度损失的 49.0，λ=3 取得最高 <span class="em">50.2 mAP</span>，λ=5 回落到 47.1，并非全部带角度损失配置均优</li>
+  </div>
+</section>
+
 <!-- ═══════════ Slide 15: 多任务结果 ═══════════ -->
 <section class="slide">
   <div class="anim slide-label">Multi-Task Results</div>
@@ -982,7 +1034,7 @@ h3 {
     <div class="card">
       <span class="card-num">🔄</span>
       <h3>定向检测 (DOTA-v1.0)</h3>
-      <p class="body-text">长边角度定义: 47.7→49.0 mAP<br>+角度损失(λ=3): 49.0→50.2 mAP<br>YOLO26全系列超越YOLO11：<br><span class="em">+2.5~3.4 mAP, AP75增益更大</span></p>
+      <p class="body-text">长边角度定义: 47.7→49.0 mAP<br>+角度损失(λ=3 最优): 49.0→50.2 mAP<br>λ=1~4 均优于 49.0，λ=5 回落至 47.1<br><span class="em">+2.5~3.4 mAP, AP75增益更大</span></p>
     </div>
   </div>
   <div class="anim highlight-bar" style="margin-top:16px;">

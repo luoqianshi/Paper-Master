@@ -170,20 +170,53 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   </div>
 </section>
 
-<!-- 7 实验：对比 -->
+<!-- 6b 实验设置（原文 Table 1） -->
 <section class="slide">
   <div class="anim slide-label">Experiments 01</div>
-  <div class="anim"><h2>WiderFace 验证集对比：三子集全面 SOTA</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLO-FaceV2/table7.png" alt="WiderFace 对比" style="max-height: 44vh;"></div>
-  <div class="anim figure-caption">
-    YOLO-FaceV2l 在 easy/medium/hard 取得 98.6%/97.9%/91.9%，超过此前 SOTA 2.3/2.5/1.1 个百分点；
-    <span class="cap-em">FDDB 不重训即取得 98.71% mAP</span>，达到 SOTA。
+  <div class="anim"><h2>实验设置：数据集与 Anchor 配置</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>主要在 <span class="em">WiderFace</span> 上进行：训练集训练、验证集评测，easy/medium/hard 对应大、中、小人脸，hard 召回率超 90% 即认为性能相当好</li>
+        <li><span class="em">FDDB</span> 含 2845 张图像、5171 张人脸，姿态角度困难、失焦与遮挡广泛，mAP 达 95% 以上即认为遮挡问题被有效解决</li>
+        <li>以 YOLOv5 为基线、PyTorch 实现，数据增强与训练超参与 YOLOv5 相同</li>
+        <li>ImageNet 预训练后，以 batch size 16 在 3090Ti 上微调约 50 个 iteration</li>
+      </ul>
+      <div class="highlight-bar"><p>anchor 按 <span class="accent-word">1:1.2 宽高比与有效感受野收缩</span>后的尺寸估计得到，P2/P3/P4 尺寸随步长 4/8/16 逐级翻倍——anchor 先验与三层检测头一一对应。</p></div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLO-FaceV2/table1.png" alt="三个检测层与九个 anchor 尺寸配置"></div>
   </div>
+</section>
+
+<!-- 7 实验：对比 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim"><h2>WiderFace 对比：三子集全面 SOTA</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>YOLO-FaceV2l 在 easy/medium/hard 取得 <span class="em">98.6% / 97.9% / 91.9%</span>，超过此前 SOTA 2.3 / 2.5 / 1.1 个百分点</li>
+        <li>参数量大于 3M、FLOPs 大于 5G 的 YOLO 系模型中<span class="em">全面领先 YOLOv5l-Face 与 YOLOv7</span></li>
+        <li>hard 子集略逊于采用两阶段分类与回归的 RetinaNet 系最佳检测器，但后者以更多计算资源为代价</li>
+        <li>FDDB 不重训即取得 <span class="em">98.71% mAP</span>，超过 PyramidBox 的 0.9869 与 YOLO5Face 的 0.9843，达到 SOTA</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLO-FaceV2/fig6.png" alt="PR 曲线"></div>
+  </div>
+  <div class="anim figure-caption">各检测器的 PR 曲线（原文 Fig 6）：小、中子集上超过 SOTA，<span class="cap-em">hard 子集优于 YOLO 系方法</span>——与正文数值互相印证。</div>
+</section>
+
+<!-- 7b 模型规模扩展（原文 Table 6） -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>模型规模扩展：精度随容量持续上升</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/YOLO-FaceV2/table7.png" alt="各档模型规模的 WiderFace 精度对比（原文 Table 6）" style="max-height: 44vh;"></div>
+  <div class="anim figure-caption">各档模型规模的 WiderFace 精度对比（原文 Table 6）：按 nano、small、medium、large 四档扩展，<span class="cap-em">精度随参数增加持续上升（hard 子集从 0.812 升到 0.919）</span>，架构的容量潜力仍未释放完毕。</div>
 </section>
 
 <!-- 8 消融 -->
 <section class="slide">
-  <div class="anim slide-label">Experiments 02</div>
+  <div class="anim slide-label">Experiments 04</div>
   <div class="anim"><h2>消融实验：尺度、遮挡、样本不平衡三组独立验证</h2></div>
   <div class="anim split">
     <div class="split-text">
@@ -197,9 +230,26 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   </div>
 </section>
 
+<!-- 8b 组合消融（原文 Table 5） -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 05</div>
+  <div class="anim"><h2>组合消融：三模块增益稳定叠加</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>样本不平衡与模块组合消融（原文 Table 5）：<span class="em">SWF 单独加入即提升 medium 与 hard 子集</span></li>
+        <li>四个变体从 <span class="em">96.30、94.71、86.11</span> 逐步升到 <span class="em">98.39、97.07、89.39</span></li>
+        <li>SWF、RFE、SEAM 依次叠加，三个模块均带来正向增益</li>
+      </ul>
+      <div class="highlight-bar"><p>三个模块的增益可以<span class="accent-word">稳定叠加</span>。</p></div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/YOLO-FaceV2/table5.png" alt="SWF、RFE、SEAM 的组合消融"></div>
+  </div>
+</section>
+
 <!-- 9 可视化 -->
 <section class="slide">
-  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim slide-label">Experiments 06</div>
   <div class="anim"><h2>遮挡人脸热力图：逐级召回被遮挡的人脸</h2></div>
   <div class="anim figure-box"><img src="../assets/paper-imgs/YOLO-FaceV2/fig7_heat.png" alt="热力图" style="max-height: 48vh;"></div>
   <div class="anim figure-caption">

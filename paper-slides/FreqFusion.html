@@ -640,7 +640,7 @@ h3 {
     </div>
     <div class="col-fig">
       <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/fig1.png" alt="特征类内相似度与预测可视化对比"></div>
-      <div class="figure-caption">特征类内相似度（IntraSim）与预测可视化：<span class="cap-em">标准融合物体内部 IntraSim 低、边界模糊位移</span>；FreqFusion 特征更一致、边界更清晰</div>
+      <div class="figure-caption">上半部分：巴士（左两列）与卡车（右两列）的类内相似度可视化（亮度越高相似度越大），<span class="cap-em">标准融合下车体内部布满低相似度斑块、边界处相似度快速衰减</span>；下半部分：预测结果中<span class="cap-em">车体边界出现错分与缺口</span>——类内不一致与边界位移由此显形</div>
     </div>
   </div>
 </section>
@@ -746,6 +746,25 @@ h3 {
   </div>
 </section>
 
+<!-- ═══════════ Slide 7b: 特征相似性分析定量归因 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Method · Quantitative Attribution</div>
+  <div class="anim"><h2>特征相似性分析：三生成器增益逐项归因</h2></div>
+  <div class="anim split">
+    <div class="col-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/TABLEI.png" alt="特征相似性分析的定量结果"></div>
+      <div class="figure-caption">特征相似性分析的定量结果（原文 TABLE I）：<span class="cap-em">完整 FreqFusion 行在 6 列指标上全部取得最优值</span></div>
+    </div>
+    <div class="col-text">
+      <ul class="bullet-list tight">
+        <li>表中列出<span class="em">标准特征融合、完整 FreqFusion 与各去掉一个生成器的消融变体</span>在整体与边界两区域上的三组相似度指标</li>
+        <li>完整 FreqFusion 行在 <b>6 列指标上全部取得最优值</b>，三个生成器的增益可在<span class="em">同一标尺下逐项归因</span></li>
+        <li>ALPF 把整体类内相似度 <span class="fx-inline">0.727 → 0.799</span>、相似度精度 <span class="fx-inline">0.918 → 0.941</span>——空间可变低通滤波确实换来更一致的深层特征</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <!-- ═══════════ Slide 8: Offset 生成器 ═══════════ -->
 <section class="slide">
   <div class="anim slide-label">Method · Offset Generator</div>
@@ -846,7 +865,7 @@ h3 {
   <div class="anim card-grid cols-2">
     <div class="card">
       <h3>语义分割</h3>
-      <p class="body-text">Cityscapes / ADE20K / COCO-Stuff，SegFormer、Mask2Former、SegNeXt，指标 <b>mIoU 与 bIoU</b></p>
+      <p class="body-text">Cityscapes / ADE20K / COCO-Stuff，SegFormer、UPerNet、SegNeXt，指标 <b>mIoU 与 bIoU</b></p>
     </div>
     <div class="card">
       <h3>目标检测</h3>
@@ -858,11 +877,11 @@ h3 {
     </div>
     <div class="card">
       <h3>全景分割</h3>
-      <p class="body-text">MS COCO，Panoptic FPN（R50），指标 <b>PQ / SQ / RQ</b></p>
+      <p class="body-text">MS COCO，Panoptic FPN（R50 / R101），指标 <b>PQ</b></p>
     </div>
   </div>
   <div class="anim highlight-bar">
-    <p>对比上采样器：<span class="accent-word">Deconv、Pixel Shuffle、CARAFE、IndexNet、A2U、FADE、SAPA-B、Dysample-S+ / +</span>；消融以 SegNeXt-T 为基线在 ADE20K 上展开</p>
+    <p>对比方法：<span class="accent-word">CARAFE、FADE、SAPA 与 DySample 系（Dysample-S+ / DySample+）</span>等先前最优方法；消融以 SegNeXt-T 为基线在 ADE20K 上展开</p>
   </div>
 </section>
 
@@ -880,7 +899,7 @@ h3 {
     </div>
     <div class="col-fig">
       <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/TABLEII.png" alt="ADE20K 验证集对比"></div>
-      <div class="figure-caption">ADE20K 验证集与近期最优方法对比：<span class="cap-em">FreqFusion 以 +0.34M 参数取得 44.5 mIoU</span></div>
+      <div class="figure-caption">ADE20K 验证集与近期最优方法对比：<span class="cap-em">FreqFusion 取得 44.5 mIoU / 32.8 bIoU，以 1.2 mIoU 优势领先第二名 Dysample-S+</span></div>
     </div>
   </div>
 </section>
@@ -896,7 +915,7 @@ h3 {
     </div>
     <div class="col-fig">
       <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/TABLEVI.png" alt="多个数据集上的结果"></div>
-      <div class="figure-caption">SegNeXt-T 在 Cityscapes / ADE20K / COCO-Stuff：<span class="cap-em">80.8 / 43.5 / 40.7，全部稳定涨点</span></div>
+      <div class="figure-caption">SegNeXt-T 在 Cityscapes / ADE20K / COCO-Stuff：<span class="cap-em">分别提升 +1.0 / +2.4 / +2.0 mIoU，全部稳定涨点</span></div>
     </div>
   </div>
   <div class="anim highlight-bar">
@@ -911,7 +930,7 @@ h3 {
   <div class="anim split">
     <div class="col-fig">
       <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/TABLEIX.png" alt="Faster R-CNN 检测结果"></div>
-      <div class="figure-caption">Faster R-CNN（COCO）：<span class="cap-em">R50 +1.9 AP 至 39.4，领先 DySample+ 0.7 AP；R101 +1.6 AP 至 41.0</span></div>
+      <div class="figure-caption">Faster R-CNN（COCO）：<span class="cap-em">R50 +1.9 AP 至 39.4，领先 DySample+ 0.7 AP；R101 仍提升 1.6 AP</span></div>
     </div>
     <div class="col-fig">
       <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/TABLEX.png" alt="Mask R-CNN 实例分割结果"></div>
@@ -931,14 +950,14 @@ h3 {
   <div class="anim split">
     <div class="col-text">
       <ul class="bullet-list tight">
-        <li>Panoptic FPN R50：<span class="em">40.2 → 42.7 PQ（+2.5）</span>，领先第二名 DySample+ <b>1.2 PQ</b></li>
-        <li>同时取得更优的 <span class="fx-inline">SQ 79.0 / RQ 51.9</span>， Stuff 与 Thing 两类区域同步受益</li>
+        <li>Panoptic FPN R50：<span class="em">提升 2.5 PQ 至 42.7</span>，领先第二名 DySample+ <b>1.2 PQ</b></li>
+        <li>R101 版本达到 <span class="fx-inline">44.0 PQ</span>，两个版本的 PQ 均高于表内其余融合方法</li>
         <li>四大任务、两种骨干上的<span class="em">一致涨点</span>，验证了类内不一致与边界位移问题在先进模型中广泛存在</li>
       </ul>
     </div>
     <div class="col-fig">
       <div class="figure-box"><img src="../assets/paper-imgs/FreqFusion/TABLEXI.png" alt="Panoptic FPN 全景分割结果"></div>
-      <div class="figure-caption">Panoptic FPN（MS COCO）：<span class="cap-em">FreqFusion 以 +0.3M 参数取得 42.7 PQ，R101 达 44.0</span></div>
+      <div class="figure-caption">Panoptic FPN（MS COCO）：<span class="cap-em">FreqFusion 将 R50 基线提升 2.5 PQ 至 42.7，R101 达 44.0</span></div>
     </div>
   </div>
 </section>
@@ -951,13 +970,13 @@ h3 {
     <div class="step">
       <span class="step-num">基线</span>
       <h3>标准特征融合</h3>
-      <p class="small-text">41.1 mIoU</p>
+      <p class="small-text">SegNeXt-T 基线</p>
     </div>
     <div class="step-arrow">→</div>
     <div class="step">
       <span class="step-num">+ ALPF</span>
       <h3>低通平滑</h3>
-      <p class="small-text">42.0（+0.9）</p>
+      <p class="small-text">提升 0.9 mIoU</p>
     </div>
     <div class="step-arrow">→</div>
     <div class="step">
@@ -981,7 +1000,7 @@ h3 {
       <ul class="bullet-list tight">
         <li><span class="em">核大小</span>：低通核 K&#772; 3→5 再涨 1.0 mIoU；高通核 K&#770; 3→5 反而 42.9→42.4 → 定为 <b>K&#772;=5、K&#770;=3</b>——平滑需要大感受野、锐化只需小邻域</li>
         <li><span class="em">偏移分组</span>：4 组最优（43.5），继续增大不再受益甚至略有回落</li>
-        <li><span class="em">初始融合</span>：43.1 → 叠加初始 ALPF 43.4 → 再叠加初始 AHPF <b>43.5</b>——被广泛沿用简单插值的中间环节本身就是一块可观红利</li>
+        <li><span class="em">初始融合</span>：仅叠加初始 ALPF 提升 0.3 mIoU，再叠加初始 AHPF <b>达到 43.5</b>——被广泛沿用简单插值的中间环节本身就是一块可观红利</li>
       </ul>
     </div>
   </div>
@@ -994,7 +1013,15 @@ h3 {
   <div class="anim figure-box"><img src="../assets/paper-imgs/FreqFusion/fig12.png" alt="特征融合可视化对比" style="max-height:30vh;"></div>
   <div class="anim figure-caption">特征融合结果对比：<span class="cap-em">FreqFusion 融合后的特征内部更一致、边界更锐利</span>（红框为放大区域）</div>
   <div class="anim figure-box"><img src="../assets/paper-imgs/FreqFusion/fig13.png" alt="Cityscapes 分割可视化对比" style="max-height:26vh;"></div>
-  <div class="anim figure-caption">Cityscapes 验证集（上：SegNeXt 基线，下：+FreqFusion）：<span class="cap-em">错分与破碎区域明显减少，预测一致性显著提高</span></div>
+  <div class="anim figure-caption">Cityscapes 验证集（上：SegNeXt 基线，下：+FreqFusion）：<span class="cap-em">错分与破碎区域明显减少，预测一致性显著提高</span>——特征层面的改善能直接传导到分割输出</div>
+</section>
+
+<!-- ═══════════ Slide 17b: ADE20K 可视化 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · ADE20K Visualization</div>
+  <div class="anim"><h2>ADE20K 验证集：碎块状错分被修复</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/FreqFusion/fig14.png" alt="ADE20K 验证集分割可视化对比" style="max-height:44vh;"></div>
+  <div class="anim figure-caption">三行依次为 SegFormer 基线、+FreqFusion 与真值标注：<span class="cap-em">虚线框标出的对比区域内，基线的碎块状错分被修复，预测与真值更加接近</span>——跨数据集的一致性改善与 Cityscapes 上的表现同步</div>
 </section>
 
 <!-- ═══════════ Slide 18: 总结 · 优点与创新点 ═══════════ -->

@@ -173,8 +173,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
       <span class="vs-tag">区域敏感任务</span>
       <h3>语义分割、实例分割</h3>
       <ul>
-        <li>双线性插值、CARAFE 表现更好</li>
-        <li>CARAFE 以<span style="font-weight:600;">解码器特征</span>生成核</li>
+        <li>双线性插值、CARAFE 表现更好，CARAFE 以<span style="font-weight:600;">解码器特征</span>生成核</li>
         <li>区域预测需要语义一致性</li>
       </ul>
     </div>
@@ -182,8 +181,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
       <span class="vs-tag">细节敏感任务</span>
       <h3>超分辨率、图像抠图</h3>
       <ul>
-        <li>pixel shuffle、IndexNet 表现更好</li>
-        <li>IndexNet 依赖<span style="font-weight:600;">编码器特征</span>生成核</li>
+        <li>pixel shuffle、IndexNet 表现更好，IndexNet 依赖<span style="font-weight:600;">编码器特征</span>生成核</li>
         <li>细节恢复需要高分辨率信息</li>
       </ul>
     </div>
@@ -203,6 +201,42 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   </div>
 </section>
 
+<!-- 4b 玩具实验：特征来源 -->
+<section class="slide">
+  <div class="anim slide-label">Method 01 · 实证</div>
+  <div class="anim"><h2>玩具实验：特征来源决定任务表现</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>在 SUN RGBD 语义分割与 Fashion-MNIST 图像重建上构建三个基线，<span class="em">仅改变核生成的特征来源</span></li>
+        <li>decoder-only（CARAFE 标准实现）：mIoU <span class="em">37.00</span>、bIoU 25.61，但重建 PSNR 仅 24.35</li>
+        <li>encoder-only：重建 PSNR 达 <span class="em">32.25</span>，分割 mIoU 反降到 36.71</li>
+        <li>encoder-decoder 拼接：mIoU <span class="em">37.59</span>、bIoU 28.80、PSNR 33.83，两个任务同时最优</li>
+      </ul>
+      <div class="highlight-bar"><p>decoder-only 掩码连贯但重建低保真，encoder-only 边界清晰但区域块状（红框：台灯与衣物条纹）——<span class="accent-word">两类特征缺一不可</span>，直接支撑联合核生成设计。</p></div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/FADE/fig5.png" alt="三种特征来源的分割掩码与重建结果对比"></div>
+  </div>
+</section>
+
+<!-- 4c 朴素实现的缺陷 -->
+<section class="slide">
+  <div class="anim slide-label">Method 02 · 动机</div>
+  <div class="anim"><h2>朴素实现：显式插值对齐的代价</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>朴素实现：解码器特征先 <span class="em">NN 插值对齐到 2H×2W</span> 再与编码器特征拼接，随后经通道压缩器、3×3 卷积与 softmax 生成核</li>
+        <li>×2 最近邻插值配 3×3 卷积使<span class="em">有效感受野降到 50% 以下</span>：插值前窗口内 9 个有效点，插值后只剩 4 个</li>
+        <li>控制高分辨率 2×2 邻域核方差的窗口，对低分辨率解码器特征而言是<span class="em">盲的</span></li>
+        <li>插值、拼接、压缩、核生成四步彼此割裂，分辨率对齐完全依赖显式插值</li>
+      </ul>
+      <div class="highlight-bar"><p>这一失配正是<span class="accent-word">半移位卷积</span>的出发点：把四步统一为一个算子。</p></div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/FADE/fig3.png" alt="联合核生成的朴素实现结构"></div>
+  </div>
+</section>
+
 <!-- 5 半移位卷积 -->
 <section class="slide">
   <div class="glow glow-blue tr"></div>
@@ -211,6 +245,42 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   <div class="anim figure-box"><img src="../assets/paper-imgs/FADE/fig6.png" alt="半移位卷积"></div>
   <div class="anim figure-caption">
     让编码器特征上的 4 个卷积窗口对应解码器特征上的同一个窗口——<span class="cap-em">2×2 邻域方差的控制权被完整交给编码器一侧</span>，同时解码器侧的感受野与编码器侧保持一致。
+  </div>
+</section>
+
+<!-- 5b 门控动机：Weizmann Horse -->
+<section class="slide">
+  <div class="anim slide-label">Method 03 · 证据</div>
+  <div class="anim"><h2>门控动机：Weizmann Horse 上的细节差距</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>各算子区域预测都接近完美时，<span class="em">细节差距被放大</span>（Weizmann Horse 二值分割，以 SegNet 为基线）</li>
+        <li>Unpooling 与 IndexNet 取得 mIoU <span class="em">93.42</span> 与 <span class="em">93.00</span></li>
+        <li>NN 与 CARAFE 只有 <span class="em">89.15</span> 与 <span class="em">89.29</span></li>
+        <li>给 NN 和 CARAFE 加上门控后分别升到 <span class="em">95.26</span> 与 <span class="em">95.25</span></li>
+      </ul>
+      <div class="highlight-bar"><p>门控的<span class="accent-word">细节补偿对两种核生成方式都有效</span>。</p></div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/FADE/table2.png" alt="Weizmann Horse 上各算子的二值分割 mIoU 对比"></div>
+  </div>
+</section>
+
+<!-- 5c 梯度图与门控图 -->
+<section class="slide">
+  <div class="anim slide-label">Method 03 · 证据</div>
+  <div class="anim"><h2>梯度图与门控图：细节需求的分布</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>中间解码器层的梯度图显示，训练中期<span class="em">大部分响应集中在边界附近</span></li>
+        <li>说明解码器特征自身已编码了对细节的需求分布</li>
+        <li>门控图的<span class="em">高响应集中在马匹轮廓</span>等需要补偿细节的位置，区域内部保持低响应</li>
+        <li>门控图与梯度图的分布相互对应</li>
+      </ul>
+      <div class="highlight-bar"><p>据此用 1×1 卷积、NN 插值与 sigmoid <span class="accent-word">生成门控图</span>，调制编码器特征与上采样特征。</p></div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/FADE/fig8.png" alt="马匹分割的梯度图与门控图"></div>
   </div>
 </section>
 
@@ -252,6 +322,24 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   </div>
 </section>
 
+<!-- 8b UPerNet 与强骨干 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02 · 泛化</div>
+  <div class="anim"><h2>UPerNet 架构与强骨干下的表现</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>换用 UPerNet：ResNet-50 与 ResNet-101 上 FADE 取得 <span class="em">42.18</span> 与 <span class="em">44.27</span> mIoU</li>
+        <li>都比 Bilinear 提升约 1 个 mIoU 并超过 CARAFE，<span class="em">增益不依赖特定架构</span></li>
+        <li>换用更强骨干时 mIoU 增益逐渐饱和（B3 上仅 +0.01），bIoU 稳定提升 1 个点以上</li>
+        <li>COCO 检测：带门控 FADE 仅 37.8 AP，置 G=1 后升到 <span class="em">38.5</span>、接近 CARAFE 的 38.6，ResNet-101 上达 40.0 AP</li>
+      </ul>
+      <div class="highlight-bar"><p>强骨干的特征质量主要修复<span class="accent-word">区域误分类</span>，边界误差仍要靠上采样弥补；实例分割中 FADE (G=1) 与 CARAFE 持平。</p></div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/FADE/table6.png" alt="UPerNet 架构下的语义分割对比结果"></div>
+  </div>
+</section>
+
 <!-- 9 深度估计 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 03</div>
@@ -269,6 +357,40 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   <div class="anim figure-box"><img src="../assets/paper-imgs/FADE/table10.png" alt="消融实验"></div>
   <div class="anim figure-caption">
     仅编码器（42.75）与仅解码器（42.82）都不及双侧并用（43.27）；半移位卷积替换朴素实现后进一步升到 43.33；<span class="cap-em">门控引入后 mIoU 升到 44.41</span>。
+  </div>
+</section>
+
+<!-- 10b 特征图质量可视化 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 05 · 可视化</div>
+  <div class="anim"><h2>上采样特征图质量：性能好坏的暗示</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>Mask R-CNN-R50 中对比<span class="em">五种上采样算子</span>输出的特征图：CARAFE、IndexNet、A2U、SAPA、FADE</li>
+        <li>下半部分对比 Nearest、FA2M、FAM、GD-FAM<span class="em">四种对齐方式</span></li>
+        <li>不同组合的特征图<span class="em">清晰度差异明显</span></li>
+      </ul>
+      <div class="highlight-bar"><p>特征图质量可以作为<span class="accent-word">性能好坏的暗示</span>。</p></div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/FADE/fig12.png" alt="Mask R-CNN-R50 上采样器输出的特征图对比"></div>
+  </div>
+</section>
+
+<!-- 10c 跨任务定性汇总 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 05 · 可视化</div>
+  <div class="anim"><h2>五类密集预测任务的定性汇总</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>跨任务定性对比覆盖<span class="em">分割、抠图、检测、实例分割与深度估计</span>五类任务</li>
+        <li>所有对比算子中<span class="em">只有 FADE</span> 在五类任务上同时给出视觉满意的结果</li>
+        <li>区域敏感与细节敏感两类需求同时被满足</li>
+      </ul>
+      <div class="highlight-bar"><p>与定量指标<span class="accent-word">互相印证</span>，再次验证算子的任务无关性。</p></div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/FADE/fig10.png" alt="五类密集预测任务上的定性效果对比"></div>
   </div>
 </section>
 

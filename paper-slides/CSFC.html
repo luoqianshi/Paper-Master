@@ -187,6 +187,25 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   </div>
 </section>
 
+<!-- ═══════ 3.5 两类错配形态 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Method 00</div>
+  <div class="anim"><h2>两类错配的具体形态</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>图 (a)：PPM、ASPP 在固定矩形区域内为 A、B 两像素建模上下文，<span class="em">激活区域或大或小</span>，与各自真实的上下文需求错配</li>
+        <li>图 (b)：空间错位使<span class="em">边界附近成片误预测</span>，且不同特征图承载语义各异、呈现分组特性</li>
+        <li>分工定位：<span class="em">CFC 面向像素-上下文错配</span>，<span class="em">SFC 面向空间特征错位</span></li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/CSFC/fig2.png" alt="两类错配示意"></div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>自注意力理应缓解这两个问题，但<span class="accent-word">高昂的计算开销</span>让实时方法无法承受。</p>
+  </div>
+</section>
+
 <!-- ═══════ 4 CFC 模块 ═══════ -->
 <section class="slide">
   <div class="glow glow-blue tr"></div>
@@ -201,6 +220,24 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
     <div class="prompt-label">像素-上下文亲和度</div>
     <p class="formula">Ω<sub>i,j</sub> = exp(<i>Q</i><sub>i</sub> · <i>K</i><sub>j</sub>) / ∑<sub>j</sub> exp(<i>Q</i><sub>i</sub> · <i>K</i><sub>j</sub>)</p>
     <p class="formula-note">注意力从 N×N 的像素对压缩到 N×M（M=50），计算量远小于自注意力。</p>
+  </div>
+</section>
+
+<!-- ═══════ 4.5 CFC 实现流程 ═══════ -->
+<section class="slide">
+  <div class="anim slide-label">Method 01 · 实现流程</div>
+  <div class="anim"><h2>CFC 实现流程：级联池化 + 亲和度聚合</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>图 (a)：级联金字塔池化逐级<span class="em">复用池化结果</span>，把多尺度输出展平拼接成 C×M 多尺度上下文</li>
+        <li>图 (b)：Q 与 K 矩阵乘经 softmax 得 M×N 亲和度图，V 按亲和度聚合后经 <span class="em">CRB 重校准</span>，再与输入残差相加输出 O</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/CSFC/fig4.png" alt="CFC 模块的级联金字塔池化与实现流程"></div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>复用前层池化结果避免重复计算，CFC 以<span class="accent-word">极小代价</span>完成逐像素的上下文定制。</p>
   </div>
 </section>
 

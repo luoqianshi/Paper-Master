@@ -198,8 +198,10 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   <div class="anim slide-label">Method 01</div>
   <div class="anim"><h2>IoU 系度量回顾：从 GIoU 到 SIoU</h2></div>
   <div class="anim prompt-box">
-    <div class="prompt-label">IoU 定义</div>
+    <div class="prompt-label">IoU 定义与 SIoU 形状代价 Ω</div>
     <p class="formula">IoU = |<i>B</i> ∩ <i>B</i><sup>gt</sup>| / |<i>B</i> ∪ <i>B</i><sup>gt</sup>|</p>
+    <p class="formula" style="font-size:clamp(13px,1.4vw,19px);">Ω = ∑<sub>t=w,h</sub> (1 − <i>e</i><sup>−ω<sub>t</sub></sup>)<sup>θ</sup>，θ = 4</p>
+    <p class="formula-note">Ω 是 SIoU 的形状代价，刻画尺寸差异：ω<sub>w</sub> = |w−w<sup>gt</sup>| / max(w, w<sup>gt</sup>)，ω<sub>h</sub> = |h−h<sup>gt</sup>| / max(h, h<sup>gt</sup>)。</p>
   </div>
   <div class="anim">
     <ul class="bullet-list">

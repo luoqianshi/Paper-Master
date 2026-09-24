@@ -264,7 +264,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
       <ul class="bullet-list">
         <li>α=0.75, γ=2.0 配 q 加权：<span class="em">41.6 AP</span> 最优</li>
         <li>正例不加 q 加权时降至 41.2 AP，验证 q 加权必要</li>
-        <li>从 FCOS+ATSS 基线 39.2 AP 起，VFL → 40.1，星形 → 40.7，精调 → <span class="em">41.6 AP</span></li>
+        <li>从去掉 centerness、用 Focal Loss 训练的原始 VFNet <span class="em">39.0 AP</span> 起（FCOS+ATSS 基线 39.2 AP），换用 VFL → 40.1，加星形表示 → 40.7，加精调 → <span class="em">41.6 AP</span></li>
         <li>三者均为正贡献</li>
       </ul>
     </div>
@@ -276,10 +276,16 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 <section class="slide">
   <div class="anim slide-label">Experiments 03</div>
   <div class="anim"><h2>COCO test-dev：多骨干稳定提升约 2.0 AP</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/VarifocalNet/vfnet_tab4_sota.png" alt="SOTA 对比"></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/VarifocalNet/vfnet_tab4_sota.png" alt="SOTA 对比" style="max-height: 32vh;"></div>
   <div class="anim figure-caption">
     在多个骨干上 VFNet 相对 ATSS 稳定提升约 2.0 AP；最佳模型 VFNet-X-1200 配 Res2Net-101-DCN
     在 1800×1200 推理下达 <span class="cap-em">55.1 AP</span>，超越同期同尺度单模型。
+  </div>
+  <div class="anim">
+    <ul class="bullet-list">
+      <li><span class="em">VFNet-X 扩展配置</span>：PAFPN + 可变形卷积 + 组归一化，头部卷积 3→4 层、通道 256→384，加 RandomCrop 与 Cutout、41 epoch 日程，SWA 平均 18 个检查点（<span class="em">SWA 单项增益最大 +1.2 AP</span>）</li>
+      <li>VFNet-X-800 以 1333×800 与 soft-NMS 取得 <span class="em">53.7 AP</span>，放大推理尺度后 VFNet-X-1200 达 55.1 AP</li>
+    </ul>
   </div>
 </section>
 

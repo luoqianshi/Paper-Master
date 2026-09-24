@@ -48,11 +48,11 @@ $$IoU=\frac{|B\cap B^{gt}|}{|B\cup B^{gt}|}$$
 
 $$GIoU=IoU-\frac{|C-B\cap B^{gt}|}{|C|}$$
 
-其中 $C$ 表示真实框与锚框之间的最小外接框。为补偿 GIoU 收敛速度慢的缺点，DIoU 在 IoU 基础上加入中心点归一化距离损失项：
+其中 $C$ 表示真实框与锚框之间的最小外接框。直观上，当两框不重叠时该项仍能给出非零惩罚，把锚框向真值框方向拉近，从而消除 IoU 的梯度消失。为补偿 GIoU 收敛速度慢的缺点，DIoU 在 IoU 基础上加入中心点归一化距离损失项：
 
 $$DIoU=IoU-\frac{\rho^2(b,b^{gt})}{c^2}$$
 
-其中 $b$、$b^{gt}$ 分别是锚框与真实框的中心点，$\rho(\cdot)$ 指欧氏距离，$c$ 是两中心点之间最小外接框的对角线距离。CIoU 在 DIoU 之上再加入形状损失项以缩小长宽比差异：
+其中 $b$、$b^{gt}$ 分别是锚框与真实框的中心点，$\rho(\cdot)$ 指欧氏距离，$c$ 是两中心点之间最小外接框的对角线距离。直观上，该惩罚项越小表示两框中心越接近，DIoU 把回归目标从重叠区域扩展到了中心对齐。CIoU 在 DIoU 之上再加入形状损失项以缩小长宽比差异：
 
 $$CIoU=IoU-\frac{\rho^2(b,b^{gt})}{c^2}-\alpha v$$
 
@@ -68,7 +68,7 @@ $$EIoU=IoU-\frac{\rho^2(b,b^{gt})}{c^2}-\frac{\rho^2(w,w^{gt})}{(w_c)^2}-\frac{\
 
 $$SIoU=IoU-\frac{\Delta+\Omega}{2}$$
 
-其中角度代价 $\Lambda=\sin\big(2\sin^{-1}\frac{\min(|x_c^{gt}-x_c|,|y_c^{gt}-y_c|)}{\sqrt{(x_c^{gt}-x_c)^2+(y_c^{gt}-y_c)^2+\epsilon}}\big)$ 刻画中心点连线与坐标轴的最小夹角；距离代价 $\Delta=\sum_{t=w,h}(1-e^{-\gamma\rho_t})$（其中 $\gamma=2-\Lambda$）使距离惩罚随角度代价变化；形状代价 $\Omega=\sum_{t=w,h}(1-e^{\omega_t})^{\theta}$（其中 $\theta=4$，$\omega_w=\frac{|w-w^{gt}|}{\max(w,w^{gt})}$、$\omega_h=\frac{|h-h^{gt}|}{\max(h,h^{gt})}$）刻画尺寸差异。在原文的评述中，SIoU 是当前基于 IoU 的损失函数中检测效果最好的一个，因此也被实验节选为统一的对比方法。至此，IoU 系损失的几何刻画已相当充分，但它们的损失值都直接由几何量决定，没有任何一项考虑样本难易，这为线性区间映射留下了改造空间。
+其中角度代价 $\Lambda=\sin\big(2\sin^{-1}\frac{\min(|x_c^{gt}-x_c|,|y_c^{gt}-y_c|)}{\sqrt{(x_c^{gt}-x_c)^2+(y_c^{gt}-y_c)^2+\epsilon}}\big)$ 刻画中心点连线与坐标轴的最小夹角；距离代价 $\Delta=\sum_{t=w,h}(1-e^{-\gamma\rho_t})$（其中 $\gamma=2-\Lambda$）使距离惩罚随角度代价变化；形状代价 $\Omega=\sum_{t=w,h}(1-e^{-\omega_t})^{\theta}$（其中 $\theta=4$，$\omega_w=\frac{|w-w^{gt}|}{\max(w,w^{gt})}$、$\omega_h=\frac{|h-h^{gt}|}{\max(h,h^{gt})}$）刻画尺寸差异。直观上，SIoU 让锚框先沿水平或竖直方向向真值框靠拢，再依次叠加距离与形状两项惩罚。在原文的评述中，SIoU 是当前基于 IoU 的损失函数中检测效果最好的一个，因此也被实验节选为统一的对比方法。至此，IoU 系损失的几何刻画已相当充分，但它们的损失值都直接由几何量决定，没有任何一项考虑样本难易，这为线性区间映射留下了改造空间。
 
 ### 回归样本的难易分析
 

@@ -14,7 +14,7 @@
       "number": "1",
       "label": "Table 1",
       "caption": "Table 1: Comparison of various attention methods on CIFAR100.\nNote that all of the attention modules are embedded into the \nbottelneck blocks of ResNet50/101.",
-      "filename": "table1.png",
+      "filename": "table1_page003.png",
       "page": 3,
       "bbox": [
         362.3077087402344,
@@ -30,7 +30,7 @@
       "number": "2",
       "label": "Table 2",
       "caption": "Table 2: Object detection results of different attention methods \non COCO and VisDrone val datasets.",
-      "filename": "table2.png",
+      "filename": "table2_page004.png",
       "page": 4,
       "bbox": [
         96.36940002441406,
@@ -46,7 +46,7 @@
       "number": "3",
       "label": "Table 3",
       "caption": "Table 3: Ablation on relative training configuration settings.",
-      "filename": "table3.png",
+      "filename": "table3_page004.png",
       "page": 4,
       "bbox": [
         309.69000244140625,

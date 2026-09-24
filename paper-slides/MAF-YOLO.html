@@ -151,6 +151,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
       <div class="prompt-box" style="margin-top:14px;">
         <div class="prompt-label">SAF 输出</div>
         <p class="formula"><i>P'</i><sub>n</sub> = concat(δ(C(Down(<i>P</i><sub>n-1</sub>))), <i>P</i><sub>n</sub>, <i>U</i>(<i>P'</i><sub>n+1</sub>))</p>
+        <p class="formula-note">其中 <i>P'</i><sub>n</sub> 是应用 SAF 后的输出特征，<i>P</i><sub>n</sub> 为骨干送来的同层特征，Down(·) 为带批归一化的 3×3 下采样卷积，U(·) 为上采样，δ 为 silu 激活，C 为控制通道数的 1×1 卷积。三条支路的通道配比决定浅层细节的保留程度，1×1 卷积就是这个配比的旋钮。</p>
       </div>
     </div>
     <div class="figure-box"><img src="../assets/paper-imgs/MAF-YOLO/fig3.png" alt="SAF 结构"></div>
@@ -168,6 +169,11 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
         <li>使最终输出层 P4 能同时合并四个不同层的信息</li>
         <li>各层通道数取齐以保证模型获得<span class="em">多样化输出</span></li>
       </ul>
+      <div class="prompt-box" style="margin-top:14px;">
+        <div class="prompt-label">AAF 输出</div>
+        <p class="formula"><i>P''</i><sub>n</sub> = concat(δ(C(Down(<i>P'</i><sub>n-1</sub>))), δ(C(Down(<i>P''</i><sub>n-1</sub>))), <i>P'</i><sub>n</sub>, C(U(<i>P'</i><sub>n+1</sub>)))</p>
+        <p class="formula-note">其中 <i>P''</i><sub>n</sub> 是应用 AAF 后第二条路径上的输出特征，<i>P'</i><sub>n-1</sub> 与 <i>P''</i><sub>n-1</sub> 分别是第一、第二条路径的前一层输出，<i>P'</i><sub>n</sub> 为同层浅层特征，<i>P'</i><sub>n+1</sub> 是第一条路径的相邻层特征。该式把来自不同层级与不同路径的四路特征一并汇入当前层，等价于把 PAFPN 的单一融合点扩展为多向汇聚点。</p>
+      </div>
     </div>
     <div class="figure-box"><img src="../assets/paper-imgs/MAF-YOLO/fig4.png" alt="AAF 结构"></div>
   </div>
@@ -177,10 +183,31 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 <section class="slide">
   <div class="glow glow-blue tr"></div>
   <div class="anim slide-label">Method 04</div>
-  <div class="anim"><h2>RepHELAN 与重参数化异构卷积</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/MAF-YOLO/fig5.png" alt="RepHELAN 结构" style="max-height: 42vh;"></div>
+  <div class="anim"><h2>RepHELAN 特征提取块</h2></div>
+  <div class="anim figure-box"><img src="../assets/paper-imgs/MAF-YOLO/fig5ab.png" alt="RepHELAN 总览与倒置瓶颈" style="max-height: 42vh;"></div>
   <div class="anim figure-caption">
-    输入经 Split 分成两股：一股直接进 Concat，另一股经 N 个倒置瓶颈单元（内含 RepHDWConv）；<span class="cap-em">训练期并行多尺度 DWConv，推理期重参数化合并为一个</span>，以零推理开销扩大有效感受野。
+    输入经 1x1 卷积与 Split 分成两股：一股保留原始信息直接进 Concat，另一股经 N 个倒置瓶颈单元；<span class="cap-em">依照 ELAN 机制，分支本身与每个倒置瓶颈的输出都被保留并最终拼接</span>，倒置瓶颈内以 kxk 的 RepHDWConv 扩大感受野。
+  </div>
+</section>
+
+<!-- 7b RepHDWConv 重参数化 -->
+<section class="slide">
+  <div class="anim slide-label">Method 05</div>
+  <div class="anim"><h2>RepHDWConv：训练并行、推理合并</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>训练时<span class="em">并行 n 个不同尺寸的深度卷积</span>，推理时合并为一个，速度不下降</li>
+        <li>各 DWConv 后接 BN，核参数先与 bn 参数合并，小 DWConv 经填充吸收进大 DWConv</li>
+        <li>异构 DWConv 的参数与偏置累加，形成新的 RepHDWConv</li>
+      </ul>
+      <div class="prompt-box" style="margin-top:14px;">
+        <div class="prompt-label">合并后输出</div>
+        <p class="formula"><i>O</i> = <i>I</i> ⊗ (K<sub>2n-1</sub> + ∑ K<sub>2n-(2i+1)</sub>) + (B<sub>2n-1</sub> + ∑ B<sub>2n-(2i+1)</sub>)</p>
+        <p class="formula-note">其中 K<sub>n</sub>、B<sub>n</sub> 为 n×n 核卷积的权重与偏置，n ≥ 3。以 7×7 为例：合并 7×7、5×5、3×3 三支，权重 0.5、1、2 相加得 3.5，偏置 0.1、0.2、0.3 相加得 0.6。多尺度感知以零推理开销实现。</p>
+      </div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/MAF-YOLO/fig5c.png" alt="7×7 RepHDWConv 重参数化"></div>
   </div>
 </section>
 
@@ -195,10 +222,27 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   </div>
 </section>
 
-<!-- 9 消融 -->
+<!-- 9a 消融：计算块 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 02</div>
-  <div class="anim"><h2>消融实验：RepHELAN 内部与 MAFPN 组件</h2></div>
+  <div class="anim"><h2>消融实验：不同计算块的对比</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>RepHELAN 以 <span class="em">3.9M 参数、11.1G FLOPs</span> 取得 42.4 AP</li>
+        <li>比 C3 的 41.0 AP 高 1.4，比 C2f 的 41.3 AP 高 1.1</li>
+        <li>参数利用率与精度均高于 C3、C2f 与 CSPNextBlock</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/MAF-YOLO/table1.png" alt="不同计算块对 MAF-YOLOn 的影响"></div>
+  </div>
+  <div class="anim highlight-bar"><p>结论：<span class="accent-word">ELAN 式多分支聚合在同等开销下换来更高精度</span>。</p></div>
+</section>
+
+<!-- 9 消融 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim"><h2>消融实验：RepHELAN 内部结构</h2></div>
   <div class="anim figure-box"><img src="../assets/paper-imgs/MAF-YOLO/table2.png" alt="消融实验" style="max-height: 42vh;"></div>
   <div class="anim figure-caption">
     单独加入 ELAN 提升 0.2 AP，大核 + ELAN 提升 1 AP 但 APs 下降 0.3，替换为 RepHConv 后 APs 回升到 22.0、总 AP 达 42.4。
@@ -206,9 +250,59 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   </div>
 </section>
 
+<!-- 9b 消融：MAFPN 结构 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 04</div>
+  <div class="anim"><h2>消融实验：MAFPN 结构</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>单独加入 SAF 提升 0.3 AP，小目标 <span class="em">APs 从 21.0 提到 22.0</span></li>
+        <li>单独加入 AAF 后 AP、APm、APl 分别达到 42.0、46.4 与 59.2，各尺度均有增强</li>
+        <li>SAF 与 AAF 两者组合达到 <span class="em">42.4 AP</span></li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/MAF-YOLO/table3.png" alt="MAFPN 结构消融"></div>
+  </div>
+  <div class="anim highlight-bar"><p>结论：SAF 主要补小目标、AAF 各尺度均有增强，<span class="accent-word">两者组合达到 42.4 AP</span>。</p></div>
+</section>
+
+<!-- 9c 消融：即插即用 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 05</div>
+  <div class="anim"><h2>MAFPN 的即插即用验证</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>把 YOLOv8n 的 PAFPN 换成 MAFPN：训练轮数<span class="em">少 200 epochs</span>、参数更少，AP 仍提升 2 个点</li>
+        <li>两阶段 Cascade Mask R-CNN 实例分割中替换 FPN：<span class="em">bbox AP 升到 42.8、segm AP 升到 36.3</span></li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/MAF-YOLO/table4.png" alt="MAFPN 在其他检测器与不同任务上的表现"></div>
+  </div>
+  <div class="anim highlight-bar"><p>结论：在单阶段检测器与两阶段实例分割上替换颈部均获增益，<span class="accent-word">验证了 MAFPN 的即插即用性</span>。</p></div>
+</section>
+
+<!-- 9d 消融：整体组件 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 06</div>
+  <div class="anim"><h2>消融实验：整体组件</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>MAFPN 贡献 <span class="em">+2.1 AP</span></li>
+        <li>RepHELAN 在<span class="em">减少 1.2M 参数</span>的同时再提升 1.1 AP</li>
+        <li>GHSK 以边际参数代价把精度推到 <span class="em">42.4 AP</span></li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/MAF-YOLO/table5.png" alt="MAF-YOLOn 整体组件消融"></div>
+  </div>
+  <div class="anim highlight-bar"><p>结论：三个组件逐级叠加，<span class="accent-word">GHSK 最终把精度推到 42.4 AP</span>。</p></div>
+</section>
+
 <!-- 10 可视化 -->
 <section class="slide">
-  <div class="anim slide-label">Experiments 03</div>
+  <div class="anim slide-label">Experiments 07</div>
   <div class="anim"><h2>Grad-CAM++ 可视化：更完整的小目标激活</h2></div>
   <div class="anim figure-box"><img src="../assets/paper-imgs/MAF-YOLO/fig1.png" alt="Grad-CAM 可视化" style="max-height: 48vh;"></div>
   <div class="anim figure-caption">
