@@ -87,6 +87,8 @@ cd Paper-Master
 
 > `lzk-paper-reading` 与 `html-paper-slides` 共享同一套"论文理解"能力:先用 `pdf_extractor.py` 从 PDF 提取透明背景原图,按论文标题统一归档到 `assets/paper-imgs/<论文标题>/`,再分别喂给笔记流与 PPT 流;`blog-to-slides` 则补上第三条路径——直接以上一条流产出的笔记与配图为输入,把已有笔记快速转成 PPT,全程无需再读 PDF。同一篇论文,可以一次生成"笔记 + PPT"两份资产。
 
+其中 `pdf_extractor.py` 采用**标题驱动**的提取模式:先定位 `Figure/Table` 标题(文本模式 + 动词黑名单 + 邻近视觉内容三重过滤,排除正文里的 "Figure 3 shows..." 引用),再按「Figure 向上找图、Table 向下找表」关联图表区域,最后在搜索窗口内取矢量/图片外接矩形做像素级裁切,输出语义化命名的 `fig1.png` / `table2.png`;标题驱动失败时可加 `--fallback-blind-crop` 启用盲裁剪兜底。完整实现原理见 [PDF 论文图表精准定位与裁切实现原理](qna/PDF论文图表精准定位与裁切实现原理_20261028_154824.md),标题检测 / 区域关联 / 边界精修三个阶段的可视化解读见 `qna/html-vis/`。
+
 ---
 
 ## Showcase · 真实论文 PPT 演示
@@ -174,16 +176,6 @@ cd Paper-Master
 
 ![pdf-papers → paper-blogs → paper-slides 三段式流水线](assets/workflow.png)
 
-```
-┌────────────┐    ┌────────────┐    ┌──────────────────────────┐
-│ pdf-papers │ →  │   paper-blogs   │ →  │      paper-slides        │
-│ 原始论文库 │    │ 中文MD笔记 │    │  ┌────────────────────┐  │
-└────────────┘    └────────────┘    │  │ 单文件 HTML PPT    │  │
-  仅存原始 PDF      五节骨架笔记     │  └────────────────────┘  │
-  命名可追踪        配图统一入库      └──────────────────────────┘
-                    assets/paper-imgs/<论文标题>/
-```
-
 ### 1. `pdf-papers/` —— 原始论文 PDF 归档
 只保存 PDF 格式的原始论文,不再存放补充材料、网页链接、临时摘录等其他素材。不追求排版,只要求来源清晰、文件命名可追踪(建议直接以论文标题命名),方便后续流程按标题建立配图目录。
 
@@ -216,7 +208,11 @@ Paper-Master/
 ├── slides-manifest.json  # paper-slides 演示文稿清单(新增内容后运行 python scripts/generate_manifests.py 重新生成并提交)
 ├── blogs-manifest.json   # paper-blogs 阅读笔记清单(新增内容后运行 python scripts/generate_manifests.py 重新生成并提交)
 ├── scripts/
-│   └── generate_manifests.py    # 本地重建两份清单(与 pages.yml 内联逻辑一致)
+│   ├── generate_manifests.py       # 本地重建两份清单(与 pages.yml 内联逻辑一致)
+│   └── update_slides_manifest.py   # 为 paper-slides/ 新增 HTML 自动补登记清单条目
+├── qna/                  # 实现原理问答沉淀:原理说明 + 阶段可视化
+│   ├── PDF论文图表精准定位与裁切实现原理_20261028_154824.md
+│   └── html-vis/         # 标题检测 / 区域关联 / 边界精修三阶段可视化 HTML
 ├── README.md             # 中文 README(默认)
 ├── README.en.md          # 英文 README
 ├── LICENSE               # MIT 协议
@@ -320,7 +316,7 @@ python skills/html-paper-slides/scripts/generate-thumbnails.py
 - **CSS Grid / Flexbox** —— 16:9 响应式布局
 - **CSS Variables** —— 主题色与字体变量化管理
 - **Markdown + LaTeX** —— 阅读笔记载体(公式行内 `$...$`、独立 `$$...$$`)
-- **PyMuPDF + Pillow** —— 从论文 PDF 提取透明背景配图
+- **PyMuPDF + Pillow** —— 从论文 PDF 标题驱动地定位并裁切 Figure/Table
 - **Playwright (Python)** —— 自动生成 HTML PPT 首屏缩略图
 - **GitHub Actions** —— 自动部署 `index.html` 至 GitHub Pages
 

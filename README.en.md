@@ -89,6 +89,8 @@ The repository ships with 3 SKILLs, covering the core ways of distilling "readin
 
 > `lzk-paper-reading` and `html-paper-slides` share the same "paper understanding" layer: `pdf_extractor.py` first pulls transparent-background figures from the PDF and archives them per paper title under `assets/paper-imgs/<paper-title>/`; the figures then feed the note flow and the deck flow. `blog-to-slides` adds a third path — it consumes the note flow's outputs (note + figures) directly and turns an existing note into a deck without ever touching the PDF. One paper can produce "note + deck" in a single pass.
 
+Inside that layer, `pdf_extractor.py` runs a **caption-driven** extraction mode: it locates `Figure/Table` captions (text-pattern match + verb blacklist + nearby-visual verification, filtering out in-text references such as "Figure 3 shows..."), then associates the caption with its figure region ("Figure looks up, Table looks down"), and finally takes the bounding box of the vector/image objects inside the search window for pixel-precise cropping, emitting semantic names like `fig1.png` / `table2.png`. If caption-driven extraction fails, add `--fallback-blind-crop` to enable a blind-crop fallback. See [PDF Figure Precise Location & Cropping](qna/PDF论文图表精准定位与裁切实现原理_20261028_154824.md) for the full principle, and `qna/html-vis/` for the three-stage visual walkthrough (caption detection → region association → boundary refinement).
+
 ---
 
 ## Showcase · Real Paper Decks
@@ -176,16 +178,6 @@ The repository's differentiator is unifying "paper reading" into one **reproduci
 
 ![The pdf-papers → paper-blogs → paper-slides three-stage pipeline](assets/workflow.png)
 
-```
-┌────────────┐    ┌────────────┐    ┌──────────────────────────┐
-│ pdf-papers │ →  │   paper-blogs   │ →  │      paper-slides        │
-│  Original  │    │  Chinese   │    │  ┌────────────────────┐  │
-│  PDFs only │    │  MD notes  │    │  │ single-file deck   │  │
-└────────────┘    └────────────┘    │  └────────────────────┘  │
-  traceable         5-section MD     └──────────────────────────┘
-                    figures → assets/paper-imgs/<paper-title>/
-```
-
 ### 1. `pdf-papers/` — Original Paper PDF Archive
 Store only the original papers, in PDF format — no supplementary materials, web links, or temporary excerpts. Don't polish; just keep sources traceable with clear file names (the paper title is recommended), so later steps can build the per-paper figure folder by title.
 
@@ -217,6 +209,12 @@ Paper-Master/
 │   └── note.html         #   Full-screen reading deep link for notes (Markdown rendering + LaTeX math)
 ├── slides-manifest.json  # paper-slides deck manifest
 ├── blogs-manifest.json   # paper-blogs note manifest (regenerate locally with `python scripts/generate_manifests.py` and commit; also rebuilt by the Pages workflow)
+├── scripts/
+│   ├── generate_manifests.py       # Rebuild both manifests locally (same inline logic as pages.yml)
+│   └── update_slides_manifest.py   # Auto-register newly added HTML decks in paper-slides/
+├── qna/                  # Implementation Q&A notes: principle write-ups + stage visuals
+│   ├── PDF论文图表精准定位与裁切实现原理_20261028_154824.md
+│   └── html-vis/         # Visual HTML walkthroughs: caption detection / region search / crop refinement
 ├── README.md             # Chinese README (default)
 ├── README.en.md          # English README
 ├── LICENSE               # MIT License
@@ -234,7 +232,7 @@ Paper-Master/
 │   └── html-paper-slides/        # Paper reading → HTML presentation deck
 │       ├── SKILL.md
 │       ├── scripts/
-│       │   ├── pdf_extractor.py   # Extract key figures from paper PDFs (shared by both flows)
+│       │   ├── pdf_extractor.py   # Caption-driven Figure/Table extraction (shared by both flows)
 │       │   └── generate-thumbnails.py  # Generate first-screen thumbnails
 │       └── templates/
 │           └── presentation.html  # Paper-presentation HTML slide template
@@ -321,7 +319,7 @@ After that, the new HTML PPT will appear in the `index.html` gallery with its **
 - **CSS Grid / Flexbox** — 16:9 responsive layout
 - **CSS Variables** — Theme color and font variable management
 - **Markdown + LaTeX** — Note carrier (inline `$...$`, display `$$...$$`)
-- **PyMuPDF + Pillow** — Extract transparent-background figures from paper PDFs
+- **PyMuPDF + Pillow** — Caption-driven Figure/Table location and cropping from paper PDFs
 - **Playwright (Python)** — Auto-generate HTML PPT first-screen thumbnails
 - **GitHub Actions** — Auto-deploy `index.html` to GitHub Pages
 
