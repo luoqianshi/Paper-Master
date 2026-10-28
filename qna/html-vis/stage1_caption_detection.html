@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>阶段 1 · 标题检测（三重过滤）</title>
+<style>
+:root {
+  color-scheme: light;
+  --surface: #F7F7F8;
+  --surface-muted: #EFEFF2;
+  --text: #171717;
+  --text-muted: #52525B;
+  --border: rgba(23, 23, 23, 0.12);
+  --brand: #0FDC78;
+  --accent-2: #F87454;
+  --radius-card: 12px;
+  --spacer-8: 8px;
+  --spacer-12: 12px;
+  --spacer-20: 20px;
+  --font-sans: "SF Pro Text", "PingFang SC", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --text-caption: 12px/18px;
+  --text-body: 14px/20px;
+  --text-title: 16px/24px;
+  --text-code: 13px/20px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --surface: #171717;
+    --surface-muted: #262626;
+    --text: #E5E5E5;
+    --text-muted: #A1A1AA;
+    --border: rgba(229, 229, 229, 0.12);
+    --brand: #32F08C;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #FFFFFF;
+  color: var(--text);
+  font: var(--weight-regular) var(--text-body) var(--font-sans);
+  padding: var(--spacer-20);
+  display: flex;
+  justify-content: center;
+}
+@media (prefers-color-scheme: dark) { body { background: #0B0B0B; } }
+.viz { width: 100%; max-width: 960px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--spacer-20);
+}
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacer-12);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacer-8);
+}
+.title { font: var(--weight-medium) var(--text-title) var(--font-sans); }
+.code { font: var(--weight-medium) var(--text-code) var(--font-mono); color: var(--text-muted); }
+svg { display: block; width: 100%; height: auto; }
+.tt { fill: var(--text); font: var(--weight-medium) var(--text-body) var(--font-sans); }
+.tc { fill: var(--text-muted); font: var(--weight-regular) var(--text-caption) var(--font-sans); }
+.tm { fill: var(--text-muted); font: var(--weight-medium) var(--text-code) var(--font-mono); }
+.tn { fill: var(--text-muted); font: var(--weight-medium) var(--text-caption) var(--font-mono); }
+.arr { stroke: var(--text-muted); stroke-width: 1.5; fill: none; stroke-linecap: round; }
+</style>
+</head>
+<body>
+<div class="viz">
+  <div class="card">
+    <div class="head">
+      <span class="title">阶段 1 · 标题检测（三重过滤）</span>
+      <span class="code">detect_all_captions()</span>
+    </div>
+    <svg viewBox="0 0 720 340" role="img" aria-label="阶段一标题检测四步：候选扫描、F1形态匹配、F2引用排除、F3邻近验证">
+      <defs>
+        <g id="pg1">
+          <rect x="0" y="44" width="142" height="200" rx="8" fill="var(--surface)" stroke="var(--border)"/>
+          <rect x="12" y="54" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+          <rect x="12" y="60" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+          <rect x="12" y="66" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+          <rect x="12" y="72" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+          <rect x="12" y="78" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+          <rect x="12" y="84" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+          <rect x="12" y="90" width="96" height="2.5" rx="1.25" fill="var(--border)"/>
+          <rect x="12" y="148" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+          <rect x="12" y="154" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+          <rect x="12" y="160" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+          <rect x="12" y="166" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+          <rect x="12" y="222" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+          <rect x="12" y="228" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+          <rect x="12" y="234" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+          <rect x="18" y="100" width="58" height="30" fill="none" stroke="var(--text-muted)" stroke-width="1" opacity="0.35"/>
+          <rect x="26" y="114" width="8" height="12" fill="var(--text-muted)" opacity="0.35"/>
+          <rect x="38" y="108" width="8" height="18" fill="var(--text-muted)" opacity="0.35"/>
+          <rect x="50" y="116" width="8" height="10" fill="var(--text-muted)" opacity="0.35"/>
+          <rect x="74" y="176" width="48" height="26" fill="none" stroke="var(--text-muted)" stroke-width="1" opacity="0.35"/>
+          <line x1="74" y1="185" x2="122" y2="185" stroke="var(--text-muted)" stroke-width="1" opacity="0.35"/>
+          <line x1="74" y1="194" x2="122" y2="194" stroke="var(--text-muted)" stroke-width="1" opacity="0.35"/>
+          <line x1="98" y1="176" x2="98" y2="202" stroke="var(--text-muted)" stroke-width="1" opacity="0.35"/>
+        </g>
+        <marker id="ar1" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+          <path d="M1 1 L7 4 L1 7 Z" fill="var(--text-muted)"/>
+        </marker>
+      </defs>
+
+      <!-- 01 候选扫描 -->
+      <g transform="translate(40,0)">
+        <circle cx="9" cy="20" r="9" fill="var(--surface-muted)" stroke="var(--border)"/>
+        <text class="tn" x="9" y="24" text-anchor="middle">01</text>
+        <text class="tt" x="24" y="25">候选扫描</text>
+        <use href="#pg1"/>
+        <rect x="12" y="60" width="30" height="2.5" rx="1.25" fill="var(--accent-2)"/>
+        <rect x="46" y="72" width="26" height="2.5" rx="1.25" fill="var(--accent-2)"/>
+        <rect x="12" y="78" width="34" height="2.5" rx="1.25" fill="var(--accent-2)"/>
+        <rect x="12" y="154" width="30" height="2.5" rx="1.25" fill="var(--accent-2)"/>
+        <rect x="62" y="166" width="26" height="2.5" rx="1.25" fill="var(--accent-2)"/>
+        <rect x="12" y="228" width="30" height="2.5" rx="1.25" fill="var(--accent-2)"/>
+        <rect x="46" y="234" width="26" height="2.5" rx="1.25" fill="var(--accent-2)"/>
+        <rect x="18" y="136" width="76" height="4" rx="2" fill="var(--accent-2)"/>
+        <rect x="74" y="208" width="58" height="4" rx="2" fill="var(--accent-2)"/>
+        <text class="tc" x="0" y="266">共 9 个候选文本块</text>
+      </g>
+
+      <!-- 02 F1 形态匹配 -->
+      <g transform="translate(206,0)">
+        <circle cx="9" cy="20" r="9" fill="var(--surface-muted)" stroke="var(--border)"/>
+        <text class="tn" x="9" y="24" text-anchor="middle">02</text>
+        <text class="tt" x="24" y="25">F1 形态匹配</text>
+        <use href="#pg1"/>
+        <rect x="46" y="72" width="26" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="62" y="166" width="26" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="12" y="228" width="30" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="46" y="234" width="26" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="12" y="60" width="30" height="2.5" rx="1.25" fill="var(--accent-2)"/>
+        <rect x="12" y="78" width="34" height="2.5" rx="1.25" fill="var(--accent-2)"/>
+        <rect x="12" y="154" width="30" height="2.5" rx="1.25" fill="var(--accent-2)"/>
+        <rect x="18" y="136" width="76" height="4" rx="2" fill="var(--accent-2)"/>
+        <rect x="74" y="208" width="58" height="4" rx="2" fill="var(--accent-2)"/>
+        <text class="tc" x="0" y="266">形态匹配后剩 5 个</text>
+      </g>
+
+      <!-- 03 F2 引用排除 -->
+      <g transform="translate(372,0)">
+        <circle cx="9" cy="20" r="9" fill="var(--surface-muted)" stroke="var(--border)"/>
+        <text class="tn" x="9" y="24" text-anchor="middle">03</text>
+        <text class="tt" x="24" y="25">F2 引用排除</text>
+        <use href="#pg1"/>
+        <rect x="12" y="60" width="30" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="46" y="72" width="26" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="12" y="154" width="30" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="62" y="166" width="26" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="12" y="228" width="30" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="46" y="234" width="26" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="12" y="78" width="34" height="2.5" rx="1.25" fill="var(--accent-2)"/>
+        <rect x="18" y="136" width="76" height="4" rx="2" fill="var(--accent-2)"/>
+        <rect x="74" y="208" width="58" height="4" rx="2" fill="var(--accent-2)"/>
+        <text class="tc" x="0" y="266">排除引用后剩 3 个</text>
+      </g>
+
+      <!-- 04 F3 邻近验证 -->
+      <g transform="translate(538,0)">
+        <circle cx="9" cy="20" r="9" fill="var(--surface-muted)" stroke="var(--border)"/>
+        <text class="tn" x="9" y="24" text-anchor="middle">04</text>
+        <text class="tt" x="24" y="25">F3 邻近验证</text>
+        <use href="#pg1"/>
+        <rect x="12" y="60" width="30" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="46" y="72" width="26" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="12" y="78" width="34" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="12" y="154" width="30" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="62" y="166" width="26" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="12" y="228" width="30" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="46" y="234" width="26" height="2.5" rx="1.25" fill="var(--text-muted)" opacity="0.22"/>
+        <rect x="18" y="136" width="76" height="4" rx="2" fill="var(--accent-2)"/>
+        <rect x="74" y="208" width="58" height="4" rx="2" fill="var(--accent-2)"/>
+        <text class="tc" x="0" y="266">邻近验证后剩 2 个</text>
+      </g>
+
+      <line class="arr" x1="186" y1="144" x2="200" y2="144" marker-end="url(#ar1)"/>
+      <line class="arr" x1="352" y1="144" x2="366" y2="144" marker-end="url(#ar1)"/>
+      <line class="arr" x1="518" y1="144" x2="532" y2="144" marker-end="url(#ar1)"/>
+
+      <rect x="40" y="286" width="640" height="40" rx="8" fill="var(--surface-muted)"/>
+      <circle cx="60" cy="306" r="4" fill="var(--accent-2)"/>
+      <text class="tc" x="72" y="311">保留的候选</text>
+      <circle cx="180" cy="306" r="4" fill="var(--text-muted)" opacity="0.28"/>
+      <text class="tc" x="192" y="311">已剔除</text>
+      <text class="tc" x="300" y="311">三道过滤依次收窄，只剩真正的图表标题</text>
+    </svg>
+  </div>
+</div>
+</body>
+</html>

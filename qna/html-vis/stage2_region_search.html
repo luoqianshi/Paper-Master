@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>阶段 2 · 区域关联（双向搜索）</title>
+<style>
+:root {
+  color-scheme: light;
+  --surface: #F7F7F8;
+  --surface-muted: #EFEFF2;
+  --text: #171717;
+  --text-muted: #52525B;
+  --border: rgba(23, 23, 23, 0.12);
+  --brand: #0FDC78;
+  --accent-2: #F87454;
+  --radius-card: 12px;
+  --spacer-8: 8px;
+  --spacer-12: 12px;
+  --spacer-20: 20px;
+  --font-sans: "SF Pro Text", "PingFang SC", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --text-caption: 12px/18px;
+  --text-body: 14px/20px;
+  --text-title: 16px/24px;
+  --text-code: 13px/20px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+    --surface: #171717;
+    --surface-muted: #262626;
+    --text: #E5E5E5;
+    --text-muted: #A1A1AA;
+    --border: rgba(229, 229, 229, 0.12);
+    --brand: #32F08C;
+  }
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: #FFFFFF;
+  color: var(--text);
+  font: var(--weight-regular) var(--text-body) var(--font-sans);
+  padding: var(--spacer-20);
+  display: flex;
+  justify-content: center;
+}
+@media (prefers-color-scheme: dark) { body { background: #0B0B0B; } }
+.viz { width: 100%; max-width: 960px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: var(--spacer-20);
+}
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--spacer-12);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacer-8);
+}
+.title { font: var(--weight-medium) var(--text-title) var(--font-sans); }
+.code { font: var(--weight-medium) var(--text-code) var(--font-mono); color: var(--text-muted); }
+svg { display: block; width: 100%; height: auto; }
+.tt { fill: var(--text); font: var(--weight-medium) var(--text-body) var(--font-sans); }
+.tc { fill: var(--text-muted); font: var(--weight-regular) var(--text-caption) var(--font-sans); }
+.tn { fill: var(--text-muted); font: var(--weight-medium) var(--text-caption) var(--font-mono); }
+.arr { stroke: var(--text-muted); stroke-width: 1.5; fill: none; stroke-linecap: round; }
+.win { fill: none; stroke: var(--brand); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.win-dead { fill: none; stroke: var(--text-muted); stroke-width: 1.5; stroke-dasharray: 4 4; opacity: 0.4; }
+.line { stroke: var(--text-muted); stroke-width: 1; opacity: 0.35; fill: none; }
+.fill-soft { fill: var(--text-muted); opacity: 0.35; }
+</style>
+</head>
+<body>
+<div class="viz">
+  <div class="card">
+    <div class="head">
+      <span class="title">阶段 2 · 区域关联（双向搜索）</span>
+      <span class="code">compute_search_area()</span>
+    </div>
+    <svg viewBox="0 0 720 340" role="img" aria-label="阶段二区域关联四步：向上找图、向下找表、收窄边界、反向兜底">
+      <defs>
+        <g id="pg2">
+          <rect x="0" y="44" width="142" height="200" rx="8" fill="var(--surface)" stroke="var(--border)"/>
+        </g>
+        <marker id="ar2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="8" markerHeight="8" markerUnits="userSpaceOnUse" orient="auto">
+          <path d="M1 1 L7 4 L1 7 Z" fill="var(--text-muted)"/>
+        </marker>
+      </defs>
+
+      <!-- 01 向上找图 -->
+      <g transform="translate(40,0)">
+        <circle cx="9" cy="20" r="9" fill="var(--surface-muted)" stroke="var(--border)"/>
+        <text class="tn" x="9" y="24" text-anchor="middle">01</text>
+        <text class="tt" x="24" y="25">向上找图</text>
+        <use href="#pg2"/>
+        <rect class="win" x="14" y="56" width="114" height="64" rx="6"/>
+        <rect x="26" y="64" width="72" height="44" fill="none" stroke="var(--text-muted)" stroke-width="1" opacity="0.35"/>
+        <polyline class="line" points="32,96 44,80 56,86 68,70 80,78 94,66"/>
+        <line class="arr" x1="116" y1="124" x2="116" y2="60" marker-end="url(#ar2)"/>
+        <rect x="26" y="126" width="76" height="4" rx="2" fill="var(--accent-2)"/>
+        <rect x="12" y="142" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="148" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="154" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="160" width="96" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="166" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="172" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="178" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="184" width="96" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="190" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="196" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="202" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="208" width="96" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="214" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="220" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="226" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="232" width="96" height="2.5" rx="1.25" fill="var(--border)"/>
+        <text class="tc" x="0" y="266">标题在图下，向上找</text>
+      </g>
+
+      <!-- 02 向下找表 -->
+      <g transform="translate(206,0)">
+        <circle cx="9" cy="20" r="9" fill="var(--surface-muted)" stroke="var(--border)"/>
+        <text class="tn" x="9" y="24" text-anchor="middle">02</text>
+        <text class="tt" x="24" y="25">向下找表</text>
+        <use href="#pg2"/>
+        <rect x="26" y="56" width="76" height="4" rx="2" fill="var(--accent-2)"/>
+        <rect class="win" x="14" y="64" width="114" height="88" rx="6"/>
+        <rect x="22" y="72" width="74" height="70" fill="none" stroke="var(--text-muted)" stroke-width="1" opacity="0.35"/>
+        <line class="line" x1="22" y1="90" x2="96" y2="90"/>
+        <line class="line" x1="22" y1="108" x2="96" y2="108"/>
+        <line class="line" x1="22" y1="126" x2="96" y2="126"/>
+        <line class="line" x1="42" y1="72" x2="42" y2="142"/>
+        <line class="line" x1="60" y1="72" x2="60" y2="142"/>
+        <line class="line" x1="78" y1="72" x2="78" y2="142"/>
+        <line class="arr" x1="116" y1="68" x2="116" y2="146" marker-end="url(#ar2)"/>
+        <rect x="12" y="162" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="168" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="174" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="180" width="96" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="186" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="192" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="198" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="204" width="96" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="210" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="216" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="222" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="228" width="96" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="234" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="240" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <text class="tc" x="0" y="266">标题在表上，向下找</text>
+      </g>
+
+      <!-- 03 收窄边界 -->
+      <g transform="translate(372,0)">
+        <circle cx="9" cy="20" r="9" fill="var(--surface-muted)" stroke="var(--border)"/>
+        <text class="tn" x="9" y="24" text-anchor="middle">03</text>
+        <text class="tt" x="24" y="25">收窄边界</text>
+        <use href="#pg2"/>
+        <rect x="26" y="54" width="76" height="4" rx="2" fill="var(--text-muted)" opacity="0.55"/>
+        <rect x="12" y="64" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="70" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="76" width="96" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="82" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect class="win" x="14" y="60" width="114" height="76" rx="6"/>
+        <rect x="30" y="92" width="70" height="38" fill="none" stroke="var(--text-muted)" stroke-width="1" opacity="0.35"/>
+        <polyline class="line" points="36,120 48,106 60,112 72,98 84,106 96,96"/>
+        <line class="arr" x1="116" y1="132" x2="116" y2="66" marker-end="url(#ar2)"/>
+        <rect x="26" y="138" width="76" height="4" rx="2" fill="var(--accent-2)"/>
+        <rect x="12" y="150" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="156" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="162" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="168" width="96" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="174" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="180" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="186" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="192" width="96" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="198" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="204" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="210" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="216" width="96" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="222" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="228" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="234" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <text class="tc" x="0" y="266">上界止于上一标题</text>
+      </g>
+
+      <!-- 04 反向兜底 -->
+      <g transform="translate(538,0)">
+        <circle cx="9" cy="20" r="9" fill="var(--surface-muted)" stroke="var(--border)"/>
+        <text class="tn" x="9" y="24" text-anchor="middle">04</text>
+        <text class="tt" x="24" y="25">反向兜底</text>
+        <use href="#pg2"/>
+        <rect class="win-dead" x="14" y="54" width="114" height="44" rx="6"/>
+        <rect x="26" y="104" width="76" height="4" rx="2" fill="var(--accent-2)"/>
+        <rect class="win" x="14" y="112" width="114" height="62" rx="6"/>
+        <rect x="30" y="120" width="70" height="44" fill="none" stroke="var(--text-muted)" stroke-width="1" opacity="0.35"/>
+        <polyline class="line" points="36,154 48,138 60,144 72,128 84,136 96,126"/>
+        <line class="arr" x1="116" y1="116" x2="116" y2="168" marker-end="url(#ar2)"/>
+        <rect x="12" y="184" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="190" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="196" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="202" width="96" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="208" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="214" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="220" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="226" width="96" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="232" width="118" height="2.5" rx="1.25" fill="var(--border)"/>
+        <rect x="12" y="238" width="110" height="2.5" rx="1.25" fill="var(--border)"/>
+        <text class="tc" x="0" y="266">无果则反向兜底</text>
+      </g>
+
+      <line class="arr" x1="186" y1="144" x2="200" y2="144" marker-end="url(#ar2)"/>
+      <line class="arr" x1="352" y1="144" x2="366" y2="144" marker-end="url(#ar2)"/>
+      <line class="arr" x1="518" y1="144" x2="532" y2="144" marker-end="url(#ar2)"/>
+
+      <rect x="40" y="286" width="640" height="40" rx="8" fill="var(--surface-muted)"/>
+      <text class="tc" x="56" y="311">虚线 = 搜索窗口；先按图/表惯例定方向，另一方向保留作兜底</text>
+    </svg>
+  </div>
+</div>
+</body>
+</html>
