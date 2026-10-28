@@ -41,6 +41,10 @@ git clone https://github.com/luoqianshi/Paper-Master.git
 cd Paper-Master
 ```
 
+> **Clear the author's sample content before adding your own papers**
+>
+> The repository ships with the author's own paper-reading output: the original paper PDFs in `pdf-papers/`, 58 reading notes in `paper-blogs/`, 61 HTML decks in `paper-slides/` (each with its own `*_assets/` figure folder), 59 per-paper figure folders in `assets/paper-imgs/`, and 61 first-screen thumbnails in `assets/thumbnails/`. Before producing your own content, clear the resources in these five folders (keep the folders themselves), then clear the arrays in `slides-manifest.json` and `blogs-manifest.json` — or run `python scripts/generate_manifests.py` to rebuild empty manifests. The `index.html` gallery only reads these two manifests. `other-htmls/` also contains four topic-explainer pages from the author — remove them as well if you don't need them.
+
 Open the project in any AI coding tool / AI office tool that supports Skills (Claude Code / TRAE / CodeBuddy), and send the Agent either prompt:
 
 **Produce a Chinese reading note:**
@@ -250,8 +254,8 @@ Paper-Master/
 │   ├── design-prompts/   # Style design prompt collection
 │   ├── accmulate-ppts.png
 │   └── favicon.png
-├── pdf-papers/           # Original paper PDFs only (gitignored)
-└── paper-blogs/               # Chinese reading notes (.md blogs) from lzk-paper-reading (gitignored)
+├── pdf-papers/           # Original paper PDFs only
+└── paper-blogs/               # Chinese reading notes (.md blogs) from lzk-paper-reading
 ```
 
 ---
@@ -265,8 +269,8 @@ git clone https://github.com/luoqianshi/Paper-Master.git
 cd Paper-Master
 ```
 
-- Delete all `.html` files in `paper-slides/`, all notes in `paper-blogs/`, and all per-paper figure folders in `assets/paper-imgs/` (these are the author's personal knowledge-base data)
-- Clear the `slides` array in `slides-manifest.json`
+- Clear the sample resources under `pdf-papers/`, `paper-blogs/`, `paper-slides/`, `assets/paper-imgs/`, and `assets/thumbnails/` (see the cleanup note in Quick Start)
+- Clear the arrays in `slides-manifest.json` and `blogs-manifest.json`, or run `python scripts/generate_manifests.py` to rebuild empty manifests
 - (Optional) Install thumbnail dependencies: `pip install playwright && playwright install chromium`
 - (Optional) Install PDF-extraction dependencies: `pip install pymupdf Pillow`
 

@@ -40,6 +40,10 @@ git clone https://github.com/luoqianshi/Paper-Master.git
 cd Paper-Master
 ```
 
+> **先清空作者的示例内容,再换成你自己的论文**
+>
+> 仓库自带作者本人的论文阅读成果:`pdf-papers/` 中的原始论文 PDF、`paper-blogs/` 中的 58 篇阅读笔记、`paper-slides/` 中的 61 份 HTML PPT(含各自的 `*_assets/` 配图目录)、`assets/paper-imgs/` 中的 59 个论文配图文件夹与 `assets/thumbnails/` 中的 61 张首屏缩略图。开始制作自己的内容前,请先清空这 5 个目录下的资源(保留目录本身),再清空 `slides-manifest.json`、`blogs-manifest.json` 中的数组,或运行 `python scripts/generate_manifests.py` 重建空清单——`index.html` 画廊只读取这两份清单。此外,`other-htmls/` 中的 4 个主题讲解页同样是作者内容,不需要可一并删除。
+
 用 Claude Code / TRAE / CodeBuddy 等任意支持 Skills 的 AI 编程工具 / AI 办公工具打开,然后把下面任意一句发给 Agent:
 
 **产出中文阅读笔记:**
@@ -248,8 +252,8 @@ Paper-Master/
 │   ├── design-prompts/   # 风格设计提示词集合
 │   ├── accmulate-ppts.png
 │   └── favicon.png
-├── pdf-papers/           # 原始论文 PDF 归档(仅 PDF 格式,已 gitignore)
-└── paper-blogs/               # lzk-paper-reading 产出的中文阅读笔记 .md 博客文件(已 gitignore)
+├── pdf-papers/           # 原始论文 PDF 归档(仅 PDF 格式)
+└── paper-blogs/               # lzk-paper-reading 产出的中文阅读笔记 .md 博客文件
 ```
 
 ---
@@ -263,8 +267,8 @@ git clone https://github.com/luoqianshi/Paper-Master.git
 cd Paper-Master
 ```
 
-- 删除 `paper-slides/` 目录下的所有 `.html` 文件、`paper-blogs/` 下的笔记与 `assets/paper-imgs/` 下的配图(以上为作者个人知识库数据)
-- 将 `slides-manifest.json` 文件中的 `slides` 数组清空
+- 清空 `pdf-papers/`、`paper-blogs/`、`paper-slides/`、`assets/paper-imgs/`、`assets/thumbnails/` 下的示例资源(详见上文「立即试用」的清理说明)
+- 清空 `slides-manifest.json`、`blogs-manifest.json` 的数组,或运行 `python scripts/generate_manifests.py` 重建空清单
 - (可选)安装缩略图生成依赖:`pip install playwright && playwright install chromium`
 - (可选)安装 PDF 提取依赖:`pip install pymupdf Pillow`
 
