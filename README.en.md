@@ -168,7 +168,13 @@ The 8 decks below were all generated with `html-paper-slides` assisted by an AI 
 
 ## Core Workflow: pdf-papers → paper-blogs → paper-slides
 
+Paper reading tends to hit three pain points: no explanation when you get stuck, notes scattered everywhere after you finish, and a second round of manual work to turn a PDF into a presentation deck.
+
+![The three pain points of paper reading: can't understand, can't write up, can't present](assets/problems.png)
+
 The repository's differentiator is unifying "paper reading" into one **reproducible, version-controlled** three-stage pipeline, where a single paper can yield both a "note" and a "deck":
+
+![The pdf-papers → paper-blogs → paper-slides three-stage pipeline](assets/workflow.png)
 
 ```
 ┌────────────┐    ┌────────────┐    ┌──────────────────────────┐

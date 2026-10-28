@@ -166,7 +166,13 @@ cd Paper-Master
 
 ## 核心工作流:pdf-papers → paper-blogs → paper-slides
 
+在读论文这件事上,常见三类痛点:读不懂时缺少讲解、读完的笔记散落各处、从论文到汇报 PPT 又要重复劳动一遍。
+
+![论文精读的三类痛点:读不懂、写不成、做不成 PPT](assets/problems.png)
+
 本仓库的差异化在于把"论文精读"统一到一条**可复现、可版本化**的三段式流水线上,一篇论文可同时产出"笔记"与"PPT"两种资产:
+
+![pdf-papers → paper-blogs → paper-slides 三段式流水线](assets/workflow.png)
 
 ```
 ┌────────────┐    ┌────────────┐    ┌──────────────────────────┐
