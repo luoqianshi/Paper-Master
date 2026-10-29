@@ -4,27 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="../assets/favicon.png" type="image/png" />
-<title>Powerful-IoU: More straightforward and faster bounding box regression loss</title>
+<title>Powerful-IoU: More straightforward and faster bounding box regression loss with a nonmonotonic focusing mechanism</title>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-:root {
-  --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843;
-  --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px;
-}
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
 html { font-size: 16px; scroll-behavior: smooth; }
-body {
-  background: var(--bg); color: var(--text);
-  font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none;
-}
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
 .deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-.slide {
-  position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center;
-  padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden;
-  transform: translateY(60px) scale(0.97);
-  transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s;
-  will-change: opacity, transform;
-}
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
 .slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
 .slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
 .progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
@@ -35,11 +22,9 @@ body {
 .hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
 .hint.hidden { opacity: 0; }
 .slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
-h1 { font-size: clamp(30px, 4vw, 54px); font-weight: 800; line-height: 1.18; color: var(--text); letter-spacing: -1.5px; }
-h1 .highlight { color: var(--title); }
 h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
 h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
-.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 860px; }
 .body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
 .small-text { font-size: clamp(11px, 1.05vw, 14px); color: #777; line-height: 1.5; }
 .divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
@@ -55,30 +40,25 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
 .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
 .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
 .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
 .card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
 .card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
 .card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.card.tight { padding: clamp(12px, 1.4vw, 18px); }
+.card.tight h3 { font-size: clamp(13px, 1.25vw, 17px); margin-bottom: 6px; }
+.card.tight .body-text { font-size: clamp(11px, 1.05vw, 14px); line-height: 1.55; }
+.card .card-num.sm { font-size: clamp(18px, 2vw, 28px); margin-bottom: 6px; }
 .highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
 .highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
 .highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.highlight-bar.compact p { font-size: clamp(12px, 1.15vw, 16px); }
 .bullet-list { list-style: none; padding: 0; margin-top: 12px; }
 .bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
 .bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
 .bullet-list li .em { color: var(--accent); font-weight: 600; }
-.vs-row { display: flex; align-items: stretch; gap: 24px; margin-top: 16px; }
-.vs-col { flex: 1; border-radius: var(--radius); padding: clamp(14px, 1.7vw, 22px); display: flex; flex-direction: column; position: relative; }
-.vs-col.left-col { background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.15); }
-.vs-col.right-col { background: rgba(34,197,94,0.04); border: 1px solid rgba(34,197,94,0.15); }
-.vs-col .vs-tag { display: inline-block; font-size: clamp(10px, 0.9vw, 12px); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 6px; margin-bottom: 12px; width: fit-content; }
-.vs-col.left-col .vs-tag { background: rgba(239,68,68,0.1); color: #b91c1c; }
-.vs-col.right-col .vs-tag { background: rgba(34,197,94,0.1); color: #15803d; }
-.vs-col h3 { font-size: clamp(15px, 1.5vw, 21px); margin-bottom: 10px; }
-.vs-col ul { list-style: none; padding: 0; }
-.vs-col ul li { font-size: clamp(12px, 1.15vw, 16px); color: #333; line-height: 1.55; padding: 3px 0 3px 20px; position: relative; }
-.vs-col ul li::before { content: ''; position: absolute; left: 0; top: 11px; width: 7px; height: 7px; border-radius: 50%; }
-.vs-col.left-col ul li::before { background: #ef4444; }
-.vs-col.right-col ul li::before { background: #22c55e; }
+.bullet-list.compact li { font-size: clamp(11px, 1.1vw, 15px); line-height: 1.55; padding: 3px 0 3px 18px; }
+.bullet-list.compact li::before { top: 10px; width: 6px; height: 6px; }
 .prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
 .prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
 .prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
@@ -87,33 +67,37 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .prompt-box .formula i { color: #a8c6ec; font-style: italic; }
 .prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
 .prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
-.fx-inline { font-weight: 600; color: var(--accent); white-space: nowrap; }
-.fx-inline i { font-style: italic; }
-.fx-inline sub, .fx-inline sup { font-size: 68%; }
-.frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 5px; line-height: 1.15; }
-.frac .num { padding: 0 6px 3px; border-bottom: 1.6px solid rgba(255,255,255,0.75); }
-.frac .den { padding: 3px 6px 0; }
+.prompt-box.slim { padding: clamp(11px, 1.3vw, 18px) clamp(16px, 1.8vw, 26px); }
+.prompt-box.slim .formula { font-size: clamp(13px, 1.45vw, 20px); }
 .glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
 .glow-blue { background: var(--title); }
 .glow-navy { background: var(--accent); }
 .glow.tl { top: -100px; left: -100px; }
-.glow.tr { top: -120px; right: -120px; }
 .glow.br { bottom: -120px; right: -100px; }
-.glow.bl { bottom: -120px; left: -100px; }
 .figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
 .figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-box.wide img { max-height: 40vh; }
+.figure-box.xwide img { max-height: 32vh; }
 .figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
 .figure-caption .cap-em { color: var(--title); font-weight: 600; }
 .split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
 .split .split-text { flex: 1.05; min-width: 0; }
 .split .figure-box { flex: 1; margin-top: 0; }
 .split .figure-box img { max-height: 56vh; }
-.steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
-.step { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.step .step-num { font-size: clamp(10px, 0.9vw, 13px); font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; }
-.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
-.step .small-text { font-size: clamp(11px, 1vw, 14px); }
-.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b8c4d4; flex-shrink: 0; }
+.fig-pair { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(14px, 2vw, 28px); margin-top: 14px; }
+.fig-pair .cell { display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.fig-pair .cell img { max-width: 100%; max-height: 44vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.fig-pair .cell .figure-caption { margin-top: 8px; max-width: 100%; }
+.vs-row { display: flex; align-items: stretch; gap: 20px; margin-top: 20px; }
+.vs-col { flex: 1; border-radius: var(--radius); padding: clamp(16px, 1.9vw, 26px); display: flex; flex-direction: column; }
+.vs-col.left-col { background: #f4f6f9; border: 1px solid var(--border); }
+.vs-col.right-col { background: rgba(57,102,162,0.07); border: 1px solid rgba(57,102,162,0.22); }
+.vs-col .vs-tag { display: inline-block; font-size: clamp(10px, 0.9vw, 12px); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 6px; margin-bottom: 12px; width: fit-content; }
+.vs-col.left-col .vs-tag { background: rgba(19,40,67,0.08); color: #66788c; }
+.vs-col.right-col .vs-tag { background: rgba(57,102,162,0.14); color: var(--title); }
+.vs-col h3 { font-size: clamp(15px, 1.55vw, 21px); margin-bottom: 8px; color: var(--accent); }
+.vs-col .bullet-list { margin-top: 6px; }
+.vs-col .bullet-list li { font-size: clamp(12px, 1.15vw, 16px); line-height: 1.6; }
 .end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
@@ -124,7 +108,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
 .slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
 .slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
-@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .vs-row { flex-direction: column; gap: 12px; } .steps { flex-direction: column; } .dots { display: none; } .split { flex-direction: column; } }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3, .card-grid.cols-4 { grid-template-columns: 1fr; } .dots { display: none; } .split { flex-direction: column; } .fig-pair { grid-template-columns: 1fr; } .vs-row { flex-direction: column; } }
 </style>
 </head>
 <body>
@@ -135,7 +119,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 
 <div class="deck" id="deck">
 
-<!-- ═══════ 1 封面 ═══════ -->
+<!-- 1 封面 -->
 <section class="slide">
   <div class="glow glow-blue tl"></div>
   <div class="glow glow-navy br"></div>
@@ -143,197 +127,482 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
     <span class="dot-yellow"></span>
     PAPER READING
     <span class="dot-gray"></span>
-    Neural Networks 2024 · CCF-B
+    NEURAL NETWORKS 2024 · CCF-B
   </div>
-  <div class="anim" style="font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
-    <span class="highlight">PIoU</span>
+  <div class="anim" style="font-size: clamp(2.4rem, 5.5vw, 4.5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
+    <span class="highlight">Powerful-IoU</span>
   </div>
-  <div class="anim" style="font-size: clamp(16px, 2vw, 28px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35;">
-    More Straightforward and Faster Bounding Box<br>Regression Loss with Nonmonotonic Focusing
+  <div class="anim" style="font-size: clamp(15px, 1.8vw, 25px); font-weight: 700; color: var(--accent); margin-top: 12px; line-height: 1.4;">
+    More straightforward and faster bounding box regression loss<br>with a nonmonotonic focusing mechanism
   </div>
-  <p class="anim subtitle">以目标框边长为分母的尺寸自适应惩罚因子，配合按锚框质量调节梯度的惩罚函数，引导锚框沿更直接路径回归。</p>
+  <p class="anim subtitle">把惩罚项的分母从「最小外接框尺寸」换成「目标框边长」，配上按锚框质量调节梯度的 <i>f</i>(<i>x</i>) = 1 − e<sup>−<i>x</i>²</sup> 与单超参数非单调注意力层，让锚框沿直线回归 —— 60 epochs 即对齐目标框。</p>
   <div class="anim contributors">
     <div class="author">Can Liu · Kaige Wang · Qing Li · Fazhan Zhao · Kun Zhao · Hongtu Ma</div>
-    <div class="affil">中国科学院微电子研究所 · 中国科学院大学 · 中国航天科技创新研究院</div>
+    <div class="affil">中国科学院微电子研究所 · 中国科学院大学集成电路学院 · 中国航天科技创新研究院 · 中国科学院自动化研究所</div>
   </div>
   <div class="anim cover-meta">
-    <span class="cover-tag">损失函数</span>
     <span class="cover-tag">边界框回归</span>
-    <span class="cover-tag">非单调聚焦</span>
-    <span class="cover-tag">Neural Networks 2024</span>
+    <span class="cover-tag">损失函数设计</span>
+    <span class="cover-tag">非单调聚焦机制</span>
+    <span class="cover-tag">锚框膨胀</span>
+    <span class="cover-tag">Neural Networks 170:276–284</span>
   </div>
 </section>
 
-<!-- ═══════ 2 核心贡献 ═══════ -->
+<!-- 2 核心贡献 -->
 <section class="slide">
   <div class="anim slide-label">Contributions</div>
-  <div class="anim"><h2>核心贡献：消除锚框膨胀 + 非单调聚焦机制</h2></div>
+  <div class="anim"><h2>核心贡献：从惩罚因子的分母下手</h2></div>
   <div class="anim divider"></div>
-  <div class="anim card-grid cols-3">
+  <div class="anim card-grid cols-2">
     <div class="card">
       <span class="card-num">01</span>
-      <h3>根因级膨胀分析</h3>
-      <p class="body-text">用梯度推导证明 GIoU、CIoU、EIoU、SIoU 四类损失的惩罚因子都以 <span style="color:var(--title);font-weight:600;">最小外接框尺寸</span> 为分母，导致锚框膨胀。</p>
+      <h3>根因分析：锚框为什么会膨胀</h3>
+      <p class="body-text">分析 IoU 系损失中锚框膨胀的成因，系统考察惩罚项的<span style="color:var(--title);font-weight:600;">惩罚因子</span>与<span style="color:var(--title);font-weight:600;">函数形式</span>，指出分母依赖最小外接框尺寸是共同根源。</p>
     </div>
     <div class="card">
       <span class="card-num">02</span>
-      <h3>尺寸自适应惩罚因子</h3>
-      <p class="body-text">PIoU 惩罚因子 P 只用 <span style="color:var(--title);font-weight:600;">目标框边长</span> 作分母，天然免疫膨胀且自适应目标尺寸。</p>
+      <h3>PIoU 损失</h3>
+      <p class="body-text">以具有良好特性的惩罚因子 <i>P</i> 配合基于锚框质量的梯度调节函数 <i>f</i>(<i>x</i>)，有效解决锚框膨胀，收敛速度<span style="color:var(--title);font-weight:600;">快于现有 IoU 系损失</span>。</p>
     </div>
     <div class="card">
       <span class="card-num">03</span>
-      <h3>PIoU v2 非单调聚焦</h3>
-      <p class="body-text">仅一个超参数 λ 控制的注意力层，将最大梯度分配给 <span style="color:var(--title);font-weight:600;">中等质量</span> 锚框。</p>
+      <h3>PIoU v2：单超参数非单调注意力层</h3>
+      <p class="body-text">设计仅由一个超参数 λ 控制的非单调注意力层并与 PIoU 结合，<span style="color:var(--title);font-weight:600;">增强对中等质量锚框的聚焦能力</span>，调参成本低于 WIoU 的双超参数设计。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">04</span>
+      <h3>SOTA 验证</h3>
+      <p class="body-text">把 PIoU v2 集成进 YOLOv8 与 DINO，在 <span style="color:var(--title);font-weight:600;">MS COCO、PASCAL VOC 与自建 IC SEM</span> 三个数据集上取得所有对比损失中最高的检测精度。</p>
     </div>
   </div>
-  <div class="anim highlight-bar">
-    <p>PIoU v2 在 YOLOv8 + COCO 上取得 <span class="accent-word">AP75/AP/AP50 = 53.26/48.63/65.42</span>，在全部损失函数中达到 SOTA。</p>
+</section>
+
+<!-- 3 研究动机 1 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="anim slide-label">Motivation · 1/2</div>
+  <div class="anim"><h2>BBR 损失的演进：从范数类到 IoU 系</h2></div>
+  <div class="anim divider"></div>
+  <ul class="anim bullet-list">
+    <li><span class="em">l<sub>n</sub>-norm 类损失</span>把 <i>xywh</i> 四个回归量当独立变量处理，忽略变量之间的相关性，且对目标尺度敏感。YOLOv1 预测宽高的平方根、Fast R-CNN 用 l<sub>1</sub>-smooth 抗离群值，都只是缓解，精度提升有限。</li>
+    <li><span class="em">IoU 损失</span>把预测框的四条边界当作整体回归：<i>L</i><sub>IoU</sub> = 1 − <i>I</i>/<i>U</i>，解决了相关性问题；但当两框没有重叠时，<i>L</i><sub>IoU</sub> 的梯度会消失。</li>
+    <li><span class="em">IoU 系改进</span>围绕惩罚项展开：GIoU 补上无重叠时的梯度，DIoU 直接最小化中心点归一化距离，CIoU 再加长宽比惩罚，EIoU 把长宽比换成更直接的宽高差，SIoU 从角度、形状、距离三方面设计惩罚项。</li>
+    <li><span class="em">被忽略的问题</span>：改进都集中在惩罚项的<i>形式</i>上，惩罚因子<i>本身是否合理</i>长期没被追问。CIoU 与 EIoU 虽然承认了锚框膨胀现象，却没有找到根因、也没有解决它。</li>
+  </ul>
+</section>
+
+<!-- 4 研究动机 2 -->
+<section class="slide">
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Motivation · 2/2</div>
+  <div class="anim"><h2>本文要同时解决的两个瓶颈</h2></div>
+  <div class="anim vs-row">
+    <div class="vs-col left-col">
+      <span class="vs-tag">瓶颈一</span>
+      <h3>惩罚因子不合理 → 锚框膨胀</h3>
+      <ul class="bullet-list">
+        <li>大多数惩罚项以预测框与目标框<span class="em">最小外接框的对角线长度或面积</span>作为分母。</li>
+        <li>仿真实验观察到：即使预测框面积已经大于目标框，多数损失仍然促使它继续增大面积。</li>
+        <li>这种回归路径迂回而缓慢，需要更多训练轮次才能收敛。</li>
+        <li>部分惩罚项在特定情形下会退化，无法真实反映两框之间的差异。</li>
+      </ul>
+    </div>
+    <div class="vs-col right-col">
+      <span class="vs-tag">瓶颈二</span>
+      <h3>聚焦机制利用不足</h3>
+      <ul class="bullet-list">
+        <li><span class="em">Focal-EIoU</span> 引入回归版 Focal Loss，但注意力函数 <i>IoU</i><sup>τ</sup> <span class="em">单调递增</span>，只放大高质量锚框的梯度，未能充分发挥注意力机制的潜力。</li>
+        <li><span class="em">WIoU</span> 用 batch 内平均质量做基准，实现了动态非单调聚焦，却依赖 δ 与 ε <span class="em">两个难以确定的超参数</span>，不同数据集上都难以调定。</li>
+        <li>BBR 中高质量实例远少于低质量实例，聚焦机制本应把梯度分给最该优化的那批锚框。</li>
+      </ul>
+    </div>
   </div>
 </section>
 
-<!-- ═══════ 3 研究动机 ═══════ -->
+<!-- 5 现有 IoU 系损失的通用形式 + fig2 -->
 <section class="slide">
-  <div class="anim slide-label">Motivation</div>
-  <div class="anim"><h2>锚框膨胀：IoU 系损失的共同根源</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Powerful-IoU/piou_fig1_regression_process.png" alt="回归过程对比"></div>
-  <div class="anim figure-caption">
-    GIoU、CIoU、EIoU、SIoU 引导的锚框在回归初期都 <span class="cap-em">明显增大了面积（膨胀）</span>，
-    而 PIoU 引导的锚框几乎沿直线路径逼近目标框，60 epochs 即可对齐。
+  <div class="anim slide-label">Method · 通用形式</div>
+  <div class="anim"><h2>现有 IoU 系损失的通用形式</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <div class="prompt-box slim">
+        <div class="prompt-label">通用形式</div>
+        <div class="formula"><i>Loss</i> = <i>L</i><sub>IoU</sub> + <i>R</i>( <i>a</i>(<i>B</i>,<i>B</i><sup>gt</sup>), <i>b</i>(<i>B</i>,<i>B</i><sup>gt</sup>), <i>c</i>(<i>B</i>,<i>B</i><sup>gt</sup>), … )</div>
+        <div class="formula-note"><i>B</i>、<i>B</i><sup>gt</sup> 分别为预测框与目标框；<i>a</i>、<i>b</i>、<i>c</i> 是惩罚因子，通常是度量两框匹配程度的几何量；<i>R</i> 是以惩罚因子为自变量的惩罚项。</div>
+      </div>
+      <ul class="bullet-list compact">
+        <li>图 (a)(b)：GIoU、DIoU、CIoU、EIoU、SIoU 的损失因子都用<span class="em">最小外接框（灰色虚线框）</span>的对角线长度、宽高或面积作分母。</li>
+        <li>图 (c)：PIoU <span class="em">只用目标框的边长</span>作分母。</li>
+        <li>分母的这一差异，正是锚框膨胀问题的根源。</li>
+      </ul>
+    </div>
+    <div class="figure-box">
+      <div>
+        <img src="../assets/paper-imgs/Powerful-IoU/piou_fig2_loss_formulas.png" alt="五类 IoU 系损失的公式与几何示意">
+        <div class="figure-caption" style="margin-left:auto;margin-right:auto;">五类 IoU 系损失的公式与几何示意：<span class="cap-em">(a)(b) 以最小外接框尺寸为分母，(c) 中 PIoU 只用目标框边长作分母</span></div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ═══════ 4 膨胀根因分析 ═══════ -->
+<!-- 6 膨胀根源：梯度分析 -->
 <section class="slide">
-  <div class="glow glow-blue tr"></div>
-  <div class="anim slide-label">Method 01</div>
-  <div class="anim"><h2>膨胀根源：惩罚项分母都依赖最小外接框</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Powerful-IoU/piou_fig2_loss_formulas.png" alt="五类 IoU 系损失公式"></div>
-  <div class="anim figure-caption">
-    GIoU、DIoU、CIoU、EIoU 与 SIoU 的惩罚因子都用最小外接框的对角线、宽高或面积作分母；
-    <span class="cap-em">PIoU 只用目标框边长作分母</span>，分母不随锚框变化。
+  <div class="anim slide-label">Method · 根因分析</div>
+  <div class="anim"><h2>锚框膨胀的根源：三类惩罚项的梯度</h2></div>
+  <div class="anim card-grid cols-3">
+    <div class="card tight">
+      <span class="card-num sm">GIoU</span>
+      <h3><i>R</i><sub>GIoU</sub> = (<i>A</i> − <i>U</i>)/<i>A</i></h3>
+      <p class="body-text">∂<i>R</i>/∂<i>A</i> = <i>U</i>/<i>A</i>²，∂<i>R</i>/∂<i>U</i> = −1/<i>A</i>。两框不重叠时 <i>U</i> &lt; <i>A</i>，于是 |∂<i>R</i>/∂<i>U</i>| &gt; |∂<i>R</i>/∂<i>A</i>|：<i>A</i> 与 <i>U</i> 同增反而使 <i>R</i><sub>GIoU</sub> 下降。预测框不向目标移动、<b>仅靠自我膨胀就能减小惩罚</b>。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num sm">CIoU / EIoU</span>
+      <h3><i>R</i><sub>D</sub> = <i>d</i>²/<i>c</i>²</h3>
+      <p class="body-text">∂<i>R</i><sub>D</sub>/∂<i>d</i> = 2<i>d</i>/<i>c</i>²，<i>c</i> 增大时 <i>R</i><sub>D</sub> 减小。两框不重叠、<i>L</i><sub>IoU</sub> 不变的情况下，<b>单纯放大预测框就能降低损失</b> —— 用 <i>c</i> 作分母不合理。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num sm">SIoU</span>
+      <h3>距离成本 Δ</h3>
+      <p class="body-text">∂Δ/∂<i>w</i><sub>c</sub> = −e<sup>−γ<i>w</i><sub>I</sub></sup> · γ<i>w</i><sub>I</sub> / <i>w</i><sub>c</sub>² 为负；<i>w</i><sub>c</sub>、<i>h</i><sub>c</sub> 增大时 Δ 下降，<b>膨胀问题依然存在</b>。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar compact">
+    <p><span class="accent-word">共同根源：</span>惩罚项的分母都依赖最小外接框的尺寸。除此之外还有各自的退化问题 —— GIoU 在两框存在包含关系时 <i>A</i>−<i>U</i> = 0，退化成 IoU 损失；CIoU 的两项都不反映目标框尺寸变化；EIoU 的形状差项数值通常很小，梯度不足以阻止膨胀；SIoU 结构复杂且距离、形状成本都不自适应目标尺寸。</p>
   </div>
 </section>
 
-<!-- ═══════ 5 惩罚因子与函数 ═══════ -->
+<!-- 7 回归过程对比 + fig1 -->
 <section class="slide">
-  <div class="anim slide-label">Method 02</div>
-  <div class="anim"><h2>PIoU 的两个核心组件</h2></div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">组件一：尺寸自适应惩罚因子</div>
-    <p class="formula">
-      <i>P</i> = (<i>d</i><sub>w₁</sub>/<i>w</i><sub>gt</sub> + <i>d</i><sub>w₂</sub>/<i>w</i><sub>gt</sub> + <i>d</i><sub>h₁</sub>/<i>h</i><sub>gt</sub> + <i>d</i><sub>h₂</sub>/<i>h</i><sub>gt</sub>) / 4
-    </p>
-    <p class="formula-note">d 是预测框与目标框对应边之间距离的绝对值，w<sub>gt</sub>、h<sub>gt</sub> 是目标框宽高。分母只取决于目标框，膨胀不会改变 P。</p>
-  </div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">组件二：质量自适应惩罚函数</div>
-    <p class="formula"><i>f</i>(<i>x</i>) = 1 − <i>e</i><sup>−<i>x</i>²</sup></p>
-    <p class="formula">
-      <i>L</i><sub>PIoU</sub> = <i>L</i><sub>IoU</sub> + <i>f</i>(<i>P</i>),&nbsp;&nbsp; 0 ≤ <i>L</i><sub>PIoU</sub> ≤ 2
-    </p>
-    <p class="formula-note">f(x) 呈「两端小、中间大」的非单调形态，无需额外权重即实现按锚框质量的静态聚焦。</p>
-  </div>
-</section>
-
-<!-- ═══════ 6 质量梯度分析 ═══════ -->
-<section class="slide">
-  <div class="anim slide-label">Method 02</div>
-  <div class="anim"><h2>惩罚函数按锚框质量自适应调节梯度</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Powerful-IoU/piou_fig5_quality_cases.png" alt="三种质量锚框的梯度"></div>
-  <div class="anim figure-caption">
-    P 很大时（低质量）f'(P) 取 <span class="cap-em">小值抑制有害梯度</span>；P 在 1 附近（中等质量）f'(P) 达到
-    <span class="cap-em">峰值加速回归</span>；P 趋近 0（高质量）梯度逐渐减小，锚框稳定优化到完全对齐。
-  </div>
-</section>
-
-<!-- ═══════ 7 函数形式对比 ═══════ -->
-<section class="slide">
-  <div class="anim slide-label">Method 02</div>
-  <div class="anim"><h2>函数形式的重要性：f(x) vs g₁(x) vs g₂(x)</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Powerful-IoU/piou_fig6_function_forms.png" alt="三种函数形式对比"></div>
-  <div class="anim figure-caption">
-    g₁(x) = x²/2 梯度单调递增，会放大低质量锚框有害梯度；g₂(x) = 0.5x 梯度恒定，对质量无注意力；
-    <span class="cap-em">只有 f(x) 呈现非单调形态</span>，无需额外权重即实现质量自适应聚焦。
-  </div>
-</section>
-
-<!-- ═══════ 8 PIoU v2 非单调聚焦 ═══════ -->
-<section class="slide">
-  <div class="glow glow-navy bl"></div>
-  <div class="anim slide-label">Method 03</div>
-  <div class="anim"><h2>PIoU v2：非单调注意力层增强聚焦</h2></div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">质量度量与注意力函数</div>
-    <p class="formula"><i>q</i> = <i>e</i><sup>−<i>P</i></sup>,&nbsp;&nbsp; <i>q</i> ∈ (0, 1]</p>
-    <p class="formula"><i>u</i>(<i>x</i>) = 3<i>x</i><i>e</i><sup>−<i>x</i>²</sup></p>
-    <p class="formula"><i>L</i><sub>PIoU_v2</sub> = <i>u</i>(<i>λq</i>) · <i>L</i><sub>PIoU</sub></p>
-    <p class="formula-note">λ 是唯一超参数，控制梯度峰值对应的锚框质量位置。λ 越大峰值越偏向低质量一侧。</p>
-  </div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Powerful-IoU/piou_fig7_attention.png" alt="注意力函数随 λ 变化" style="max-height:30vh;"></div>
-</section>
-
-<!-- ═══════ 9 仿真与收敛 ═══════ -->
-<section class="slide">
-  <div class="anim slide-label">Experiments 01</div>
-  <div class="anim"><h2>回归仿真：PIoU 收敛速度最快</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Powerful-IoU/piou_fig4_simulation.png" alt="仿真回归曲线"></div>
-  <div class="anim figure-caption">
-    1,715,000 个回归案例的仿真中，<span class="cap-em">PIoU 的 L<sub>IoU</sub> 曲线下降最快</span>，
-    60 epochs 即可实现锚框对齐，而其余 IoU 系损失通常需要 80-300 epochs。
-  </div>
-</section>
-
-<!-- ═══════ 10 COCO 对比 ═══════ -->
-<section class="slide">
-  <div class="anim slide-label">Experiments 02</div>
-  <div class="anim"><h2>MS COCO + YOLOv8：PIoU v2 全面 SOTA</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Powerful-IoU/piou_table1_coco.png" alt="COCO 对比"></div>
-  <div class="anim figure-caption">
-    PIoU v2 取得 <span class="cap-em">AP75/AP/AP50 = 53.26/48.63/65.42</span>，在全部损失函数中 SOTA；
-    0.5% AP75、0.5% AP50、0.3% AP 的提升幅度明显高于其他损失之间的差距。
-    Focal-EIoU 相比 EIoU 全面下降，说明其注意力函数缺乏泛化性。
-  </div>
-</section>
-
-<!-- ═══════ 11 VOC 与消融 ═══════ -->
-<section class="slide">
-  <div class="anim slide-label">Experiments 03</div>
-  <div class="anim"><h2>DINO + VOC 与超参数敏感性消融</h2></div>
+  <div class="anim slide-label">Method · 现象观察</div>
+  <div class="anim"><h2>不同损失引导的回归过程</h2></div>
   <div class="anim split">
     <div class="split-text">
       <ul class="bullet-list">
-        <li>DINO-4scale + VOC：PIoU v2 以 <span class="em">70.50/64.23</span> 的 AP75/AP 取得 SOTA，比原始 GIoU 提升 1.1% AP75、0.6% AP</li>
-        <li>IC SEM 数据集：PIoU v2 以 <span class="em">96.0/98.9</span> AP/AP75 保持最高</li>
-        <li>λ = 1.3 时最优（AP 50.43），偏大或偏小均掉点</li>
+        <li>图中彩色框是各损失引导下、回归过程中不同时刻的锚框位置。</li>
+        <li><span class="em">GIoU、CIoU、EIoU、SIoU</span> 引导的锚框在回归初期都明显增大了面积，先「膨胀」再去追求与目标框重叠。</li>
+        <li><span class="em">PIoU</span> 引导的锚框几乎沿直线路径逼近目标框，在 <span class="em">60 epochs</span> 时就对齐了目标。</li>
+        <li>其余 IoU 系损失在真实检测训练中通常至少需要 <span class="em">80–300 epochs</span> 才能收敛。</li>
+      </ul>
+      <div class="highlight-bar compact">
+        <p><span class="accent-word">结论：</span>回归路径越直接，收敛越快 —— 这直接来自分母的选择，而不是额外的权重设计。</p>
+      </div>
+    </div>
+    <div class="figure-box">
+      <div>
+        <img src="../assets/paper-imgs/Powerful-IoU/piou_fig1_regression_process.png" alt="不同 IoU 系损失引导的锚框回归过程">
+        <div class="figure-caption" style="margin-left:auto;margin-right:auto;">不同 IoU 系损失引导的锚框回归过程：<span class="cap-em">除 PIoU 外所有损失引导的锚框都存在面积膨胀问题，PIoU 收敛最快</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 数值反例 + fig3 -->
+<section class="slide">
+  <div class="anim slide-label">Method · 数值反例</div>
+  <div class="anim"><h2>锚框不动、只是变大，惩罚项就降了</h2></div>
+  <div class="anim small-text" style="margin-top:10px;">锚框中心固定在 (4, 4)，宽高从 4 × 2 扩大到 6 × 3 —— 位置完全没变，只是面积膨胀：</div>
+  <div class="anim card-grid cols-4">
+    <div class="card tight">
+      <span class="card-num sm"><i>R</i><sub>GIoU</sub></span>
+      <h3>0.7143 → 0.5769</h3>
+      <p class="body-text">下降 ↓ 惩罚变小</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num sm"><i>R</i><sub>D</sub></span>
+      <h3>0.3765 → 0.3012</h3>
+      <p class="body-text">下降 ↓ 惩罚变小</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num sm">Δ</span>
+      <h3>0.9219 → 0.8531</h3>
+      <p class="body-text">下降 ↓ 惩罚变小</p>
+    </div>
+    <div class="card tight" style="background:rgba(57,102,162,0.08);border-color:rgba(57,102,162,0.25);">
+      <span class="card-num sm"><i>R</i><sub>PIoU</sub></span>
+      <h3>0.9817 → 0.9817</h3>
+      <p class="body-text"><b>保持不变</b> ✓ 免疫膨胀</p>
+    </div>
+  </div>
+  <div class="anim figure-box wide">
+    <div>
+      <img src="../assets/paper-imgs/Powerful-IoU/piou_fig3_enlargement_example.png" alt="锚框中心不动、面积扩大后惩罚项的变化">
+      <div class="figure-caption" style="margin-left:auto;margin-right:auto;">锚框中心不动、面积从宽 4 高 2 扩大到宽 6 高 3：<span class="cap-em">三个惩罚项都在「什么都没做、只是变大」时减小了，唯有 <i>R</i><sub>PIoU</sub> 保持 0.9817 不变</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 尺寸自适应惩罚因子 P -->
+<section class="slide">
+  <div class="glow glow-blue br"></div>
+  <div class="anim slide-label">Method · 组件一</div>
+  <div class="anim"><h2>尺寸自适应惩罚因子 <i>P</i></h2></div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">惩罚因子</div>
+    <div class="formula"><i>P</i> = ( <i>d</i><sub>w1</sub>/<i>w</i><sub>gt</sub> + <i>d</i><sub>w2</sub>/<i>w</i><sub>gt</sub> + <i>d</i><sub>h1</sub>/<i>h</i><sub>gt</sub> + <i>d</i><sub>h2</sub>/<i>h</i><sub>gt</sub> ) / 4</div>
+    <div class="formula-note"><i>d</i><sub>w1</sub>、<i>d</i><sub>w2</sub>、<i>d</i><sub>h1</sub>、<i>d</i><sub>h2</sub> 是预测框与目标框对应两条宽边、两条高边之间距离的绝对值；<i>w</i><sub>gt</sub>、<i>h</i><sub>gt</sub> 是目标框的宽与高（几何示意见第 5 页图 (c)）。</div>
+  </div>
+  <div class="anim card-grid cols-3">
+    <div class="card tight">
+      <span class="card-num sm">性质 1</span>
+      <h3>免疫锚框膨胀</h3>
+      <p class="body-text">分母只取决于目标框的大小，与最小外接框无关 —— 锚框膨胀<b>不会改变</b> <i>P</i>。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num sm">性质 2</span>
+      <h3>不退化</h3>
+      <p class="body-text">只要预测框与目标框不完全重合，<i>P</i> 就<b>不会退化为 0</b>，始终真实反映两框差异。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num sm">性质 3</span>
+      <h3>目标尺寸自适应</h3>
+      <p class="body-text">逐边除以目标框边长的写法，使 <i>P</i> 对目标尺寸<b>具有自适应性</b>，直接度量四条边的对齐程度。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar compact">
+    <p><i>P</i> 解决的是<span class="accent-word">「用什么来度量差距」</span>；而惩罚项的梯度该有多大，由下一个组件 —— 惩罚函数 <i>f</i>(<i>x</i>) 决定。</p>
+  </div>
+</section>
+
+<!-- 10 质量自适应惩罚函数 + fig5 -->
+<section class="slide">
+  <div class="anim slide-label">Method · 组件二</div>
+  <div class="anim"><h2>质量自适应惩罚函数与 PIoU 损失</h2></div>
+  <div class="anim prompt-box slim">
+    <div class="formula"><i>f</i>(<i>x</i>) = 1 − e<sup>−<i>x</i>²</sup> &nbsp;&nbsp;→&nbsp;&nbsp; <i>L</i><sub>PIoU</sub> = 1 − PIoU = <i>L</i><sub>IoU</sub> + <i>f</i>(<i>P</i>)，&nbsp; 0 ≤ <i>L</i><sub>PIoU</sub> ≤ 2</div>
+    <div class="formula-note"><i>x</i> 取惩罚因子 <i>P</i> 的值，锚框质量越高 <i>P</i> 越小；PIoU = IoU − <i>f</i>(<i>P</i>)，−1 ≤ PIoU ≤ 1。等价于在 IoU 损失上叠加一个<b style="color:#fff;">有界的非单调惩罚项</b>。</div>
+  </div>
+  <div class="anim figure-box wide">
+    <div>
+      <img src="../assets/paper-imgs/Powerful-IoU/piou_fig5_quality_cases.png" alt="低质量、中等质量、高质量三种锚框的损失与梯度">
+      <div class="figure-caption" style="margin-left:auto;margin-right:auto;">低质量、中等质量、高质量三种锚框的 <i>L</i><sub>IoU</sub>、<i>L</i><sub>PIoU</sub> 与梯度 <i>f</i>′(<i>P</i>)。<span class="cap-em"><i>P</i> &gt; 2 时 <i>f</i>′(<i>P</i>) 取小值以抑制有害梯度；<i>P</i> ≈ 1 时达到峰值以加速回归；<i>P</i> → 0 时梯度渐减以稳定对齐。</span>算例：<i>L</i><sub>IoU</sub> = 0.750、<i>P</i> = 0.5 → <i>f</i>(0.5) = 1 − e<sup>−0.25</sup> ≈ 0.221，<i>L</i><sub>PIoU</sub> = 0.971；梯度 <i>f</i>′(<i>P</i>) = 2<i>P</i>e<sup>−<i>P</i>²</sup> ≈ 0.779，正处于峰值附近 —— 中等质量锚框同时获得可观惩罚量与接近最大的梯度。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 11 惩罚函数形式对照 + fig6 -->
+<section class="slide">
+  <div class="anim slide-label">Method · 函数形式</div>
+  <div class="anim"><h2>为什么是 <i>f</i>(<i>x</i>)：三种函数形式对照</h2></div>
+  <div class="anim prompt-box slim">
+    <div class="formula"><i>g</i><sub>1</sub>(<i>x</i>) = <i>x</i>²/2，&nbsp; <i>L</i><sub>1</sub> = <i>L</i><sub>IoU</sub> + <i>g</i><sub>1</sub>(<i>P</i>) &nbsp;&nbsp;|&nbsp;&nbsp; <i>g</i><sub>2</sub>(<i>x</i>) = 0.5<i>x</i>，&nbsp; <i>L</i><sub>2</sub> = <i>L</i><sub>IoU</sub> + <i>g</i><sub>2</sub>(<i>P</i>)</div>
+    <div class="formula-note">原文用<b style="color:#fff;">同一个惩罚因子 <i>P</i></b> 配另外两个函数做对照，以隔离「函数形式」这一个变量的影响。</div>
+  </div>
+  <div class="anim card-grid cols-3">
+    <div class="card tight" style="background:rgba(57,102,162,0.08);border-color:rgba(57,102,162,0.25);">
+      <span class="card-num sm"><i>f</i>(<i>x</i>)</span>
+      <h3>两端小、中间大 ✓</h3>
+      <p class="body-text">非单调形态，<b>无需任何额外权重</b>就实现了按锚框质量的静态聚焦，且值域有界、优化稳定。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num sm"><i>g</i><sub>1</sub>(<i>x</i>)</span>
+      <h3>单调递增 ✗</h3>
+      <p class="body-text">梯度随锚框质量变差而增大，会把低质量锚框的<b>有害梯度放大</b>。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num sm"><i>g</i><sub>2</sub>(<i>x</i>)</span>
+      <h3>恒定 ✗</h3>
+      <p class="body-text">梯度恒定不变，对锚框质量<b>毫无注意力</b>，等于没有聚焦机制。</p>
+    </div>
+  </div>
+  <div class="anim figure-box wide">
+    <div>
+      <img src="../assets/paper-imgs/Powerful-IoU/piou_fig6_function_forms.png" alt="三种惩罚函数及其导数的图像">
+      <div class="figure-caption" style="margin-left:auto;margin-right:auto;">三种惩罚函数 <i>f</i>(<i>x</i>)、<i>g</i><sub>1</sub>(<i>x</i>)、<i>g</i><sub>2</sub>(<i>x</i>) 及其导数的图像：<span class="cap-em">(a) 函数值，(b) 梯度 —— 只有 <i>f</i>(<i>x</i>) 的导数呈现「两端小、中间大」</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 12 PIoU v2 + fig7 -->
+<section class="slide">
+  <div class="anim slide-label">Method · PIoU v2</div>
+  <div class="anim"><h2>非单调聚焦机制与 PIoU v2</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <div class="prompt-box slim">
+        <div class="formula"><i>q</i> = e<sup>−<i>P</i></sup>，&nbsp; <i>q</i> ∈ (0, 1]</div>
+        <div class="formula"><i>u</i>(<i>x</i>) = 3<i>x</i> · e<sup>−<i>x</i>²</sup></div>
+        <div class="formula"><i>L</i><sub>PIoU_v2</sub> = <i>u</i>(λ<i>q</i>) · <i>L</i><sub>PIoU</sub> = 3(λ<i>q</i>) e<sup>−(λ<i>q</i>)²</sup> · <i>L</i><sub>PIoU</sub></div>
+        <div class="formula-note"><i>q</i> 度量锚框质量：<i>q</i> = 1 即 <i>P</i> = 0，两框完全重合；<i>P</i> 越大 <i>q</i> 越小、质量越低。λ 是<b style="color:#fff;">唯一需要调节的超参数</b>。</div>
+      </div>
+      <ul class="bullet-list compact">
+        <li>注意力层把<span class="em">最大梯度分配给中等质量锚框</span>，同时抑制低质量锚框的有害梯度。</li>
+        <li>λ 决定梯度峰值对应的锚框质量位置：<span class="em">λ 越大，峰值越偏向低质量一侧</span>。</li>
+        <li>相比 WIoU 的 δ、ε 双超参数，PIoU v2 只需调一个 λ，简化了调参过程。</li>
       </ul>
     </div>
-    <div class="figure-box"><img src="../assets/paper-imgs/Powerful-IoU/piou_table4_lambda.png" alt="λ 消融"></div>
+    <div class="figure-box">
+      <div>
+        <img src="../assets/paper-imgs/Powerful-IoU/piou_fig7_attention.png" alt="不同超参数 λ 下注意力函数 u(λx) 的图像">
+        <div class="figure-caption" style="margin-left:auto;margin-right:auto;">不同超参数 λ 下注意力函数 <i>u</i>(λ<i>x</i>) 的图像：<span class="cap-em">λ 越大，梯度峰值越偏向低质量锚框一侧</span></div>
+      </div>
+    </div>
   </div>
 </section>
 
-<!-- ═══════ 12 惩罚函数消融 ═══════ -->
+<!-- 13 实验设置 -->
 <section class="slide">
-  <div class="anim slide-label">Experiments 04</div>
-  <div class="anim"><h2>惩罚函数形式消融验证</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Powerful-IoU/piou_table5_funcform.png" alt="函数形式消融"></div>
-  <div class="anim figure-caption">
-    f(x) 在 <span class="cap-em">54.12/49.72/69.26</span> 的三项指标上全面优于 g₁(x) 与 g₂(x)，
-    验证了「两端小、中间大」的非单调梯度形态比单调递增或恒定梯度更适合锚框回归。
+  <div class="glow glow-navy tl"></div>
+  <div class="anim slide-label">Experiments · Setup</div>
+  <div class="anim"><h2>实验设置</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-2">
+    <div class="card tight">
+      <span class="card-num sm">数据集</span>
+      <h3>三个数据集、两种用途</h3>
+      <p class="body-text">
+        · <b>MS COCO + PASCAL VOC</b>：不同损失函数的对比实验。<br>
+        · <b>MS COCO 20 类子集</b>：消融实验，28,474 张训练图 / 1,219 张验证图。<br>
+        · <b>IC SEM（自建）</b>：55 nm 集成电路芯片的 SEM 图像，80 张训练图（2,457 实例）/ 40 张验证图（1,332 实例），类别为 MCC、MOSFET、Filler，用于验证实际应用中的泛化性。
+      </p>
+    </div>
+    <div class="card tight">
+      <span class="card-num sm">模型与超参</span>
+      <h3>YOLOv8-m 与 DINO-4scale</h3>
+      <p class="body-text">
+        · YOLOv8-m 在 <b>NVIDIA 3090</b> 上训练，DINO-4scale 在 <b>V100</b> 上训练，全部基于 PyTorch。<br>
+        · 除损失函数与 batch size 外，其余设置均保持源码默认：COCO 主表 batch = 4，其余 YOLOv8 实验 batch = 16，DINO 实验 batch = 32。<br>
+        · 未特别说明时 <b>λ = 1.3</b>；评价指标为验证集上的 <b>AP75 / AP / AP50</b>。
+      </p>
+    </div>
+  </div>
+  <div class="anim highlight-bar compact">
+    <p><span class="accent-word">对照口径：</span>所有对比只替换损失函数，检测器结构与训练配置保持一致 —— 因此精度差异可归因于损失函数本身。IC 图像来自 SMIC，工作受国家重点研发计划 2021YFB3100904 支持。</p>
   </div>
 </section>
 
-<!-- ═══════ 13 可视化 ═══════ -->
+<!-- 14 回归仿真 + fig4 -->
 <section class="slide">
-  <div class="anim slide-label">Experiments 05</div>
-  <div class="anim"><h2>检测可视化：PIoU v2 对不完整目标更敏感</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Powerful-IoU/piou_fig8_detection_examples.png" alt="检测样例"></div>
-  <div class="anim figure-caption">
-    PIoU v2 能凭部分区域准确判断类别并定位（如只露出后半身的 elephants 与被遮挡的 horse），
-    <span class="cap-em">Focal-EIoU 与 WIoU 则漏掉不完整目标或出现定位与分类错误</span>。
+  <div class="anim slide-label">Experiments · 仿真</div>
+  <div class="anim"><h2>回归仿真对比：171.5 万个回归案例</h2></div>
+  <ul class="anim bullet-list compact" style="margin-top:8px;">
+      <li>沿用 CIoU 的做法：在位置 (1, 1) 处生成<span class="em">面积为 1/32、7 种长宽比</span>（1:4、1:3、1:2、1:1、2:1、3:1、4:1）的目标框。</li>
+      <li>在以 (1, 1) 为圆心、半径 0.5 的圆形区域内<span class="em">均匀采样 5,000 个锚框起点</span>；锚框含 7 种尺度（1/32、1/24、3/64、1/16、1/12、3/32、1/8）× 7 种长宽比 = 49 个。</li>
+      <li>共 <span class="em">1,715,000（7 × 7 × 7 × 5,000）个回归案例</span>；学习率 0.01、Adam 优化器、120 epochs，以 <i>L</i><sub>IoU</sub> 为评价指标。</li>
+  </ul>
+  <div class="anim figure-box wide">
+    <div>
+      <img src="../assets/paper-imgs/Powerful-IoU/piou_fig4_simulation.png" alt="多框回归仿真设置与收敛曲线">
+      <div class="figure-caption" style="margin-left:auto;margin-right:auto;">多框回归仿真：(a) 1,715,000 个回归案例的设置；(b) 各损失的 <i>L</i><sub>IoU</sub> 随 epochs 的下降曲线。<span class="cap-em">PIoU 的曲线下降最快，在六种损失中收敛速度第一</span></div>
+    </div>
   </div>
 </section>
 
-<!-- ═══════ 14 总结 ═══════ -->
+<!-- 15 COCO 定量对比 + table1 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · 主对比 1/3</div>
+  <div class="anim"><h2>YOLOv8-m 在 MS COCO 上的定量对比</h2></div>
+  <ul class="anim bullet-list compact" style="margin-top:8px;">
+      <li>在 GIoU、CIoU、SIoU、EIoU、PIoU v1 五个<span class="em">基础版本</span>中，PIoU v1 以 <span class="em">48.43 AP</span> 最优。</li>
+      <li>PIoU v2 进一步取得 <span class="em">53.26 / 48.63 / 65.42</span> 的 AP75 / AP / AP50，在全部损失函数中达到 SOTA，增益 0.5% AP75、0.3% AP、0.5% AP50。</li>
+      <li>其他损失之间的差距很小（AP 集中在 48.30–48.43），<span class="em">PIoU v2 的提升幅度明显高于其他损失之间的差距</span>。</li>
+      <li>Focal-EIoU（51.78 / 47.29 / 63.68）相比 EIoU <span class="em">反而全面下降</span>，说明其注意力函数缺乏泛化性。</li>
+  </ul>
+  <div class="anim figure-box wide">
+    <div>
+      <img src="../assets/paper-imgs/Powerful-IoU/piou_table1_coco.png" alt="YOLOv8 在 MS COCO 上与各损失函数的对比结果">
+      <div class="figure-caption" style="margin-left:auto;margin-right:auto;">YOLOv8 在 MS COCO 上与各损失函数的对比结果（AP75 / AP / AP50）：<span class="cap-em">PIoU v2 三项指标全部最优</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 VOC 定量对比 + table2 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · 主对比 2/3</div>
+  <div class="anim"><h2>DINO-4scale 在 PASCAL VOC 上的定量对比</h2></div>
+  <ul class="anim bullet-list compact" style="margin-top:8px;">
+      <li>换一类检测器验证：DINO-4scale 搭配各<span class="em">聚焦机制</span>损失在 VOC 上的结果。</li>
+      <li>PIoU v2 以 <span class="em">70.50 / 64.23</span> 的 AP75 / AP 在全部损失函数中取得 SOTA，增益 0.5% AP75、0.3% AP。</li>
+      <li>相比 DINO 原始的 GIoU 损失（69.42 / 63.61），PIoU v2 提升了 <span class="em">1.1% AP75 与 0.6% AP</span>。</li>
+      <li>这里 Focal-EIoU（69.83 / 63.94）与 WIoU（70.00 / 63.83）都优于基础损失，说明聚焦机制在 DINO 上确实有效，<span class="em">但仍不及 PIoU v2</span>。</li>
+  </ul>
+  <div class="anim figure-box wide">
+    <div>
+      <img src="../assets/paper-imgs/Powerful-IoU/piou_table2_voc.png" alt="DINO 在 PASCAL VOC 上与各损失函数的对比结果">
+      <div class="figure-caption" style="margin-left:auto;margin-right:auto;">DINO 在 PASCAL VOC 上与各损失函数的对比结果（AP75 / AP）：<span class="cap-em">PIoU v2 相比 DINO 原始 GIoU 提升 1.1% AP75、0.6% AP</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 IC SEM 泛化 + table3 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · 主对比 3/3</div>
+  <div class="anim"><h2>IC SEM 数据集：更贴近实际应用的泛化验证</h2></div>
+  <ul class="anim bullet-list compact" style="margin-top:8px;">
+      <li>场景换成 <span class="em">55 nm 集成电路芯片的 SEM 图像</span>（MCC / MOSFET / Filler 三类），检验损失函数在真实工业任务上的泛化性。</li>
+      <li>PIoU v2 以 <span class="em">96.0 / 98.9</span> 的 AP / AP75 保持最高。</li>
+      <li>Focal-EIoU（95.3 / 98.6）在此<span class="em">再度低于 EIoU</span>（95.5 / 98.6）—— 与 COCO 上的表现一致，说明其聚焦机制不稳定，不是单次波动。</li>
+      <li>PIoU v2 相对 PIoU v1（95.7 / 98.7）的增强<span class="em">在不同数据集上更加稳定</span>。</li>
+  </ul>
+  <div class="anim figure-box wide">
+    <div>
+      <img src="../assets/paper-imgs/Powerful-IoU/piou_table3_icsem.png" alt="各 BBR 损失在 IC SEM 数据集上的性能">
+      <div class="figure-caption" style="margin-left:auto;margin-right:auto;">各 BBR 损失在 IC SEM 数据集上的性能（AP / AP75）：<span class="cap-em">PIoU v2 以 96.0 / 98.9 保持最高</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 检测结果可视化 + fig8 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · 可视化</div>
+  <div class="anim"><h2>检测结果可视化</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>在 <span class="em">COCO2017-val</span> 的若干图像上对比不同损失训练出的模型的预测结果，从左到右依次为 <span class="em">PIoU v2、Focal-EIoU、WIoU</span>。</li>
+        <li>使用 PIoU v2 的模型对<span class="em">不完整目标更敏感</span>，能够凭部分区域准确判断类别并定位 —— 例如 (b) 中只露出后半身的 elephants、(d) 中被车辆遮挡的 horse。</li>
+        <li>使用 Focal-EIoU 与 WIoU 的模型则<span class="em">漏掉了不完整目标</span>，或出现定位与分类错误。</li>
+      </ul>
+      <div class="highlight-bar compact">
+        <p><span class="accent-word">读图结论：</span>PIoU v2 的聚焦机制确实改善了对<b>中低质量目标</b>的回归质量 —— 这正是非单调注意力层设计的直接目标，与定量结果互相印证。</p>
+      </div>
+    </div>
+    <div class="figure-box">
+      <div>
+        <img src="../assets/paper-imgs/Powerful-IoU/piou_fig8_detection_examples.png" alt="YOLOv8-m 在 MS COCO 上的检测样例">
+        <div class="figure-caption" style="margin-left:auto;margin-right:auto;">YOLOv8-m 在 MS COCO 上的检测样例：<span class="cap-em">从左到右依次为 PIoU v2、Focal-EIoU、WIoU</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 19 消融 λ + table4 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · 消融 1/2</div>
+  <div class="anim"><h2>超参数敏感性：λ 从 1.1 扫到 1.7</h2></div>
+  <ul class="anim bullet-list compact" style="margin-top:8px;">
+      <li>基线为 PIoU v1（54.12 / 49.72 / 69.26 的 AP75 / AP / AP50）。</li>
+      <li><span class="em">λ = 1.3</span> 时模型取得最佳的 <span class="em">50.43(+0.71) AP</span> 与 <span class="em">69.96(+0.70) AP50</span>。</li>
+      <li>λ 偏大或偏小时，高质量样本的梯度增益与梯度峰值对应的 <i>P</i> 都不再适合收敛 —— <span class="em">λ = 1.1 与 λ = 1.4 的 AP75（53.99、53.51）甚至低于基线 54.12</span>。</li>
+      <li>AP75 随 λ 非单调起伏（1.2 与 1.5 分别为 54.62、54.67，而 1.4 掉到 53.51），表明 PIoU v2 对 λ <span class="em">较为敏感</span>，1.3 附近是最优工作区。</li>
+  </ul>
+  <div class="anim figure-box wide">
+    <div>
+      <img src="../assets/paper-imgs/Powerful-IoU/piou_table4_lambda.png" alt="PIoU v2 在不同超参数 λ 下的性能">
+      <div class="figure-caption" style="margin-left:auto;margin-right:auto;">PIoU v2 在不同超参数 λ 下的性能：<span class="cap-em">λ = 1.3 取得最佳 AP 与 AP50，括号内为相对 PIoU v1 基线的增减</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 20 消融 函数形式 + table5 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · 消融 2/2</div>
+  <div class="anim"><h2>惩罚函数形式消融</h2></div>
+  <ul class="anim bullet-list compact" style="margin-top:8px;">
+      <li>同一惩罚因子 <i>P</i> 搭配三种函数形式，YOLOv8 上的对比结果。</li>
+      <li><i>f</i>(<i>x</i>) 在 <span class="em">54.12 / 49.72 / 69.26</span> 三项指标上全面优于 <i>g</i><sub>1</sub>(<i>x</i>)（54.02 / 49.71 / 68.91）与 <i>g</i><sub>2</sub>(<i>x</i>)（53.53 / 49.50 / 68.70）。</li>
+      <li>「两端小、中间大」的梯度形态确实比<span class="em">单调递增</span>或<span class="em">恒定</span>的梯度更适合锚框回归，验证了方法节对函数形态的设计动机。</li>
+      <li><span class="em">留待后续：</span>原文指出，若初始锚框普遍质量极差，可能存在与 <i>P</i> 搭配更佳的函数形式 —— PIoU 的聚焦机制是静态的，这是它与 WIoU 动态机制的差异所在。</li>
+  </ul>
+  <div class="anim figure-box wide">
+    <div>
+      <img src="../assets/paper-imgs/Powerful-IoU/piou_table5_funcform.png" alt="不同惩罚函数形式的性能对比">
+      <div class="figure-caption" style="margin-left:auto;margin-right:auto;">不同惩罚函数形式的性能对比：<span class="cap-em"><i>L</i><sub>PIoU</sub> 三项指标全面优于 <i>L</i><sub>1</sub>（配 <i>g</i><sub>1</sub>）与 <i>L</i><sub>2</sub>（配 <i>g</i><sub>2</sub>）</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 21 优点和创新点 + 结尾 -->
 <section class="slide">
   <div class="glow glow-blue tl"></div>
   <div class="glow glow-navy br"></div>
@@ -343,37 +612,25 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   <div class="anim card-grid cols-3">
     <div class="card">
       <span class="card-num">1</span>
-      <h3>根因级膨胀分析</h3>
-      <p class="body-text">用梯度推导证明四类损失的惩罚因子都以最小外接框尺寸为分母，思路可迁移到新损失设计。</p>
+      <h3>根因级分析，双重验证</h3>
+      <p class="body-text">对锚框膨胀现象给出了根因级分析：用梯度推导证明四类代表性损失的惩罚因子都以最小外接框尺寸为分母，再以数值反例与百万例回归仿真双重验证，思路可迁移到新损失的设计中。</p>
     </div>
     <div class="card">
       <span class="card-num">2</span>
-      <h3>惩罚因子 + 函数联合设计</h3>
-      <p class="body-text">P 只用目标框边长作分母，配合 f(x) 无需额外权重即实现按质量的梯度调节。</p>
+      <h3>分母换掉，膨胀自然消失</h3>
+      <p class="body-text">惩罚因子 <i>P</i> 只用目标框边长作分母，天然免疫锚框膨胀且自适应目标尺寸；配合 <i>f</i>(<i>x</i>) 无需额外权重即实现按锚框质量的梯度调节，设计巧妙。</p>
     </div>
     <div class="card">
       <span class="card-num">3</span>
-      <h3>单超参数非单调聚焦</h3>
-      <p class="body-text">PIoU v2 的注意力层仅一个 λ，调参成本低于 WIoU 的双超参数设计，在三个数据集上一致提升。</p>
+      <h3>单超参数，跨检测器一致提升</h3>
+      <p class="body-text">PIoU v2 的非单调注意力层只有一个超参数，调参成本低于 WIoU 的双超参数设计，并在 YOLOv8 与 DINO 及三个数据集上取得一致提升，说服力强。</p>
     </div>
   </div>
-</section>
-
-<!-- ═══════ 15 结尾 ═══════ -->
-<section class="slide">
-  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
-  <div class="end-card">
-    <div class="anim"><h2 style="color:var(--title);">PIoU：更直接、更快的边界框回归</h2></div>
-    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
-    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">
-      以目标框边长取代最小外接框作分母，<br>
-      <span style="color:var(--accent);font-weight:600;">从根源消除锚框膨胀，用非单调聚焦提升回归质量</span>。
-    </div>
-    <div class="anim cover-meta" style="margin-top:28px;">
-      <span class="cover-tag">Neural Networks 2024</span>
-      <span class="cover-tag">代码开源 github.com/fppccc/Powerful-IoU</span>
-      <span class="cover-tag">感谢观看</span>
-    </div>
+  <div class="anim cover-meta" style="justify-content:center;margin-top:30px;">
+    <span class="cover-tag">Neural Networks 170 (2024) 276–284 · CCF-B</span>
+    <span class="cover-tag">doi:10.1016/j.neunet.2023.11.041</span>
+    <span class="cover-tag">代码已开源 · fppccc/Powerful-IoU</span>
+    <span class="cover-tag">感谢观看</span>
   </div>
 </section>
 
@@ -387,30 +644,14 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   const progress = document.getElementById('progress');
   const dotsWrap = document.getElementById('dots');
   const hint = document.getElementById('hint');
-  for (let i = 0; i < total; i++) {
-    const d = document.createElement('div');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
-    d.addEventListener('click', () => goTo(i));
-    dotsWrap.appendChild(d);
-  }
+  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
   const dots = dotsWrap.querySelectorAll('.dot');
-  function goTo(idx) {
-    if (idx < 0 || idx >= total || idx === current) return;
-    const prev = slides[current]; const next = slides[idx];
-    prev.classList.remove('active'); prev.classList.add('exit-up');
-    requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); });
-    setTimeout(() => { prev.classList.remove('exit-up'); }, 700);
-    dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active');
-    progress.style.width = ((current + 1) / total * 100) + '%';
-  }
-  function next() { goTo(current + 1); } function prev() { goTo(current - 1); }
-  slides[0].classList.add('active'); progress.style.width = (1 / total * 100) + '%';
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
-    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
-    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
-  });
+  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
+  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
   let touchX = 0, touchY = 0;
   document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
   document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });

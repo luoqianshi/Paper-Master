@@ -7,602 +7,104 @@
 <title>Dynamic Head: Unifying Object Detection Heads with Attentions</title>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-:root {
-  --bg: #ffffff;
-  --text: #000000;
-  --title: #3966A2;
-  --accent: #132843;
-  --dim: #6191D3;
-  --card-bg: #f7f9fc;
-  --border: #e2e8f0;
-  --radius: 12px;
-}
-
+:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
 html { font-size: 16px; scroll-behavior: smooth; }
-
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  overflow: hidden;
-  height: 100vh;
-  cursor: default;
-  user-select: none;
-}
-
-/* ═══════════ SLIDE ENGINE ═══════════ */
+body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
 .deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-
-.slide {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 5vh 7vw;
-  background: var(--bg);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(60px) scale(0.97);
-  transition: opacity 0.6s cubic-bezier(.4,0,.2,1),
-              transform 0.6s cubic-bezier(.4,0,.2,1),
-              visibility 0.6s;
-  will-change: opacity, transform;
-}
-
-.slide.active {
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: translateY(0) scale(1) !important;
-}
-
+.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
 .slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
-
-/* ═══════════ CONTROLS / PROGRESS / DOTS / HINT ═══════════ */
-.controls {
-  position: fixed;
-  bottom: 32px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  z-index: 100;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  padding: 8px 20px;
-}
-.controls button {
-  background: none;
-  border: none;
-  color: var(--title);
-  font-size: 18px;
-  cursor: pointer;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: background 0.2s, color 0.2s;
-}
-.controls button:hover { background: rgba(57,102,162,0.08); color: var(--accent); }
-.controls button:disabled { opacity: 0.25; cursor: default; }
-.controls .counter {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--dim);
-  min-width: 52px;
-  text-align: center;
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.5px;
-}
-
-.progress {
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--title), var(--accent));
-  z-index: 100;
-  transition: width 0.5s cubic-bezier(.4,0,.2,1);
-  border-radius: 0 1px 1px 0;
-}
-
-.dots {
-  position: fixed;
-  right: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  z-index: 100;
-}
-.dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #d3dce8;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.3s;
-}
+.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
+.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
 .dot.active { background: var(--title); transform: scale(1.6); }
 .dot:hover { background: var(--dim); }
-
-.hint {
-  position: fixed;
-  bottom: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 12px;
-  color: #999;
-  z-index: 90;
-  opacity: 1;
-  transition: opacity 1s;
-  pointer-events: none;
-}
+.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
 .hint.hidden { opacity: 0; }
-
-/* ═══════════ TYPOGRAPHY ═══════════ */
-.slide-label {
-  font-size: clamp(11px, 1.1vw, 14px);
-  font-weight: 600;
-  letter-spacing: 3px;
-  text-transform: uppercase;
-  color: var(--dim);
-  margin-bottom: 12px;
-}
-
-h1 {
-  font-size: clamp(32px, 4.5vw, 58px);
-  font-weight: 800;
-  line-height: 1.15;
-  color: var(--text);
-  letter-spacing: -1.5px;
-}
-h1 .highlight { color: var(--title); }
-h1 .accent { color: var(--accent); }
-
-h2 {
-  font-size: clamp(24px, 2.9vw, 40px);
-  font-weight: 700;
-  line-height: 1.25;
-  color: var(--title);
-  letter-spacing: -1px;
-}
-
-h3 {
-  font-size: clamp(16px, 1.7vw, 24px);
-  font-weight: 600;
-  color: var(--text);
-  margin-bottom: 8px;
-}
-
-.subtitle {
-  font-size: clamp(16px, 1.7vw, 22px);
-  font-weight: 400;
-  color: #555;
-  line-height: 1.55;
-  margin-top: 16px;
-  max-width: 780px;
-}
-
-.body-text {
-  font-size: clamp(14px, 1.4vw, 18px);
-  font-weight: 400;
-  color: #333;
-  line-height: 1.65;
-}
-.body-text b { color: var(--accent); }
-.body-text .em { color: var(--title); font-weight: 600; }
-
-.small-text {
-  font-size: clamp(12px, 1.1vw, 15px);
-  color: #777;
-  line-height: 1.5;
-}
-
-/* ═══════════ COMPONENTS ═══════════ */
-.divider {
-  width: 48px;
-  height: 3px;
-  background: var(--title);
-  border-radius: 2px;
-  margin: 16px 0;
-}
+.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
+h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
+h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 880px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.small-text { font-size: clamp(11px, 1.05vw, 14px); color: #777; line-height: 1.5; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
 .divider-accent { background: var(--accent); }
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(57,102,162,0.08);
-  border: 1px solid rgba(57,102,162,0.15);
-  border-radius: 100px;
-  padding: 8px 16px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--title);
-  letter-spacing: 0.06em;
-  margin-bottom: 40px;
-  text-transform: uppercase;
-  width: fit-content;
-}
-.badge .dot-yellow {
-  width: 7px; height: 7px;
-  background: var(--accent);
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-.badge .dot-gray {
-  width: 4px; height: 4px;
-  background: rgba(57,102,162,0.3);
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
-.cover-meta {
-  margin-top: 32px;
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.cover-tag {
-  font-size: clamp(11px, 1vw, 14px);
-  font-weight: 500;
-  color: var(--dim);
-  background: rgba(57,102,162,0.06);
-  border: 1px solid rgba(57,102,162,0.12);
-  padding: 5px 14px;
-  border-radius: 100px;
-}
-
-.contributors {
-  margin-top: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.contributors .author {
-  font-size: clamp(14px, 1.4vw, 19px);
-  color: #444;
-  font-weight: 500;
-}
-.contributors .affil {
-  font-size: clamp(12px, 1.2vw, 16px);
-  color: var(--dim);
-}
-
-.card-grid {
-  display: grid;
-  gap: 14px;
-  margin-top: 20px;
-  flex: 0;
-}
+.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
 .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
 .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
-.card-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
-
-.card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: clamp(16px, 1.9vw, 26px);
-  display: flex;
-  flex-direction: column;
-}
-.card .card-num {
-  font-size: clamp(28px, 3vw, 42px);
-  font-weight: 800;
-  color: var(--title);
-  opacity: 0.3;
-  line-height: 1;
-  margin-bottom: 8px;
-}
+.card-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card .card-num.sm { font-size: clamp(16px, 1.8vw, 24px); margin-bottom: 6px; opacity: 0.55; }
 .card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
 .card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
-
-.quote-block {
-  border-left: 3px solid var(--dim);
-  padding: 14px 22px;
-  background: var(--card-bg);
-  border-radius: 0 var(--radius) var(--radius) 0;
-  margin-top: 18px;
-}
-.quote-block p {
-  font-size: clamp(15px, 1.5vw, 20px);
-  font-weight: 500;
-  color: var(--accent);
-  line-height: 1.6;
-}
-
-.highlight-bar {
-  background: rgba(57,102,162,0.06);
-  border: 1px solid rgba(57,102,162,0.15);
-  border-radius: var(--radius);
-  padding: clamp(13px, 1.6vw, 20px) clamp(17px, 2vw, 26px);
-  margin-top: 16px;
-}
-.highlight-bar p {
-  font-size: clamp(14px, 1.4vw, 18px);
-  color: var(--text);
-  line-height: 1.6;
-}
-.highlight-bar .accent-word { color: var(--title); font-weight: 600; }
-
-.bullet-list { list-style: none; padding: 0; margin-top: 10px; }
-.bullet-list li {
-  font-size: clamp(13px, 1.3vw, 17px);
-  color: #333;
-  line-height: 1.65;
-  padding: 4px 0 4px 22px;
-  position: relative;
-}
-.bullet-list li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 13px;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--title);
-}
+.card.tight { padding: clamp(12px, 1.4vw, 18px); }
+.card.tight h3 { font-size: clamp(13px, 1.25vw, 17px); margin-bottom: 6px; }
+.card.tight .body-text { font-size: clamp(11px, 1.05vw, 14px); line-height: 1.55; }
+.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.highlight-bar.compact p { font-size: clamp(12px, 1.15vw, 16px); }
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
 .bullet-list li .em { color: var(--accent); font-weight: 600; }
-.bullet-list li b { color: var(--accent); }
-.bullet-list.tight li { font-size: clamp(12px, 1.15vw, 16px); line-height: 1.6; padding: 3px 0 3px 20px; }
-.bullet-list.tight li::before { top: 11px; width: 6px; height: 6px; }
-
-/* ═══════════ VS COLUMNS ═══════════ */
-.vs-row { display: flex; align-items: flex-start; gap: 24px; margin-top: 16px; }
-.vs-col {
-  flex: 1;
-  border-radius: var(--radius);
-  padding: clamp(14px, 1.7vw, 22px);
-  display: flex;
-  flex-direction: column;
-  position: relative;
-}
-.vs-col.left-col { background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.15); }
-.vs-col.right-col { background: rgba(34,197,94,0.04); border: 1px solid rgba(34,197,94,0.15); }
-.vs-col .vs-tag {
-  display: inline-block;
-  font-size: clamp(10px, 0.9vw, 12px);
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  padding: 4px 12px;
-  border-radius: 6px;
-  margin-bottom: 12px;
-  width: fit-content;
-}
-.vs-col.left-col .vs-tag { background: rgba(239,68,68,0.1); color: #b91c1c; }
-.vs-col.right-col .vs-tag { background: rgba(34,197,94,0.1); color: #15803d; }
-.vs-col h3 { font-size: clamp(15px, 1.5vw, 21px); margin-bottom: 10px; }
-.vs-col ul { list-style: none; padding: 0; }
-.vs-col ul li {
-  font-size: clamp(12px, 1.15vw, 16px);
-  color: #333;
-  line-height: 1.55;
-  padding: 3px 0 3px 20px;
-  position: relative;
-}
-.vs-col ul li::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 11px;
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-}
-.vs-col.left-col ul li::before { background: #ef4444; }
-.vs-col.right-col ul li::before { background: #22c55e; }
-
-/* ═══════════ STEPS ═══════════ */
-.steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
-.step {
-  flex: 1;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-.step .step-num {
-  font-size: clamp(10px, 0.9vw, 13px);
-  font-weight: 700;
-  color: var(--accent);
-  letter-spacing: 2px;
-  margin-bottom: 8px;
-}
-.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
-.step .small-text { font-size: clamp(11px, 1vw, 14px); }
-.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b8c4d4; flex-shrink: 0; }
-
-/* ═══════════ FORMULA BOX ═══════════ */
-.prompt-box {
-  background: var(--accent);
-  border-radius: var(--radius);
-  padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px);
-  margin-top: 16px;
-}
-.prompt-box .prompt-label {
-  font-size: clamp(9px, 0.85vw, 12px);
-  font-weight: 600;
-  color: #9db8d9;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  margin-bottom: 8px;
-}
-.prompt-box p {
-  font-size: clamp(13px, 1.3vw, 17px);
-  color: #dce6f2;
-  line-height: 1.6;
-}
+.bullet-list.compact li { font-size: clamp(11px, 1.1vw, 15px); line-height: 1.55; padding: 3px 0 3px 18px; }
+.bullet-list.compact li::before { top: 10px; width: 6px; height: 6px; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
 .prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
-.prompt-box .formula {
-  font-size: clamp(16px, 2vw, 27px);
-  font-weight: 600;
-  color: #ffffff;
-  line-height: 1.55;
-  letter-spacing: 0.5px;
-}
+.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
 .prompt-box .formula i { color: #a8c6ec; font-style: italic; }
 .prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
-.prompt-box .formula-note {
-  font-size: clamp(11px, 1.05vw, 14px);
-  color: #9db8d9;
-  margin-top: 6px;
-}
-.fx-inline { font-weight: 600; color: var(--accent); white-space: nowrap; }
-.fx-inline i { font-style: italic; }
-.fx-inline sub, .fx-inline sup { font-size: 68%; }
-
-/* ═══════════ GLOW ═══════════ */
-.glow {
-  position: absolute;
-  width: 400px;
-  height: 400px;
-  border-radius: 50%;
-  filter: blur(120px);
-  opacity: 0.10;
-  pointer-events: none;
-}
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.prompt-box.slim { padding: clamp(11px, 1.3vw, 18px) clamp(16px, 1.8vw, 26px); }
+.prompt-box.slim .formula { font-size: clamp(13px, 1.45vw, 20px); }
+.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
 .glow-blue { background: var(--title); }
 .glow-navy { background: var(--accent); }
 .glow.tl { top: -100px; left: -100px; }
-.glow.tr { top: -120px; right: -120px; }
 .glow.br { bottom: -120px; right: -100px; }
-.glow.bl { bottom: -120px; left: -100px; }
-.glow.sm { width: 280px; height: 280px; }
-
-/* ═══════════ FIGURE ═══════════ */
-.figure-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 14px;
-  min-width: 0;
-}
-.figure-box img {
-  max-width: 100%;
-  max-height: 40vh;
-  object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0 2px 16px rgba(19,40,67,0.08);
-}
-.figure-box.sm img { max-height: 28vh; }
-.figure-caption {
-  text-align: center;
-  font-size: clamp(11px, 1vw, 13.5px);
-  color: #8a94a3;
-  margin-top: 8px;
-  line-height: 1.55;
-  max-width: 960px;
-}
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-box.wide img { max-height: 40vh; }
+.figure-box.xwide img { max-height: 30vh; }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 1000px; }
 .figure-caption .cap-em { color: var(--title); font-weight: 600; }
-
-.split {
-  display: flex;
-  gap: clamp(20px, 3vw, 44px);
-  align-items: center;
-  margin-top: 16px;
-  min-height: 0;
-}
-.split .col-text { flex: 1.1; min-width: 0; }
-.split .col-fig { flex: 1; min-width: 0; }
-.split .col-text-wide { flex: 1.3; min-width: 0; }
-.split .col-fig-narrow { flex: 0.85; min-width: 0; }
-.split .figure-box { margin-top: 0; }
-.split .figure-caption { margin-top: 10px; }
-.split-2 { display: flex; gap: clamp(18px, 2.6vw, 40px); margin-top: 14px; align-items: flex-start; }
-.split-2 > div { flex: 1; min-width: 0; }
-
-/* ═══════════ DATA TABLE ═══════════ */
-.data-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: clamp(11px, 1vw, 14px);
-  margin-top: 14px;
-}
-.data-table th {
-  text-align: left;
-  padding: 8px 10px;
-  background: #eaf1f9;
-  color: var(--title);
-  font-weight: 600;
-  border-bottom: 2px solid var(--border);
-  font-size: clamp(10px, 0.9vw, 13px);
-  white-space: nowrap;
-}
-.data-table td {
-  padding: 7px 10px;
-  border-bottom: 1px solid var(--border);
-  color: #333;
-}
-.data-table tbody tr:nth-child(even) { background: #f7f9fc; }
-.data-table tr:last-child td { border-bottom: none; }
-.data-table td.sym-cell { font-weight: 600; color: var(--accent); white-space: nowrap; }
-
-/* ═══════════ STAT GRID ═══════════ */
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 14px;
-  margin-top: 18px;
-}
-.stat {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: clamp(12px, 1.5vw, 20px);
-  text-align: center;
-}
-.stat .stat-num {
-  font-size: clamp(20px, 2.4vw, 34px);
-  font-weight: 800;
-  color: var(--title);
-  line-height: 1.2;
-}
-.stat .stat-num.good { color: #15803d; }
-.stat .stat-label {
-  font-size: clamp(10px, 0.95vw, 13px);
-  color: #777;
-  margin-top: 6px;
-  line-height: 1.45;
-}
-
-/* ═══════════ END CARD ═══════════ */
-.end-card {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box img { max-height: 56vh; }
+.fig-pair { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(14px, 2vw, 28px); margin-top: 14px; }
+.fig-pair .cell { display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.fig-pair .cell img { max-width: 100%; max-height: 44vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.fig-pair .cell .figure-caption { margin-top: 8px; max-width: 100%; }
+.fig-stack { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; align-items: center; }
+.vs-row { display: flex; align-items: stretch; gap: 20px; margin-top: 20px; }
+.vs-col { flex: 1; border-radius: var(--radius); padding: clamp(16px, 1.9vw, 26px); display: flex; flex-direction: column; }
+.vs-col.left-col { background: #f4f6f9; border: 1px solid var(--border); }
+.vs-col.right-col { background: rgba(57,102,162,0.07); border: 1px solid rgba(57,102,162,0.22); }
+.vs-col .vs-tag { display: inline-block; font-size: clamp(10px, 0.9vw, 12px); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 6px; margin-bottom: 12px; width: fit-content; }
+.vs-col.left-col .vs-tag { background: rgba(19,40,67,0.08); color: #66788c; }
+.vs-col.right-col .vs-tag { background: rgba(57,102,162,0.14); color: var(--title); }
+.vs-col h3 { font-size: clamp(15px, 1.55vw, 21px); margin-bottom: 8px; color: var(--accent); }
+.vs-col .bullet-list { margin-top: 6px; }
+.vs-col .bullet-list li { font-size: clamp(12px, 1.15vw, 16px); line-height: 1.6; }
+.sym-table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+.sym-table td { padding: 6px 12px; border-bottom: 1px solid var(--border); font-size: clamp(11px, 1.05vw, 15px); color: #333; vertical-align: top; }
+.sym-table td:first-child { color: var(--accent); font-weight: 600; white-space: nowrap; width: 1%; }
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
-.end-card .divider { margin: 16px auto; }
-.end-card .subtitle { max-width: 600px; text-align: center; margin: 0 auto; }
-.end-card .cover-meta { margin-top: 28px; justify-content: center; }
-
-/* ═══════════ ANIMATIONS ═══════════ */
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(18px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 .slide.active .anim { animation: fadeUp 0.5s ease both; }
 .slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
 .slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
@@ -610,578 +112,469 @@ h3 {
 .slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
 .slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
 .slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
-.slide.active .anim:nth-child(7) { animation-delay: 0.56s; }
-.slide.active .anim:nth-child(8) { animation-delay: 0.64s; }
-
-/* ═══════════ RESPONSIVE ═══════════ */
-@media (max-width: 900px) {
-  .slide { padding: 4vh 5vw; }
-  .card-grid.cols-2, .card-grid.cols-3, .card-grid.cols-4 { grid-template-columns: 1fr; }
-  .vs-row { flex-direction: column; gap: 12px; }
-  .steps { flex-direction: column; }
-  .step-arrow { transform: rotate(90deg); }
-  .dots { display: none; }
-  .split, .split-2 { flex-direction: column; }
-  .stat-grid { grid-template-columns: 1fr; }
-}
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3, .card-grid.cols-4 { grid-template-columns: 1fr; } .dots { display: none; } .split { flex-direction: column; } .fig-pair { grid-template-columns: 1fr; } .vs-row { flex-direction: column; } }
 </style>
 </head>
 <body>
 
 <div class="progress" id="progress"></div>
 <div class="dots" id="dots"></div>
-<div class="hint" id="hint">← → 键盘 / 触摸滑动 翻页</div>
+<div class="hint" id="hint">← → 或点击翻页</div>
 
 <div class="deck" id="deck">
 
-<!-- ═══════════ Slide 1: 封面 ═══════════ -->
+<!-- 1 封面 -->
 <section class="slide">
   <div class="glow glow-blue tl"></div>
   <div class="glow glow-navy br"></div>
   <div class="anim badge">
     <span class="dot-yellow"></span>
-    Paper Reading · 目标检测
+    PAPER READING
     <span class="dot-gray"></span>
-    CVPR 2021
+    CVPR 2021 · CCF-A
   </div>
-  <div class="anim">
-    <h1>
-      <span class="highlight">Dynamic Head:</span><br>
-      <span class="accent">Unifying Object Detection Heads</span><br>
-      with Attentions
-    </h1>
+  <div class="anim" style="font-size: clamp(2.4rem, 5.5vw, 4.5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
+    <span class="highlight">Dynamic Head</span>
   </div>
-  <p class="anim subtitle">把检测头输入统一为「层级 × 空间 × 通道」三维张量，用三个串联注意力同时获得尺度感知、空间感知与任务感知 —— 无额外计算开销地大幅增强检测头表示能力</p>
+  <div class="anim" style="font-size: clamp(16px, 2vw, 28px); font-weight: 700; color: var(--accent); margin-top: 12px; line-height: 1.35;">
+    Unifying Object Detection Heads with Attentions
+  </div>
+  <p class="anim subtitle">把检测头的输入看成「层级 × 空间 × 通道」的三维张量，将尺度感知、空间感知、任务感知统一为张量上三个串联的注意力 —— 即插即用提升各类检测器 1.2 ∼ 3.2 AP，COCO test-dev 54.0 AP，配合 Transformer 骨干与额外数据推至 60.6 AP。</p>
   <div class="anim contributors">
-    <span class="author">Xiyang Dai · Yinpeng Chen · Bin Xiao · Dongdong Chen · Mengchen Liu · Lu Yuan · Lei Zhang</span>
-    <span class="affil">Microsoft, Redmond, USA</span>
+    <div class="author">Xiyang Dai · Yinpeng Chen · Bin Xiao · Dongdong Chen · Mengchen Liu · Lu Yuan · Lei Zhang</div>
+    <div class="affil">Microsoft, Redmond, USA</div>
   </div>
   <div class="anim cover-meta">
-    <span class="cover-tag">CVPR 2021 · CCF-A</span>
-    <span class="cover-tag">论文代码 github.com/microsoft/DynamicHead</span>
-    <span class="cover-tag">COCO test-dev 60.6 AP</span>
+    <span class="cover-tag">检测头</span>
+    <span class="cover-tag">统一注意力</span>
+    <span class="cover-tag">即插即用</span>
+    <span class="cover-tag">可变形卷积</span>
+    <span class="cover-tag">arXiv:2106.08322</span>
   </div>
 </section>
 
-<!-- ═══════════ Slide 2: 概述 · 核心贡献 ═══════════ -->
+<!-- 2 核心贡献 -->
 <section class="slide">
-  <div class="glow glow-blue tr sm"></div>
-  <div class="anim slide-label">Overview · Contributions</div>
-  <div class="anim"><h2>核心贡献</h2></div>
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献：一个统一的注意力检测头</h2></div>
   <div class="anim divider"></div>
   <div class="anim card-grid cols-2">
     <div class="card">
       <span class="card-num">01</span>
-      <h3>三维张量统一表示</h3>
-      <p class="body-text">把检测头的输入——特征金字塔各层缩放对齐后拼接的特征——看作<b>层级 × 空间 × 通道</b>的三维张量，把各类头端改进统一为<span class="em">同一张量上的注意力学习问题</span></p>
+      <h3>统一表示</h3>
+      <p class="body-text">把特征金字塔缩放对齐后拼接成的检测头输入看作 <span style="color:var(--title);font-weight:600;">L × S × C 三维张量</span>，把各类头端改进统一为同一张量上的注意力学习问题。</p>
     </div>
     <div class="card">
       <span class="card-num">02</span>
-      <h3>三个串联注意力</h3>
-      <p class="body-text"><b>尺度感知</b>作用在层级维度动态融合特征，<b>空间感知</b>借助可变形卷积聚焦判别区域并跨层聚合，<b>任务感知</b>在通道维度动态开关通道适配不同任务</p>
+      <h3>三段串联注意力</h3>
+      <p class="body-text">沿三个维度依次作用：<span style="color:var(--title);font-weight:600;">尺度感知 π<sub>L</sub></span> 按语义重要性动态融合层级，<span style="color:var(--title);font-weight:600;">空间感知 π<sub>S</sub></span> 借可变形卷积稀疏采样聚焦判别区域，<span style="color:var(--title);font-weight:600;">任务感知 π<sub>C</sub></span> 动态开关通道适配下游任务。</p>
     </div>
     <div class="card">
       <span class="card-num">03</span>
-      <h3>即插即用插件块</h3>
-      <p class="body-text">DyHead 可接入一阶段与两阶段等各类检测器，一致带来 <span class="em">1.2 ∼ 3.2 AP</span> 提升，且几乎不增加计算开销</p>
+      <h3>即插即用的泛化能力</h3>
+      <p class="body-text">作为插件块接入 Faster R-CNN、RetinaNet、ATSS、FCOS、RepPoints，覆盖两阶段/一阶段、anchor-based/anchor-free、基于框/基于点的多种设定，<span style="color:var(--title);font-weight:600;">一致提升 1.2 ∼ 3.2 AP</span>。</p>
     </div>
     <div class="card">
       <span class="card-num">04</span>
-      <h3>刷新 COCO 纪录</h3>
-      <p class="body-text">配合 ResNeXt-101-DCN 骨干取得 <span class="em">54.0 AP</span>，结合 Transformer 骨干与自训练额外数据后进一步推至 <span class="em">60.6 AP</span></p>
+      <h3>COCO 新纪录</h3>
+      <p class="body-text">配 ResNeXt-101-DCN 在 COCO test-dev 取得 <span style="color:var(--title);font-weight:600;">54.0 AP</span>，训练时间仅为 EfficientDet / SpineNet 的 1/20；结合 Transformer 骨干与自训练额外数据推至 <span style="color:var(--title);font-weight:600;">60.6 AP</span>。</p>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ Slide 3: 研究动机（上） ═══════════ -->
+<!-- 3 研究动机 -->
 <section class="slide">
-  <div class="anim slide-label">Motivation · 1/2</div>
-  <div class="anim"><h2>研究动机：一个好的检测头要同时应对三类固有困难</h2></div>
-  <div class="anim divider divider-accent"></div>
+  <div class="glow glow-blue tl"></div>
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>一个好的检测头要同时应对三类固有困难</h2></div>
+  <div class="anim card-grid cols-3">
+    <div class="card tight">
+      <span class="card-num sm">尺度感知</span>
+      <h3>Scale-aware</h3>
+      <p class="body-text">图像中不同尺度的物体常常<b>并存</b>，检测头应当让特征强度随物体尺度自适应 —— 这关系到特征张量的<b>层级</b>维度。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num sm">空间感知</span>
+      <h3>Spatial-aware</h3>
+      <p class="body-text">物体在不同视角下呈现差异巨大的<b>形状、姿态与位置</b>，检测头应当能学习空间变换 —— 这关系到<b>空间位置</b>维度。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num sm">任务感知</span>
+      <h3>Task-aware</h3>
+      <p class="body-text">边界框、中心点、关键点等物体表示各有<b>全然不同的训练目标与约束</b>，检测头应当按任务重组特征 —— 这关系到<b>通道</b>维度。</p>
+    </div>
+  </div>
   <div class="anim highlight-bar">
-    <p>深度学习时代的现代检测器几乎都遵循同一范式：<span class="accent-word">骨干网络负责特征提取，检测头负责定位与分类</span>——检测头的设计质量因而成为决定检测性能的关键</p>
-  </div>
-  <div class="anim card-grid cols-3">
-    <div class="card">
-      <span class="card-num">01</span>
-      <h3>尺度感知</h3>
-      <p class="body-text">图像中<b>不同尺度的物体常常并存</b>，检测头应当在层级特征上自适应地突出与物体尺度匹配的层级</p>
-    </div>
-    <div class="card">
-      <span class="card-num">02</span>
-      <h3>空间感知</h3>
-      <p class="body-text">物体在不同视角下呈现<b>差异巨大的形状、姿态与位置</b>，检测头应当能聚焦判别性的空间位置</p>
-    </div>
-    <div class="card">
-      <span class="card-num">03</span>
-      <h3>任务感知</h3>
-      <p class="body-text">边界框、中心点、关键点等物体表示<b>各有全然不同的训练目标与约束</b>，检测头应让通道分别偏向不同任务</p>
-    </div>
+    <p><span class="accent-word">现状：</span>改进特征金字塔与路径增强的工作聚焦尺度问题，可变形卷积一系的工作聚焦空间变换学习，各式物体表示的工作聚焦任务建模 —— <span class="accent-word">彼此之间缺少一个统一的视角</span>，暂未有工作把三种感知能力放进同一个检测头框架中同时优化。</p>
   </div>
 </section>
 
-<!-- ═══════════ Slide 4: 研究动机（下） ═══════════ -->
+<!-- 4 特征张量与统一注意力表示 -->
 <section class="slide">
-  <div class="glow glow-navy bl sm"></div>
-  <div class="anim slide-label">Motivation · 2/2</div>
-  <div class="anim"><h2>现有研究各自为战，缺少统一视角</h2></div>
-  <div class="anim divider"></div>
-  <div class="anim card-grid cols-3">
-    <div class="card">
-      <h3>聚焦尺度问题</h3>
-      <p class="body-text">改进<b>特征金字塔与路径增强</b>的工作缓解层级间语义差距，但各种改进彼此独立</p>
-    </div>
-    <div class="card">
-      <h3>聚焦空间变换</h3>
-      <p class="body-text"><b>可变形卷积一系</b>的工作以自学习偏移采样空间位置，只解决空间变换学习</p>
-    </div>
-    <div class="card">
-      <h3>聚焦任务建模</h3>
-      <p class="body-text"><b>各式物体表示</b>（框 / 中心 / 关键点）的工作各自设计任务分支，难以互相兼容</p>
-    </div>
-  </div>
-  <div class="anim quote-block">
-    <p>暂未有工作把三种感知能力放进同一个检测头框架中同时优化，如何设计这样一个统一的检测头仍是开放问题。</p>
-  </div>
-</section>
-
-<!-- ═══════════ Slide 5: 方法总览（fig1） ═══════════ -->
-<section class="slide">
-  <div class="anim slide-label">Method · Pipeline</div>
-  <div class="anim"><h2>整体范式：任意骨干 + 堆叠 DyHead 块</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Dynamic-Head/dyhead_fig1_overview.png" alt="Dynamic Head 整体范式与注意力前后特征图变化"></div>
-  <div class="anim figure-caption">骨干网络提取特征金字塔，缩放对齐成三维张量后送入 DyHead，串联注意力块的输出可用于<span class="cap-em">分类、中心与框回归</span>等不同任务和表示；图底部可见特征图经三类注意力后：对前景尺度更敏感 → 稀疏聚焦判别位置 → 按下游任务重组激活</div>
-  <div class="anim steps">
-    <div class="step"><span class="step-num">STEP 01</span><h3>骨干提取金字塔</h3><p class="small-text">任意骨干网络均可</p></div>
-    <div class="step-arrow">→</div>
-    <div class="step"><span class="step-num">STEP 02</span><h3>缩放对齐为 L×S×C 张量</h3><p class="small-text">上/下采样到中间层尺度</p></div>
-    <div class="step-arrow">→</div>
-    <div class="step"><span class="step-num">STEP 03</span><h3>堆叠 DyHead 块</h3><p class="small-text">πL → πS → πC 串联</p></div>
-    <div class="step-arrow">→</div>
-    <div class="step"><span class="step-num">STEP 04</span><h3>多任务输出</h3><p class="small-text">分类 / 中心与框回归等</p></div>
-  </div>
-</section>
-
-<!-- ═══════════ Slide 6: 统一表示与问题形式化 ═══════════ -->
-<section class="slide">
-  <div class="glow glow-blue tr sm"></div>
-  <div class="anim slide-label">Method · Formalization</div>
-  <div class="anim"><h2>问题形式化：把统一注意力按维度拆解</h2></div>
-  <div class="anim divider"></div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">Unified Attention</div>
-    <p class="formula"><i>W</i>(<i>F</i>) = π(<i>F</i>) · <i>F</i> &nbsp;&nbsp;⟶&nbsp;&nbsp; <i>W</i>(<i>F</i>) = π<sub>C</sub>(π<sub>S</sub>(π<sub>L</sub>(<i>F</i>) · <i>F</i>) · <i>F</i>) · <i>F</i></p>
-    <p class="formula-note">π(·) 为注意力函数；πL、πS、πC 分别作用在维度 L、S、C 上。朴素的全维度自注意力因张量维度过高而优化困难、计算代价不可承受，故拆解为三个各管一个维度的串联注意力</p>
-  </div>
+  <div class="anim slide-label">Method · 统一表示</div>
+  <div class="anim"><h2>特征张量与统一注意力表示</h2></div>
   <div class="anim split">
-    <div class="col-text">
-      <ul class="bullet-list tight">
-        <li>张量的三个维度与三类感知能力<b>一一对应</b>：层间特征差异关系<span class="em">物体尺度</span>，空间位置差异关系<span class="em">几何变换</span>，通道差异关系<span class="em">任务与物体表示</span></li>
-        <li>三个注意力依次串联，分别承接尺度、空间与任务感知，<b>性能互补</b></li>
-        <li>该表示是后续三个模块的<b>公共输入约定</b>，也是与既有注意力工作对照的统一语言</li>
-      </ul>
-    </div>
-    <div class="col-fig">
-      <table class="data-table">
-        <thead><tr><th>符号</th><th>含义</th></tr></thead>
-        <tbody>
-          <tr><td class="sym-cell">L</td><td>特征金字塔的层级数</td></tr>
-          <tr><td class="sym-cell">S = H × W</td><td>中间层特征的空间位置数</td></tr>
-          <tr><td class="sym-cell">C</td><td>中间层特征的通道数</td></tr>
-          <tr><td class="sym-cell">πL / πS / πC</td><td>尺度 / 空间 / 任务感知注意力函数</td></tr>
-          <tr><td class="sym-cell">f(·)</td><td>由 1×1 卷积近似的线性函数</td></tr>
-          <tr><td class="sym-cell">σ(·)</td><td>hard sigmoid 函数</td></tr>
-          <tr><td class="sym-cell">K</td><td>稀疏采样位置的数目</td></tr>
-          <tr><td class="sym-cell">θ(·)</td><td>生成通道激活参数的超函数</td></tr>
-        </tbody>
+    <div class="split-text">
+      <div class="prompt-box slim">
+        <div class="prompt-label">一般形式 → 三维分解</div>
+        <div class="formula"><i>W</i>(<i>F</i>) = π(<i>F</i>) · <i>F</i></div>
+        <div class="formula"><i>W</i>(<i>F</i>) = π<sub>C</sub>( π<sub>S</sub>( π<sub>L</sub>(<i>F</i>) · <i>F</i> ) · <i>F</i> ) · <i>F</i></div>
+        <div class="formula-note">π(·) 是注意力函数。朴素解法是用全连接层直接在所有维度上学注意力，但张量维度过高，<b style="color:#fff;">优化困难且计算代价不可承受</b> —— 于是拆成三个各管一个维度的串联注意力。</div>
+      </div>
+      <table class="sym-table">
+        <tr><td><i>L</i></td><td>特征金字塔的层级数；层间特征差异关系<b>物体尺度</b></td></tr>
+        <tr><td><i>S</i> = <i>H</i> × <i>W</i></td><td>中间层特征的空间位置数；空间位置差异关系<b>几何变换</b></td></tr>
+        <tr><td><i>C</i></td><td>中间层特征的通道数；通道差异关系<b>任务与物体表示</b></td></tr>
       </table>
     </div>
-  </div>
-</section>
-
-<!-- ═══════════ Slide 7: 尺度感知注意力 πL ═══════════ -->
-<section class="slide">
-  <div class="glow glow-blue tl sm"></div>
-  <div class="anim slide-label">Method · Scale-aware Attention</div>
-  <div class="anim"><h2>尺度感知注意力 πL：按语义重要性动态融合层级</h2></div>
-  <div class="anim divider divider-accent"></div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">Scale-aware Attention</div>
-    <p class="formula">π<sub>L</sub>(<i>F</i>) · <i>F</i> = σ( <i>f</i>( (1/<i>SC</i>) ∑<sub>S,C</sub> <i>F</i> ) ) · <i>F</i></p>
-    <p class="formula-note">f(·) 由 1×1 卷积层近似的线性函数；σ(x) = max(0, min(1, (x+1)/2)) 为 hard sigmoid 函数</p>
-  </div>
-  <div class="anim card-grid cols-3">
-    <div class="card"><h3>① 聚合层级统计</h3><p class="body-text">先在空间与通道维度上聚合，得到每个层级的统计量</p></div>
-    <div class="card"><h3>② 生成重要性分数</h3><p class="body-text">经线性映射与 hard sigmoid，得到各层级的相对重要性</p></div>
-    <div class="card"><h3>③ 逐层缩放特征</h3><p class="body-text">与物体尺度更匹配的层级被增强，不匹配的被抑制</p></div>
-  </div>
-  <div class="anim highlight-bar">
-    <p>该模块位于串联注意力的<span class="accent-word">第一级</span>，让特征在各层级的相对强度随输入自适应，其输出交给空间感知注意力继续加工</p>
-  </div>
-</section>
-
-<!-- ═══════════ Slide 8: 空间感知注意力 πS ═══════════ -->
-<section class="slide">
-  <div class="glow glow-navy tr sm"></div>
-  <div class="anim slide-label">Method · Spatial-aware Attention</div>
-  <div class="anim"><h2>空间感知注意力 πS：稀疏采样聚焦判别区域</h2></div>
-  <div class="anim divider"></div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">Spatial-aware Attention</div>
-    <p class="formula">π<sub>S</sub>(<i>F</i>) · <i>F</i> = (1/<i>L</i>) ∑<sub>l=1..L</sub> ∑<sub>k=1..K</sub> <i>w</i><sub>l,k</sub> · <i>F</i>(<i>l</i>; <i>p</i><sub>k</sub>+Δ<i>p</i><sub>k</sub>; <i>c</i>) · Δ<i>m</i><sub>k</sub></p>
-    <p class="formula-note">K 为稀疏采样位置数目；p<sub>k</sub>+Δp<sub>k</sub> 为自学习空间偏移得到的偏移后位置；Δm<sub>k</sub> 为该位置自学习的重要性标量，两者均从中间层输入特征学习；w<sub>l,k</sub> 为第 l 层第 k 个采样位置对应的权重</p>
-  </div>
-  <div class="anim card-grid cols-3">
-    <div class="card"><h3>稀疏化注意力</h3><p class="body-text">用可变形卷积做稀疏采样，避免 <span class="em">S 维全空间自注意力</span>的巨大开销</p></div>
-    <div class="card"><h3>自适应偏移</h3><p class="body-text">自学习偏移让采样点<b>自适应落到前景的判别位置</b>，重要性标量再筛选</p></div>
-    <div class="card"><h3>跨层聚合</h3><p class="body-text">在相同空间位置上对 L 层取平均，完成<b>跨层特征聚合</b></p></div>
-  </div>
-  <div class="anim highlight-bar">
-    <p>承接尺度融合后的特征、输出交给任务感知注意力，聚焦<span class="accent-word">在空间位置与特征层级间持续共存</span>的判别性区域</p>
-  </div>
-</section>
-
-<!-- ═══════════ Slide 9: 任务感知注意力 πC ═══════════ -->
-<section class="slide">
-  <div class="glow glow-blue bl sm"></div>
-  <div class="anim slide-label">Method · Task-aware Attention</div>
-  <div class="anim"><h2>任务感知注意力 πC：动态开关特征通道</h2></div>
-  <div class="anim divider divider-accent"></div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">Task-aware Attention</div>
-    <p class="formula">π<sub>C</sub>(<i>F</i>) · <i>F</i> = max( α<sup>1</sup>(<i>F</i>) · <i>F</i><sub>c</sub> + β<sup>1</sup>(<i>F</i>),&nbsp; α<sup>2</sup>(<i>F</i>) · <i>F</i><sub>c</sub> + β<sup>2</sup>(<i>F</i>) )</p>
-    <p class="formula-note">Fc 为第 c 个通道的特征切片；[α¹, α², β¹, β²]ᵀ = θ(·) 为学习激活阈值的超函数：先在 L×S 维度全局平均池化，再接两个全连接层与归一化层，最后用平移 sigmoid 归一到 [-1, 1]（与 Dynamic ReLU 一脉相承）</p>
-  </div>
-  <div class="anim split">
-    <div class="col-text">
-      <ul class="bullet-list tight">
-        <li>两条仿射分支中<b>哪条占优由输入统计动态决定</b>，通道因此被按需「打开」或「关闭」</li>
-        <li>输出呈现<span class="em">分段线性的任务自适应特性</span>，使不同通道分别偏向分类、回归等任务</li>
-        <li>部署在串联注意力的<span class="em">末端</span>，输出直接供下游任务分支使用</li>
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>给定特征金字塔的 <i>L</i> 个层级特征，先用<span class="em">上采样或下采样</span>把各层缩放到中间层特征的尺度，得到 <i>F</i> ∈ ℝ<sup><i>L</i>×<i>H</i>×<i>W</i>×<i>C</i></sup>。</li>
+        <li>记 <i>S</i> = <i>H</i> × <i>W</i>，即可重排为三维张量 <i>F</i> ∈ ℝ<sup><i>L</i>×<i>S</i>×<i>C</i></sup>。</li>
+        <li>张量的三个维度与三类感知能力<span class="em">一一对应</span> —— 这是把各种头端改进统一起来的关键一步。</li>
+        <li>其余符号：<i>f</i>(·) 是由 1×1 卷积近似的线性函数，σ(·) 是 hard sigmoid，<i>K</i> 是稀疏采样位置数，θ(·) 是生成通道激活参数的超函数。</li>
+        <li>三个注意力<span class="em">依次串联</span>，分别承接尺度、空间与任务感知；这一表示是后续三个模块的公共输入约定。</li>
       </ul>
     </div>
-    <div class="col-fig">
-      <div class="highlight-bar" style="margin-top:0;">
-        <p><span class="accent-word">自造算例</span>：设某通道 <b>Fc = 1</b>，超函数输出 α¹ = 0.5、β¹ = 0.2、α² = −0.3、β² = 0.4</p>
-        <p style="margin-top:8px;">分支一：0.5 × 1 + 0.2 = <b>0.7</b>；分支二：−0.3 × 1 + 0.4 = <b>0.1</b>；取 max 后该通道输出 <b>0.7</b> —— 通道被「打开」</p>
+  </div>
+</section>
+
+<!-- 5 尺度感知注意力 -->
+<section class="slide">
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Method · π<sub>L</sub></div>
+  <div class="anim"><h2>尺度感知注意力：在层级维度上融合</h2></div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">Scale-aware Attention</div>
+    <div class="formula">π<sub>L</sub>(<i>F</i>) · <i>F</i> = σ( <i>f</i>( (1/<i>SC</i>) Σ<sub><i>S</i>,<i>C</i></sub> <i>F</i> ) ) · <i>F</i></div>
+    <div class="formula-note"><i>f</i>(·) 是由 1×1 卷积层近似的线性函数；σ(<i>x</i>) = max(0, min(1, (<i>x</i>+1)/2)) 是 hard sigmoid 函数。</div>
+  </div>
+  <ul class="anim bullet-list">
+    <li>依据<span class="em">语义重要性</span>动态融合不同层级的特征，让特征在各层级的相对强度随输入自适应。</li>
+    <li>直观流程：先在<span class="em">空间与通道维度上聚合</span>得到层级统计量，再映射成各层级的重要性分数并逐层缩放特征。</li>
+    <li>与物体尺度<span class="em">更匹配的层级被增强</span>，不匹配的被抑制。</li>
+    <li>该模块位于串联注意力的<span class="em">第一级</span>，输出交给空间感知注意力继续加工。</li>
+  </ul>
+</section>
+
+<!-- 6 空间感知注意力 -->
+<section class="slide">
+  <div class="glow glow-blue br"></div>
+  <div class="anim slide-label">Method · π<sub>S</sub></div>
+  <div class="anim"><h2>空间感知注意力：稀疏采样 + 跨层聚合</h2></div>
+  <div class="anim prompt-box">
+    <div class="prompt-label">Spatial-aware Attention</div>
+    <div class="formula">π<sub>S</sub>(<i>F</i>) · <i>F</i> = (1/<i>L</i>) Σ<sub><i>l</i>=1…<i>L</i></sub> Σ<sub><i>k</i>=1…<i>K</i></sub> <i>w</i><sub><i>l</i>,<i>k</i></sub> · <i>F</i>(<i>l</i>; <i>p</i><sub><i>k</i></sub>+Δ<i>p</i><sub><i>k</i></sub>; <i>c</i>) · Δ<i>m</i><sub><i>k</i></sub></div>
+    <div class="formula-note"><i>K</i> 是稀疏采样位置数；<i>p</i><sub><i>k</i></sub>+Δ<i>p</i><sub><i>k</i></sub> 是由自学习空间偏移 Δ<i>p</i><sub><i>k</i></sub> 得到的偏移后位置；Δ<i>m</i><sub><i>k</i></sub> 是位置 <i>p</i><sub><i>k</i></sub> 处自学习的重要性标量 —— 两者都从 <i>F</i> 的<b style="color:#fff;">中间层</b>输入特征中学习。</div>
+  </div>
+  <ul class="anim bullet-list">
+    <li>目标：聚焦在<span class="em">空间位置与特征层级间持续共存</span>的判别性区域。<i>S</i> 维度过高，因此把模块拆成两步。</li>
+    <li>第一步用<span class="em">可变形卷积</span>让注意力学习稀疏化，避免全空间自注意力的巨大开销。</li>
+    <li>偏移量让采样点<span class="em">自适应地落到前景的判别位置</span>；第二步对 <i>L</i> 层取平均，完成相同空间位置上的跨层聚合。</li>
+    <li>该模块接收尺度融合后的特征，输出交给任务感知注意力。</li>
+  </ul>
+</section>
+
+<!-- 7 任务感知注意力 -->
+<section class="slide">
+  <div class="anim slide-label">Method · π<sub>C</sub></div>
+  <div class="anim"><h2>任务感知注意力：动态开关特征通道</h2></div>
+  <div class="anim prompt-box slim">
+    <div class="prompt-label">Task-aware Attention</div>
+    <div class="formula">π<sub>C</sub>(<i>F</i>) · <i>F</i> = max( α<sup>1</sup>(<i>F</i>) · <i>F</i><sub><i>c</i></sub> + β<sup>1</sup>(<i>F</i>), &nbsp; α<sup>2</sup>(<i>F</i>) · <i>F</i><sub><i>c</i></sub> + β<sup>2</sup>(<i>F</i>) )</div>
+    <div class="formula-note"><i>F</i><sub><i>c</i></sub> 是第 <i>c</i> 个通道上的特征切片；[α<sup>1</sup>, α<sup>2</sup>, β<sup>1</sup>, β<sup>2</sup>]<sup>T</sup> = θ(·) 是学习激活阈值的超函数。θ(·) 与 Dynamic ReLU 一脉相承：先在 <i>L</i>×<i>S</i> 维度上全局平均池化降维，再接两个全连接层与一个归一化层，最后用平移 sigmoid 把输出归一到 [−1, 1]。</div>
+  </div>
+  <div class="anim highlight-bar compact">
+    <p><span class="accent-word">算例：</span>设某通道特征切片 <i>F</i><sub><i>c</i></sub> = 1，超函数输出 α<sup>1</sup> = 0.5、β<sup>1</sup> = 0.2、α<sup>2</sup> = −0.3、β<sup>2</sup> = 0.4。第一条分支 0.5 × 1 + 0.2 = <span class="accent-word">0.7</span>；第二条分支 −0.3 × 1 + 0.4 = <span class="accent-word">0.1</span>；取 max 后该通道输出 <span class="accent-word">0.7</span>。两条仿射分支中哪条占优由输入统计动态决定，通道因此被按需「打开」或「关闭」，呈现<span class="accent-word">分段线性的任务自适应</span>特性。</p>
+  </div>
+  <div class="anim small-text" style="margin-top:12px;">该模块部署在串联注意力的末端，输出直接供分类、回归等下游任务分支使用。</div>
+</section>
+
+<!-- 8 整体范式 + fig1 -->
+<section class="slide">
+  <div class="anim slide-label">Method · 整体范式</div>
+  <div class="anim"><h2>DyHead 块的堆叠与整体范式</h2></div>
+  <div class="anim figure-box wide">
+    <div>
+      <img src="../assets/paper-imgs/Dynamic-Head/dyhead_fig1_overview.png" alt="Dynamic Head 整体范式示意">
+      <div class="figure-caption" style="margin-left:auto;margin-right:auto;">Dynamic Head 整体范式：<span class="cap-em">三种注意力各聚焦一个视角 —— 尺度感知、空间感知、任务感知；图底部还可视化了每类注意力前后特征图的改善</span></div>
+    </div>
+  </div>
+  <ul class="anim bullet-list compact">
+    <li>任意骨干网络先提取特征金字塔，<span class="em">缩放对齐成三维张量</span>后送入 DyHead；三个注意力按固定顺序串联即构成一个 DyHead 块，把统一注意力公式<span class="em">嵌套多次</span>即可有效堆叠多个 π<sub>L</sub>、π<sub>S</sub>、π<sub>C</sub> 块。</li>
+    <li>若干注意力块串联的输出可用于<span class="em">分类、中心与框回归</span>等不同任务和表示。</li>
+    <li>图底部的可视化：骨干输出的初始特征图因 ImageNet 预训练的域差异而<span class="em">噪声很大</span>；经尺度感知注意力后对前景物体的尺度差异更敏感；再经空间感知注意力后变得更稀疏、聚焦到前景物体的判别性空间位置；最后经任务感知注意力后按下游任务需求重组出不同激活 —— 与块内「先尺度、再空间、后任务」的固定顺序相互印证。</li>
+  </ul>
+</section>
+
+<!-- 9 详细设计与接入方式 + fig2 -->
+<section class="slide">
+  <div class="anim slide-label">Method · 块设计与接入</div>
+  <div class="anim"><h2>DyHead 块的详细设计与接入现有检测器</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li><span class="em">图 (a)</span>：各注意力模块的内部实现。</li>
+        <li><span class="em">一阶段检测器</span>（图 b）：RetinaNet 这类通常在骨干后挂多个任务特定子网分别处理分类与回归；本文<span class="em">只接一条统一分支</span>即可同时处理多个任务，得益于多重注意力机制，架构更简、效率更高。</li>
+        <li><span class="em">anchor-free 变体</span>：FCOS、ATSS、RepPoints 原本需要把 centerness 或关键点预测挂到分类或回归分支上、构造并不轻松；DyHead 只需在<span class="em">头端追加各种类型的预测</span>即可。</li>
+        <li><span class="em">两阶段检测器</span>（图 c）：利用区域提议与 ROI Pooling 从特征金字塔抽取中间表示。为此先在 <span class="em">ROI Pooling 层之前</span>对特征金字塔施加尺度感知与空间感知注意力，再用<span class="em">任务感知注意力替换原来的全连接层</span>。</li>
+      </ul>
+    </div>
+    <div class="figure-box">
+      <div>
+        <img src="../assets/paper-imgs/Dynamic-Head/dyhead_fig2_design.png" alt="Dynamic Head 的详细设计">
+        <div class="figure-caption" style="margin-left:auto;margin-right:auto;">Dynamic Head 的详细设计：<span class="cap-em">(a) 各注意力模块的内部实现，(b) 接入一阶段检测器的方式，(c) 接入两阶段检测器的方式</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ Slide 10: DyHead 块堆叠（fig2） ═══════════ -->
+<!-- 10 与其他注意力机制的联系 -->
 <section class="slide">
-  <div class="anim slide-label">Method · DyHead Block</div>
-  <div class="anim"><h2>三个注意力串联成块，嵌套堆叠加深</h2></div>
-  <div class="anim split">
-    <div class="col-text">
-      <ul class="bullet-list tight">
-        <li>πL、πS、πC 按<b>固定顺序</b>串联构成一个 DyHead 块</li>
-        <li>由于三者依次应用，把统一注意力公式<span class="em">嵌套多次</span>即可堆叠多个块</li>
-        <li>可视化印证：特征图经 πL 后<b>对前景尺度更敏感</b>，经 πS 后<span class="em">更稀疏、聚焦判别位置</span>，经 πC 后<b>按任务需求重组激活</b></li>
-      </ul>
+  <div class="glow glow-navy tl"></div>
+  <div class="anim slide-label">Method · 统一视角</div>
+  <div class="anim"><h2>与其他注意力机制的联系：都只是子维度特例</h2></div>
+  <div class="anim card-grid cols-3">
+    <div class="card tight">
+      <span class="card-num sm">Deformable</span>
+      <h3>只建模 <i>S</i> 子维度</h3>
+      <p class="body-text">可变形卷积通过<b>稀疏采样</b>改进传统卷积的变换学习，可视为只建模了空间维度。它已被广泛用于检测<b>骨干</b>，但很少用在检测<b>头</b>；骨干中的可变形模块与 DyHead <b>互补</b>。</p>
     </div>
-    <div class="col-fig">
-      <div class="figure-box"><img src="../assets/paper-imgs/Dynamic-Head/dyhead_fig2_design.png" alt="DyHead 块详细设计与一/两阶段检测器接入方式"></div>
-      <div class="figure-caption">(a) 各注意力模块的内部实现；(b) 接入一阶段检测器；(c) 接入两阶段检测器</div>
+    <div class="card tight">
+      <span class="card-num sm">Non-Local</span>
+      <h3>只建模 <i>L</i> × <i>S</i> 子维度</h3>
+      <p class="body-text">Non-Local Networks 用<b>点积形式</b>融合不同空间位置的特征来增强像素特征，可视为只建模了层级与空间两个维度。</p>
     </div>
-  </div>
-</section>
-
-<!-- ═══════════ Slide 11: 泛化到现有检测器 ═══════════ -->
-<section class="slide">
-  <div class="anim slide-label">Method · Generalization</div>
-  <div class="anim"><h2>即插即用：接入一阶段与两阶段检测器</h2></div>
-  <div class="anim divider"></div>
-  <div class="anim vs-row">
-    <div class="vs-col left-col">
-      <span class="vs-tag">传统检测器头</span>
-      <h3>多任务特定子网</h3>
-      <ul>
-        <li>RetinaNet 在骨干后挂多个子网分别处理分类与回归</li>
-        <li>FCOS、ATSS、RepPoints 等 anchor-free 变体需把 centerness 或关键点预测挂到分类或回归分支，构造并不轻松</li>
-      </ul>
-    </div>
-    <div class="vs-col right-col">
-      <span class="vs-tag">+ DyHead</span>
-      <h3>单一统一分支</h3>
-      <ul>
-        <li>只接一条统一分支即可同时处理多个任务，架构更简、效率更高</li>
-        <li>anchor-free 变体只需在头端追加各种类型的预测，部署更灵活</li>
-      </ul>
+    <div class="card tight">
+      <span class="card-num sm">Transformer</span>
+      <h3>只建模 <i>S</i> × <i>C</i> 子维度</h3>
+      <p class="body-text">Transformer 用<b>多头全连接层</b>学习跨注意力对应、融合不同模态特征，可视为只建模了空间与通道两个维度。</p>
     </div>
   </div>
   <div class="anim highlight-bar">
-    <p><span class="accent-word">两阶段检测器</span>：先在 ROI Pooling 层之前对特征金字塔施加尺度感知与空间感知注意力，再用任务感知注意力替换原来的全连接层</p>
+    <p>这三类注意力都<span class="accent-word">只部分建模了特征张量的子维度</span>；DyHead 把不同维度上的注意力合并成一个连贯且高效的实现，并<span class="accent-word">显式对应检测任务的三类挑战</span> —— 相比之下既有方案的工作原理是隐式的。这正是实验部分显著收益的来源。</p>
   </div>
 </section>
 
-<!-- ═══════════ Slide 12: 与其他注意力机制的联系 ═══════════ -->
+<!-- 11 实验设置 -->
 <section class="slide">
-  <div class="glow glow-navy tr sm"></div>
-  <div class="anim slide-label">Method · Relation to Other Attentions</div>
-  <div class="anim"><h2>既有注意力只是子维度上的特例</h2></div>
-  <div class="anim divider"></div>
-  <div class="anim card-grid cols-3">
-    <div class="card">
-      <span class="card-num">S</span>
-      <h3>Deformable 卷积</h3>
-      <p class="body-text">以稀疏采样改进变换学习，可视为只建模了 <span class="em">S 子维度</span>；骨干中的可变形模块与 DyHead 互补</p>
-    </div>
-    <div class="card">
-      <span class="card-num">L×S</span>
-      <h3>Non-Local</h3>
-      <p class="body-text">用点积形式融合不同空间位置的特征，可视为只建模了 <span class="em">L × S 子维度</span></p>
-    </div>
-    <div class="card">
-      <span class="card-num">S×C</span>
-      <h3>Transformer</h3>
-      <p class="body-text">用多头全连接层学习跨注意力对应，可视为只建模了 <span class="em">S × C 子维度</span></p>
-    </div>
-  </div>
-  <div class="anim quote-block">
-    <p>DyHead 把不同维度上的注意力合并成一个连贯且高效的实现，并显式对应检测任务的三类挑战——这正是实验部分显著收益的来源。</p>
-  </div>
-</section>
-
-<!-- ═══════════ Slide 13: 实验设置 ═══════════ -->
-<section class="slide">
-  <div class="anim slide-label">Experiment · Setup</div>
+  <div class="anim slide-label">Experiments · Setup</div>
   <div class="anim"><h2>实验设置</h2></div>
-  <div class="anim divider divider-accent"></div>
-  <div class="anim" style="display:flex; justify-content:center;">
-    <table class="data-table" style="max-width:960px;">
-      <tbody>
-        <tr><td class="sym-cell">数据集</td><td>MS COCO 2017（train2017 训练，val2017 消融，test-dev 服务器评测）</td></tr>
-        <tr><td class="sym-cell">指标</td><td>COCO 风格 AP，含 AP、AP50、AP75、APS、APM、APL</td></tr>
-        <tr><td class="sym-cell">框架</td><td>基于 Mask R-CNN benchmark 实现，默认采用 ATSS 训练框架</td></tr>
-        <tr><td class="sym-cell">训练</td><td>8 张 V100 32GB；消融用 ResNet-50 + 1x 配置，其余用 2x；仅随机水平翻转，部分模型多尺度训练</td></tr>
-        <tr><td class="sym-cell">推理</td><td>与使用测试时增强的方法对比时采用多尺度测试；未用 EMA、mosaic、mix-up、label smoothing、soft-NMS 等 trick</td></tr>
-      </tbody>
-    </table>
-  </div>
-</section>
-
-<!-- ═══════════ Slide 14: 注意力模块消融（tab1） ═══════════ -->
-<section class="slide">
-  <div class="anim slide-label">Experiment · Ablation</div>
-  <div class="anim"><h2>消融：三类注意力协同工作</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Dynamic-Head/dyhead_tab1_attention_ablation.png" alt="三类注意力模块逐个加入基线的消融结果"></div>
-  <div class="anim figure-caption">单独加入尺度感知、空间感知、任务感知注意力分别带来 <span class="cap-em">0.9 / 2.4 / 1.3 AP</span> 提升；三者全部加入后基线从 <span class="cap-em">39.0 AP 提升到 42.6 AP</span></div>
-  <div class="anim stat-grid">
-    <div class="stat"><div class="stat-num">+0.9 AP</div><div class="stat-label">单独加尺度感知注意力（L）</div></div>
-    <div class="stat"><div class="stat-num good">+2.4 AP</div><div class="stat-label">单独加空间感知注意力（S），增益最大与其维度占主导相符</div></div>
-    <div class="stat"><div class="stat-num">+3.6 AP</div><div class="stat-label">三者全部加入，作为连贯模块协同工作</div></div>
-  </div>
-</section>
-
-<!-- ═══════════ Slide 15: 注意力学习可视化（fig3 + fig4） ═══════════ -->
-<section class="slide">
-  <div class="anim slide-label">Experiment · Visualization</div>
-  <div class="anim"><h2>注意力学习可视化</h2></div>
-  <div class="anim split-2">
-    <div>
-      <div class="figure-box sm"><img src="../assets/paper-imgs/Dynamic-Head/dyhead_fig3_scale_hist.png" alt="尺度感知注意力学到的尺度比值分布"></div>
-      <div class="figure-caption">学到的尺度比值（高分辨率层与低分辨率层学习权重之比）分布，统计自 COCO val2017 全部图像：<span class="cap-em">level 5 权重被调向低分辨率、level 1 被调向高分辨率</span>，层级尺度差异被平滑，证明了尺度感知注意力学习的有效性</div>
-    </div>
-    <div>
-      <div class="figure-box sm"><img src="../assets/paper-imgs/Dynamic-Head/dyhead_fig4_spatial_vis.png" alt="空间感知注意力前后特征图变化"></div>
-      <div class="figure-caption">堆叠 2、4、6 个注意力块前后的特征图：初始特征图噪声很大、难以聚焦前景，随着块数增多<span class="cap-em">覆盖更多前景物体并更准确聚焦其判别性空间位置</span></div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════ Slide 16: 头部深度与效率（tab2） ═══════════ -->
-<section class="slide">
-  <div class="glow glow-blue tr sm"></div>
-  <div class="anim slide-label">Experiment · Depth &amp; Efficiency</div>
-  <div class="anim"><h2>深度与效率：堆叠多少块合适？</h2></div>
-  <div class="anim figure-box sm"><img src="../assets/paper-imgs/Dynamic-Head/dyhead_tab2_depth_ablation.png" alt="不同 DyHead 块数的精度与计算开销对比"></div>
-  <div class="anim figure-caption">控制 DyHead 块数量得到的精度与 GFLOPs 对比（基线 254.39 GFLOPs）</div>
-  <div class="anim stat-grid">
-    <div class="stat"><div class="stat-num">2 块</div><div class="stat-label">已超过基线（39.5 vs 39.0 AP）且计算成本更低</div></div>
-    <div class="stat"><div class="stat-num good">6 块 · 42.6 AP</div><div class="stat-label">达到峰值，GFLOPs 仅增加 21.50，相对骨干可忽略</div></div>
-    <div class="stat"><div class="stat-num">8 / 10 块</div><div class="stat-label">精度饱和（42.5 / 42.3 AP），证明了该方法的高效率</div></div>
-  </div>
-</section>
-
-<!-- ═══════════ Slide 17: 对现有检测器的泛化（tab3） ═══════════ -->
-<section class="slide">
-  <div class="anim slide-label">Experiment · Generalization</div>
-  <div class="anim"><h2>泛化：插入五种检测框架一致提升</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Dynamic-Head/dyhead_tab3_detector_generalization.png" alt="DyHead 插入五种检测框架的泛化结果"></div>
-  <div class="anim figure-caption">覆盖<span class="cap-em">两阶段与一阶段、anchor-based 与 anchor-free、基于框与基于点</span>的多种设定（Faster R-CNN、RetinaNet、ATSS、FCOS、RepPoints），各类检测器一致获得 <span class="cap-em">1.2 ∼ 3.2 AP</span> 提升，证明了该方法的泛化能力</div>
-</section>
-
-<!-- ═══════════ Slide 18: 配合不同骨干（tab4） ═══════════ -->
-<section class="slide">
-  <div class="glow glow-navy bl sm"></div>
-  <div class="anim slide-label">Experiment · Backbones</div>
-  <div class="anim"><h2>配合不同骨干网络（COCO test-dev）</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Dynamic-Head/dyhead_tab4_backbones.png" alt="配合不同骨干网络在 COCO test-dev 上的对比"></div>
-  <div class="anim figure-caption">DyHead 配 ResNet-50、ResNet-101、ResNeXt-64x4d-101 分别取得 <span class="cap-em">43.0 / 46.5 / 47.7 AP</span>，相同设置下比此前最好的 BorderDet 高出 <span class="cap-em">1.1 AP 与 1.2 AP</span>，在 COCO 上这是显著的改进</div>
-</section>
-
-<!-- ═══════════ Slide 19: 与最先进方法的对比（tab5） ═══════════ -->
-<section class="slide">
-  <div class="glow glow-blue tl sm"></div>
-  <div class="anim slide-label">Experiment · SOTA Comparison</div>
-  <div class="anim"><h2>与最先进方法的整体对比</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Dynamic-Head/dyhead_tab5_sota.png" alt="与最先进检测器在 COCO test-dev 上的对比"></div>
-  <div class="anim stat-grid">
-    <div class="stat"><div class="stat-num">52.3 AP</div><div class="stat-label">仅多尺度训练一组的新纪录，且只用 2x 训练日程</div></div>
-    <div class="stat"><div class="stat-num">1/20</div><div class="stat-label">训练时间只有 EfficientDet 与 SpineNet 的二十分之一</div></div>
-    <div class="stat"><div class="stat-num good">54.0 AP</div><div class="stat-label">加入多尺度测试后领先同期最好方法 1.3 AP</div></div>
-  </div>
-</section>
-
-<!-- ═══════════ Slide 20: Transformer 骨干与额外数据（tab6 + tab7） ═══════════ -->
-<section class="slide">
-  <div class="anim slide-label">Experiment · Appendix</div>
-  <div class="anim"><h2>与 Transformer 骨干和额外数据的对比</h2></div>
-  <div class="anim figure-box sm"><img src="../assets/paper-imgs/Dynamic-Head/dyhead_tab6_transformer_backbone.png" alt="与 Transformer 骨干结合的结果（COCO val2017）"></div>
-  <div class="anim figure-caption">配 Swin-T 用 2x 日程取得 <span class="cap-em">49.7 AP</span>，比框架原本的 ATSS 基线高 2.5 AP，并以更短日程接近需要额外 mask 标注的 Cascade Mask R-CNN——说明其与 Transformer 骨干互补</div>
-  <div class="anim figure-box sm"><img src="../assets/paper-imgs/Dynamic-Head/dyhead_tab7_extra_data.png" alt="增大输入并引入自训练额外数据后的结果（COCO test-dev）"></div>
-  <div class="anim figure-caption">增大输入（最大边长 1333 → 2000）后配 Swin-L 取得 <span class="cap-em">58.7 AP</span>、训练时间不到同类工作的 1/3；使用 ImageNet 伪标签自训练数据后进一步推至 <span class="cap-em">60.6 AP 的 COCO 新纪录</span></div>
-</section>
-
-<!-- ═══════════ Slide 21: 总结 · 优点与创新点 ═══════════ -->
-<section class="slide">
-  <div class="glow glow-blue tr sm"></div>
-  <div class="anim slide-label">Summary · Takeaways</div>
-  <div class="anim"><h2>优点和创新点</h2></div>
   <div class="anim divider"></div>
   <div class="anim card-grid cols-2">
-    <div class="card">
-      <span class="card-num">01</span>
-      <h3>统一框架，解释力强</h3>
-      <p class="body-text">把尺度、空间与任务感知统一为三维张量上的注意力学习，将 <b>Deformable、Non-Local 与 Transformer</b> 收纳为子维度特例</p>
+    <div class="card tight">
+      <span class="card-num sm">数据与指标</span>
+      <h3>MS COCO 2017</h3>
+      <p class="body-text">
+        · 80 类、约 160K 张网络图像；train2017 / val2017 / test2017 分别含 <b>118K / 5K / 41K</b> 张。<br>
+        · 所有实验<b>只用 train2017 训练、不使用任何额外数据</b>；消融在 val2017 上评测，与 SOTA 对比时报告 test 服务器返回的 test-dev 官方结果。<br>
+        · 指标为 COCO 风格 AP，含 AP、AP50、AP75、AP<sup>S</sup>、AP<sup>M</sup>、AP<sup>L</sup>。
+      </p>
     </div>
-    <div class="card">
-      <span class="card-num">02</span>
-      <h3>即插即用，效率高</h3>
-      <p class="body-text">可接入一阶段与两阶段等各类检测器并一致带来 <span class="em">1.2 ∼ 3.2 AP</span> 提升；2 个块即超基线且计算更低，6 个块的额外开销相对骨干可忽略</p>
+    <div class="card tight">
+      <span class="card-num sm">框架与训练</span>
+      <h3>基于 Mask R-CNN benchmark 实现</h3>
+      <p class="body-text">
+        · DyHead 块以<b>插件</b>形式实现；未特别说明时用 <b>ATSS 训练框架</b>。<br>
+        · 单计算节点 <b>8 张 V100 32GB</b>；消融全部用 ResNet-50 + 标准 1x 配置，其余模型用 2x。<br>
+        · 初始学习率 0.02、weight decay 1e−4、momentum 0.9，学习率在训练轮次的 67% 与 89% 处乘 0.1。<br>
+        · 增强只用随机水平翻转；为与多尺度输入方法对比，部分模型采用多尺度训练。
+      </p>
     </div>
-    <div class="card">
-      <span class="card-num">03</span>
-      <h3>统一分支简化头端</h3>
-      <p class="body-text">用单一统一分支替代多个任务特定子网，同时完成分类与回归等任务，对 <span class="em">YOLO 系列的检测头轻量化改造</span>具有直接的借鉴意义</p>
-    </div>
-    <div class="card">
-      <span class="card-num">04</span>
-      <h3>实验丰富，说服力强</h3>
-      <p class="body-text">消融、可视化、泛化与 SOTA 对比环环相扣，在 COCO test-dev 上取得 <span class="em">54.0 AP</span> 并推至 <span class="em">60.6 AP</span> 新纪录</p>
+  </div>
+  <div class="anim highlight-bar compact">
+    <p><span class="accent-word">推理与「不用 trick」声明：</span>与使用测试时增强的方法对比时采用多尺度测试；<span class="accent-word">未使用</span> model EMA、mosaic、mix-up、label smoothing、soft-NMS 或自适应多尺度测试等技巧 —— 因此精度增益可归因于 DyHead 本身。</p>
+  </div>
+</section>
+
+<!-- 12 注意力模块消融 + tab1 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · 消融 1/3</div>
+  <div class="anim"><h2>注意力模块消融：逐个加到基线上</h2></div>
+  <ul class="anim bullet-list compact" style="margin-top:8px;">
+    <li>表中 L. / S. / C. 分别代表尺度感知、空间感知、任务感知注意力模块，基线为三者全关的 39.0 AP。</li>
+    <li>单独加入三者分别带来 <span class="em">0.9 AP（39.9）、2.4 AP（41.4）、1.3 AP（40.3）</span>的提升；同时加入 L. 与 S. 可提升 2.9 AP（41.9）。</li>
+    <li>三者全部加入后基线从 <span class="em">39.0 AP 提升到 42.6 AP</span>（+3.6 AP），AP50 从 57.2 升到 60.1，AP<sup>S</sup> 从 22.1 升到 26.1。</li>
+    <li><span class="em">空间感知增益最大</span>，与其在三个维度中占据主导地位相符；不同组件作为<span class="em">连贯模块协同工作</span>，而非简单叠加。</li>
+  </ul>
+  <div class="anim figure-box wide">
+    <div>
+      <img src="../assets/paper-imgs/Dynamic-Head/dyhead_tab1_attention_ablation.png" alt="注意力模块消融">
+      <div class="figure-caption" style="margin-left:auto;margin-right:auto;">DyHead 块中各注意力模块有效性的消融：<span class="cap-em">全开时 42.6 / 60.1 / 46.4 的 AP / AP50 / AP75，相比基线 +3.6 AP</span></div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════ Slide 22: 结尾 ═══════════ -->
+<!-- 13 注意力学习可视化 + fig3 & fig4 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · 可视化</div>
+  <div class="anim"><h2>注意力学习可视化：尺度与空间两侧的证据</h2></div>
+  <div class="anim fig-pair">
+    <div class="cell">
+      <img src="../assets/paper-imgs/Dynamic-Head/dyhead_fig3_scale_hist.png" alt="尺度感知注意力学到的尺度比值分布">
+      <div class="figure-caption">尺度感知注意力学到的<span class="cap-em">尺度比值</span>（高分辨率层学习权重 ÷ 低分辨率层学习权重）分布，统计自 COCO val2017 全部图像。<span class="cap-em">level 5 的高分辨率特征图权重被调向低分辨率、level 1 的低分辨率特征图权重被调向高分辨率</span> —— 不同层级的尺度差异被平滑，证明尺度感知注意力学习有效。</div>
+    </div>
+    <div class="cell">
+      <img src="../assets/paper-imgs/Dynamic-Head/dyhead_fig4_spatial_vis.png" alt="空间感知注意力前后的特征图变化">
+      <div class="figure-caption">空间感知注意力前后的特征图变化，对应<span class="cap-em">堆叠 2、4、6 个注意力块</span>的情形。骨干输出的初始特征图<span class="cap-em">噪声很大、难以聚焦前景物体</span>；随着经过的注意力块增多，特征图覆盖更多前景物体并更准确地聚焦其判别性空间位置。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 头部深度与效率 + tab2 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · 消融 2/3</div>
+  <div class="anim"><h2>头部深度与效率：块数怎么定</h2></div>
+  <ul class="anim bullet-list compact" style="margin-top:8px;">
+    <li>基线为 254.39 GFLOPs / 39.0 AP；控制 DyHead 块数量得到精度与计算开销的对比。</li>
+    <li><span class="em">2 个块（39.5 AP，−63.45 GFLOPs）就已超过基线且计算成本更低</span>；4 个块达 42.0 AP、开销仍比基线低 20.97 GFLOPs —— 因为 DyHead 用一条统一分支替代了多个任务特定子网。</li>
+    <li><span class="em">6 个块时达到 42.6 AP 的峰值，GFLOPs 仅增加 21.50</span>，相对骨干的计算量可忽略。</li>
+    <li>继续加深到 8、10 块后精度<span class="em">饱和甚至回落</span>（42.5、42.3 AP），而开销增至 +63.98、+106.46 GFLOPs —— 证明该方法的高效率。</li>
+  </ul>
+  <div class="anim figure-box wide">
+    <div>
+      <img src="../assets/paper-imgs/Dynamic-Head/dyhead_tab2_depth_ablation.png" alt="堆叠不同数量 DyHead 块的效率与效果消融">
+      <div class="figure-caption" style="margin-left:auto;margin-right:auto;">堆叠不同数量 DyHead 块的效率与效果消融：<span class="cap-em">6 块取得 42.6 AP 峰值且 GFLOPs 仅 +21.50，8/10 块精度饱和</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 对现有检测器的泛化 + tab3 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · 消融 3/3</div>
+  <div class="anim"><h2>对现有检测器的泛化</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>把 DyHead 插入 <span class="em">Faster R-CNN、RetinaNet、ATSS、FCOS、RepPoints</span> 五种检测框架。</li>
+        <li>它们覆盖了<span class="em">两阶段与一阶段、anchor-based 与 anchor-free、基于框与基于点</span>的多种设定，是对「统一检测头」这一主张最直接的检验。</li>
+        <li>结果：各类检测器<span class="em">一致获得 1.2 ∼ 3.2 AP 提升</span> —— ATSS 39.4 → 42.6（+3.2）增益最大，FCOS 38.8 → 40.0（+1.2）增益最小；Faster R-CNN +2.5、RetinaNet +2.7、RepPoints +1.4。</li>
+        <li>值得注意的是 ATSS + DyHead 的 42.6 AP 与消融全开结果一致 —— 本文默认框架正是 ATSS。</li>
+      </ul>
+    </div>
+    <div class="figure-box">
+      <div>
+        <img src="../assets/paper-imgs/Dynamic-Head/dyhead_tab3_detector_generalization.png" alt="DyHead 对主流检测器的泛化结果">
+        <div class="figure-caption" style="margin-left:auto;margin-right:auto;">DyHead 应用于主流检测方法时的泛化性消融：<span class="cap-em">五种框架按 anchor-based/anchor-free、框/中心/关键点分组，全部获得 1.2 ∼ 3.2 AP 提升</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 不同骨干对比 + tab4 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · SOTA 1/2</div>
+  <div class="anim"><h2>与最先进方法的对比：不同骨干网络</h2></div>
+  <ul class="anim bullet-list compact" style="margin-top:8px;">
+    <li>COCO test-dev 上，DyHead 配 ResNet-50（1x）、ResNet-101（2x）、ResNeXt-64x4d-101（2x）分别取得 <span class="em">43.0 / 46.5 / 47.7 AP</span>。</li>
+    <li>对比对象包括 Mask R-CNN、Cascade-RCNN、FCOS、ATSS 与 BorderDet 等相近配置的方法，DyHead <span class="em">一致以较大优势超出</span>。</li>
+    <li>与相同设置下此前最好的 BorderDet 相比：<span class="em">ResNet-101 骨干高出 1.1 AP（46.5 vs 45.4），ResNeXt-64x4d-101 骨干高出 1.2 AP（47.7 vs 46.5）</span> —— 在 COCO 上这是显著的改进。</li>
+  </ul>
+  <div class="anim figure-box wide">
+    <div>
+      <img src="../assets/paper-imgs/Dynamic-Head/dyhead_tab4_backbones.png" alt="不同骨干网络在 COCO test-dev 上的对比">
+      <div class="figure-caption" style="margin-left:auto;margin-right:auto;">不同骨干网络在 MS COCO test-dev 上的对比：<span class="cap-em">两阶段与一阶段方法按骨干与训练日程列出六项指标，DyHead 三行位于表末并全部领先</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 SOTA 对比 + tab5 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · SOTA 2/2</div>
+  <div class="anim"><h2>与最先进检测器的整体对比</h2></div>
+  <ul class="anim bullet-list compact" style="margin-top:8px;">
+    <li>表中把已有工作分成两类：<span class="em">仅多尺度训练</span>，以及<span class="em">多尺度训练 + 多尺度测试</span>。</li>
+    <li>在仅多尺度训练的一组中，DyHead 用 <span class="em">2x 训练日程取得 52.3 AP 的新纪录</span>，且训练时间只有 EfficientDet（∼50x）与 SpineNet（∼40x）的 <span class="em">1/20</span>。</li>
+    <li>相比 DETR、Deformable DETR、RelationNet++ 这些<span class="em">以 Transformer 模块做注意力</span>的最新工作，DyHead 高出 2.0 AP 以上（52.3 vs Deformable DETR 50.1），且训练时间更短。</li>
+    <li>再加入多尺度测试后达到 <span class="em">54.0 AP</span>（AP50 72.1 / AP75 59.3 / AP<sup>L</sup> 66.3），领先同期最好方法 <span class="em">1.3 AP</span>。</li>
+  </ul>
+  <div class="anim figure-box wide">
+    <div>
+      <img src="../assets/paper-imgs/Dynamic-Head/dyhead_tab5_sota.png" alt="与最先进检测器在 COCO test-dev 上的对比">
+      <div class="figure-caption" style="margin-left:auto;margin-right:auto;">MS COCO test-dev 上与最先进结果的对比：<span class="cap-em">DyHead 以 ResNeXt-64x4d-101-DCN + 2x 取得 52.3 AP，加多尺度测试后达 54.0 AP</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 Transformer 骨干与额外数据 + tab6 & tab7 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · 附录</div>
+  <div class="anim"><h2>与 Transformer 骨干和额外数据的对比</h2></div>
+  <div class="anim fig-stack">
+    <div class="figure-box xwide" style="margin-top:0;">
+      <div>
+        <img src="../assets/paper-imgs/Dynamic-Head/dyhead_tab6_transformer_backbone.png" alt="与 Transformer 骨干结果的对比">
+        <div class="figure-caption" style="margin-left:auto;margin-right:auto;">COCO <span class="cap-em">验证集</span>上与 Transformer 骨干结果的对比：DyHead 配 Swin-T 用 2x 日程取得 <span class="cap-em">49.7 AP</span>，比框架原本的 ATSS 基线（Swin-T 3x，47.2）高 <span class="cap-em">2.5 AP</span>，并以更短训练日程接近需要额外 mask 标注的 Cascade Mask R-CNN（Swin-T 3x，50.4）—— 说明 DyHead 与 Transformer 骨干<span class="cap-em">互补</span>。</div>
+      </div>
+    </div>
+    <div class="figure-box xwide" style="margin-top:0;">
+      <div>
+        <img src="../assets/paper-imgs/Dynamic-Head/dyhead_tab7_extra_data.png" alt="与最新方法在 COCO test-dev 上的对比">
+        <div class="figure-caption" style="margin-left:auto;margin-right:auto;">COCO <span class="cap-em">test-dev</span> 上与最新方法的对比（† 表示使用额外数据）：把输入最大边长从 1333 增至 <span class="cap-em">2000</span>（多尺度训练最短边 480–1200）后，DyHead 配 Swin-L 取得 <span class="cap-em">58.7 AP</span>，训练时间不到同类工作的 <span class="cap-em">1/3</span>；再用自训练在 ImageNet 上生成伪标签作额外数据，进一步推至 <span class="cap-em">60.6 AP 的 COCO 新纪录</span>。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 19 优点和创新点 + 结尾 -->
 <section class="slide">
   <div class="glow glow-blue tl"></div>
   <div class="glow glow-navy br"></div>
-  <div class="end-card">
-    <div class="anim">
-      <h2><span class="highlight">谢谢观看</span></h2>
+  <div class="anim slide-label">Summary</div>
+  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-2">
+    <div class="card tight">
+      <span class="card-num sm">1</span>
+      <h3>统一框架，解释力强</h3>
+      <p class="body-text">把尺度、空间与任务感知统一为三维张量上的注意力学习，将 Deformable、Non-Local 与 Transformer 收纳为子维度特例。</p>
     </div>
-    <div class="anim divider divider-accent"></div>
-    <div class="anim subtitle">
-      Questions &amp; Discussion
+    <div class="card tight">
+      <span class="card-num sm">2</span>
+      <h3>即插即用，效率高</h3>
+      <p class="body-text">作为插件块可接入一阶段与两阶段等各类检测器并一致带来 1.2 ∼ 3.2 AP 提升；2 个块即超基线且计算更低，6 个块的额外开销相对骨干可忽略。</p>
     </div>
-    <div class="anim cover-meta">
-      <span class="cover-tag">CVPR 2021 · CCF-A</span>
-      <span class="cover-tag">github.com/microsoft/DynamicHead</span>
+    <div class="card tight">
+      <span class="card-num sm">3</span>
+      <h3>简化头端设计</h3>
+      <p class="body-text">用单一统一分支替代多个任务特定子网，同时完成分类与回归等任务，简化了一阶段检测器的头端设计，对 YOLO 系列的检测头轻量化改造具有直接借鉴意义。</p>
     </div>
+    <div class="card tight">
+      <span class="card-num sm">4</span>
+      <h3>实验丰富，说服力强</h3>
+      <p class="body-text">消融、可视化、泛化与 SOTA 对比环环相扣，在 COCO test-dev 上取得 54.0 AP 并推至 60.6 AP 新纪录。</p>
+    </div>
+  </div>
+  <div class="anim cover-meta" style="justify-content:center;margin-top:26px;">
+    <span class="cover-tag">CVPR 2021 · CCF-A</span>
+    <span class="cover-tag">arXiv:2106.08322</span>
+    <span class="cover-tag">代码已开源 · microsoft/DynamicHead</span>
+    <span class="cover-tag">感谢观看</span>
   </div>
 </section>
 
 </div><!-- /deck -->
-
-<!-- ═══════════ CONTROLS（隐藏，仅保留键盘/触摸翻页） ═══════════ -->
-<div class="controls" style="display:none;">
-  <button id="prevBtn" title="上一页">‹</button>
-  <span class="counter" id="counter">01 / 22</span>
-  <button id="nextBtn" title="下一页">›</button>
-</div>
 
 <script>
 (function() {
   const slides = document.querySelectorAll('.slide');
   const total = slides.length;
   let current = 0;
-
-  const counter = document.getElementById('counter');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
   const progress = document.getElementById('progress');
   const dotsWrap = document.getElementById('dots');
   const hint = document.getElementById('hint');
-
-  for (let i = 0; i < total; i++) {
-    const d = document.createElement('div');
-    d.className = 'dot' + (i === 0 ? ' active' : '');
-    d.addEventListener('click', () => goTo(i));
-    dotsWrap.appendChild(d);
-  }
+  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
   const dots = dotsWrap.querySelectorAll('.dot');
-
-  function pad(n) { return String(n).padStart(2, '0'); }
-
-  function goTo(idx) {
-    if (idx < 0 || idx >= total || idx === current) return;
-    const prev = slides[current];
-    const next = slides[idx];
-
-    prev.classList.remove('active');
-    prev.classList.add('exit-up');
-
-    requestAnimationFrame(() => {
-      next.classList.remove('exit-up');
-      next.classList.add('active');
-    });
-
-    setTimeout(() => {
-      prev.classList.remove('exit-up');
-    }, 700);
-
-    dots[current].classList.remove('active');
-    current = idx;
-    dots[current].classList.add('active');
-    counter.textContent = pad(current + 1) + ' / ' + pad(total);
-    progress.style.width = ((current + 1) / total * 100) + '%';
-    prevBtn.disabled = current === 0;
-    nextBtn.disabled = current === total - 1;
-  }
-
+  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
   function next() { goTo(current + 1); }
   function prev() { goTo(current - 1); }
-
   slides[0].classList.add('active');
-  prevBtn.disabled = true;
   progress.style.width = (1 / total * 100) + '%';
-
-  prevBtn.addEventListener('click', prev);
-  nextBtn.addEventListener('click', next);
-
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
-    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
-    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
-    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
-  });
-
+  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
   let touchX = 0, touchY = 0;
-  document.addEventListener('touchstart', (e) => {
-    touchX = e.changedTouches[0].screenX;
-    touchY = e.changedTouches[0].screenY;
-  }, { passive: true });
-  document.addEventListener('touchend', (e) => {
-    const dx = e.changedTouches[0].screenX - touchX;
-    const dy = e.changedTouches[0].screenY - touchY;
-    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
-      dx < 0 ? next() : prev();
-    }
-  }, { passive: true });
-
+  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
+  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
+  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
   function hideHint() { hint.classList.add('hidden'); }
   document.addEventListener('keydown', hideHint, { once: true });
   document.addEventListener('click', hideHint, { once: true });

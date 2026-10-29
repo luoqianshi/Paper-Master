@@ -108,16 +108,16 @@
     {
       "title": "Dynamic Head: Unifying Object Detection Heads with Attentions",
       "file": "paper-slides/Dynamic-Head.html",
-      "description": "CVPR 2021 Dynamic Head 论文演示，聚焦把检测头输入统一为层级 × 空间 × 通道三维张量，以尺度感知、空间感知与任务感知三个串联注意力统一检测头，即插即用提升 1.2 ∼ 3.2 AP 并将 COCO 推至 60.6 AP。",
-      "kind": "期刊/会议",
+      "description": "CVPR 2021 Dynamic Head 论文演示，聚焦把检测头输入统一为层级 × 空间 × 通道三维张量，以尺度感知、空间感知与任务感知三个串联注意力统一检测头，即插即用提升 1.2 ∼ 3.2 AP，COCO test-dev 达 54.0 AP、结合 Transformer 骨干与额外数据推至 60.6 AP。",
+      "kind": "会议",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/Dynamic-Head.png"
     },
     {
       "title": "DySample: Learning to Upsample by Learning to Sample",
       "file": "paper-slides/DySample_Learning_to_Upsample.html",
-      "description": "ICCV 2023 DySample 论文演示，聚焦从点采样视角设计的超轻量动态上采样器，绕过动态卷积，仅用 PyTorch 内置函数，在五项密集预测任务上全面领先。",
-      "kind": "期刊/会议",
+      "description": "ICCV 2023 DySample 论文演示，聚焦从点采样视角重新形式化上采样：为每个上采样点生成内容感知偏移，用 PyTorch 内置 grid_sample 取值而绕开动态卷积与定制 CUDA 包，经 bilinear 初始化、静态范围因子、特征分组、动态范围因子四步改进，在五个密集预测任务上全面领先且延迟逼近双线性插值。",
+      "kind": "会议",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/DySample_Learning_to_Upsample.png"
     },
@@ -260,8 +260,8 @@
     {
       "title": "Powerful-IoU: More straightforward and faster bounding box regression loss with a nonmonotonic focusing mechanism",
       "file": "paper-slides/Powerful-IoU.html",
-      "description": "Powerful-IoU: More straightforward and faster bounding box regression loss with a nonmonotonic focusing mechanism 论文演示文稿，基于阅读笔记生成。",
-      "kind": "期刊/会议",
+      "description": "Neural Networks 2024 Powerful-IoU 论文演示，聚焦把惩罚项的分母从最小外接框尺寸换成目标框边长以根除锚框膨胀，配合质量自适应惩罚函数 f(x)=1-e^(-x^2) 与单超参数非单调注意力层得到 PIoU v2，在 YOLOv8 / DINO 与 COCO、VOC、IC SEM 三个数据集上取得同类损失最高精度。",
+      "kind": "期刊",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/Powerful-IoU.png"
     },
@@ -292,7 +292,7 @@
     {
       "title": "SimAM: A Simple, Parameter-Free Attention Module for Convolutional Neural Networks",
       "file": "paper-slides/SimAM.html",
-      "description": "ICML 2021 论文演示，聚焦基于空间抑制理论的零参数注意力模块：以线性可分性定义能量函数并推导闭式解，直接推断全 3-D 注意力权重，不足十行代码在分类、检测与分割上取得精度-效率双赢。",
+      "description": "ICML 2021 SimAM 论文演示，聚焦基于空间抑制理论的零参数注意力模块：以线性可分性定义能量函数并推导闭式解，直接推断全 3-D 注意力权重，不足十行代码在 CIFAR/ImageNet 分类与 COCO 检测、实例分割上取得精度-效率双赢。",
       "kind": "会议",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/SimAM.png"
