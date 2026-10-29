@@ -4,6 +4,10 @@ ingest/*
 # private
 .lqs/*
 
+# blog-to-slides 中间产物（素材账本 / PDF 列感知正文）
+# 不得入库、不得发布：assets/ 会被 GitHub Pages 原样发布，论文全文不可公开分发
+.cache/*
+
 # Agents
 .claude/
 .codebuddy/
