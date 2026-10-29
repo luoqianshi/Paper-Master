@@ -3,10 +3,10 @@ name: lzk-paper-reading
 description: >
   按「乌漆WhiteMoon」Paper Reading 专栏范式撰写中文论文阅读笔记。当用户给出论文 PDF / arXiv 链接 / 论文标题，
   并要求「写阅读笔记」「按 lzk 范式读这篇」「论文精读笔记」「读一下这篇并输出笔记」时触发。产出固定五节骨架
-  （研究动机 / 文章贡献 / 本文方法 / 实验结果 / 优点和创新点）+ 论文概况表 + 免责声明的 .md 文件；强制执行
-  公式「铺垫句→LaTeX→其中解释」三段式、实验节「2-3 句 + 1 图」节奏、中英文间加空格、优点节 2-4 条有序分点
-  等硬性契约；用 scripts/new_note.py 起稿、scripts/check_note.py 验收。仅在用户明确要求产出「阅读笔记」时触发；
-  论文问答、文献综述、翻译、代码复现、审稿意见、PPT 生成等需求一律不要自动触发。
+  （研究动机 / 文章贡献 / 本文方法 / 实验结果 / 优点和创新点）+ 论文概况表 + 免责声明的 .md 文件到 paper-blogs/
+  目录；强制执行公式「铺垫句→LaTeX→其中解释」三段式、实验节「2-3 句 + 1 图」节奏、中英文间加空格、优点节
+  2-4 条有序分点等硬性契约；用 new_note.py 起稿、check_note.py 验收。仅在用户明确要求产出「阅读笔记」时触发；
+  论文问答、文献综述、翻译、代码复现、审稿意见、PPT 生成（改用 html-paper-slides 技能）等需求一律不要自动触发。
 ---
 
 # 论文阅读笔记写作流水线
@@ -16,8 +16,10 @@ description: >
 一套「读到一篇新论文 → 产出一篇中文阅读笔记」的方法论流水线，从 97 篇公开博客笔记全量统计 + 逐篇通读中蒸馏而来。
 **这是方法论模仿，不是人物扮演**——不模拟人格、不编造作者观点，只复用骨架、句式与格式规范。
 
-- **产出物契约**：单个 `.md` 文件存入 `paper-blogs/`（用论文标题/最核心方法名命名，如 `DySample.md`）+ `assets/paper-imgs/<论文名>/` 图片目录（先以论文名建目录，所有提取图片放入其中）。不产出多文件、不改动用户已有笔记。
-- **领域**：骨架与规范是**通用**的。语料本身偏表格数据机器学习，跨领域（尤其视觉检测）的替换映射见 `references/research/domain-transfer.md`，实测 95/97 篇手法可迁移。当 `domain-transfer.md` 与本文件冲突时，**以 domain-transfer.md 为准**（它是针对具体领域的特化规则）。
+本技能的全部脚本与参考资源位于本技能目录内，以下所有命令均以项目根目录为工作目录执行。
+
+- **产出物契约**：单个 `.md` 文件（输出到 `paper-blogs/`）+ `assets/paper-imgs/<论文名>/` 图片目录。不产出多文件、不改动用户已有笔记。
+- **领域**：骨架与规范是**通用**的。语料本身偏表格数据机器学习，跨领域（尤其视觉检测）的替换映射见 `references/research/domain-transfer.md`（本技能目录内），实测 95/97 篇手法可迁移。当 `domain-transfer.md` 与本文件冲突时，**以 domain-transfer.md 为准**（它是针对具体领域的特化规则）。
 - **篇幅三档**：短 2500 / 标准 4000 / 长 6500 字（语料中位 3770，P25 3071，P75 4845）。
 
 ### ⚠ 铁律：不编造
@@ -42,11 +44,17 @@ description: >
 
 | 项 | 默认 |
 | --- | --- |
-| 输出路径与文件名 | `paper-blogs/<英文短标题或核心方法名>.md` |
+| 输出路径与文件名 | `paper-blogs/<英文短标题>.md`（与现有笔记同级） |
 | 批判性增补节 | **关**（见 §7） |
 | 篇幅档 | 标准 4000 字 |
 
-然后调用 `python scripts/new_note.py "<输出路径>" --title "<标题>" --category "<分类>"` 生成 frontmatter + 五节骨架，再往里填。
+然后调用以下命令生成 frontmatter + 五节骨架，再往里填：
+
+```
+python .qoder/skills/lzk-paper-reading/scripts/new_note.py "paper-blogs/<英文短标题>.md" --title "<论文英文标题>" --category "<分类>"
+```
+
+（可选参数：`--date`、`--url`、`--variant 标准|预备知识|survey|方法名`、`--venue 会议|期刊`）
 
 ### Step 1 · 通读与切片
 
@@ -64,13 +72,14 @@ description: >
 按 §2 路由表确定 H2 序列。
 
 ### Step 3 · 逐节写作
-按 §3 五节契约 + §4 公式图片规范 + §5 表达 DNA 执行。句式直接查 `references/research/phrase-corpus.md`。
+按 §3 五节契约 + §4 公式图片规范 + §5 表达 DNA 执行。句式直接查 `references/research/phrase-corpus.md`（本技能目录内）。
 
 ### Step 4 · 图表落盘
-图片存到 `assets/paper-imgs/<论文名>/`，正文用相对路径 `![](../assets/paper-imgs/<论文名>/<方法名前缀>_figN.png)` 引用（笔记位于 `paper-blogs/` 下，引用需带 `../`）。
+图片存到 `assets/paper-imgs/<论文名>/`，正文用相对路径 `![](../assets/paper-imgs/<论文名>/xx_01.png)` 引用。
+可先运行 `python .qoder/skills/html-paper-slides/scripts/pdf_extractor.py <pdf路径> --output-dir assets/paper-imgs/<论文名>` 从 PDF 提取图表（依赖 `pymupdf`、`Pillow`）。
 
 ### Step 5 · 自检与交付
-跑 `python scripts/check_note.py <文件>`，再人工过 §6 清单，把未通过项改掉后才交付。
+跑 `python .qoder/skills/lzk-paper-reading/scripts/check_note.py <文件>`，再人工过 §6 清单，把未通过项改掉后才交付。
 
 ---
 
@@ -98,7 +107,7 @@ description: >
 逐类写法固定为：**定义句 + 代表工作（加粗名 + 一句机制）+「该方法的优势是……局限在于……」+ 类末 H3「小结」**。
 收尾用「分析与展望」：立评估标准 → 重映射范式 → 逐项给局限与未来方向 → 末段「N 个最具潜力的发展方向」。
 
-> 四类变体的真实样貌见 `references/skeleton-variants.md`；完整判据与篇幅数据见 `references/research/skeleton-annotations.md`。
+> 四类变体的真实样貌见 `references/skeleton-variants.md`；完整判据与篇幅数据见 `references/research/skeleton-annotations.md`（均为本技能目录内文件）。
 
 ---
 
@@ -187,7 +196,7 @@ description: >
 - 选题优先级：①把 X 改造成**可微/端到端** ②从 Y 视角**统一**了 A 和 B ③**实验丰富、说服力强**；备选池：可解释性 / 计算效率 / 鲁棒泛化 / 特征工程 / 稀疏结构 / 理论证明。
 - 价值词：可供参考(86) > 说服力强(11) > 新颖(9) > 巧妙(7) > 有新意、耳目一新、优雅。
 
-> 十类主题的模板句与原文例句见 `references/research/pros-taxonomy.md`。
+> 十类主题的模板句与原文例句见 `references/research/pros-taxonomy.md`（本技能目录内）。
 
 **禁忌**：零负面表述；不写缺点（除非用户开启 §7 的开关）。
 
@@ -262,7 +271,7 @@ description: >
 
 ## §6 质量自检清单
 
-交付前逐项打勾（先跑 `python scripts/check_note.py <文件>`，机器项以脚本结果为准）：
+交付前逐项打勾（先跑 `python .qoder/skills/lzk-paper-reading/scripts/check_note.py <文件>`，机器项以脚本结果为准）：
 
 - [ ] **公式、数值、数据集名、实验结论全部可在论文原文中找到出处，无编造**（§0 铁律）
 - [ ] frontmatter 四字段齐全；免责声明一字不差
@@ -278,6 +287,7 @@ description: >
 - [ ] 中英文空格 100%；禁用词 0 命中
 - [ ] 正文字数落在选定篇幅档 ±20%
 - [ ] 未获取的元信息标注「未获取」，无编造
+- [ ] 笔记保存于 `paper-blogs/`，图片保存于 `assets/paper-imgs/<论文名>/` 且相对路径引用正确
 
 ---
 
@@ -294,6 +304,8 @@ description: >
 
 ## §8 参考资源索引
 
+以下资源均位于本技能目录 `.qoder/skills/lzk-paper-reading/` 下（路径相对项目根目录）：
+
 | 资源 | 内容 |
 | --- | --- |
 | `references/examples/` | 3 篇完整典范原文：2023 预备知识变体 / 2025 标准骨架 / 2026 双变体 + LaTeX |
@@ -309,6 +321,3 @@ description: >
 
 `references/research/corpus_scan.py` 与 `merge_annotations.py` 是**构建期**脚本（全量预抽取与标注合并），
 供语料扩充后重建本 Skill 用，日常写笔记不需要运行。
-
-> 本 Skill 由 [女娲 · Skill 造人术](https://github.com/alchaincyf/nuwa-skill) 生成
-> 创建者：[花叔](https://x.com/AlchainHust)

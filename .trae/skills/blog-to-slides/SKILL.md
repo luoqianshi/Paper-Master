@@ -1,13 +1,13 @@
 ---
 name: blog-to-slides
-description: 生成苹果风/Notion 风的论文阅读 HTML 演示文稿（PPT）。当用户提供 lzk-paper-reading 技能产出的中文阅读笔记（paper-blogs/*.md）并要求「把笔记做成PPT」「笔记转幻灯片」「组会汇报PPT」「HTML 演示文稿」「PPT风格页面」时使用。输入为阅读笔记 + assets/paper-imgs/ 已提取的论文图表（无需 PDF），产出单文件 HTML 幻灯片到 paper-slides/，嵌入论文原始图表，并登记 slides-manifest.json、生成首页截图缩略图。从论文 PDF 直接生成 PPT 请改用 html-paper-slides 技能；写阅读笔记请改用 lzk-paper-reading 技能。
+description: 生成苹果风/Notion 风的论文阅读 HTML 演示文稿（PPT）。当用户提供 lzk-paper-reading 技能产出的中文阅读笔记（paper-blogs/*.md）并要求「把笔记做成PPT」「笔记转幻灯片」「组会汇报PPT」「HTML 演示文稿」「PPT风格页面」时使用。输入为阅读笔记 + assets/paper-imgs/ 已提取的论文图表（不重新提图），并按需通读原始 PDF 正文补充事实细节，产出单文件 HTML 幻灯片到 paper-slides/，嵌入论文原始图表，并登记 slides-manifest.json、生成首页截图缩略图。从论文 PDF 直接生成 PPT 请改用 html-paper-slides 技能；写阅读笔记请改用 lzk-paper-reading 技能。
 ---
 
 # 博客笔记 → HTML 论文演示文稿生成器
 
 生成苹果风/Notion 风的 HTML 演示文稿，用于 AI&CS 专业组会论文阅读汇报或内容展示。
 
-与 html-paper-slides 技能的区别：**本技能的输入不是论文 PDF，而是 lzk-paper-reading 技能产出的中文阅读笔记**（`paper-blogs/<论文名>.md`）及其配套论文图表（`assets/paper-imgs/<论文名>/`）。产出物与 html-paper-slides 完全一致：单文件 HTML 幻灯片 + 首页截图缩略图 + slides-manifest.json 登记。
+与 html-paper-slides 技能的区别：**本技能的叙事输入不是论文 PDF，而是 lzk-paper-reading 技能产出的中文阅读笔记**（`paper-blogs/<论文名>.md`）及其配套论文图表（`assets/paper-imgs/<论文名>/`）。但**事实层仍会按需查阅原始 PDF 正文**（见下「三层信息源」）。产出物与 html-paper-slides 完全一致：单文件 HTML 幻灯片 + 首页截图缩略图 + slides-manifest.json 登记。
 
 本技能的全部资源（脚本、模板）位于本技能目录内，以下所有命令均以项目根目录为工作目录执行。
 
@@ -16,13 +16,17 @@ description: 生成苹果风/Notion 风的论文阅读 HTML 演示文稿（PPT�
 | 项 | 约定 |
 | --- | --- |
 | 笔记输入 | `paper-blogs/<论文名>.md`（lzk-paper-reading 产出，含 frontmatter + 五节骨架） |
-| 图表输入 | `assets/paper-imgs/<论文名>/`（已提取好的论文图表，无需再跑 pdf_extractor） |
+| 图表输入 | `assets/paper-imgs/<论文名>/`（**不重新提取图片**，只复用已有文件） |
+| 原始 PDF | 由 `build_asset_ledger.py` 三级兜底定位（`pdf-papers/**/*.pdf`），只读正文、不提图 |
+| 素材账本 | `.cache/blog-to-slides/<论文名>/asset_ledger.{json,md}` + `paper_text.txt`（gitignore，不发布） |
 | 幻灯片输出 | `paper-slides/<论文名>.html`（单文件 HTML，与现有幻灯片同级） |
 | 图片引用 | HTML 内用相对路径 `../assets/paper-imgs/<论文名>/xxx.png` 直接引用，**不复制图片**到 paper-slides/ 下 |
 | 缩略图 | `assets/thumbnails/<论文名>.png`，由脚本自动生成 |
 | 清单登记 | 生成后必须在 `slides-manifest.json` 的 `slides` 数组末尾追加条目 |
 
 > **图片路径说明**：`paper-blogs/` 与 `paper-slides/` 同为项目根目录下的一级目录，因此笔记正文里的相对路径 `../assets/paper-imgs/<论文名>/xx.png` 在幻灯片 HTML 中**同样有效，直接复用即可**，无需改写、无需复制图片（避免双份存储）。
+
+> **中间产物不得写进 `assets/`**：`assets/paper-imgs/` 被 `index.html` 引用且仓库有 `.nojekyll`，整棵树会原样发布到 GitHub Pages。账本与 PDF 全文一律写入 gitignore 的 `.cache/blog-to-slides/<论文名>/`。
 
 `slides-manifest.json` 条目格式：
 
@@ -39,10 +43,20 @@ description: 生成苹果风/Notion 风的论文阅读 HTML 演示文稿（PPT�
 
 `title`、`kind` 等字段从笔记的论文概况表（标题 / 发表期刊或会议）中取，不得编造。
 
-## ⚠️ 铁律：笔记是唯一信息源
+## ⚠️ 铁律：三层信息源与冲突裁决
 
-> **幻灯片中的每一个公式、数值、数据集名称、实验结论，都必须能在输入笔记中找到出处。**
-> 笔记已通过 lzk-paper-reading 的 check_note.py 验证，可直接信任；但**禁止**凭记忆从论文原文「补充」笔记里没有的内容（例如摘要原文、笔记未提及的实验）。信息拿不到就省略该页或该要点，宁可少写，不可编造。
+> **L1 叙事层 = `paper-blogs/<论文名>.md`**（权威于：章节顺序、中文措辞、图后解读句、个人观点）
+> **L2 事实层 = 原始 PDF 正文**（权威于：数值、数据集、实验设定、被笔记压缩掉的方法细节）
+> **L3 素材层 = `assets/paper-imgs/<论文名>/` + `extraction_summary.json`**（权威于：有哪些图、每张图画什么、尺寸、页码；**只读，不重新提取**）
+
+裁决规则：
+
+1. **叙事从 L1**：幻灯片的章节顺序、中文表述、解读句以笔记为准，保住博客的个人风格。
+2. **事实从 L2**：笔记没写的数值/数据集/实验设定，从 PDF 正文补；**禁止凭记忆编造**。
+3. **冲突时**：采用 L2 的数值/事实，但**必须在收尾说明中标注该分歧**，不得静默覆盖笔记作者原意。
+4. **素材从 L3**：图片全集以**磁盘实际文件**为准（`extraction_summary.json` 的 `items` 实测存在单向缺失，全库 216/767 博客引用图不在其中，只可作元数据）。
+5. **表格数据以 L3 的表格图片为准**，不得采信 PDF 抽取出的单元格碎片文本。
+6. 信息拿不到就省略该页或该要点，**宁可少写，不可编造**。
 
 ## 核心样式规范（必须严格遵循）
 
@@ -93,68 +107,80 @@ description: 生成苹果风/Notion 风的论文阅读 HTML 演示文稿（PPT�
 | 引用框 | `.quote-block` | 引言/金句 |
 | 圆圈图 | `.ipo-circle` | IPO/I-P-O 流程 |
 | 列表 | `.bullet-list li::before` | 要点列表 |
-| 提示框 | `.prompt-box` | 提示词展示 |
+| 提示框 | `.prompt-box` | 提示词/公式展示 |
 | 发光效果 | `.glow .glow-purple/.glow-yellow` | 装饰背景 |
 | 封面元数据 | `.cover-tag` | 标签展示 |
 | 图标 | `.icon` | 64x64 白色图标 |
+| 双图并排 | `.fig-pair .cell` | 两张 square 图并排（可视化对比） |
+| 图文分栏 | `.split .split-text` | 左文右图 |
 
-## 工作流程
+## 工作流程（11 步）
 
-1. **解析笔记**：Read `paper-blogs/<论文名>.md`，提取：
-   - frontmatter：`title / category / date / source_url`
-   - 论文概况表：标题 / 作者 / 发表期刊（或会议）+ 等级 / 发表年份 / 论文代码
-   - 作者单位（表后编号列表）
-   - 五节正文：研究动机 / 文章贡献 / 本文方法 / 实验结果 / 优点和创新点（若笔记含预备知识、理论分析、XX 分析等变体节，一并保留）
+1. **生成素材账本**：
 
-2. **盘点图片**：列出 `assets/paper-imgs/<论文名>/` 下全部文件，与笔记中 `![](../assets/paper-imgs/...)` 引用一一对应。幻灯片优先使用笔记已引用的图片；笔记未引用但与页面主题强相关的图（如消融表、可视化结果）也可取用。图片不存在时不得虚构引用。
+   ```
+   python .qoder/skills/blog-to-slides/scripts/build_asset_ledger.py <论文名>
+   ```
 
-3. **内容规划**：将笔记内容拆分为 13~22 页，每页聚焦单一主题。章节映射：
+   依赖 `pymupdf` 与 `Pillow`（缺失时 `pip install pymupdf Pillow`）。产出 `.cache/blog-to-slides/<论文名>/` 下的 `asset_ledger.json`、`asset_ledger.md`、`paper_text.txt`，并打印 PDF 定位结果与页数预算。PDF 定位三级兜底：`extraction_summary.json` 的 `pdf_path` → 文件名/标题模糊匹配（**top1 ≥ 0.85 且与次优差距 ≥ 0.15**，否则不采用）→ `--pdf <路径>` 人工指定。
 
-   | 笔记章节 | 幻灯片对应 |
-   | --- | --- |
-   | 论文概况表 + frontmatter | 首页（标题 + 作者 + 作者单位 + 发表期刊/会议） |
-   | 文章贡献 | 概述页（替代原技能的「摘要」页，用贡献段散文拆成要点） |
-   | 研究动机 | 引言：现有研究不足 + 本文切入点 |
-   | 预备知识（如有） | 相关工作/背景综述页（可选） |
-   | 本文方法 | 方法：框架总述 + 按 H3 逐模块分述 |
-   | 实验结果 | 实验设置 + 主对比 + 消融 + 可视化 |
-   | 优点和创新点 | 总结与讨论（优点条目直接转为总结要点） |
+2. **逐行过账本**：Read `asset_ledger.md`，把**全部**图片行（含 `unused_in_blog`）过一遍，确认每张图的形态（wide/square/tall）、博客章节与解读句。
 
-4. **结构设计**：
-   - 首页（标题 + 作者 + 作者单位 + 发表期刊）
-   - 概述（核心贡献要点）
-   - 引言（现有研究不足 + 本文主要贡献）
-   - 背景综述（可选，来自预备知识节）
-   - 方法
-   - 实验结果
-   - 总结与讨论
-   - 结尾
+3. **通读 PDF 正文**：Read `paper_text.txt`（L2 事实层）。正文为列感知抽取结果；表格页的碎片文本不可信，表格以图片为准。
 
-5. **填充内容**：根据模板组件填充具体内容，用 Write 工具将 HTML 保存到 `paper-slides/<论文名>.html`（单文件，图片用相对路径 `../assets/paper-imgs/<论文名>/xxx.png` 引用）。
+4. **通读笔记**：Read `paper-blogs/<论文名>.md` 全文（L1 叙事层）。
+
+5. **产出规划表**（写 HTML 前必须完成）：`页码 | 主题 | 用哪张图 | 图的博客章节归属 | 事实来源(PDF页码) | 叙事来源(笔记章节)`。硬约束：
+   - 每个 `in_blog=true` 的图必须落在某一行；
+   - 章节归属须与账本 `blog_sections` 一致 —— **禁止用方法节的图凑满总数而把可视化节掏空**；
+   - 「可视化分析 / 定性结果」章节的图不得降级进图集页，必须独占整页或半页；
+   - `aspect=wide` 的图独占整页或半页，不得塞进窄栏。
+
+6. **填充内容**：按规划表用 Write 工具将 HTML 保存到 `paper-slides/<论文名>.html`（单文件，图片用相对路径 `../assets/paper-imgs/<论文名>/xxx.png` 引用）。页数须落在账本 `page_budget` 的 `[min, max]` 区间内。
 
    **公式排版规则**（笔记是 LaTeX 源，幻灯片是 HTML）：
    - 简单公式（上下标、分式、希腊字母）用 HTML/CSS 排版：`<sup>`/`<sub>`、斜体 `<i>`、Unicode 符号（α β γ λ ∂ ∑ √ ≤ ≥ ×）。
    - 复杂公式优先引用 `assets/paper-imgs/` 中的论文原图（若有对应公式图）。
    - **不引入 MathJax/KaTeX 等 CDN 依赖**，保持 `file://` 协议下零外部依赖可打开。
 
-6. **预览调整**：生成后检查效果并微调。
+7. **跑门禁**：
 
-7. **登记清单**：按上方格式在 `slides-manifest.json` 追加条目。
+   ```
+   python .qoder/skills/blog-to-slides/scripts/verify_slides.py <论文名>
+   ```
 
-8. **生成缩略图**：运行 `python .trae/skills/blog-to-slides/scripts/generate-thumbnails.py` 为新生成的 HTML 幻灯片截取首屏封面，输出到 `assets/thumbnails/`，并自动更新 `slides-manifest.json` 中的 `thumbnail` 字段，使电子书柜首页（index.html）的卡片能展示真实的幻灯片封面而非默认示意图。依赖 `playwright`（缺失时 `pip install playwright && playwright install chromium`）。
+   **不通过则回到第 6 步修补，禁止跳过、禁止进入第 8 步。** 豁免须显式：`--allow-missing <图>` / `--allow-extra-pages <n>`，并在收尾说明豁免理由。
 
-## 分页规划建议
+8. **登记清单**：按上方格式在 `slides-manifest.json` 追加条目。
+
+9. **生成缩略图**：运行 `python .qoder/skills/blog-to-slides/scripts/generate-thumbnails.py` 为新生成的 HTML 幻灯片截取首屏封面，输出到 `assets/thumbnails/`，并自动更新 `slides-manifest.json` 中的 `thumbnail` 字段。依赖 `playwright`（缺失时 `pip install playwright && playwright install chromium`）。注意该脚本会遍历全部 HTML，若只想更新单篇请确认副作用可接受。
+
+10. **人工浏览复核**：逐页翻看，确认无溢出、无图片变形、图注与结论同页。
+
+11. **收尾说明**：报告页数 / 用图数 / 覆盖率、`pdf_resolution`、任何降级（PDF 未找到、扫描版）或豁免。
+
+## 分页规划建议（动态页数）
+
+```
+N        = 博客引用图数（账本 blog_ref_count）
+图页下限 = ceil(N / 2)        # 允许每页最多 2 图（仅限 square/tall）
+结构页   = 7                  # 首页1 + 概述1 + 引言2 + 总结2 + 结尾1
+page_budget.min = 7 + ceil(N / 2)
+page_budget.max = min(8 + N, 30)
+```
 
 | 位置 | 内容 | 页数 |
 |------|------|------|
 | 首页 | 标题 + 作者 + 作者单位 + 发表期刊 | 1页 |
 | 概述 | 核心贡献要点（来自文章贡献节） | 1页 |
-| 引言 | 现有研究不足 + 本文切入点（来自研究动机节） | 2页 |
-| 背景综述（可选） | 预备知识 / 相关概念（如有） | 2~3页 |
-| 方法 | 框架总述 + 关键要点分述（按笔记方法节 H3 组织） | 3~5页 |
-| 实验结果 | 实验设置 + 主对比 + 消融 + 可视化（实验节图片为主） | 3~5页 |
-| 总结与讨论 | 优点和创新点条目 + 局限与展望（如有） | 2~3页 |
-| 结尾 | 简要结束页面 | 1页 |
+| 引言 | 现有研究不足 + 本文切入点（来自研究动机节） | 1~2页 |
+| 背景综述（可选） | 预备知识 / 相关概念（如有）；**占用 max 预算内额度** | 0~3页 |
+| 方法 | 形式化 + 框架总述 + 按 H3 逐模块分述 | 3~6页 |
+| 实验结果 | 实验设置 + 主对比 + 横向对比 + 消融 + 可视化（实验节图片为主） | 4~8页 |
+| 总结与讨论 | 优点和创新点条目 + 局限与展望（如有） | 1~2页 |
+| 结尾 | 简要结束页面（可与总结合并） | 0~1页 |
+
+当 N 大到触及 30 页封顶时，超出部分放入 grid 图集页（每页 4~6 张缩略图 + 简短图注），**仍计入 100% 覆盖**；但「可视化分析」节的图除外（见工作流第 5 步）。
 
 ## 注意事项
 
@@ -166,6 +192,8 @@ description: 生成苹果风/Notion 风的论文阅读 HTML 演示文稿（PPT�
 6. 保留左右键前后翻页的功能，但是不要出现显式的左右翻页的控制器
 7. 笔记中每张图后都配有解读句——把「图 + 解读结论」一起搬到幻灯片，图注与结论不要拆散
 8. 优点和创新点节的有序条目直接作为总结页要点，起手句「个人认为…」可省略，但条目措辞保持原意
+9. **横长图（`aspect=wide`，如框架图、宽对比表）独占整页或半页，不得塞进窄栏**；两张 square 图并排用 `.fig-pair`
+10. **表格数据以 `assets/paper-imgs/` 中的表格图片为准**，不得采信 PDF 抽取出的单元格碎片文本
 
 ## ⚠️ 已知问题 & 解决方案（必须遵循）
 
@@ -183,5 +211,15 @@ description: 生成苹果风/Notion 风的论文阅读 HTML 演示文稿（PPT�
 
 ### 问题3：相对路径图片在缩略图截屏中空白
 
-- **原因**：`generate-thumbnails.py` 通过 `file:///` 绝对 URL 加载 HTML，`../assets/...` 相对路径以 HTML 文件自身位置为基准解析，正常可加载；若空白多为路径笔误（如把 `../assets` 写成 `./assets` 或图片名抄错）
-- **解决**：生成后核对每张图片的文件名与 `assets/paper-imgs/<论文名>/` 实际文件一一对应；manifest 登记的 `file` 字段必须是 `paper-slides/<论文名>.html`
+- **原因**：路径笔误（如把 `../assets` 写成 `./assets` 或图片名抄错）
+- **解决**：**由 `verify_slides.py` 的检查 2（`naturalWidth > 0`，证明图片真实加载）与检查 5（src 前缀必须为 `../assets/paper-imgs/<名>/`）自动拦截**，无需人工核对
+
+### 问题4：幻灯片丢弃博客已有截图（本技能的历史顽疾）
+
+- **原因**：旧版把笔记当唯一信息源且限死 13~22 页，模型边写边想、写到后半程乏力就丢图；实测全库 699 张博客引用图只用了 364 张（丢 48%），且丢图集中在「可视化分析」节
+- **解决**：工作流第 5 步「规划表先行」+ 第 7 步「覆盖率门禁」。`verify_slides.py` 检查 1 要求博客引用图 100% 出现，缺失即非零退出并列出清单
+
+### 问题5：双栏论文 PDF 正文抽取错乱
+
+- **原因**：裸 `page.get_text()` 先吐图内标签汤；`get_text(sort=True)` 会把左右两栏合并到同一行
+- **解决**：`build_asset_ledger.py` 使用列感知块抽取（按页面中线分栏、栏内按 y 排序），并用 `extraction_summary.json` 的图 bbox 过滤图区文本块
