@@ -241,36 +241,32 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 <section class="slide">
   <div class="anim slide-label">Experiments 01</div>
   <div class="anim"><h2>算子级速度基准：标准分辨率</h2></div>
-  <div class="anim split fig-wide">
-    <div class="split-text">
-      <ul class="bullet-list compact">
-        <li>设置：224×224 输入经 4/8/16/32 倍下采样，外加 ViT 的 14×14×768；batch 64，只测核心空间聚合操作</li>
-        <li>稠密注意力随分辨率显著变慢甚至显存溢出；FlashAttention-2 大幅提速但不改变二次复杂度</li>
-        <li>DCNv3 快于朴素深度卷积，却<span class="em">慢于 cuDNN 优化版</span>——3×3 稀疏窗口的速度优势并未兑现</li>
-        <li>DCNv4 全面超越基线：56×56×128 的 FP16 耗时从 <span class="em">1.52 ms 降到 0.404 ms</span></li>
-      </ul>
-    </div>
-    <div class="figure-box h54"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table2.png" alt="原文 §4.1 算子级基准设置（PDF 页裁剪）"></div>
+  <div class="anim">
+    <ul class="bullet-list compact">
+      <li>设置：224×224 输入经 4/8/16/32 倍下采样，外加 ViT 的 14×14×768；batch 64，只测核心空间聚合操作</li>
+      <li>稠密注意力随分辨率显著变慢甚至显存溢出；FlashAttention-2 大幅提速但不改变二次复杂度</li>
+      <li>DCNv3 快于朴素深度卷积，却<span class="em">慢于 cuDNN 优化版</span>——3×3 稀疏窗口的速度优势并未兑现</li>
+      <li>DCNv4 全面超越基线：56×56×128 的 FP16 耗时从 <span class="em">1.52 ms 降到 0.404 ms</span></li>
+    </ul>
   </div>
-  <div class="anim figure-caption">原文 §4.1 算子级基准设置（PDF 页裁剪）：表 2 的完整运行时间见左侧结论，DCNv4 在四档降采样率与 ViT 等宽形状上均快于 DCNv3。</div>
+  <div class="anim figure-box big"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table2.png" alt="标准分辨率下的算子级基准"></div>
+  <div class="anim figure-caption">表 2：标准输入形状下各算子的运行时间（ms，FP32/FP16），DCNv4 在四档降采样率与 ViT 等宽形状上均快于 DCNv3。</div>
 </section>
 
 <!-- 8 算子级基准 table3 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 02</div>
   <div class="anim"><h2>算子级速度基准：高分辨率</h2></div>
-  <div class="anim split fig-wide">
-    <div class="split-text">
-      <ul class="bullet-list compact">
-        <li>设置：800×1280 层级特征图与 1024×1024 各向同性特征图，batch size 1，对应检测等下游任务的常用输入</li>
-        <li>高分辨率下稠密全局注意力显存溢出，FlashAttention-2 也无法消除二次复杂度</li>
-        <li>窗口注意力与深度卷积在高分辨率下同样落后于 DCNv4</li>
-        <li>各档输入上 DCNv4 均比 DCNv3 快 <span class="em">3 倍以上</span>，稀疏窗口的速度优势只有在内存访问优化后才成为现实</li>
-      </ul>
-    </div>
-    <div class="figure-box h54"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table3.png" alt="原文 §4.1–4.2 结果页（PDF 页裁剪）"></div>
+  <div class="anim">
+    <ul class="bullet-list compact">
+      <li>设置：800×1280 层级特征图与 1024×1024 各向同性特征图，batch size 1，对应检测等下游任务的常用输入</li>
+      <li>高分辨率下稠密全局注意力显存溢出，FlashAttention-2 也无法消除二次复杂度</li>
+      <li>窗口注意力与深度卷积在高分辨率下同样落后于 DCNv4</li>
+      <li>各档输入上 DCNv4 均比 DCNv3 快 <span class="em">3 倍以上</span>，稀疏窗口的速度优势只有在内存访问优化后才成为现实</li>
+    </ul>
   </div>
-  <div class="anim figure-caption">原文 §4.1–4.2 结果页（PDF 页裁剪）：表 3 的高分辨率数据见左侧结论，DCNv4 在各档输入上均优于 cuDNN 深度卷积、窗口注意力与 FlashAttention-2。</div>
+  <div class="anim figure-box big"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table3.png" alt="高分辨率下的算子级基准"></div>
+  <div class="anim figure-caption">表 3：高分辨率输入下的算子级基准（ms，FP32/FP16）。DCNv4 在各档输入上均优于 cuDNN 深度卷积、窗口注意力与 FlashAttention-2。</div>
 </section>
 
 <!-- 9 运行时间消融 table10 -->
@@ -287,7 +283,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
         <li>最终模块 0.873 ms / 内核 0.404 ms，<span class="em">消除冗余内存指令是最关键一步</span></li>
       </ul>
     </div>
-    <div class="figure-box h56"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table9.png" alt="各优化环节的运行时间消融"></div>
+    <div class="figure-box h56"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table10.png" alt="各优化环节的运行时间消融"></div>
   </div>
   <div class="anim figure-caption">表 10：各优化环节的累积运行时间（ms）。Module 为模块级、Kernel 为内核级，灰色行即最终 DCNv4。</div>
 </section>
@@ -341,9 +337,9 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
         <li>与 InternImage 同架构同超参，收益完全来自算子替换</li>
       </ul>
     </div>
-    <div class="figure-box h48"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table10.png" alt="原文 §4.5 消融设置（PDF 页裁剪）"></div>
+    <div class="figure-box h56"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table6.png" alt="ADE20K 语义分割结果"></div>
   </div>
-  <div class="anim figure-caption">原文 §4.5 消融设置页（PDF 页裁剪）：ADE20K 的 SS/MS mIoU 与 FPS 以左侧结论为准；表 6 图版未包含在现有素材中。</div>
+  <div class="anim figure-caption">表 6：ADE20K val 上的 UperNet 语义分割结果（SS/MS mIoU 与 FPS），同规模下精度与速度同时占优。</div>
 </section>
 
 <!-- 13 nuScenes 3D 检测 table7 -->
@@ -359,7 +355,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
         <li>检测头尚未充分优化，算子级提速仍能完整转化为系统级收益</li>
       </ul>
     </div>
-    <div class="figure-box h56"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table6.png" alt="nuScenes 3D 检测结果"></div>
+    <div class="figure-box h52"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table7.png" alt="nuScenes 3D 检测结果"></div>
   </div>
   <div class="anim figure-caption">表 7：nuScenes test set 上的 BEVFormerV2 结果；FPS<sup>†</sup> 为骨干吞吐，FPS 为整体吞吐（检测头未充分优化）。</div>
 </section>
@@ -377,9 +373,9 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
         <li>在为特定算子精心调参的架构中，DCNv4 仍能保持精度并获得更快速度</li>
       </ul>
     </div>
-    <div class="figure-box h52"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table7.png" alt="原文 ConvNeXt/ViT 替换页（PDF 页裁剪）"></div>
+    <div class="figure-box h52"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table8.png" alt="ConvNeXt 与 ViT 中替换 DCNv4 的结果"></div>
   </div>
-  <div class="anim figure-caption">原文 §4.3–4.4 页裁剪：ConvNeXt 与 ViT 替换 DCNv4 的精度与吞吐以左侧结论为准；表 8 图版未包含在现有素材中。</div>
+  <div class="anim figure-caption">表 8：ConvNeXt 与 ViT 中替换 DCNv4 后的 ImageNet-1K 精度与吞吐，均未做任何超参调整。</div>
 </section>
 
 <!-- 15 生成任务 table9 -->
@@ -395,9 +391,9 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
         <li>作者指出该架构与超参未必对 DCNv4 最优，重新设计模型或搜索超参可能更好</li>
       </ul>
     </div>
-    <div class="figure-box h60"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table8.png" alt="ImageNet 256×256 类条件生成结果（同页含 Table 10 消融表）"></div>
+    <div class="figure-box h60"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table9.png" alt="ImageNet 256×256 类条件生成结果"></div>
   </div>
-  <div class="anim figure-caption">原文 Table 9 生成结果（同页含 Table 10 消融表，PDF 页裁剪）：潜扩散模型从零训练，U-Net 中的卷积被替换为 DCNv4。</div>
+  <div class="anim figure-caption">表 9：ImageNet 256×256 类条件生成结果，潜扩散模型从零训练，U-Net 中的卷积被替换为 DCNv4。</div>
 </section>
 
 <!-- 16 可视化分析 fig1 -->

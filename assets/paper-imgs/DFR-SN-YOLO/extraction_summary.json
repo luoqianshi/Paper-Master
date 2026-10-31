@@ -25,13 +25,13 @@
       "caption": "表 1    YOLO 系列模型的检测结果\nTable 1    Detection results of models of YOLO series",
       "filename": "tab1.png",
       "page": 2,
-      "w": 692,
-      "h": 112,
+      "w": 1068,
+      "h": 597,
       "bbox": [
-        310.44000244140625,
-        633.4894409179688,
-        559.1199951171875,
-        673.2601318359375
+        305,
+        610,
+        561,
+        753
       ]
     },
     {
@@ -85,13 +85,13 @@
       "caption": "表 2    模型训练的参数设置\nTable 2    Parameter settings for the model training",
       "filename": "tab2.png",
       "page": 6,
-      "w": 505,
-      "h": 400,
+      "w": 801,
+      "h": 688,
       "bbox": [
-        339.9599914550781,
-        144.82948303222656,
-        521.4113159179688,
-        288.41009521484375
+        333,
+        121,
+        525,
+        286
       ]
     },
     {
@@ -100,13 +100,13 @@
       "caption": "表 3    不同层加入CA 注意力的效果及不同的注意力机制对比\nTable 3    The effect of adding CA attention at different layers and the comparison of different attention mechanisms",
       "filename": "tab3.png",
       "page": 6,
-      "w": 1470,
-      "h": 1145,
+      "w": 2122,
+      "h": 743,
       "bbox": [
-        35.5,
-        138.3796844482422,
-        564.2884521484375,
-        550.144287109375
+        40,
+        544,
+        549,
+        722
       ]
     },
     {
@@ -130,13 +130,13 @@
       "caption": "表 5    不同轻量化模块试验效果对比\nTable 5    Comparison of experimental effects of different\nlightweight modules",
       "filename": "tab5.png",
       "page": 8,
-      "w": 708,
-      "h": 380,
+      "w": 1030,
+      "h": 709,
       "bbox": [
-        303.44000244140625,
-        156.70948791503906,
-        557.9400024414062,
-        293.31011962890625
+        307,
+        121,
+        554,
+        291
       ]
     },
     {
@@ -160,13 +160,13 @@
       "caption": "表 7    消融试验结果对比\nTable 7    Comparison of the results of the ablation experiments",
       "filename": "tab7.png",
       "page": 9,
-      "w": 1470,
-      "h": 220,
+      "w": 2113,
+      "h": 763,
       "bbox": [
-        35.5,
-        48.991302490234375,
-        564.4238891601562,
-        127.83753967285156
+        44,
+        122,
+        551,
+        305
       ]
     },
     {
@@ -175,13 +175,13 @@
       "caption": "表 8    不同检测网络的检测结果对比\nTable 8    Comparison of the detection results for the different detection networks",
       "filename": "tab8.png",
       "page": 10,
-      "w": 1471,
-      "h": 530,
+      "w": 2130,
+      "h": 675,
       "bbox": [
-        35.5,
-        48.991302490234375,
-        564.747802734375,
-        239.69432067871094
+        42,
+        234,
+        553,
+        396
       ]
     },
     {
@@ -220,13 +220,13 @@
       "caption": "表 9    不同模型的检测试验结果\nTable 9    Detection results for the different detection models",
       "filename": "tab9.png",
       "page": 11,
-      "w": 731,
-      "h": 465,
+      "w": 967,
+      "h": 401,
       "bbox": [
-        35.5,
-        236.96949768066406,
-        298.24041748046875,
-        403.9314270019531
+        49,
+        214,
+        281,
+        310
       ]
     }
   ]

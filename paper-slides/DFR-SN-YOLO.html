@@ -210,20 +210,16 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 <section class="slide">
   <div class="anim slide-label">Experiments 01</div>
   <div class="anim"><h2>CA 注意力：插在第 7 层最合适</h2></div>
-  <div class="anim split">
-    <div class="split-text">
-      <ul class="bullet-list tight">
-        <li>对比第 3、7、9、13、17、20 层插入 CA：<b>第 7 层</b>平均精度 mAP@[50-95] 最高，为 <b>69.4%</b>。</li>
-        <li>第 7 层较基线顶芯准确率 SP 88.5→90.9、召回率 SR 87.0→89.4，<b>各提升 2.4 个百分点</b>。</li>
-        <li>第 7 层处于中层，空间与语义信息较平衡；网络越深分辨率越低、空间信息越少，位置敏感的 CA 收益下降。</li>
-        <li>同层替换注意力：CA、CBAM、SE、ECA 分别提升 mAP@50 <b>1.4、0.9、0.6、0.3</b> 个百分点，CA 对顶芯提升最高。</li>
-      </ul>
-    </div>
-    <div class="figure-col h62">
-      <img src="../assets/paper-imgs/DFR-SN-YOLO/tab3.png" alt="原文 §2.1–2.2 页裁剪（含表 2 训练参数）">
-      <div class="figure-caption tight">原文 §2.1–2.2 页裁剪（含表 2 训练参数）：第 7 层 CA 的 SR 为 89.4%、mAP@[50-95] 为 69.4%；表 3 图版未包含在现有素材中。</div>
-    </div>
+  <div class="anim">
+    <ul class="bullet-list tight">
+      <li>对比第 3、7、9、13、17、20 层插入 CA：<b>第 7 层</b>平均精度 mAP@[50-95] 最高，为 <b>69.4%</b>。</li>
+      <li>第 7 层较基线顶芯准确率 SP 88.5→90.9、召回率 SR 87.0→89.4，<b>各提升 2.4 个百分点</b>。</li>
+      <li>第 7 层处于中层，空间与语义信息较平衡；网络越深分辨率越低、空间信息越少，位置敏感的 CA 收益下降。</li>
+      <li>同层替换注意力：CA、CBAM、SE、ECA 分别提升 mAP@50 <b>1.4、0.9、0.6、0.3</b> 个百分点，CA 对顶芯提升最高。</li>
+    </ul>
   </div>
+  <div class="anim figure-box h38"><img src="../assets/paper-imgs/DFR-SN-YOLO/tab3.png" alt="不同层加入 CA 注意力的效果及不同注意力机制对比"></div>
+  <div class="anim figure-caption tight">表 3 上：不同层加入 CA 的效果；下：第 7 层替换为 GAM/EMA/ECA/NAM/SE/CBAM 的对比。CA(7) 的 SR 为 89.4%、mAP@[50-95] 为 69.4%。</div>
 </section>
 
 <!-- 8 颈部 C3_RFCBAMConv fig4 -->
@@ -250,7 +246,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 <section class="slide">
   <div class="anim slide-label">Experiments 02</div>
   <div class="anim"><h2>颈部感受野模块的有效性</h2></div>
-  <div class="anim figure-box h36"><img src="../assets/paper-imgs/DFR-SN-YOLO/tab4.png" alt="C3 中融入不同感受野卷积模块测试结果及不同层替换 C3_RFCBAMConv 效果对比"></div>
+  <div class="anim figure-box h44"><img src="../assets/paper-imgs/DFR-SN-YOLO/tab4.png" alt="C3 中融入不同感受野卷积模块测试结果及不同层替换 C3_RFCBAMConv 效果对比"></div>
   <div class="anim figure-caption tight">表 4 上：C3 中融入 RFAConv / RFCAConv / RFCBAMConv；下：第 4/6/8/13/17/20/23 层替换 C3_RFCBAMConv 的效果对比。</div>
   <div class="anim">
     <ul class="bullet-list compact">
@@ -304,7 +300,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 <section class="slide">
   <div class="anim slide-label">Experiments 04</div>
   <div class="anim"><h2>损失函数对比：iou_ratio = 0.8 最优</h2></div>
-  <div class="anim figure-box h32"><img src="../assets/paper-imgs/DFR-SN-YOLO/tab6.png" alt="SN 不同融合权重比下模型性能及使用不同损失函数试验结果对比"></div>
+  <div class="anim figure-box h38"><img src="../assets/paper-imgs/DFR-SN-YOLO/tab6.png" alt="SN 不同融合权重比下模型性能及使用不同损失函数试验结果对比"></div>
   <div class="anim figure-caption tight">表 6 上：SN 不同融合权重比下的模型性能；下：与 CIoU、SIoU、EIoU、MPD、Shape、NWD 的对比。</div>
   <div class="anim">
     <ul class="bullet-list compact">
@@ -340,8 +336,8 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 <section class="slide">
   <div class="anim slide-label">Experiments 06</div>
   <div class="anim"><h2>消融实验：四模块相互补偿</h2></div>
-  <div class="anim figure-box h30"><img src="../assets/paper-imgs/DFR-SN-YOLO/tab7.png" alt="原文 §2.5 消融讨论页裁剪"></div>
-  <div class="anim figure-caption tight">原文 §2.5 消融讨论（PDF 页裁剪）：A-CA、B-C3_RFCBAMConv、C-SN、D-DWConv+C3_Faster 的单独与组合验证结论见左侧；表 7 图版未包含在现有素材中。</div>
+  <div class="anim figure-box h38"><img src="../assets/paper-imgs/DFR-SN-YOLO/tab7.png" alt="消融试验结果对比"></div>
+  <div class="anim figure-caption tight">表 7 消融结果：A-CA、B-C3_RFCBAMConv、C-SN、D-DWConv+C3_Faster 的单独与组合验证。</div>
   <div class="anim">
     <ul class="bullet-list compact">
       <li><span class="em">D 单独</span>：参数 7.0→3.9 M（-44%）、计算 15.8→9.8 G（-37%），顶芯 SR 87.0→87.6。</li>
@@ -356,8 +352,8 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 <section class="slide">
   <div class="anim slide-label">Experiments 07</div>
   <div class="anim"><h2>不同检测网络对比：参数多不等于精度高</h2></div>
-  <div class="anim figure-box h36"><img src="../assets/paper-imgs/DFR-SN-YOLO/tab8.png" alt="原文 §2.6 对比讨论页裁剪"></div>
-  <div class="anim figure-caption tight">原文 §2.6 对比讨论（PDF 页裁剪）：与 YOLO 系列、二阶段网络、DETR-R50 及现有顶芽模型的对比结论见左侧；表 8 图版未包含在现有素材中。</div>
+  <div class="anim figure-box h38"><img src="../assets/paper-imgs/DFR-SN-YOLO/tab8.png" alt="不同检测网络的检测结果对比"></div>
+  <div class="anim figure-caption tight">表 8 与 YOLO 系列、二阶段网络（Faster/Mask/Cascade RCNN）、DETR-R50 及现有顶芽模型 YOLOv5-cpp、Bud-YOLO 的对比。</div>
   <div class="anim">
     <ul class="bullet-list compact">
       <li>二阶段网络参数量是 YOLO 系列的 4~7 倍，顶芯召回率只有 55.4~57.3%，帧率 25~38 帧/s。</li>
@@ -408,8 +404,8 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 <section class="slide">
   <div class="anim slide-label">Experiments 10</div>
   <div class="anim"><h2>基准模型选择：为什么是 YOLOv5s</h2></div>
-  <div class="anim figure-box h24"><img src="../assets/paper-imgs/DFR-SN-YOLO/tab1.png" alt="表 1 表头与首行裁剪"></div>
-  <div class="anim figure-caption tight">表 1 表头与首行裁剪：顶叶 BP/BR 普遍较高而顶芯 SR 偏低；完整 YOLO 系列结果见左侧结论。</div>
+  <div class="anim figure-box h44"><img src="../assets/paper-imgs/DFR-SN-YOLO/tab1.png" alt="YOLO 系列模型的检测结果"></div>
+  <div class="anim figure-caption tight">表 1 YOLO 系列模型的检测结果：顶芯 SP/SR、顶叶 BP/BR、mAP@50、参数量、GFLOPs 与权重大小。</div>
   <div class="anim">
     <ul class="bullet-list compact">
       <li>所有模型顶叶的 BP、BR 均较高，而顶芯召回率 SR 普遍偏低 —— <b>顶芯才是瓶颈</b>。</li>

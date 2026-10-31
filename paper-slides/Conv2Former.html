@@ -566,9 +566,9 @@ h3 {
       </ul>
     </div>
     <div class="fig-col doc">
-      <div class="figure-box"><img src="../assets/paper-imgs/Conv2Former/table1.png" alt="原文架构与阶段配置正文页"></div>
+      <div class="figure-box"><img src="../assets/paper-imgs/Conv2Former/table1.png" alt="Conv2Former 五个变体的通道与块数配置表"></div>
       <div class="figure-caption">
-        原文 §3.1 架构与阶段配置正文（PDF 页裁剪）：patch embedding 为 2×2、stride 2 卷积，五个变体的通道与块数汇总于 Tab. 1。
+        表 1：五个变体的通道与块数配置，参数量依次为 15M / 27M / 50M / 90M / 199M；patch embedding 为 2×2、stride 2 卷积。
         <span class="cap-em">本文在 ConvNeXt 的阶段比例上把第三阶段再加深，换来同参数下更高的精度。</span>
       </div>
     </div>
@@ -648,19 +648,19 @@ h3 {
   </div>
 </section>
 
-<!-- 11 COCO 随机深度 table11 -->
+<!-- 11 ImageNet-1k 微调随机深度 table11 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 03</div>
-  <div class="anim"><h2>随机深度率：COCO 微调</h2></div>
-  <div class="anim figure-box tbl"><img src="../assets/paper-imgs/Conv2Former/table11.png" alt="COCO 微调的随机深度率表"></div>
+  <div class="anim"><h2>随机深度率：ImageNet-1k 微调</h2></div>
+  <div class="anim figure-box tbl"><img src="../assets/paper-imgs/Conv2Former/table11.png" alt="ImageNet-22k 预训练后 ImageNet-1k 微调的随机深度率表"></div>
   <div class="anim figure-caption">
-    原文附录 A.2：Mask R-CNN 下 Conv2Former-T 取 <span class="cap-em">0.2</span>；Cascade Mask R-CNN 下 T/S/B 依次 <span class="cap-em">0.2/0.6/0.9</span> —— 检测阶段随机深度随骨干增大而提高。
+    原文 Table 11：Conv2Former-S/B/L 在 224×224 下取 <span class="cap-em">0.2/0.2/0.3</span>，B/L 在 384×384 下取 <span class="cap-em">0.2/0.3</span> —— 按分辨率分组成表。
   </div>
   <div class="anim">
     <ul class="bullet-list compact">
-      <li>检测微调沿用 ConvNeXt 的设置，只按骨干与检测框架重设随机深度率</li>
-      <li>Mask R-CNN 只用到 T 一档，Cascade 覆盖 T/S/B 三个尺寸，后者的正则强度明显更高</li>
-      <li>固定这套口径后，检测结果才能与 Swin、ConvNeXt 在同一训练预算下直接对比</li>
+      <li>ImageNet-22k 预训练后的 ImageNet-1k 微调按 224 / 384 两档分辨率分别设定随机深度率</li>
+      <li>S/B/L 在 224² 下取 0.2/0.2/0.3，B/L 在 384² 下取 0.2/0.3，模型越大正则越强</li>
+      <li>该口径与表 10 的预训练随机深度配套，构成 22k → 1k 的完整训练配置</li>
     </ul>
   </div>
 </section>
@@ -669,9 +669,9 @@ h3 {
 <section class="slide">
   <div class="anim slide-label">Experiments 04</div>
   <div class="anim"><h2>COCO 检测训练细节</h2></div>
-  <div class="anim figure-box tbl"><img src="../assets/paper-imgs/Conv2Former/table12.png" alt="COCO 微调随机深度率表（裁剪）"></div>
+  <div class="anim figure-box tbl"><img src="../assets/paper-imgs/Conv2Former/table12.png" alt="COCO 微调的随机深度率表"></div>
   <div class="anim figure-caption">
-    原文附录 A.2 Tab. 12 的裁剪版：COCO 微调的随机深度率，与上页同源、此处与检测训练设定并置阅读。
+    原文 Table 12：Mask R-CNN 下 Conv2Former-T 取 <span class="cap-em">0.2</span>；Cascade Mask R-CNN 下 T/S/B 依次 <span class="cap-em">0.2/0.6/0.9</span> —— 检测阶段随机深度随骨干增大而提高。
   </div>
   <div class="anim">
     <ul class="bullet-list compact">
@@ -696,9 +696,9 @@ h3 {
       </ul>
     </div>
     <div class="fig-col doc">
-      <div class="figure-box"><img src="../assets/paper-imgs/Conv2Former/table3.png" alt="ImageNet-1k 对比与微设计正文页"></div>
+      <div class="figure-box"><img src="../assets/paper-imgs/Conv2Former/table3.png" alt="ImageNet-1k 上各模型 top-1 精度对比表"></div>
       <div class="figure-caption">
-        原文 §3.3 微设计收尾与 §4.1 数据集说明（PDF 页裁剪）：LN + GELU 带来 0.1%–0.2% 增益，ImageNet-1k 约 120 万训练图、1000 类。
+        表 3：ImageNet-1k top-1 精度对比，Conv2Former 各尺寸均高于同规模 Swin Transformer 与 ConvNeXt。
         <span class="cap-em">同规模下卷积调制的收益并不依赖大模型。</span>
       </div>
     </div>
@@ -718,9 +718,9 @@ h3 {
       </ul>
     </div>
     <div class="fig-col doc">
-      <div class="figure-box"><img src="../assets/paper-imgs/Conv2Former/table4.png" alt="ImageNet-22k 数据集与训练设置正文页"></div>
+      <div class="figure-box"><img src="../assets/paper-imgs/Conv2Former/table4.png" alt="ImageNet-22k 预训练后的 top-1 精度对比表"></div>
       <div class="figure-caption">
-        原文 §4.1 的 22k 数据与训练设置（PDF 页裁剪）：约 1400 万图、21841 类，预训练 90 epochs 后在 1k 微调 30 epochs。
+        表 4：ImageNet-22k 预训练后的 top-1 精度对比，各尺寸相对 ConvNeXt 的增益保持一致。
         <span class="cap-em">Conv2Former-L 的 87.7% 是全文最好的分类结果。</span>
       </div>
     </div>
@@ -801,9 +801,9 @@ h3 {
       </ul>
     </div>
     <div class="fig-col doc">
-      <div class="figure-box"><img src="../assets/paper-imgs/Conv2Former/table6.png" alt="加权策略与等向架构讨论正文页"></div>
+      <div class="figure-box"><img src="../assets/paper-imgs/Conv2Former/table6.png" alt="卷积调制块不同加权策略的精度对比表"></div>
       <div class="figure-caption">
-        原文 §4.3 的加权策略讨论（PDF 页裁剪）：原文明确指出 Hadamard 积优于所有其它融合方式，并把「正值化后掉点」留作后续研究。
+        表 6：Conv2Former-T 上不同加权策略的 top-1 对比，Hadamard 积以 83.2% 最优。
         <span class="cap-em">调制式加权是收益来源，而不是任意融合都能奏效。</span>
       </div>
     </div>
@@ -824,9 +824,9 @@ h3 {
       </ul>
     </div>
     <div class="fig-col doc">
-      <div class="figure-box"><img src="../assets/paper-imgs/Conv2Former/table2.png" alt="阶段配置与卷积调制块正文页"></div>
+      <div class="figure-box"><img src="../assets/paper-imgs/Conv2Former/table2.png" alt="四个 tiny 尺寸模型的阶段配置与 top-1 精度对比表"></div>
       <div class="figure-caption">
-        原文 §3.1 stage configuration 正文（PDF 页裁剪）：ResNet-50 的 (3,4,6,3)、ConvNeXt 的 (3,3,9,3) 与 1:1:9:1 计算比，四个 tiny 模型的对比见 Tab. 2。
+        表 2：四个 tiny 尺寸模型的阶段配置与 top-1 对比，Conv2Former-T 以 3-3-12-3 取得 83.2%。
         <span class="cap-em">轻微调整块数即可换来稳定增益。</span>
       </div>
     </div>
@@ -846,9 +846,9 @@ h3 {
       </ul>
     </div>
     <div class="fig-col doc">
-      <div class="figure-box"><img src="../assets/paper-imgs/Conv2Former/table5.png" alt="核尺寸与融合策略分析正文页"></div>
+      <div class="figure-box"><img src="../assets/paper-imgs/Conv2Former/table5.png" alt="与不同核尺寸大核 ConvNet 的对比表"></div>
       <div class="figure-caption">
-        原文 §4.3 method analysis 正文（PDF 页裁剪）：六档核尺寸 5×5 至 21×21 的消融结论，以及 Hadamard 积优于逐元素相加的分析。
+        表 5：与不同核尺寸大核 ConvNet 的对比，Conv2Former-B 在 11×11 核下达到 84.4%。
         <span class="cap-em">核越大越好的前提，是把卷积特征当作权重来用。</span>
       </div>
     </div>
@@ -868,9 +868,9 @@ h3 {
       </ul>
     </div>
     <div class="fig-col doc">
-      <div class="figure-box"><img src="../assets/paper-imgs/Conv2Former/table7.png" alt="等向架构与下游任务正文页"></div>
+      <div class="figure-box"><img src="../assets/paper-imgs/Conv2Former/table7.png" alt="等向架构下与 DeiT、ConvNeXt 的对比表"></div>
       <div class="figure-caption">
-        原文 §4.4 等向架构设置（PDF 页裁剪）：18 块 plain 结构，与 DeiT、ConvNeXt 在同等参数与计算下对比，结果见 Tab. 7。
+        表 7：等向架构（18 块 plain 结构）下与 DeiT、ConvNeXt 的对比。
         <span class="cap-em">卷积调制的收益不依赖金字塔结构。</span>
       </div>
     </div>

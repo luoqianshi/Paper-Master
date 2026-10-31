@@ -615,7 +615,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   <div class="anim split">
     <div class="split-text">
       <ul class="bullet-list">
-        <li>原文图 22 并排给出 bicubic、SRCNN 与 RCAN 三种重建效果；当前切图保留原始块与 bicubic、SRCNN 两列，RCAN 列见原文</li>
+        <li>原文图 22 并排给出原图与 bicubic、SRCNN、RCAN 三种重建结果，RCAN 的纹理最清晰</li>
         <li>RCAN 的重建效果更好，重建图像含有更丰富的纹理结构信息</li>
         <li>病叶纹理的强梯度变化有利于梯度优化下的检测网络学习</li>
         <li>定性观感与表 6 的 PSNR / SSIM 排序一致</li>
@@ -623,7 +623,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
     </div>
     <div class="figure-box">
       <img src="../assets/paper-imgs/DDMA-YOLO/fig22.png" alt="部分茶图像的超分可视化结果">
-      <div class="figure-caption">部分茶图像的超分可视化结果（原文图 22 按列并排；当前切图保留了原始块与 bicubic、SRCNN 两列）。</div>
+      <div class="figure-caption">部分茶图像的超分可视化结果（原文图 22）：从左到右为原图、bicubic、SRCNN 与 RCAN。</div>
     </div>
   </div>
 </section>
@@ -632,27 +632,14 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 <section class="slide">
   <div class="anim slide-label">Visualization 03</div>
   <div class="anim"><h2>RCAN 重建质量：PSNR 41.90、SSIM 0.9779 最优</h2></div>
-  <div class="anim split">
-    <div class="figure-box narrow">
-      <img src="../assets/paper-imgs/DDMA-YOLO/table6.png" alt="RCAN 重建结果">
-      <div class="figure-caption">RCAN 重建结果局部（原文表 6 所在页图版裁剪），定量指标见右表。</div>
-    </div>
-    <div class="split-text">
-      <h3>三种重建方法的定量指标</h3>
-      <table class="data-table">
-        <thead><tr><th>方法</th><th>PSNR (dB)</th><th>SSIM</th></tr></thead>
-        <tbody>
-          <tr><td>bicubic</td><td>37.74</td><td>0.9572</td></tr>
-          <tr><td>SRCNN</td><td>41.36</td><td>0.9773</td></tr>
-          <tr class="hl"><td>RCAN</td><td>41.90</td><td>0.9779</td></tr>
-        </tbody>
-      </table>
-      <ul class="bullet-list">
-        <li>RCAN 的 PSNR 与 SSIM 均最高，重建图像纹理结构信息更丰富</li>
-        <li>PSNR 与 SSIM 越高，说明重建结果越接近清晰原图</li>
-        <li>与 bicubic、SRCNN 的对比说明选择 RCAN 作为前置超分模块是合理的</li>
-      </ul>
-    </div>
+  <div class="anim figure-box big"><img src="../assets/paper-imgs/DDMA-YOLO/table6.png" alt="RCAN 重建结果"></div>
+  <div class="anim figure-caption">表 6：三种重建方法的 PSNR/SSIM 对比，RCAN 的 PSNR 41.90、SSIM 0.9779 均为最高。</div>
+  <div class="anim">
+    <ul class="bullet-list compact">
+      <li>RCAN 的 PSNR 与 SSIM 均最高，重建图像纹理结构信息更丰富</li>
+      <li>PSNR 与 SSIM 越高，说明重建结果越接近清晰原图</li>
+      <li>与 bicubic、SRCNN 的对比说明选择 RCAN 作为前置超分模块是合理的</li>
+    </ul>
   </div>
 </section>
 
