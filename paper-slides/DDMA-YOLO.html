@@ -15,6 +15,12 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sa
 .slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
 .slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
 .progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
+.progress.p1{width:3.333%}.progress.p2{width:6.667%}.progress.p3{width:10%}.progress.p4{width:13.333%}.progress.p5{width:16.667%}
+.progress.p6{width:20%}.progress.p7{width:23.333%}.progress.p8{width:26.667%}.progress.p9{width:30%}.progress.p10{width:33.333%}
+.progress.p11{width:36.667%}.progress.p12{width:40%}.progress.p13{width:43.333%}.progress.p14{width:46.667%}.progress.p15{width:50%}
+.progress.p16{width:53.333%}.progress.p17{width:56.667%}.progress.p18{width:60%}.progress.p19{width:63.333%}.progress.p20{width:66.667%}
+.progress.p21{width:70%}.progress.p22{width:73.333%}.progress.p23{width:76.667%}.progress.p24{width:80%}.progress.p25{width:83.333%}
+.progress.p26{width:86.667%}.progress.p27{width:90%}.progress.p28{width:93.333%}.progress.p29{width:96.667%}.progress.p30{width:100%}
 .dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
 .dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
 .dot.active { background: var(--title); transform: scale(1.6); }
@@ -26,37 +32,42 @@ h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; c
 h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
 .subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
 .body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
-.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; flex: 0 0 auto; }
 .divider-accent { background: var(--accent); }
 .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
 .badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
 .badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
-.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-title { font-size: clamp(3rem, 6.5vw, 5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px; color: var(--accent); }
+.cover-sub { font-size: clamp(16px, 2vw, 26px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35; }
+.cover-meta { margin-top: 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-meta.center { justify-content: center; }
 .cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
-.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
+.contributors { margin-top: 22px; display: flex; flex-direction: column; gap: 4px; }
 .contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
 .contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
-.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
+.card-grid { display: grid; gap: 16px; margin-top: 22px; flex: 0; }
 .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
 .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
-.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
-.card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
-.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
+.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px); display: flex; flex-direction: column; }
+.card .card-num { font-size: clamp(22px, 2.6vw, 36px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 6px; }
+.card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 6px; color: var(--accent); }
 .card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
 .highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
 .highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
 .highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
-.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
-.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.em-blue { color: var(--title); font-weight: 600; }
+.bullet-list { list-style: none; padding: 0; margin-top: 6px; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.6; padding: 4px 0 4px 22px; position: relative; }
 .bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
 .bullet-list li .em { color: var(--accent); font-weight: 600; }
-.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
-.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
-.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
-.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(12px, 1.6vw, 20px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
+.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.55; }
+.prompt-box .formula { font-size: clamp(16px, 1.9vw, 25px); font-weight: 600; color: #ffffff; line-height: 1.5; letter-spacing: 0.5px; }
 .prompt-box .formula i { color: #a8c6ec; font-style: italic; }
 .prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
-.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 6px; }
+.prompt-box .formula.long { font-size: clamp(14px, 1.55vw, 20px); }
 .fx-inline { font-weight: 600; color: var(--accent); white-space: nowrap; }
 .glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
 .glow-blue { background: var(--title); }
@@ -65,16 +76,31 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .glow.tr { top: -120px; right: -120px; }
 .glow.br { bottom: -120px; right: -100px; }
 .glow.bl { bottom: -120px; left: -100px; }
-.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
-.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
-.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-box { display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top: 12px; min-width: 0; }
+.figure-box img { max-width: 100%; max-height: 44vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-box.wide img { max-height: 18vh; }
+.figure-box.strip img { max-height: 28vh; }
+.figure-box.big img { max-height: 58vh; }
+.figure-box.native img { max-height: 40vh; }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.5; max-width: 980px; }
 .figure-caption .cap-em { color: var(--title); font-weight: 600; }
-.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 12px; min-height: 0; }
 .split .split-text { flex: 1.05; min-width: 0; }
 .split .figure-box { flex: 1; margin-top: 0; }
+.split .figure-box.narrow { flex: 0 0 auto; }
 .split .figure-box img { max-height: 56vh; }
+.split .figure-box.tall img { max-height: 68vh; }
+.split .figure-box.mid img { max-height: 62vh; }
+.split .figure-box.narrow img { max-height: 48vh; }
+.split .figure-box .figure-caption { margin-top: 8px; max-width: 100%; }
+.split-text .figure-caption { text-align: left; }
+.data-table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: clamp(11px, 1.05vw, 14px); }
+.data-table th { background: rgba(57,102,162,0.08); color: var(--accent); font-weight: 600; padding: 6px 8px; border-bottom: 1px solid var(--border); text-align: center; }
+.data-table td { padding: 5px 8px; border-bottom: 1px solid var(--border); text-align: center; color: #333; }
+.data-table tr.hl td { color: var(--accent); font-weight: 700; background: rgba(57,102,162,0.05); }
+.note { font-size: clamp(10px, 0.95vw, 13px); color: #7a7a7a; margin-top: 8px; line-height: 1.5; }
 .end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-.end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
+.end-card h2 { font-size: clamp(28px, 3.3vw, 46px); margin-bottom: 10px; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
 .slide.active .anim { animation: fadeUp 0.5s ease both; }
 .slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
@@ -82,11 +108,12 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
 .slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
 .slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
 @media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .split { flex-direction: column; } .dots { display: none; } }
 </style>
 </head>
 <body>
-<div class="progress" id="progress"></div>
+<div class="progress p1" id="progress"></div>
 <div class="dots" id="dots"></div>
 <div class="hint" id="hint">← → 或点击翻页</div>
 <div class="deck" id="deck">
@@ -96,206 +123,605 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   <div class="glow glow-blue tl"></div>
   <div class="glow glow-navy br"></div>
   <div class="anim badge"><span class="dot-yellow"></span>PAPER READING<span class="dot-gray"></span>Computers and Electronics in Agriculture 2023</div>
-  <div class="anim" style="font-size: clamp(3rem, 6.5vw, 5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;"><span class="highlight">DDMA-YOLO</span></div>
-  <div class="anim" style="font-size: clamp(16px, 2vw, 26px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35;">UAV Remote Sensing Detection of<br>Tea Leaf Blight</div>
-  <p class="anim subtitle">面向无人机茶园图像模糊、病叶小且密集的问题，以 RCAN 超分 + Retinex 增强前置处理，配合多尺度 RFB 与双维混合注意力 DDMA 的 YOLOv5 改进框架。</p>
+  <div class="anim cover-title">DDMA-YOLO</div>
+  <div class="anim cover-sub">UAV Remote Sensing Detection of<br>Tea Leaf Blight</div>
+  <p class="anim subtitle">面向无人机茶园图像模糊、病叶小且密集的退化，以 RCAN 超分与 Retinex 增强做前置处理，配合多尺度 RFB 与双维混合注意力 DDMA 的 YOLOv5 改进框架。</p>
   <div class="anim contributors"><div class="author">Wenxia Bao · Ziqiang Zhu · Gensheng Hu · Xingen Zhou · Dongyan Zhang · Xianjun Yang</div><div class="affil">安徽大学 · 德州农工大学 · 中国科学院合肥物质科学研究院</div></div>
   <div class="anim cover-meta"><span class="cover-tag">无人机遥感</span><span class="cover-tag">超分辨率</span><span class="cover-tag">茶树叶部病害</span><span class="cover-tag">CEA 2023</span></div>
 </section>
 
-<!-- 2 贡献 -->
-<section class="slide">
-  <div class="anim slide-label">Contributions</div>
-  <div class="anim"><h2>核心贡献：超分增强 + 检测的完整流水线</h2></div>
-  <div class="anim divider"></div>
-  <div class="anim card-grid cols-3">
-    <div class="card"><span class="card-num">01</span><h3>RCAN 超分辨率重建</h3><p class="body-text">直接学习低分辨率到高分辨率的映射，<span style="color:var(--title);font-weight:600;">补偿飞行高度带来的分辨率损失</span>，AP@0.5 提高 7.8%。</p></div>
-    <div class="card"><span class="card-num">02</span><h3>多尺度 RFB 模块</h3><p class="body-text">在 Backbone 中模仿人眼多尺度感受野，<span style="color:var(--title);font-weight:600;">扩大感受野并提取多尺度细节</span>，缓解小叶片漏检。</p></div>
-    <div class="card"><span class="card-num">03</span><h3>DDMA 双维混合注意力</h3><p class="body-text">上支通道+空间注意力捕获局部相关性，下支坐标注意力保留位置信息，<span style="color:var(--title);font-weight:600;">并联优于串联</span>。</p></div>
-  </div>
-  <div class="anim highlight-bar"><p>完整模型相对基线 YOLOv5 的 AP@0.5 提高 <span class="accent-word">3.8%</span>、召回率提高 6.5%，AP@0.5 达到 76.8%。</p></div>
-</section>
-
-<!-- 3 监测流程 -->
-<section class="slide">
-  <div class="anim slide-label">Method 01</div>
-  <div class="anim"><h2>「切块-超分-增强-增广-训练-检测-拼图」流水线</h2></div>
-  <div class="anim split">
-    <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig1.png" alt="数据采集区域与茶园位置"></div>
-    <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig3.png" alt="切块样例"></div>
-  </div>
-  <div class="anim figure-caption">
-    左：上部为试验茶园的无人机航拍影像、下部为采集区域的地理位置，四个试验小区的图像即采集自该区域；右：(a) 健康茶图像块、(b) TLB 图像块。
-    132 幅无人机茶图像被切为 640x640 图像块，<span class="cap-em">小区 1-3 中含 TLB 的 300 个图像块训练，小区 4 中 55 幅测试</span>；
-    训练图像先经 RCAN 超分与 Retinex 增强再做离线与在线数据增广——数据组织是后续所有模块的输入前提。
-  </div>
-</section>
-
-<!-- 4 RCAN 超分 -->
+<!-- 2 研究动机 -->
 <section class="slide">
   <div class="glow glow-blue tr"></div>
-  <div class="anim slide-label">Method 02</div>
-  <div class="anim"><h2>RCAN 超分辨率重建：残差中的残差 + 通道注意力</h2></div>
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>三类相互叠加的退化，让通用检测网络在茶园失效</h2></div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><span class="card-num">01</span><h3>图像整体模糊</h3><p class="body-text">无人机单幅图像覆盖空间大，<span class="em-blue">分配给单个空间场景的分辨率不足</span>，病斑边界难以清晰呈现。</p></div>
+    <div class="card"><span class="card-num">02</span><h3>病叶尺寸小</h3><p class="body-text">病叶多为 30×30 至 130×130 像素，<span class="em-blue">小目标占比高</span>，网络容易把病叶当作背景而漏检。</p></div>
+    <div class="card"><span class="card-num">03</span><h3>叶片密集分布</h3><p class="body-text">数量大、位置近、形状相似，<span class="em-blue">密集场景下漏检与误检同时出现</span>。</p></div>
+  </div>
+  <div class="anim highlight-bar"><p>茶园多位于交通不便的山区，人工现场辨病困难且成本高；传统机器学习依赖人工设计的颜色与纹理特征，自然背景下病斑与背景相似时容易错检。</p></div>
+</section>
+
+<!-- 3 核心贡献 -->
+<section class="slide">
+  <div class="glow glow-navy bl"></div>
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献：超分增强前置 + RFB/DDMA 双模块改进</h2></div>
+  <div class="anim card-grid cols-2">
+    <div class="card"><span class="card-num">01</span><h3>RCAN 超分辨率重建</h3><p class="body-text">直接学习低分辨率到高分辨率茶图像的映射，补偿飞行高度带来的分辨率损失，使基线 AP@0.5 提高 <span class="em-blue">7.8%</span>。</p></div>
+    <div class="card"><span class="card-num">02</span><h3>Retinex 增强 + 双倍增广</h3><p class="body-text">削弱光照不均、提升对比度；离线平移旋转翻转扩至 1200 幅，在线 mosaic 继续扩样。</p></div>
+    <div class="card"><span class="card-num">03</span><h3>多尺度 RFB 模块</h3><p class="body-text">在 Backbone 中模仿人眼多尺度感受野，扩大感受野并提取多尺度细节，缓解小叶片漏检。</p></div>
+    <div class="card"><span class="card-num">04</span><h3>DDMA 双维混合注意力</h3><p class="body-text">上支通道 + 空间注意力捕获局部相关性，下支坐标注意力保留位置信息，并联优于串联。</p></div>
+  </div>
+  <div class="anim highlight-bar"><p>完整模型相对基线 YOLOv5 的 <span class="accent-word">AP@0.5 提高 3.8%</span>、召回率提高 <span class="accent-word">6.5%</span>，AP@0.5 达到 <span class="accent-word">76.8%</span>，优于 Faster R-CNN、SSD、RetinaNet 与 YOLOv3/v4/v5。</p></div>
+</section>
+
+<!-- 4 数据采集 fig1 -->
+<section class="slide">
+  <div class="anim slide-label">Materials 01</div>
+  <div class="anim"><h2>数据采集：巢湖市坝镇的四块试验茶园</h2></div>
   <div class="anim split">
+    <div class="figure-box">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig1.png" alt="数据采集区域与茶园位置">
+      <div class="figure-caption">上图：试验茶园无人机航拍影像；下图：采集区域地理位置，虚线把航拍区域连到地图上的对应地点。</div>
+    </div>
     <div class="split-text">
       <ul class="bullet-list">
-        <li>RCAN 由浅层特征提取、<span class="em">RIR 极深结构</span>、上采样与重建四部分组成</li>
-        <li>借助残差中的残差构建极深可训练网络，<span class="em">通道注意力</span>增强特征表达</li>
-        <li>RCAN 重建使基线 AP@0.5 提高 <span class="em">7.8%</span></li>
-        <li>PSNR 41.90、SSIM 0.9779，优于 bicubic 与 SRCNN</li>
-        <li>等价于把「模糊—清晰」映射整体交给深度残差网络拟合，<span class="em">局部与全局残差耦合</span>保证信息流顺畅传递</li>
+        <li>采集地：安徽省巢湖市坝镇，<span class="em">31°14′N、117°36′E</span>，海拔约 40 m</li>
+        <li>2021 年 5 月 3–4 日 14:00–17:00 拍摄，微风少云，避开强光、阴影与反光</li>
+        <li>DJI Mavic Air2 + 4800 万像素可见光相机 FC3170，f/2.8、1/60 s、ISO-100</li>
+        <li>单幅 8000×6000 JPEG，飞行高度约 5 m，相机垂直向下、机载 GPS 记录位置</li>
       </ul>
     </div>
-    <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig4.png" alt="RCAN 结构"></div>
   </div>
 </section>
 
-<!-- 5 Retinex -->
+<!-- 5 数据组织 fig3 -->
+<section class="slide">
+  <div class="anim slide-label">Materials 02</div>
+  <div class="anim"><h2>数据组织：132 幅原图切为 640×640 图像块</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>四个试验小区共 132 幅无人机茶图像，统一切为 <span class="em">640×640</span> 图像块</li>
+        <li>小区①②③ 中含 TLB 的 <span class="em">300 个图像块</span>作训练，小区④ 中含 TLB 的 <span class="em">55 幅</span>作测试</li>
+        <li>全部图像由农艺专家使用 LabelImg 标注，健康块与病叶块混排，贴近真实分布</li>
+        <li>训练前依次经过 RCAN 超分、Retinex 增强与离线/在线增广，测试图不参与增广</li>
+      </ul>
+    </div>
+    <div class="figure-box">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig3.png" alt="切块后茶图像样例">
+      <div class="figure-caption">图中 (a) 为健康茶图像块、(b) 为 TLB 图像块，全部图像由农艺专家使用 LabelImg 完成标注。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 RCAN 结构 fig4 -->
+<section class="slide">
+  <div class="glow glow-blue tr"></div>
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>RCAN：残差中的残差 + 通道注意力</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>由浅层特征提取、RIR 深层特征提取、上采样与重建四部分组成</li>
+        <li>用残差中的残差堆出极深可训练网络，<span class="em">局部与全局残差耦合</span>保证信息流顺畅传递</li>
+        <li>通道注意力增强特征表达，等价于把「模糊—清晰」映射整体交给深度网络拟合</li>
+        <li>四阶段：<span class="fx-inline">F<sub>0</sub>=H<sub>SF</sub>(I<sub>LR</sub>) → F<sub>DF</sub>=H<sub>RIR</sub>(F<sub>0</sub>) → F<sub>UP</sub>=H<sub>UP</sub>(F<sub>DF</sub>) → I<sub>HR</sub>=H<sub>REC</sub>(F<sub>UP</sub>)</span></li>
+      </ul>
+    </div>
+    <div class="figure-box mid">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig4.png" alt="RCAN 超分辨率算法网络结构">
+      <div class="figure-caption">RCAN 超分辨率算法网络结构：浅层提取 → RIR → 上采样 → 重建卷积。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 超分结果 fig5 -->
+<section class="slide">
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>超分重建：55 幅测试图重建为 110 个 640×640 测试块</h2></div>
+  <div class="anim split">
+    <div class="figure-box">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig5.png" alt="部分图像的超分辨率结果">
+      <div class="figure-caption">部分图像的超分辨率结果：原本模糊的无人机茶图像经 RCAN 重建后纹理与边缘更清晰。</div>
+    </div>
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>RCAN 的训练集是无人机在 <span class="em">1–2 m 高度</span>拍摄的清晰茶图像，病斑区域明显</li>
+        <li>网络收敛后对测试小区 55 幅图像重建，1280×1280 再裁为 640×640，共得 <span class="em">110 幅</span></li>
+        <li>这 110 幅图像用于检测网络测试，重建结果同时送入 Retinex 增强环节</li>
+        <li>超分不是独立指标，而是为检测网络补回被飞行高度抹掉的纹理与边缘</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 8 Retinex 原理 fig6 -->
 <section class="slide">
   <div class="anim slide-label">Method 03</div>
-  <div class="anim"><h2>Retinex 对比度增强：去除光照、保留反射属性</h2></div>
+  <div class="anim"><h2>Retinex：把观测图像拆成光照 L 与反射 R</h2></div>
   <div class="anim split">
-    <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig6.png" alt="Retinex 原理"></div>
-    <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig7.png" alt="Retinex 算法总体流程"></div>
-  </div>
-  <div class="anim figure-caption">
-    左（原理）：图像被视为入射光图像 L 与反射图像 R 的乘积，取对数把乘性光照变为加性项再减去，
-    <span class="cap-em">剩下的就是与光照无关的物体反射属性</span>；
-    右（流程）：观测图像的对数 log S 与照射分量近似的对数 log[F*S] 相减，得到反射分量的对数 log R，即上式的逐步执行过程。
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>入射光照射反射物后经反射进入人眼，形成观测图像 S</li>
+        <li>目标：去除或削弱光照分量 L，尽量保留物体反射属性 R</li>
+        <li>病斑与健康叶的差异主要落在反射属性上，正是检测需要的信号</li>
+      </ul>
+      <div class="prompt-box">
+        <div class="prompt-label">Retinex Model</div>
+        <p class="formula"><i>S</i>(x, y) = <i>L</i>(x, y) × <i>R</i>(x, y)</p>
+        <p class="formula-note">S 为相机接收的图像信号，L 为光照分量，R 为物体反射属性分量。</p>
+      </div>
+    </div>
+    <div class="figure-box">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig6.png" alt="Retinex 原理示意图">
+      <div class="figure-caption">Retinex 原理示意：入射光、反射物与观测图像三者的关系。</div>
+    </div>
   </div>
 </section>
 
-<!-- 5.5 CBAM 对照 -->
+<!-- 9 Retinex 流程 fig7 -->
 <section class="slide">
   <div class="anim slide-label">Method 04</div>
-  <div class="anim"><h2>对照 CBAM：串联注意力缺少非局部信息</h2></div>
+  <div class="anim"><h2>Retinex 流程：对数域相减得到反射分量</h2></div>
   <div class="anim split">
+    <div class="figure-box">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig7.png" alt="Retinex 算法总体流程">
+      <div class="figure-caption">图中给出对数域的处理路径：log S 与 log[F*S] 相减，得到反射分量的对数 log R。</div>
+    </div>
     <div class="split-text">
       <ul class="bullet-list">
-        <li>特征先经<span class="em">通道注意力</span>加权、再与原特征相乘送入<span class="em">空间注意力</span>，两级串联</li>
-        <li>两级编码相互独立，只能捕获特征的<span class="em">局部相关性</span></li>
-        <li>缺少解决密集分布问题所需的<span class="em">非局部信息</span></li>
+        <li>对等式两边取对数，把乘性光照变成可减去的加性项</li>
+        <li>用高斯核 F 与 S 的卷积近似照射分量</li>
+        <li>相减后剩下的就是与光照无关的物体反射属性</li>
       </ul>
+      <div class="prompt-box">
+        <div class="prompt-label">Log Domain</div>
+        <p class="formula long">log <i>R</i>(x, y) = log <i>S</i>(x, y) − log[<i>F</i>(x, y) * <i>S</i>(x, y)]</p>
+      </div>
     </div>
-    <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig13.png" alt="CBAM 模块结构"></div>
   </div>
 </section>
 
-<!-- 6 RFB + DDMA -->
+<!-- 10 Retinex 效果 fig8 -->
 <section class="slide">
+  <div class="glow glow-blue bl"></div>
   <div class="anim slide-label">Method 05</div>
-  <div class="anim"><h2>多尺度 RFB 与 DDMA 双维混合注意力</h2></div>
+  <div class="anim"><h2>增强效果：对比度提升、光照不均被削弱</h2></div>
   <div class="anim split">
     <div class="split-text">
       <ul class="bullet-list">
-        <li><span class="em">RFB</span>：1x1 降维 + 空洞率 1/3/5 空洞卷积生成不同感受野，以 shortcut 输出</li>
-        <li><span class="em">DDMA 上支</span>：通道注意力 + 空间注意力串联，捕获局部相关性</li>
-        <li><span class="em">DDMA 下支</span>：坐标注意力沿水平/垂直方向 1D 池化，保留精确位置信息</li>
-        <li>两支结果相加：<span class="em">W(F) = sigmoid[W_U(F) + W_D(F)]</span></li>
+        <li>(a) 原始图像整体对比度不足，病斑与健康叶的边界偏弱</li>
+        <li>(b) Retinex 处理后对比度更明显，光照不均的影响被削弱</li>
+        <li>增强后的图像作为检测网络输入，病斑与背景更易区分</li>
+        <li>增强与超分串联：先补分辨率，再补对比度</li>
       </ul>
     </div>
-    <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig14.png" alt="DDMA 模块"></div>
+    <div class="figure-box">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig8.png" alt="Retinex 处理前后的图像">
+      <div class="figure-caption">图中 (a) 为原始图像、(b) 为 Retinex 处理后的图像，增强后图像对比度更明显。</div>
+    </div>
   </div>
 </section>
 
-<!-- 7 实验：超分增益 -->
+<!-- 11 数据增广 fig9 -->
+<section class="slide">
+  <div class="anim slide-label">Method 06</div>
+  <div class="anim"><h2>数据增广：离线扩样 1200 幅 + 在线 mosaic</h2></div>
+  <div class="anim split">
+    <div class="figure-box">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig9.png" alt="数据增广方式">
+      <div class="figure-caption">图中 (a) 为离线增广的平移、30° 旋转与水平翻转，(b) 为在线 mosaic 增广。</div>
+    </div>
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>离线增广：训练前对原图做平移、<span class="em">30° 旋转</span>与水平翻转，扩至 <span class="em">1200 幅</span>训练图像</li>
+        <li>在线增广：每次迭代前以 <span class="em">mosaic</span> 方式拼接增强，持续改变样本组合</li>
+        <li>目标是提升样本丰富度与多样性，增强泛化能力并加快收敛</li>
+        <li>测试集不参与增广，保证评估口径干净</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 12 病叶尺寸 fig10 -->
+<section class="slide">
+  <div class="anim slide-label">Method 07</div>
+  <div class="anim"><h2>病叶尺寸分布：30×30 至 130×130 像素，小目标占多数</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>统计显示多数病叶仅 <span class="em">30×30–130×130</span> 像素，尺寸分布明显偏小</li>
+        <li>小尺寸病叶数量最多，网络容易把病叶误判为背景，产生大量漏检</li>
+        <li>这是 Backbone 引入多尺度 RFB 的直接依据：用多尺度卷积核与空洞卷积覆盖不同病叶尺度</li>
+      </ul>
+    </div>
+    <div class="figure-box mid">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig10.png" alt="病叶尺寸分布">
+      <div class="figure-caption">病叶像素尺寸分布统计：小尺寸病叶数量占多数，与上文的小目标判断一致。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 13 总体结构 fig11 -->
+<section class="slide">
+  <div class="glow glow-navy tr"></div>
+  <div class="anim slide-label">Method 08</div>
+  <div class="anim"><h2>DDMA-YOLO 总体结构：骨干加 RFB、颈部加 DDMA</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>以 YOLOv5 为基线，仍分 Backbone、Neck、Head 三部分</li>
+        <li>Backbone 依 Focus 与 CSP 提特征，按人眼感受野特点加入<span class="em">多尺度 RFB</span></li>
+        <li>Neck 基于 PANet 双向融合低层空间与高层语义，每个 <span class="em">Concat 之后接 DDMA</span></li>
+        <li>Head 在三个尺度套锚框，输出类别、坐标与置信度</li>
+        <li>两处改进分别作用于骨干与颈部，互不干扰又可叠加</li>
+      </ul>
+    </div>
+    <div class="figure-box mid">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig11.png" alt="DDMA-YOLO 网络模型总体框架">
+      <div class="figure-caption">绿色为 RFB、橙色为 DDMA，前者在 Backbone、后者在 Neck 的每个 Concat 之后。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 14 RFB fig12 -->
+<section class="slide">
+  <div class="anim slide-label">Method 09</div>
+  <div class="anim"><h2>多尺度 RFB：空洞卷积在不增参数的条件下扩大感受野</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>各分支先 1×1 卷积降维，中间两支再经 1×1、3×3 与 5×5 卷积层</li>
+        <li>用空洞率 <span class="em">1、3、5</span> 的空洞卷积生成不同感受野的特征图</li>
+        <li>1×1 卷积做特征融合，最后借 ResNet 的 shortcut 得到输出</li>
+        <li>多尺度卷积核应对病叶与健康叶、背景之间的颜色与纹理差异</li>
+      </ul>
+    </div>
+    <div class="figure-box mid">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig12.png" alt="RFB 结构">
+      <div class="figure-caption">RFB 模仿人眼多尺度观察物体的感知结构，扩大感受野并提取多尺度细节特征。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 15 CBAM fig13 -->
+<section class="slide">
+  <div class="anim slide-label">Method 10</div>
+  <div class="anim"><h2>对照 CBAM：串联注意力只能捕获局部相关性</h2></div>
+  <div class="anim figure-box strip"><img src="../assets/paper-imgs/DDMA-YOLO/fig13.png" alt="CBAM 模块结构"></div>
+  <div class="anim figure-caption">CBAM 把通道注意力与空间注意力串联，作为 DDMA 的对照结构。</div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><h3>串联两级</h3><p class="body-text">特征先经通道注意力加权、再与原特征相乘送入空间注意力。</p></div>
+    <div class="card"><h3>编码独立</h3><p class="body-text">通道与空间两级编码相互独立、彼此没有关联。</p></div>
+    <div class="card"><h3>缺少非局部信息</h3><p class="body-text">只能捕获局部相关性，难以应对密集叶片的分布问题。</p></div>
+  </div>
+</section>
+
+<!-- 16 DDMA fig14 -->
+<section class="slide">
+  <div class="glow glow-blue br"></div>
+  <div class="anim slide-label">Method 11</div>
+  <div class="anim"><h2>DDMA：局部注意力与非局部注意力并联</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>上支：通道注意力 + 空间注意力串联，回答「哪些通道与位置重要」</li>
+        <li>下支：坐标注意力沿水平与垂直方向做 1D 池化，保留精确位置信息</li>
+        <li>两支融合偏移后输出 <span class="fx-inline">W(F) = sigmoid[W<sub>U</sub>(F) + W<sub>D</sub>(F)]</span></li>
+        <li>输出同时具备局部与非局部特性，抑制冗余背景、聚焦密集病叶</li>
+      </ul>
+    </div>
+    <div class="figure-box mid">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig14.png" alt="DDMA 模块结构">
+      <div class="figure-caption">DDMA 结构：(a) 并联总览；(b) 通道注意力；(c) 空间注意力；(d) 坐标注意力。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 17 实验设置 fig15 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 01</div>
-  <div class="anim"><h2>超分辨率增益验证：AP@0.5 提高 7.8%</h2></div>
+  <div class="anim"><h2>实验设置与训练曲线</h2></div>
   <div class="anim split">
     <div class="split-text">
       <ul class="bullet-list">
-        <li>加入 RCAN 后精确率提高 <span class="em">6.3%</span>、召回率提高 5%</li>
-        <li>F1-score 提高 5.6%、AP@0.5 提高 <span class="em">7.8%</span></li>
-        <li>超分前的漏检与误检在超分后明显减少</li>
-        <li>原本模糊的图像经重建后含有更多纹理、边缘等结构信息</li>
+        <li>平台：Windows 10 64 位、PyTorch 1.5、RTX 2060、CUDA 10.1 + cuDNN 7.6.5、Python 3.6</li>
+        <li>训练：输入 640×640×3，SGD，batch 16，200 epochs，学习率 0.01，动量 0.937，权重衰减 0.0005</li>
+        <li>指标：精确率 P、召回率 R、F1-score、AP@0.5 与 AP@0.5:0.95</li>
+        <li>200 轮后损失曲线趋于稳定，P、R 与 AP@0.5 曲线平稳，模型基本收敛</li>
       </ul>
     </div>
-    <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/table3.png" alt="超分增益"></div>
+    <div class="figure-box tall">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig15.png" alt="模型训练曲线">
+      <div class="figure-caption">训练曲线同时给出损失与精确率、召回率、AP@0.5，200 轮后基本收敛。</div>
+    </div>
   </div>
 </section>
 
-<!-- 8 消融 -->
+<!-- 18 超分增益 table3 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 02</div>
-  <div class="anim"><h2>消融实验：RFB 与 DDMA 互补</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/table4.png" alt="消融实验" style="max-height: 42vh;"></div>
-  <div class="anim figure-caption">
-    只加 RFB 召回率提高 7.5% 但精确率下降（RFB 同时增强了背景感受野）；只加 DDMA 精确率提高 1%、召回率提高 4.4%；
-    <span class="cap-em">两者齐备时 AP@0.5 达到 76.8%</span>，RFB 弥补了 DDMA 感受野的不足；逐模块累加后密集病叶的检出逐步完整。
+  <div class="anim"><h2>超分辨率增益：AP@0.5 从 65.5% 提到 73.3%</h2></div>
+  <div class="anim split">
+    <div class="figure-box">
+      <img src="../assets/paper-imgs/DDMA-YOLO/table3.png" alt="超分辨率 RCAN 对测试结果的影响">
+      <div class="figure-caption">表中 × 为未超分、√ 为接入 RCAN；基线均为 YOLOv5，仅改变是否超分。</div>
+    </div>
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>精确率 <span class="em">66.2% → 72.5%</span>（+6.3），召回率 <span class="em">60.3% → 65.3%</span>（+5.0）</li>
+        <li>F1-score 63.1% → 68.7%（+5.6），AP@0.5 <span class="em">65.5% → 73.3%</span>（+7.8）</li>
+        <li>AP@0.5:0.95 39.4% → 42.6%（+3.2）</li>
+        <li>超分使全部指标一致提升，说明前置超分不是只改善观感</li>
+      </ul>
+    </div>
   </div>
 </section>
 
-<!-- 9 对比实验 -->
+<!-- 19 超分视觉 fig16 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 03</div>
-  <div class="anim"><h2>对比实验：优于 Faster R-CNN、SSD、YOLOv3/v4/v5</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/fig20.png" alt="AP 对比" style="max-height: 40vh;"></div>
-  <div class="anim figure-caption">
-    DDMA-YOLO 的 AP 达到最高值 76.8%；Faster R-CNN、RetinaNet 与 SSD 存在更多漏检框；
-    <span class="cap-em">YOLOv3、YOLOv4、YOLOv5 同样存在更多漏检</span>，多尺度 RFB 与 DDMA 的组合取得了最好的检测效果。
-  </div>
-</section>
-
-<!-- 10 注意力对比 -->
-<section class="slide">
-  <div class="anim slide-label">Experiments 04</div>
-  <div class="anim"><h2>注意力模块横向对比：DDMA 并联优于 SE/CBAM 串联</h2></div>
+  <div class="anim"><h2>超分前后检测效果：漏检与误检明显减少</h2></div>
   <div class="anim split">
     <div class="split-text">
       <ul class="bullet-list">
-        <li>SE 只加权通道维，精确率<span class="em">反而下降 2.2%</span></li>
-        <li>CBAM 串联通道与空间两维，F1-score 提高 1.7%</li>
-        <li>DDMA 比 CBAM 的 F1-score 再高 <span class="em">1.1%</span>、AP@0.5 高 0.4%</li>
-        <li>密集病叶场景下<span class="em">并联局部与非局部注意力优于单纯串联</span></li>
+        <li>蓝框为标签、红框为检测结果；(a) 原始图像、(b) 超分前、(c) 超分后</li>
+        <li>超分前的漏检与误检在超分后明显减少，密集区域尤其明显</li>
+        <li>重建后图像含有更多纹理、边缘等结构信息，强梯度变化恰好利于 SGD 优化下的检测网络学习</li>
       </ul>
     </div>
-    <div class="figure-box"><img src="../assets/paper-imgs/DDMA-YOLO/table5.png" alt="注意力对比"></div>
+    <div class="figure-box tall">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig16.png" alt="超分辨率 RCAN 对检测效果的影响">
+      <div class="figure-caption">超分辨率 RCAN 对检测效果的影响：(a) 原图、(b) 超分前、(c) 超分后。</div>
+    </div>
   </div>
 </section>
 
-<!-- 11 总结 -->
+<!-- 20 消融 table4 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="anim slide-label">Experiments 04</div>
+  <div class="anim"><h2>消融：RFB 与 DDMA 互补，AP@0.5 达到 76.8%</h2></div>
+  <div class="anim figure-box wide"><img src="../assets/paper-imgs/DDMA-YOLO/table4.png" alt="不同模块的消融实验"></div>
+  <div class="anim figure-caption">不同模块的消融实验（YOLOv5 基线）：√ 表示接入该模块，两模块齐备时各项指标最优。</div>
+  <div class="anim card-grid cols-2">
+    <div class="card"><h3>只加 RFB</h3><p class="body-text">召回率 +7.5、F1 +1.9、AP@0.5 +1.2，但精确率由 72.5% 降至 68.6%：RFB 同时增强了目标与冗余背景的感受野。</p></div>
+    <div class="card"><h3>只加 DDMA</h3><p class="body-text">精确率 +1.0、召回率 +4.4、F1 +2.8：前景被增强、背景被抑制，但缺少 RFB 的大感受野。</p></div>
+  </div>
+  <div class="anim highlight-bar"><p>两者齐备时 F1 +2.9、AP@0.5 +3.5、AP@0.5:0.95 +1.9、召回率 +5.8，<span class="accent-word">RFB 弥补了 DDMA 感受野的不足</span>。</p></div>
+</section>
+
+<!-- 21 消融可视化 fig17 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 05</div>
+  <div class="anim"><h2>消融的视觉效果：逐模块累加，密集病叶检出更完整</h2></div>
+  <div class="anim split">
+    <div class="figure-box tall">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig17.png" alt="不同模块组合的检测结果">
+      <div class="figure-caption">不同模块组合的检测结果：(a) YOLOv5 基线、(b) +RFB、(c) +DDMA、(d) RFB + DDMA。</div>
+    </div>
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>(a) YOLOv5 基线存在较多漏检与误检</li>
+        <li>(b) 加入 RFB 后感受野扩大，不同尺度特征被提取，小目标检出增加</li>
+        <li>(c) 加入 DDMA 后前景增强、冗余背景被压制</li>
+        <li>(d) 两者同时嵌入，密集病叶的检出逐步完整</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 22 注意力对比 table5 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 06</div>
+  <div class="anim"><h2>注意力横向对比：并联的 DDMA 优于 SE 与 CBAM</h2></div>
+  <div class="anim split">
+    <div class="figure-box tall">
+      <img src="../assets/paper-imgs/DDMA-YOLO/table5.png" alt="不同注意力模块的测试结果对比">
+      <div class="figure-caption">不同注意力模块的测试结果对比（原文表 5），基线均为 YOLOv5。</div>
+    </div>
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>SE 只加权通道维，精确率反而下降 <span class="em">2.2%</span>（72.5% → 70.3%）</li>
+        <li>CBAM 串联通道与空间两维，F1-score 提高 1.7%（68.7% → 70.4%）</li>
+        <li>DDMA 比 CBAM 的 F1 再高 <span class="em">1.1%</span>、AP@0.5 高 0.4%、AP@0.5:0.95 高 0.1%</li>
+        <li>密集病叶场景下，并联局部与非局部注意力优于单纯串联</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 23 对比经典 fig18 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 07</div>
+  <div class="anim"><h2>对比经典检测器：Faster R-CNN / RetinaNet / SSD 漏检更多</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>两阶段 Faster R-CNN 与单阶段 RetinaNet、SSD 的检测结果中存在更多漏检框</li>
+        <li>密集小病叶处漏检最明显，多个病叶只画出少量检测框</li>
+        <li>DDMA-YOLO 在同样图像上框出的病叶更完整</li>
+        <li>对比在相同测试集上进行，差异来自模型结构而非数据</li>
+      </ul>
+    </div>
+    <div class="figure-box tall">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig18.png" alt="与 Faster R-CNN、RetinaNet、SSD 的对比结果">
+      <div class="figure-caption">与 Faster R-CNN、RetinaNet、SSD 的对比结果：其他模型存在更多漏检框。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 24 对比 YOLO fig19 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 08</div>
+  <div class="anim"><h2>对比 YOLO 系列：YOLOv3/v4/v5 同样漏检更多</h2></div>
+  <div class="anim split">
+    <div class="figure-box tall">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig19.png" alt="与 YOLOv3、YOLOv4、YOLOv5 的对比结果">
+      <div class="figure-caption">与 YOLOv3、YOLOv4、YOLOv5 的对比结果：本文模型检出最完整。</div>
+    </div>
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>YOLOv3、YOLOv4、YOLOv5 的检测结果同样存在更多漏检框</li>
+        <li>同为 YOLO 单阶段框架，本文模型在密集小病叶上的检出最完整</li>
+        <li>说明增益来自 RFB 与 DDMA 的结构改进，而非单纯换用 YOLO 框架</li>
+        <li>定性结果与表 4 的指标提升方向一致</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 25 AP 对比 fig20 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 09</div>
+  <div class="anim"><h2>AP 对比：DDMA-YOLO 76.8% 为最高</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>Faster R-CNN 57.8%、SSD 46.8%、RetinaNet 47.6%</li>
+        <li>YOLOv3 53.1%、YOLOv4 58.2%、YOLOv5 73.3%</li>
+        <li>本文方法 AP 达到 <span class="em">76.8%</span>，为所有对比模型中的最高值</li>
+        <li>多尺度 RFB 与 DDMA 的组合在低空茶园光学图像上取得最好的检测效果</li>
+      </ul>
+    </div>
+    <div class="figure-box">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig20.png" alt="不同检测模型的 AP 值对比">
+      <div class="figure-caption">不同检测模型的 AP 值对比：柱状图逐项对应六种对比模型与本文方法。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 26 热力图 fig21 -->
+<section class="slide">
+  <div class="glow glow-navy tl"></div>
+  <div class="anim slide-label">Visualization 01</div>
+  <div class="anim"><h2>热力图：DDMA 的目标响应更集中</h2></div>
+  <div class="anim figure-box native"><img src="../assets/paper-imgs/DDMA-YOLO/fig21.png" alt="部分检测图像的热力图"></div>
+  <div class="anim figure-caption">部分检测图像的热力图（原文图 21）：不同注意力模块输出特征的响应对比。</div>
+  <div class="anim card-grid cols-3">
+    <div class="card"><h3>响应更集中</h3><p class="body-text">DDMA 对目标区域的响应比 SE 与 CBAM 更集中，病叶轮廓更清晰。</p></div>
+    <div class="card"><h3>背景被压制</h3><p class="body-text">冗余背景的响应被进一步压制，减少密集叶片带来的误检。</p></div>
+    <div class="card"><h3>与指标互证</h3><p class="body-text">与表 5 中 DDMA 的指标优势相互印证，说明并联注意力确实有效。</p></div>
+  </div>
+</section>
+
+<!-- 27 超分可视化 fig22 -->
+<section class="slide">
+  <div class="anim slide-label">Visualization 02</div>
+  <div class="anim"><h2>超分可视化：RCAN 重建的纹理更丰富</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>原文图 22 并排给出 bicubic、SRCNN 与 RCAN 三种重建效果；当前切图保留原始块与 bicubic、SRCNN 两列，RCAN 列见原文</li>
+        <li>RCAN 的重建效果更好，重建图像含有更丰富的纹理结构信息</li>
+        <li>病叶纹理的强梯度变化有利于梯度优化下的检测网络学习</li>
+        <li>定性观感与表 6 的 PSNR / SSIM 排序一致</li>
+      </ul>
+    </div>
+    <div class="figure-box">
+      <img src="../assets/paper-imgs/DDMA-YOLO/fig22.png" alt="部分茶图像的超分可视化结果">
+      <div class="figure-caption">部分茶图像的超分可视化结果（原文图 22 按列并排；当前切图保留了原始块与 bicubic、SRCNN 两列）。</div>
+    </div>
+  </div>
+</section>
+
+<!-- 28 RCAN 重建 table6 -->
+<section class="slide">
+  <div class="anim slide-label">Visualization 03</div>
+  <div class="anim"><h2>RCAN 重建质量：PSNR 41.90、SSIM 0.9779 最优</h2></div>
+  <div class="anim split">
+    <div class="figure-box narrow">
+      <img src="../assets/paper-imgs/DDMA-YOLO/table6.png" alt="RCAN 重建结果">
+      <div class="figure-caption">RCAN 重建结果局部（原文表 6 所在页图版裁剪），定量指标见右表。</div>
+    </div>
+    <div class="split-text">
+      <h3>三种重建方法的定量指标</h3>
+      <table class="data-table">
+        <thead><tr><th>方法</th><th>PSNR (dB)</th><th>SSIM</th></tr></thead>
+        <tbody>
+          <tr><td>bicubic</td><td>37.74</td><td>0.9572</td></tr>
+          <tr><td>SRCNN</td><td>41.36</td><td>0.9773</td></tr>
+          <tr class="hl"><td>RCAN</td><td>41.90</td><td>0.9779</td></tr>
+        </tbody>
+      </table>
+      <ul class="bullet-list">
+        <li>RCAN 的 PSNR 与 SSIM 均最高，重建图像纹理结构信息更丰富</li>
+        <li>PSNR 与 SSIM 越高，说明重建结果越接近清晰原图</li>
+        <li>与 bicubic、SRCNN 的对比说明选择 RCAN 作为前置超分模块是合理的</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 29 讨论与局限 -->
+<section class="slide">
+  <div class="anim slide-label">Discussion</div>
+  <div class="anim"><h2>落地路径与尚存的局限</h2></div>
+  <div class="anim card-grid cols-2">
+    <div class="card"><span class="card-num">A</span><h3>无人机端部署</h3><p class="body-text">训练后的模型可部署于无人机平台做现场检测，并接入基于无人机的精准喷药系统，按 TLB 严重程度施用对应农药与浓度。</p></div>
+    <div class="card"><span class="card-num">B</span><h3>服务器端部署</h3><p class="body-text">也可部署在服务器端，接收无人机回传图像做后端检测，适合算力受限的机载场景。</p></div>
+  </div>
+  <div class="anim highlight-bar"><p><span class="accent-word">局限一</span>：本文方法尚缺少对 TLB 病害严重程度的估计；<span class="accent-word">局限二</span>：面向实时喷药系统，模型还需进一步轻量化。两点均被作者列为后续研究方向。</p></div>
+</section>
+
+<!-- 30 总结 -->
 <section class="slide">
   <div class="glow glow-blue tl"></div>
   <div class="glow glow-navy br"></div>
   <div class="anim slide-label">Summary</div>
   <div class="anim"><h2>优点和创新点</h2></div>
-  <div class="anim divider"></div>
   <div class="anim card-grid cols-3">
-    <div class="card"><span class="card-num">1</span><h3>超分前置增益量化</h3><p class="body-text">RCAN 补偿无人机飞行高度的分辨率损失，超分前后 AP@0.5 相差 7.8%，前置环节增益被单独量化。</p></div>
+    <div class="card"><span class="card-num">1</span><h3>超分前置增益被单独量化</h3><p class="body-text">把超分重建、Retinex 增强与检测网络串成完整流水线，用 RCAN 补偿飞行高度带来的分辨率损失，超分前后 AP@0.5 相差 7.8%。</p></div>
     <div class="card"><span class="card-num">2</span><h3>并联式 DDMA 设计</h3><p class="body-text">上支捕获局部相关性、下支保留位置信息，与 SE、CBAM 的对比实验和热力图共同支撑设计动机。</p></div>
-    <div class="card"><span class="card-num">3</span><h3>完整监测流程</h3><p class="body-text">覆盖超分验证、模块消融、注意力对比、多模型对比与可视化五组证据，8 步可复现的监测流程。</p></div>
+    <div class="card"><span class="card-num">3</span><h3>证据链完整的监测流程</h3><p class="body-text">覆盖超分验证、模块消融、注意力对比、多模型对比与可视化五组证据，给出 8 步可复现流程，工程落地路径清晰。</p></div>
   </div>
-</section>
-
-<!-- 12 结尾 -->
-<section class="slide">
-  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
-  <div class="end-card">
-    <div class="anim"><h2 style="color:var(--title);">DDMA-YOLO：超分 + 增强 + 检测一体化</h2></div>
-    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
-    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">用 RCAN 超分补偿分辨率不足，<br>以<span style="color:var(--accent);font-weight:600;">RFB + DDMA 并联注意力</span>实现茶树叶部病害无人机遥感精准监测。</div>
-    <div class="anim cover-meta" style="margin-top:28px;"><span class="cover-tag">CEA 2023</span><span class="cover-tag">AP@0.5 76.8%</span></div>
+  <div class="anim cover-meta center">
+    <span class="cover-tag">CEA 2023</span>
+    <span class="cover-tag">AP@0.5 76.8%</span>
+    <span class="cover-tag">RCAN + Retinex + RFB + DDMA</span>
+    <span class="cover-tag">感谢观看</span>
   </div>
 </section>
 
 </div>
 <script>
 (function() {
-  const slides = document.querySelectorAll('.slide'); const total = slides.length; let current = 0;
-  const progress = document.getElementById('progress'); const dotsWrap = document.getElementById('dots'); const hint = document.getElementById('hint');
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
   for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
   const dots = dotsWrap.querySelectorAll('.dot');
-  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
-  function next() { goTo(current + 1); } function prev() { goTo(current - 1); }
-  slides[0].classList.add('active'); progress.style.width = (1 / total * 100) + '%';
+  function goTo(idx) {
+    if (idx < 0 || idx >= total || idx === current) return;
+    const prev = slides[current];
+    const next = slides[idx];
+    prev.classList.remove('active');
+    prev.classList.add('exit-up');
+    requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); });
+    setTimeout(() => { prev.classList.remove('exit-up'); }, 700);
+    dots[current].classList.remove('active');
+    current = idx;
+    dots[current].classList.add('active');
+    progress.className = 'progress p' + (current + 1);
+  }
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+  slides[0].classList.add('active');
   document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
   let touchX = 0, touchY = 0;
   document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
   document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
   document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
   function hideHint() { hint.classList.add('hidden'); }
-  document.addEventListener('keydown', hideHint, { once: true }); document.addEventListener('click', hideHint, { once: true }); setTimeout(() => hideHint(), 5000);
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(() => hideHint(), 5000);
 })();
 </script>
 </body>

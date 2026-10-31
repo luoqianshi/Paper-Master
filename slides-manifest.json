@@ -36,16 +36,16 @@
     {
       "title": "基于 CBP-YOLO 的玉米田间草地贪夜蛾侵染痕迹检测与试验",
       "file": "paper-slides/cbp-yolo.html",
-      "description": "基于 CBP-YOLO 的玉米田间草地贪夜蛾侵染痕迹检测与试验 论文演示文稿，基于阅读笔记生成。",
-      "kind": "期刊/会议",
+      "description": "农业工程学报 2026, 42(10)；面向玉米田间草地贪夜蛾侵染痕迹检测，引入 Real-ESRGAN 超分、C2f-CA 坐标注意力、BiFPN 加权融合与 P2 小目标检测头，AP@0.5 达 76.5%。",
+      "kind": "期刊",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/cbp-yolo.png"
     },
     {
       "title": "Conv2Former: A Simple Transformer-Style ConvNet for Visual Recognition",
       "file": "paper-slides/Conv2Former.html",
-      "description": "Conv2Former: A Simple Transformer-Style ConvNet for Visual Recognition 论文演示文稿，基于阅读笔记生成。",
-      "kind": "期刊/会议",
+      "description": "arXiv 2022 预印本；提出以深度卷积权重与 Hadamard 积构成的卷积调制替代自注意力，构建四阶段 Conv2Former，在 ImageNet、COCO 与 ADE20K 上超过 Swin 与 ConvNeXt。",
+      "kind": "预印本",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/Conv2Former.png"
     },
@@ -68,8 +68,8 @@
     {
       "title": "UAV remote sensing detection of tea leaf blight based on DDMA-YOLO",
       "file": "paper-slides/DDMA-YOLO.html",
-      "description": "UAV remote sensing detection of tea leaf blight based on DDMA-YOLO 论文演示文稿，基于阅读笔记生成。",
-      "kind": "期刊/会议",
+      "description": "Computers and Electronics in Agriculture 2023；面向无人机遥感茶树叶枯病检测，串联 RCAN 超分、Retinex 增强与并联双维注意力 DDMA，AP@0.5 达 76.8%。",
+      "kind": "期刊",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/DDMA-YOLO.png"
     },
@@ -84,8 +84,8 @@
     {
       "title": "基于 DFR-SN-YOLO 的棉花顶芽识别方法",
       "file": "paper-slides/DFR-SN-YOLO.html",
-      "description": "基于 DFR-SN-YOLO 的棉花顶芽识别方法 论文演示文稿，基于阅读笔记生成。",
-      "kind": "期刊/会议",
+      "description": "农业工程学报 2025；面向棉花顶芽识别，以 DWConv + C3_Faster 轻量化主干、C3_RFCBAMConv 与 SN-IoU 损失实现 97.5% mAP@50 与 37 帧/s 边缘推理。",
+      "kind": "期刊",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/DFR-SN-YOLO.png"
     },
@@ -124,8 +124,8 @@
     {
       "title": "Efficient Deformable ConvNets: Rethinking Dynamic and Sparse Operator for Vision Applications",
       "file": "paper-slides/Efficient-Deformable-ConvNets.html",
-      "description": "Efficient Deformable ConvNets: Rethinking Dynamic and Sparse Operator for Vision Applications 论文演示文稿，基于阅读笔记生成。",
-      "kind": "期刊/会议",
+      "description": "CVPR 2024（CCF-A）；提出 DCNv4，移除 softmax 归一化并优化线程复用与内存访问，前向速度达 DCNv3 的 3 倍以上，覆盖分类、检测、分割与生成任务。",
+      "kind": "会议",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/Efficient-Deformable-ConvNets.png"
     },
@@ -188,8 +188,8 @@
     {
       "title": "基于 GCMD-YOLO 的轻量化多尺度中药材检测方法",
       "file": "paper-slides/gcmd-yolo.html",
-      "description": "基于 GCMD-YOLO 的轻量化多尺度中药材检测方法 论文演示文稿，基于阅读笔记生成。",
-      "kind": "期刊/会议",
+      "description": "农业工程学报 2026, 42(5)；面向 100 类中药材的轻量化多尺度检测，集成 GhostConv、C3K2-GL、Conv-SPPF、MG-CA 与 Dysample，mAP@0.5 达 92.8%，模型仅 9.4 MB 并支持 Jetson 边缘部署。",
+      "kind": "期刊",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/gcmd-yolo.png"
     },
@@ -268,8 +268,8 @@
     {
       "title": "基于 PSMF-YOLO 的无人机遥感图像枇杷花蕾小目标检测方法",
       "file": "paper-slides/psmf-yolo.html",
-      "description": "基于 PSMF-YOLO 的无人机遥感图像枇杷花蕾小目标检测方法 论文演示文稿，基于阅读笔记生成。",
-      "kind": "期刊/会议",
+      "description": "农业工程学报 2026, 42(11)；面向无人机遥感枇杷花蕾小目标检测，融合 SPD-Conv、多尺度扩张注意力 MSDA 与 C2PSA-MSDA，mAP@0.5 达 84.9%，模型 9.5 MB、189.4 FPS。",
+      "kind": "期刊",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/psmf-yolo.png"
     },
@@ -354,14 +354,6 @@
       "thumbnail": "assets/thumbnails/YOLO-Master.png"
     },
     {
-      "title": "YOLO-Master Presentation",
-      "file": "paper-slides/YOLO-Master_Presentation.html",
-      "description": "YOLO-Master 论文演示，聚焦基于 MoE 加速的专业化 Transformer 实时目标检测方法。",
-      "kind": "期刊/会议",
-      "accent": "rgba(97,145,211,.18)",
-      "thumbnail": "assets/thumbnails/YOLO-Master_Presentation.png"
-    },
-    {
       "title": "YOLO-PEFT: Parameter-Efficient Fine-Tuning on YOLO Family",
       "file": "paper-slides/YOLO-PEFT.html",
       "description": "arXiv 2026 论文演示，聚焦把 adapter 放置建模为可审计的约束规划问题：角色感知图解析与十维架构指纹、固定顺序硬约束过滤与预算化秩分配、校准拒绝机制（Refuse 回退 Full-SFT）与训练-保存-合并-导出端到端契约。",
@@ -444,8 +436,8 @@
     {
       "title": "YOLOv12: Attention-Centric Real-Time Object Detectors",
       "file": "paper-slides/YOLOv12_Attention-Centric.html",
-      "description": "YOLOv12 论文演示，聚焦以注意力机制为核心的实时目标检测框架，包括 Area Attention、R-ELAN 与多项架构优化。",
-      "kind": "期刊/会议",
+      "description": "arXiv 2025；以区域注意力（Area Attention）与残差高效层聚合网络 R-ELAN 重构实时检测器，YOLOv12-N 在 COCO 上以 1.64 ms 时延取得 40.6% AP，X 尺度达 55.2% AP。",
+      "kind": "arXiv 预印本",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/YOLOv12_Attention-Centric.png"
     },

@@ -25,6 +25,7 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sa
 h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
 h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
 .subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
+.lead { font-size: clamp(13px, 1.3vw, 17px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 8px; max-width: 1060px; }
 .body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
 .divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
 .divider-accent { background: var(--accent); }
@@ -39,35 +40,70 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
 .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
 .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
 .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
 .card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
 .card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
 .card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.card.tight { padding: clamp(12px, 1.4vw, 18px); }
+.card.tight h3 { font-size: clamp(13px, 1.25vw, 17px); margin-bottom: 6px; }
+.card.tight .body-text { font-size: clamp(11px, 1.05vw, 14px); line-height: 1.55; }
 .highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
 .highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
 .highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.highlight-bar.compact p { font-size: clamp(12px, 1.15vw, 16px); }
 .bullet-list { list-style: none; padding: 0; margin-top: 12px; }
 .bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
 .bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
 .bullet-list li .em { color: var(--accent); font-weight: 600; }
+.bullet-list.compact li { font-size: clamp(11px, 1.1vw, 15px); line-height: 1.55; padding: 3px 0 3px 18px; }
+.bullet-list.compact li::before { top: 10px; width: 6px; height: 6px; }
 .prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
 .prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
 .prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
 .prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box .formula.compact { font-size: clamp(14px, 1.55vw, 22px); }
 .prompt-box .formula i { color: #a8c6ec; font-style: italic; }
 .prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
 .prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.prompt-box.slim { padding: clamp(11px, 1.3vw, 18px) clamp(16px, 1.8vw, 26px); }
+.prompt-box.slim .formula { font-size: clamp(13px, 1.45vw, 20px); }
+.cases { display: inline-grid; grid-template-columns: auto auto; gap: 4px 16px; border-left: 2px solid #8fb2da; padding-left: 14px; margin-left: 10px; vertical-align: middle; text-align: left; }
+.case { display: contents; }
+.case .expr { text-align: right; white-space: nowrap; }
+.case .cond { color: #9db8d9; font-size: 0.6em; font-weight: 500; white-space: nowrap; }
+.formula-sub { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 26px; margin-top: 14px; font-size: clamp(12px, 1.2vw, 16px); color: #dce6f2; line-height: 1.5; }
+.formula-sub span { white-space: nowrap; }
+.formula-sub sub, .formula-sub sup { font-size: 65%; }
 .glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
 .glow-blue { background: var(--title); }
 .glow-navy { background: var(--accent); }
 .glow.tl { top: -100px; left: -100px; }
-.glow.tr { top: -120px; right: -120px; }
 .glow.br { bottom: -120px; right: -100px; }
-.glow.bl { bottom: -120px; left: -100px; }
 .figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
 .figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.figure-box.tablefig img { max-height: 46vh; }
+.figure-box.tabshort img { max-height: 40vh; }
+.figure-box.midwide img { max-height: 46vh; }
+.figure-box.ultrawide img { max-height: 32vh; }
+.figure-box.c2psa img { max-height: 30vh; }
 .figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
 .figure-caption .cap-em { color: var(--title); font-weight: 600; }
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
+.split .split-text { flex: 1.05; min-width: 0; }
+.split-fig { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.split-fig .figure-box { width: 100%; margin-top: 0; }
+.split .figure-box img { max-height: 60vh; }
+.mini-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; border: 1px solid var(--border); }
+.mini-table th, .mini-table td { padding: 10px 14px; font-size: clamp(12px, 1.1vw, 15px); border-bottom: 1px solid var(--border); text-align: left; }
+.mini-table th { background: var(--card-bg); color: var(--title); font-weight: 700; }
+.mini-table tr:last-child td { border-bottom: none; }
+.mini-table td:first-child { color: var(--accent); font-weight: 600; }
+.layer-table td:last-child { font-weight: 700; color: var(--title); text-align: right; }
+.stat-row { display: flex; gap: 14px; margin-top: 14px; }
+.stat { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; }
+.stat .num { font-size: clamp(20px, 2.2vw, 30px); font-weight: 800; color: var(--title); line-height: 1.15; }
+.stat .lbl { font-size: clamp(10px, 0.95vw, 12px); color: #666; margin-top: 4px; }
 .end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
@@ -78,161 +114,532 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
 .slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
 .slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
-@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .dots { display: none; } }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3, .card-grid.cols-4 { grid-template-columns: 1fr; } .dots { display: none; } .split { flex-direction: column; } }
 </style>
 </head>
 <body>
+
 <div class="progress" id="progress"></div>
 <div class="dots" id="dots"></div>
 <div class="hint" id="hint">← → 或点击翻页</div>
+
 <div class="deck" id="deck">
 
+<!-- 1 封面 -->
 <section class="slide">
   <div class="glow glow-blue tl"></div>
   <div class="glow glow-navy br"></div>
-  <div class="anim badge"><span class="dot-yellow"></span>PAPER READING<span class="dot-gray"></span>农业工程学报 · 2026</div>
-  <div class="anim" style="font-size: clamp(1.8rem, 4.5vw, 3.5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">基于 <span class="highlight">PSMF-YOLO</span> 的<br>无人机遥感图像枇杷花蕾小目标检测</div>
-  <p class="anim subtitle">引入 P2 小目标检测层、SPD-Conv、MSDA 多尺度扩张注意力与 Focaler-DIoU 损失，mAP@0.5 较基线 YOLOv11n 提升 4.9 个百分点至 84.9%。</p>
-  <div class="anim contributors"><div class="author">徐常塑 · 柳鑫智 · 朱瑜琳 · 陈晨 · 凤柳燕 · 李云伍</div><div class="affil">西南大学工程技术学院</div></div>
-  <div class="anim cover-meta"><span class="cover-tag">枇杷花蕾检测</span><span class="cover-tag">小目标</span><span class="cover-tag">SPD-Conv</span><span class="cover-tag">Focaler-DIoU</span></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    PAPER READING
+    <span class="dot-gray"></span>
+    农业工程学报 · 2026
+  </div>
+  <div class="anim" style="font-size: clamp(2rem, 4.2vw, 3.4rem); font-weight: 900; line-height: 1.1; letter-spacing: -1.5px; color: var(--title);">
+    基于 <span style="color: var(--accent);">PSMF-YOLO</span> 的<br>无人机遥感图像枇杷花蕾小目标检测方法
+  </div>
+  <p class="anim subtitle" style="max-width: 940px;">
+    在 YOLOv11n 上融合 P2 小目标检测层、SPD-Conv、C2PSA-MSDA 与 Focaler-DIoU，mAP@0.5 达到
+    <b style="color: var(--accent);">84.9%</b>，较基线提升 <b style="color: var(--accent);">4.9 个百分点</b>。
+  </p>
+  <div class="anim contributors">
+    <div class="author">徐常塑 · 柳鑫智 · 朱瑜琳 · 陈晨 · 凤柳燕 · 李云伍</div>
+    <div class="affil">西南大学工程技术学院，重庆 400715</div>
+  </div>
+  <div class="anim cover-meta">
+    <span class="cover-tag">农业工程学报 2026, 42(11): 1-10</span>
+    <span class="cover-tag">无人机遥感</span>
+    <span class="cover-tag">小目标检测</span>
+    <span class="cover-tag">YOLOv11n</span>
+    <span class="cover-tag">轻量化部署</span>
+  </div>
 </section>
 
-<section class="slide">
-  <div class="anim slide-label">Contributions</div>
-  <div class="anim"><h2>四处改进：小目标特征保留与损失函数优化</h2></div>
-  <div class="anim divider"></div>
-  <div class="anim card-grid cols-2">
-    <div class="card"><span class="card-num">01</span><h3>P2 小目标检测层</h3><p class="body-text">对应较低下采样倍率的高分辨率特征层，mAP@0.5 提升 2.1 个百分点，有效保留小目标的纹理细节。</p></div>
-    <div class="card"><span class="card-num">02</span><h3>SPD-Conv 空间到深度卷积</h3><p class="body-text">通过 SPD 变换将空间信息重排至通道维度，避免步幅卷积和池化层带来的信息丢失。</p></div>
-  </div>
-  <div class="anim card-grid cols-2" style="margin-top:12px;">
-    <div class="card"><span class="card-num">03</span><h3>MSDA 多尺度扩张注意力</h3><p class="body-text">C2PSA-MSDA 融合，扩张率 r=1,2,3,4，感受野覆盖 3×3 到 9×9，实现跨层次感知。</p></div>
-    <div class="card"><span class="card-num">04</span><h3>Focaler-DIoU 损失函数</h3><p class="body-text">结合 Focaler-IoU 动态权重调整与 DIoU 中心点距离优化，mAP@0.5 从 80.0% 提升至 80.6%。</p></div>
-  </div>
-</section>
-
+<!-- 2 研究动机 -->
 <section class="slide">
   <div class="anim slide-label">Motivation</div>
-  <div class="anim"><h2>枇杷花蕾检测面临的困难</h2></div>
-  <div class="anim">
-    <ul class="bullet-list">
-      <li>花蕾<span class="em">呈簇状生长、体积小</span>且与背景叶片颜色相近</li>
-      <li>传统步幅卷积和池化层在特征提取时<span class="em">不可避免地丢失关键信息</span></li>
-      <li>CIoU 损失函数在小目标检测中存在显著不足，<span class="em">难以缓解数据分布不均衡</span></li>
-      <li>在密集簇生且视觉特征高度相似的检测任务中，模型鲁棒性有待提升</li>
-    </ul>
+  <div class="anim"><h2>研究动机</h2></div>
+  <p class="anim lead">
+    枇杷花蕾呈簇状密集生长，单个目标体积小且与背景叶片颜色相近，导致漏检与误检同时高发，影响疏花决策的科学性。
+    现有目标检测方法在无人机遥感视角下面临层层递进的局限。
+  </p>
+  <div class="anim card-grid cols-3" style="margin-top: 18px;">
+    <div class="card tight">
+      <span class="card-num">A</span>
+      <h3>特征提取丢失空间信息</h3>
+      <p class="body-text">步幅卷积和池化层在特征提取时会不可避免地丢失关键空间信息，小目标赖以辨识的边缘与纹理随之被削弱。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num">B</span>
+      <h3>跨层次感知能力不足</h3>
+      <p class="body-text">YOLOv11 等主流模型的改进多聚焦于单一结构或注意力机制，对复杂果园背景下低对比度小目标的跨层次感知能力不足。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num">C</span>
+      <h3>回归损失受到干扰</h3>
+      <p class="body-text">CIoU 在小目标检测中还同时引入宽高比约束的干扰，对定位偏差与样本分布不均衡问题的缓解有限。</p>
+    </div>
   </div>
-</section>
-
-<section class="slide">
-  <div class="glow glow-blue tr"></div>
-  <div class="anim slide-label">Method 01</div>
-  <div class="anim"><h2>P2 小目标检测层与 SPD-Conv</h2></div>
-  <div class="anim">
-    <ul class="bullet-list">
-      <li>P2 检测层输出尺寸为 <span class="em">160×160</span>，融合更多浅层特征，保留位置信息和纹理信息</li>
-      <li>SPD 变换将原始特征图 X 划分为 4 个子特征图 f<sub>i,j</sub>，空间尺寸缩小但<span class="em">通道数变为 4C<sub>1</sub></span></li>
-      <li>保证在降采样过程中<span class="em">信息不丢失</span>，而是被重新编码到通道维度</li>
-    </ul>
-  </div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">SPD 变换</div>
-    <p class="formula" style="font-size:clamp(14px,1.5vw,20px);">
-      <i>f</i><sub>i,j</sub> = <i>X</i>[i : scale : scale, j : scale : scale]
+  <div class="anim highlight-bar compact">
+    <p>
+      上述缺陷相互耦合，使检测精度、定位质量与模型规模难以同时兼顾。本文以
+      <span class="accent-word">YOLOv11n</span>（五档中参数量与计算量最小）为基线，在保持轻量化的前提下提升密集簇生小目标的检测能力。
     </p>
-    <p class="formula-note">scale=2 时，空间尺寸缩小至 S/2×S/2，通道数变为 4C<sub>1</sub>，后续接 stride=1 标准卷积。</p>
   </div>
 </section>
 
+<!-- 3 文章贡献 -->
 <section class="slide">
-  <div class="anim slide-label">Method 02</div>
-  <div class="anim"><h2>MSDA 多尺度扩张注意力机制</h2></div>
-  <div class="anim">
-    <ul class="bullet-list">
-      <li>通道划分为多个注意力头，各头采用<span class="em">不同扩张率</span>执行滑动窗口空洞注意力</li>
-      <li>扩张率 r = 1、2、3、4，感受野大小分别为 <span class="em">3×3、5×5、7×7、9×9</span></li>
-      <li>扩张率小时聚焦<span class="em">细粒度纹理与边缘信息</span></li>
-      <li>扩张率大时在更大范围内<span class="em">建立特征依赖</span>，引入更丰富的上下文信息</li>
-    </ul>
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>文章贡献</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-4" style="margin-top: 0;">
+    <div class="card tight">
+      <span class="card-num">01</span>
+      <h3>数据集构建</h3>
+      <p class="body-text">无人机采集 850 张图像，筛选 600 张精细标注，按 7:2:1 划分，增强后训练集扩至 3 000 张。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num">02</span>
+      <h3>P2 + SPD-Conv</h3>
+      <p class="body-text">新增 P2 小目标检测层保留高分辨率细节；7 个非步幅卷积层替换为 SPD-Conv，实现无损下采样。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num">03</span>
+      <h3>C2PSA-MSDA</h3>
+      <p class="body-text">把多尺度扩张注意力嵌入 C2PSA，扩张率 1～4 并行，覆盖 3×3 至 9×9 感受野。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num">04</span>
+      <h3>Focaler-DIoU</h3>
+      <p class="body-text">替换 CIoU：按 IoU 区间动态调整样本权重，并直接优化预测框与真实框的中心点距离。</p>
+    </div>
   </div>
   <div class="anim highlight-bar">
-    <p>通过在多个注意力头中并行引入不同扩张率的局部注意力学习，MSDA 能够同时刻画<span class="accent-word">局部细节信息与较大范围的上下文语义</span>。</p>
-  </div>
-</section>
-
-<section class="slide">
-  <div class="glow glow-navy bl"></div>
-  <div class="anim slide-label">Method 03</div>
-  <div class="anim"><h2>Focaler-DIoU 损失函数</h2></div>
-  <div class="anim">
-    <ul class="bullet-list">
-      <li>IoU 值低于下限阈值 d 时，<span class="em">Focaler-IoU 值为 0</span>，低质量样本不被重视</li>
-      <li>IoU 值高于上限阈值 u 时，<span class="em">Focaler-IoU 值为 1</span>，该样本被完全关注</li>
-      <li>DIoU 直接针对<span class="em">位置偏差进行优化</span>，梯度更新更稳定</li>
-      <li>综合考虑样本难度和中心点位置，<span class="em">重点关注困难样本</span>并优化目标定位</li>
-    </ul>
-  </div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">Focaler-DIoU 损失</div>
-    <p class="formula" style="font-size:clamp(14px,1.5vw,20px);">
-      <i>L</i><sub>Focaler-DIoU</sub> = <i>L</i><sub>DIoU</sub> + (<i>IoU</i> − <i>IoU</i><sub>Focaler</sub>)
+    <p>
+      PSMF-YOLO 的 mAP@0.5、精确率与召回率较 YOLOv11n 分别高
+      <span class="accent-word">4.9、2.3 与 4.2 个百分点</span>；较表现最好的 YOLOv5s 仍高
+      <span class="accent-word">0.8、0.1 与 0.6 个百分点</span>。
     </p>
-    <p class="formula-note">mAP@0.5 从 80.0% 提升至 80.6%，同时加快模型收敛速度。</p>
   </div>
 </section>
 
+<!-- 4 整体网络架构 -->
+<section class="slide">
+  <div class="anim slide-label">Method 01</div>
+  <div class="anim"><h2>PSMF-YOLO 整体网络架构</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li><span class="em">SPD-Conv + C3k2（骨干）</span>：无损下采样并逐级提取花蕾的边缘与纹理特征</li>
+        <li><span class="em">P2 分支与多尺度融合（颈部）</span>：在 P3、P4、P5 基础上新增 P2 分支，以上采样和拼接融合 P2—P5 各层特征</li>
+        <li><span class="em">Detect 检测头（输出端）</span>：在 4 个尺度上输出花蕾的类别与边界框</li>
+        <li><span class="em">Focaler-DIoU（回归损失）</span>：约束预测框与真实框的中心点距离并动态加权样本</li>
+      </ul>
+      <div class="highlight-bar compact">
+        <p>输入图像先经骨干逐级压缩空间尺寸并扩张通道，再由颈部把深层语义与浅层细节融合，最后送入检测头产生预测框。</p>
+      </div>
+    </div>
+    <div class="split-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/psmf-yolo/fig02_network_structure.png" alt="PSMF-YOLO 网络结构图"></div>
+      <div class="figure-caption">
+        <span class="cap-em">PSMF-YOLO 网络结构图</span>：按 Backbone、Neck、Head、Result 四个区域展示全部组件及连接关系，并放大给出 C3k2、C2PSA-MSDA 与 SPPF 的内部构成。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 P2 小目标检测层 -->
+<section class="slide">
+  <div class="anim slide-label">Method 02</div>
+  <div class="anim"><h2>P2 小目标检测层</h2></div>
+  <p class="anim lead">为小尺寸花蕾保留高分辨率的检测特征，对应较低下采样倍率的特征层。</p>
+  <div class="anim split" style="align-items: flex-start; margin-top: 12px;">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li><span class="em">不额外下采样</span>：先把高层特征图上采样两倍恢复空间分辨率，再与主干同尺度浅层特征在通道维拼接。</li>
+        <li>拼接后经<span class="em">带残差连接的 C3k2</span> 完成特征融合与增强，浅层携带的位置与纹理信息进入检测分支。</li>
+        <li>该分支接收主干浅层特征与颈部上采样特征，输出 <span class="em">160×160</span> 特征图交给 P2 检测头。</li>
+        <li>与 P3、P4、P5 共同构成四尺度预测，减少小目标信息在层层下采样中的流失。</li>
+      </ul>
+      <div class="highlight-bar compact">
+        <p>P2 让花蕾的细微边缘得以进入检测分支，是消融中 mAP@0.5 增益最大的单项模块（+2.1 个百分点）。</p>
+      </div>
+    </div>
+    <div style="flex: 0.9; min-width: 0;">
+      <table class="mini-table layer-table">
+        <thead><tr><th>检测层</th><th>输出特征图尺寸</th></tr></thead>
+        <tbody>
+          <tr><td>P2</td><td>160 × 160</td></tr>
+          <tr><td>P3</td><td>80 × 80</td></tr>
+          <tr><td>P4</td><td>40 × 40</td></tr>
+          <tr><td>P5</td><td>20 × 20</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-bar compact">
+        <p>输入统一为 640×640 像素，四尺度特征图依次为 160×160、80×80、40×40、20×20。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 SPD-Conv -->
+<section class="slide">
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>SPD-Conv 空间到深度卷积</h2></div>
+  <p class="anim lead">在下采样过程中保留全部空间信息，用于替换网络中的非步幅卷积层。</p>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>SPD 变换把原始特征图划分为 <span class="em">scale² 个子特征图</span>，按固定间隔抽取像素并重排到通道维度。</li>
+        <li>空间尺寸缩小到 S/2 × S/2，但通道数变为 <span class="em">4C₁</span>，信息不丢失而是被重新编码。</li>
+        <li>随后接 stride=1 的标准卷积，输出 S/2 × S/2 × C₂ 的 X''，兼顾感受野扩展与冗余信息抑制。</li>
+        <li>本文将整个网络中的 <span class="em">7 个非步幅卷积层</span>替换为 SPD-Conv。</li>
+      </ul>
+      <div class="prompt-box slim">
+        <div class="prompt-label">SPD 变换 · 式（1）</div>
+        <p class="formula"><i>f</i><sub>i,j</sub> = <i>X</i>[ i : S : scale, &nbsp;j : S : scale ]</p>
+        <p class="formula-note">X 为输入特征图，S 为空间尺寸，scale 为缩放因子（本文取 2），f<sub>i,j</sub> 为按偏移 (i, j) 抽取的子特征图。</p>
+      </div>
+    </div>
+    <div class="split-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/psmf-yolo/fig03_spdconv_module.png" alt="SPD-Conv 模块结构与转换示意图"></div>
+      <div class="figure-caption">
+        <span class="cap-em">SPD-Conv 模块结构与转换示意图</span>：输入特征图 X 经 SPD 变换拆分为子特征图、在通道维拼接得到 X'，再由 stride=1 的标准卷积得到输出 X''。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 MSDA -->
+<section class="slide">
+  <div class="anim slide-label">Method 04</div>
+  <div class="anim"><h2>多尺度扩张注意力机制 MSDA</h2></div>
+  <p class="anim lead">为小目标检测引入可控范围的全局上下文，弥补 C2PSA 模块感受野有限的问题。</p>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>输入 <span class="em">H × W × C</span> 特征图先映射为查询 Q、键 K、值 V，并在通道维划分为多个注意力头，各头只处理部分通道。</li>
+        <li>在特征图上以<span class="em">滑动窗口</span>遍历空间位置，按预设扩张率对邻域采样，把全局注意力转化为局部计算，在控制复杂度的同时扩大有效感受野。</li>
+        <li>扩张率 r 取 1、2、3、4，感受野分别为 <span class="em">3×3、5×5、7×7、9×9</span>；小 r 聚焦细粒度纹理，大 r 建立远距离依赖。</li>
+        <li>各头输出在通道维拼接并映射回原通道空间，交给 C2PSA-MSDA 与主干特征融合。</li>
+      </ul>
+      <div class="highlight-bar compact">
+        <p>不同扩张率的局部注意力并行学习，使 MSDA 同时刻画局部细节与较大范围的上下文语义。</p>
+      </div>
+    </div>
+    <div class="split-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/psmf-yolo/fig04_msda_structure.png" alt="多尺度扩张注意力机制 MSDA 结构图"></div>
+      <div class="figure-caption">
+        <span class="cap-em">多尺度扩张注意力机制 MSDA 结构图</span>：展示 Q、K、V 三组线性映射、多个注意力头、滑动窗口扩张注意力，以及扩张率 r 取 1～4 时对应的采样网格。
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 8 C2PSA-MSDA -->
+<section class="slide">
+  <div class="anim slide-label">Method 05</div>
+  <div class="anim"><h2>C2PSA-MSDA 跨阶段注意力融合模块</h2></div>
+  <p class="anim lead">把 MSDA 嵌入 C2PSA 的注意力通路，同时建模局部细节与全局上下文。</p>
+  <div class="anim figure-box c2psa" style="margin-top: 8px;">
+    <img src="../assets/paper-imgs/psmf-yolo/fig02b_c2psa_msda_module.png" alt="C2PSA-MSDA 模块结构图">
+  </div>
+  <div class="anim figure-caption" style="max-width: 1040px;">
+    <span class="cap-em">C2PSA-MSDA 模块结构图</span>：Conv、N 个 PSABlock-MSDA 单元、Concat 与输出 Conv 的串联方式，以及跨越拼接的直连通路。
+  </div>
+  <div class="anim card-grid cols-3" style="margin-top: 12px;">
+    <div class="card tight">
+      <h3>补上远距离依赖</h3>
+      <p class="body-text">C2PSA 通过对不同空间位置和通道加权提升关键区域敏感度，但缺乏通过扩张卷积捕捉远距离依赖的能力。</p>
+    </div>
+    <div class="card tight">
+      <h3>多尺度邻域动态聚合</h3>
+      <p class="body-text">MSDA 的多扩张率并行补上这一环，注意力权重可在多种尺度邻域内动态聚合，同时刻画局部细节与较大范围上下文。</p>
+    </div>
+    <div class="card tight">
+      <h3>骨干末端送入颈部</h3>
+      <p class="body-text">模块位于骨干网络末端、SPPF 之后，接收深层语义特征，把增强后的特征送入颈部参与多尺度融合。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 9 Focaler-DIoU -->
+<section class="slide">
+  <div class="anim slide-label">Method 06</div>
+  <div class="anim"><h2>Focaler-DIoU 损失函数</h2></div>
+  <p class="anim lead">让边界框回归同时关注困难样本与中心点偏移，替换 YOLOv11 原有的 CIoU 损失。</p>
+  <div class="anim prompt-box" style="margin-top: 8px;">
+    <div class="prompt-label">Focaler-DIoU · 式（2）</div>
+    <div class="formula compact">
+      IoU<sup>focaler</sup> =
+      <span class="cases">
+        <span class="case"><span class="expr">0</span><span class="cond">IoU &lt; d</span></span>
+        <span class="case"><span class="expr">(IoU − d) / (u − d)</span><span class="cond">d ≤ IoU ≤ u</span></span>
+        <span class="case"><span class="expr">1</span><span class="cond">IoU &gt; u</span></span>
+      </span>
+    </div>
+    <div class="formula-sub">
+      <span>L<sub>Focaler-IoU</sub> = 1 − IoU<sup>focaler</sup></span>
+      <span>L<sub>DIoU</sub> = 1 − DIoU</span>
+      <span>DIoU = IoU − ρ²(b, b<sup>gt</sup>) / c²</span>
+      <span>L<sub>Focaler-DIoU</sub> = L<sub>DIoU</sub> + IoU − IoU<sup>focaler</sup></span>
+    </div>
+  </div>
+  <div class="anim card-grid cols-2" style="margin-top: 12px;">
+    <div class="card tight">
+      <h3>按区间重新赋权</h3>
+      <p class="body-text">低于下限阈值 d 的回归样本不被重视，高于上限阈值 u 的样本被完全关注，中间区间线性过渡，从而缓解数据分布不均衡并加快收敛。</p>
+    </div>
+    <div class="card tight">
+      <h3>去掉宽高比干扰</h3>
+      <p class="body-text">DIoU 直接惩罚预测框与真实框中心点之间的欧氏距离，相较 CIoU 去掉了宽高比约束带来的额外干扰，梯度更新更为稳定。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>两项综合后重点校正困难样本的位置误差；该损失接在检测头的回归分支上，与分类损失共同监督训练，输出最终检测框。</p>
+  </div>
+</section>
+
+<!-- 10 实验设置 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 01</div>
-  <div class="anim"><h2>消融实验：各模块增益叠加</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/psmf-yolo/page5_img2.png" alt="损失曲线" style="max-height: 50vh;"></div>
-  <div class="anim figure-caption">PSMF-YOLO 的损失下降速度明显快于 YOLOv11n，<span class="cap-em">在较早训练阶段即可达到稳定水平</span>，具有更快的收敛速度和更优的整体检测性能。</div>
+  <div class="anim"><h2>实验设置</h2></div>
+  <p class="anim lead">自建枇杷花蕾数据集与统一训练配置。</p>
+  <div class="anim split" style="margin-top: 12px;">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li><span class="em">采集</span>：重庆北碚秀峰枇杷园，DJI mini3 在 5～8 m 航高拍摄，共 850 张 1920×1080 RGB 图像。</li>
+        <li><span class="em">标注</span>：人工筛选 600 张，Labelimg 精细标注；按 7:2:1 划分训练、验证与测试集。</li>
+        <li><span class="em">增强</span>：翻转、旋转、随机裁剪、亮度与对比度调整，训练集扩充至 3 000 张。</li>
+        <li><span class="em">训练</span>：输入 640×640，300 轮，批大小 32，初始学习率 0.01，权重衰减 0.000 5；RTX 4090D 平台。</li>
+        <li><span class="em">指标</span>：mAP@0.5、P、R、F1，以及 GFLOPs、参数量、FPS 与模型大小。</li>
+      </ul>
+    </div>
+    <div class="split-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/psmf-yolo/fig01_dataset_augmentation.png" alt="无人机遥感图像数据增强样例图"></div>
+      <div class="figure-caption">
+        <span class="cap-em">无人机遥感图像数据增强样例图</span>：原图与随机裁剪、旋转、翻转及亮度对比度调整等增强方式的效果对比；增强样本在视角、构图与明暗上差异明显，覆盖田间拍摄常见的成像变化。
+      </div>
+    </div>
+  </div>
 </section>
 
+<!-- 11 对比实验：YOLO 可视化 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 02</div>
-  <div class="anim"><h2>对比实验：与 YOLO 系列模型对比</h2></div>
-  <div class="anim">
-    <table style="width:100%;border-collapse:collapse;font-size:clamp(12px,1.2vw,15px);margin-top:16px;">
-      <tr style="background:var(--card-bg);"><th style="padding:8px;border:1px solid var(--border);">模型</th><th style="padding:8px;border:1px solid var(--border);">mAP@0.5/%</th><th style="padding:8px;border:1px solid var(--border);">P/%</th><th style="padding:8px;border:1px solid var(--border);">R/%</th><th style="padding:8px;border:1px solid var(--border);">Parameters/M</th><th style="padding:8px;border:1px solid var(--border);">FPS</th></tr>
-      <tr><td style="padding:6px;border:1px solid var(--border);font-weight:700;color:var(--title);">PSMF-YOLO</td><td style="padding:6px;border:1px solid var(--border);text-align:center;font-weight:700;">84.9</td><td style="padding:6px;border:1px solid var(--border);text-align:center;font-weight:700;">79.3</td><td style="padding:6px;border:1px solid var(--border);text-align:center;font-weight:700;">80.6</td><td style="padding:6px;border:1px solid var(--border);text-align:center;">4.71</td><td style="padding:6px;border:1px solid var(--border);text-align:center;">189.4</td></tr>
-      <tr><td style="padding:6px;border:1px solid var(--border);">YOLOv5s</td><td style="padding:6px;border:1px solid var(--border);text-align:center;">84.1</td><td style="padding:6px;border:1px solid var(--border);text-align:center;">79.2</td><td style="padding:6px;border:1px solid var(--border);text-align:center;">80.0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;">9.11</td><td style="padding:6px;border:1px solid var(--border);text-align:center;">285.9</td></tr>
-      <tr><td style="padding:6px;border:1px solid var(--border);">YOLOv11n</td><td style="padding:6px;border:1px solid var(--border);text-align:center;">80.0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;">77.0</td><td style="padding:6px;border:1px solid var(--border);text-align:center;">76.4</td><td style="padding:6px;border:1px solid var(--border);text-align:center;">2.58</td><td style="padding:6px;border:1px solid var(--border);text-align:center;">233.9</td></tr>
-    </table>
+  <div class="anim"><h2>对比实验</h2></div>
+  <p class="anim lead">先在一张复杂果园场景图像上对 YOLO 系列模型的检测结果进行可视化。</p>
+  <div class="anim figure-box midwide" style="margin-top: 10px;">
+    <img src="../assets/paper-imgs/psmf-yolo/fig07_yolo_detection_vis.png" alt="YOLO 系列模型检测结果可视化对比图">
   </div>
-  <div class="anim highlight-bar"><p>相较 Faster R-CNN <span class="accent-word">mAP@0.5 领先 12.0 个百分点</span>，参数量仅为其 16.6%；较基线 YOLOv11n 各项指标均有显著提升。</p></div>
+  <div class="anim figure-caption" style="max-width: 1120px;">
+    <span class="cap-em">YOLO 系列模型检测结果可视化对比图</span>：PSMF-YOLO 与 YOLOv5s、YOLOv10s、YOLOv8n-P2、YOLOv11n、YOLOv5n、YOLOv10n、YOLOv3-tiny 同图检测的框叠加结果。
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>
+      花蕾密集簇生、叶片遮挡明显的区域，各模型的检出完整程度差异清晰，基线 YOLOv11n 与 YOLOv3-tiny 的漏检更多。该场景下
+      <span class="accent-word">PSMF-YOLO 正确检测 51 个、漏检 2 个、误检 1 个</span>，而 YOLOv3-tiny 漏检 8 个、误检 7 个。
+    </p>
+  </div>
 </section>
 
+<!-- 12 对比实验：YOLO 定量 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 03</div>
-  <div class="anim"><h2>可视化：检测结果对比</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/psmf-yolo/page7_img7.jpeg" alt="检测结果可视化" style="max-height: 55vh;"></div>
-  <div class="anim figure-caption">YOLOv11n 正确检测 74 个目标、漏检 7 个、误检 5 个；<span class="cap-em">PSMF-YOLO 正确检测多了 4 个，漏检少 4 个，误检少 2 个</span>，小目标检测效果更优。</div>
+  <div class="anim"><h2>对比实验</h2></div>
+  <p class="anim lead">上述差异在统一训练的定量指标上得到印证。</p>
+  <div class="anim figure-box tablefig" style="margin-top: 10px;">
+    <img src="../assets/paper-imgs/psmf-yolo/tab02_yolo_compare.png" alt="不同 YOLO 检测模型实验结果对比表">
+  </div>
+  <div class="anim figure-caption" style="max-width: 1100px;">
+    <span class="cap-em">不同 YOLO 检测模型实验结果对比表</span>：8 个模型在 mAP@0.5、P、R、F1 分数、GFLOPs、参数量、FPS 与模型大小上的结果。
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>
+      PSMF-YOLO 以 <span class="accent-word">84.9% 的 mAP@0.5 位于首位</span>，较基线 YOLOv11n 高 4.9 个百分点，较此前表现最好的 YOLOv5s 仍高 0.8 个百分点；
+      P 79.3%、R 80.6% 同为最优，模型大小 9.5 MB、FPS 189.4，精度优势同时覆盖轻量级与中型模型两档。
+    </p>
+  </div>
 </section>
 
+<!-- 13 对比实验：跨架构 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 04</div>
+  <div class="anim"><h2>对比实验</h2></div>
+  <p class="anim lead">选取 Faster R-CNN、SSD、RT-DETR 等经典检测框架进行跨架构对比。</p>
+  <div class="anim figure-box tabshort" style="margin-top: 10px;">
+    <img src="../assets/paper-imgs/psmf-yolo/tab04_detector_compare.png" alt="不同检测模型实验结果对比表">
+  </div>
+  <div class="anim figure-caption" style="max-width: 1100px;">
+    <span class="cap-em">不同检测模型实验结果对比表</span>：包含两阶段、单阶段与 Transformer 类检测器的精度和开销指标。
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>
+      Faster R-CNN 的精确率虽比 YOLOv11n 高 1.3 个百分点，但其 mAP@0.5 仅为 72.9%，PSMF-YOLO 以 84.9% 领先 Faster R-CNN 12.0 个百分点；
+      而 Faster R-CNN 与 RT-DETR 的参数量分别是 PSMF-YOLO 的 6.0 倍和 6.8 倍，单阶段框架叠加结构改进在精度与部署开销之间取得了更好的平衡。
+    </p>
+  </div>
+</section>
+
+<!-- 14 消融实验 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 05</div>
+  <div class="anim"><h2>消融实验</h2></div>
+  <p class="anim lead">为厘清各模块的贡献，以 YOLOv11n 为基线逐个添加模块进行消融。</p>
+  <div class="anim figure-box tablefig" style="margin-top: 10px;">
+    <img src="../assets/paper-imgs/psmf-yolo/tab01_ablation.png" alt="PSMF-YOLO 模型消融试验结果表">
+  </div>
+  <div class="anim figure-caption" style="max-width: 1100px;">
+    <span class="cap-em">PSMF-YOLO 模型消融试验结果表</span>：8 种模块组合下的 mAP@0.5、P、R 与 F1 score。
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>
+      单独引入 P2 时 mAP@0.5、P 和 R 分别提高 <span class="accent-word">2.1、1.6 和 0.9</span> 个百分点，单独替换 SPDConv 时三项分别提高
+      <span class="accent-word">0.9、0.1 和 1.4</span> 个百分点；P2 与 SPDConv 结合后 mAP@0.5 升至 83.0%，加入 MSDA 后进一步升至 83.5%，
+      Focaler-DIoU 单独加入则把 mAP@0.5 由 80.0% 提升到 80.6%。四模块齐备的 PSMF-YOLO 最终取得 84.9%、79.3% 与 80.6%，较基线分别提高 4.9、2.3 和 4.2 个百分点。
+    </p>
+  </div>
+</section>
+
+<!-- 15 消融实验：P-R 曲线 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 06</div>
+  <div class="anim"><h2>消融实验</h2></div>
+  <p class="anim lead">将表中 8 个变体的 P-R 曲线绘制在同一图中。</p>
+  <div class="anim split" style="margin-top: 10px;">
+    <div class="split-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/psmf-yolo/fig05_pr_curves.png" alt="不同消融变体的 P-R 曲线图"></div>
+      <div class="figure-caption">
+        <span class="cap-em">不同消融变体的 P-R 曲线图</span>：8 个变体的精确率—召回率曲线绘制在同一图中。
+      </div>
+    </div>
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>PSMF-YOLO 的曲线下面积<span class="em">大于其余全部变体</span>，也大于基线 YOLOv11n。</li>
+        <li>P-R 曲线验证了模块组合带来的整体性能提升，与消融表中 mAP@0.5 由 80.0% 到 84.9% 的结论一致。</li>
+      </ul>
+      <div class="highlight-bar compact">
+        <p>从逐模块消融到整体 P-R 曲线，各模块的增益在统一评价口径下得到相互印证。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 16 速度-精度权衡：参数量 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 07</div>
+  <div class="anim"><h2>速度-精度权衡</h2></div>
+  <p class="anim lead">为确认模型规模仍处于轻量范围，统计 YOLOv11 系列各规模模型与 PSMF-YOLO 的参数量。</p>
+  <div class="anim figure-box tablefig" style="margin-top: 10px;">
+    <img src="../assets/paper-imgs/psmf-yolo/tab03_yolov11_params.png" alt="YOLOv11 不同规模模型参数量对比表">
+  </div>
+  <div class="anim figure-caption" style="max-width: 1100px;">
+    <span class="cap-em">YOLOv11 不同规模模型参数量对比表</span>：YOLOv11n 到 YOLOv11x 五个规模及 PSMF-YOLO 的参数量与计算量。
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>
+      PSMF-YOLO 参数量 4.71M，高于 YOLOv11n 的 2.58M，但明显低于 YOLOv11s 的 9.46M、YOLOv11m 的 20.11M、YOLOv11l 的 25.37M 与 YOLOv11x 的 56.97M；
+      GFLOPs 为 15.6，说明检测精度提升的同时模型规模仍保持在轻量化部署的可接受范围内。
+    </p>
+  </div>
+</section>
+
+<!-- 17 速度-精度权衡：损失曲线 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 08</div>
+  <div class="anim"><h2>速度-精度权衡</h2></div>
+  <p class="anim lead">对比 YOLOv11n 与 PSMF-YOLO 的训练框损失、训练分类损失、验证框损失与验证分类损失。</p>
+  <div class="anim split" style="margin-top: 10px;">
+    <div class="split-fig">
+      <div class="figure-box"><img src="../assets/paper-imgs/psmf-yolo/fig06_loss_curves.png" alt="YOLOv11n 与 PSMF-YOLO 的损失曲线图"></div>
+      <div class="figure-caption">
+        <span class="cap-em">YOLOv11n 与 PSMF-YOLO 的损失曲线图</span>：a 训练框损失、b 训练分类损失、c 验证框损失、d 验证分类损失。
+      </div>
+    </div>
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li>PSMF-YOLO 的损失下降速度<span class="em">明显快于 YOLOv11n</span>，且在较早的训练阶段即趋于平稳。</li>
+        <li>验证集指标在训练后期波动幅度较小，表明模型收敛更快且泛化性能已达到稳定状态。</li>
+      </ul>
+      <div class="highlight-bar compact">
+        <p>训练与验证的四组曲线共同说明：结构改进没有牺牲收敛稳定性，反而带来更快的收敛速度和更优的整体检测性能。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 18 可视化分析 -->
+<section class="slide">
+  <div class="anim slide-label">Visualization</div>
+  <div class="anim"><h2>可视化分析</h2></div>
+  <p class="anim lead">在同一复杂场景下，将 PSMF-YOLO 与 SSD、Faster R-CNN、RT-DETR、YOLOv11n 的检测结果并排可视化。</p>
+  <div class="anim figure-box ultrawide" style="margin-top: 10px;">
+    <img src="../assets/paper-imgs/psmf-yolo/fig08_detector_vis.png" alt="不同检测模型结果的可视化对比图">
+  </div>
+  <div class="anim figure-caption" style="max-width: 1120px;">
+    <span class="cap-em">不同检测模型结果的可视化对比图</span>：5 个检测模型对同一张图像的框叠加结果。
+  </div>
+  <div class="anim stat-row">
+    <div class="stat"><div class="num">74 / 7 / 5</div><div class="lbl">YOLOv11n：正确 / 漏检 / 误检</div></div>
+    <div class="stat"><div class="num">+4 / −4 / −2</div><div class="lbl">PSMF-YOLO 相对变化</div></div>
+    <div class="stat"><div class="num">84.9%</div><div class="lbl">PSMF-YOLO mAP@0.5</div></div>
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>改进模型在密集花蕾区域的定位更准、覆盖更全，验证了 PSMF-YOLO 在复杂果园场景下的检测鲁棒性。</p>
+  </div>
+</section>
+
+<!-- 19 优点和创新点 -->
 <section class="slide">
   <div class="glow glow-blue tl"></div>
   <div class="glow glow-navy br"></div>
   <div class="anim slide-label">Summary</div>
   <div class="anim"><h2>优点和创新点</h2></div>
   <div class="anim divider"></div>
-  <div class="anim card-grid cols-3">
-    <div class="card"><span class="card-num">1</span><h3>P2 + SPD-Conv 组合</h3><p class="body-text">高分辨率特征层保留与空间到深度变换的信息无损下采样，mAP@0.5 较基线提升 4.9 个百分点。</p></div>
-    <div class="card"><span class="card-num">2</span><h3>MSDA 跨层次感知</h3><p class="body-text">四种扩张率并行捕获不同尺度感受野（3×3 至 9×9），显著提升密集簇生花蕾的可分辨性。</p></div>
-    <div class="card"><span class="card-num">3</span><h3>Focaler-DIoU 损失</h3><p class="body-text">结合动态权重调整与中心点距离优化，有效缓解小目标样本不平衡问题，加快收敛速度。</p></div>
+  <div class="anim card-grid cols-3" style="margin-top: 0;">
+    <div class="card">
+      <span class="card-num">1</span>
+      <h3>信息保留链路</h3>
+      <p class="body-text">将 P2 小目标检测层与 SPD-Conv 组合成信息保留链路，以空间到深度的无损下采样配合浅层高分辨率特征拼接，使 mAP@0.5 较基线提升 4.9 个百分点，可供小目标检测的特征保留设计参考学习。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">2</span>
+      <h3>C2PSA-MSDA</h3>
+      <p class="body-text">设计 C2PSA-MSDA 模块把多尺度扩张注意力嵌入跨阶段注意力结构，用四种扩张率并行的滑动窗口注意力覆盖 3×3 至 9×9 感受野，统一了局部细节与全局上下文的建模。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">3</span>
+      <h3>Focaler-DIoU</h3>
+      <p class="body-text">以 Focaler-DIoU 重构边界框回归损失，将按区间动态加权的样本难度与中心点距离约束相结合，配合逐模块消融、P-R 曲线与多模型检测效果可视化相互印证，实验完整且说服力强。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>从特征保留、上下文建模到边界框回归，三方面协同改进，在保持轻量化的前提下提升密集簇生小目标的检测能力。</p>
   </div>
 </section>
 
+<!-- 20 结尾 -->
 <section class="slide">
-  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
   <div class="end-card">
-    <div class="anim"><h2 style="color:var(--title);">PSMF-YOLO：枇杷花蕾检测</h2></div>
-    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
-    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">P2 + SPD-Conv + MSDA + Focaler-DIoU，<br>mAP@0.5 达 <span style="color:var(--accent);font-weight:600;">84.9%</span>，较基线提升 4.9 个百分点。</div>
-    <div class="anim cover-meta" style="margin-top:28px;"><span class="cover-tag">农业工程学报 2026</span></div>
+    <div class="anim"><h2 style="color: var(--title);">PSMF-YOLO</h2></div>
+    <div class="anim divider divider-accent" style="margin: 16px auto;"></div>
+    <div class="anim subtitle" style="max-width: 720px; text-align: center; margin: 0 auto;">
+      P2 + SPD-Conv + C2PSA-MSDA + Focaler-DIoU，<br>
+      mAP@0.5 达 <span style="color: var(--accent); font-weight: 600;">84.9%</span>，较基线提升 4.9 个百分点。
+    </div>
+    <div class="anim cover-meta" style="justify-content: center; margin-top: 28px;">
+      <span class="cover-tag">农业工程学报 2026, 42(11)</span>
+      <span class="cover-tag">西南大学工程技术学院</span>
+      <span class="cover-tag">感谢观看</span>
+    </div>
   </div>
 </section>
 
-</div>
+</div><!-- /deck -->
+
 <script>
 (function() {
   const slides = document.querySelectorAll('.slide');
@@ -259,5 +666,6 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   setTimeout(() => hideHint(), 5000);
 })();
 </script>
+
 </body>
 </html>

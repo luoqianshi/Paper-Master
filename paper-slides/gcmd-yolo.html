@@ -26,8 +26,8 @@ h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; c
 h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
 .subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
 .body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
+.small-text { font-size: clamp(11px, 1.05vw, 14px); color: #777; line-height: 1.5; }
 .divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
-.divider-accent { background: var(--accent); }
 .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
 .badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
 .badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
@@ -39,39 +39,65 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
 .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
 .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
 .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
 .card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
 .card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
 .card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.card.tight { padding: clamp(12px, 1.4vw, 18px); }
+.card.tight h3 { font-size: clamp(13px, 1.25vw, 17px); margin-bottom: 6px; }
+.card.tight .body-text { font-size: clamp(11px, 1.05vw, 14px); line-height: 1.55; }
 .highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
 .highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
 .highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.highlight-bar.compact p { font-size: clamp(12px, 1.15vw, 16px); }
 .bullet-list { list-style: none; padding: 0; margin-top: 12px; }
 .bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
 .bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
 .bullet-list li .em { color: var(--accent); font-weight: 600; }
+.bullet-list.compact li { font-size: clamp(11px, 1.1vw, 15px); line-height: 1.55; padding: 3px 0 3px 18px; }
+.bullet-list.compact li::before { top: 10px; width: 6px; height: 6px; }
 .prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
 .prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
 .prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
-.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
+.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
+.prompt-box .formula { font-size: clamp(15px, 1.8vw, 24px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
 .prompt-box .formula i { color: #a8c6ec; font-style: italic; }
 .prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
 .prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
+.prompt-box.slim { padding: clamp(11px, 1.3vw, 18px) clamp(16px, 1.8vw, 26px); }
+.prompt-box.slim .formula { font-size: clamp(13px, 1.45vw, 20px); }
 .glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
 .glow-blue { background: var(--title); }
 .glow-navy { background: var(--accent); }
 .glow.tl { top: -100px; left: -100px; }
-.glow.tr { top: -120px; right: -120px; }
 .glow.br { bottom: -120px; right: -100px; }
-.glow.bl { bottom: -120px; left: -100px; }
 .figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
 .figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
-.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-box.wide img { max-height: 40vh; }
+.figure-box.xwide img { max-height: 32vh; }
+.figure-box.full img, .figure-box.mid img { width: 62%; height: auto; max-height: none; }
+.figure-box.mid70 img { width: 70%; height: auto; max-height: none; }
+.figure-box.tall img { max-height: 62vh; }
+.figure-box.strip img { width: 100%; height: auto; }
+.figure-box.table4 img { width: 100%; height: auto; max-width: 980px; }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 1000px; align-self: center; }
 .figure-caption .cap-em { color: var(--title); font-weight: 600; }
 .split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
 .split .split-text { flex: 1.05; min-width: 0; }
 .split .figure-box { flex: 1; margin-top: 0; }
-.split .figure-box img { max-height: 56vh; }
+.split .figure-box img { max-height: 60vh; }
+.fig-pair { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(14px, 2vw, 28px); margin-top: 14px; }
+.fig-pair .cell { display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.fig-pair .cell img { max-width: 100%; max-height: 44vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.fig-pair .cell .figure-caption { margin-top: 8px; max-width: 100%; }
+.flow { display: flex; align-items: stretch; justify-content: center; gap: 8px; margin-top: 18px; }
+.flow .node { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; text-align: center; font-size: clamp(10px, 1vw, 14px); color: var(--accent); font-weight: 600; line-height: 1.45; display: flex; align-items: center; justify-content: center; }
+.flow .arrow { color: var(--dim); font-size: 18px; flex: 0 0 auto; align-self: center; }
+.metric-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 18px; }
+.metric { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; text-align: center; }
+.metric .v { font-size: clamp(22px, 2.4vw, 32px); font-weight: 800; color: var(--title); line-height: 1.1; }
+.metric .k { font-size: clamp(11px, 1vw, 13px); color: #666; margin-top: 5px; }
 .end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
@@ -82,170 +108,432 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
 .slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
 .slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
-@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .dots { display: none; } .split { flex-direction: column; } }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3, .card-grid.cols-4 { grid-template-columns: 1fr; } .dots { display: none; } .split { flex-direction: column; } .fig-pair { grid-template-columns: 1fr; } .flow { flex-wrap: wrap; } .flow .arrow { display: none; } .metric-row { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
 <body>
+
 <div class="progress" id="progress"></div>
 <div class="dots" id="dots"></div>
-<div class="hint" id="hint">← → 或点击翻页</div>
+<div class="hint" id="hint">点击或方向键翻页</div>
+
 <div class="deck" id="deck">
 
+<!-- 1 封面 -->
 <section class="slide">
   <div class="glow glow-blue tl"></div>
   <div class="glow glow-navy br"></div>
-  <div class="anim badge"><span class="dot-yellow"></span>PAPER READING<span class="dot-gray"></span>农业工程学报 · 2026</div>
-  <div class="anim" style="font-size: clamp(2rem, 5vw, 4rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">基于 <span class="highlight">GCMD-YOLO</span> 的<br>轻量化多尺度中药材检测方法</div>
-  <p class="anim subtitle">面向 100 种中药材检测，GhostConv 轻量化 + C3K2-GL 动态卷积 + MG-CA 多尺度注意力 + Dysample 动态上采样，精确率 93%、mAP@0.5 92.8%，Jetson Nano 推理 39 FPS。</p>
-  <div class="anim contributors"><div class="author">孙鹏 · 唐永菁 · 孙传聪</div><div class="affil">山东药品食品职业学院 · 威海市妇幼保健院</div></div>
-  <div class="anim cover-meta"><span class="cover-tag">中药材检测</span><span class="cover-tag">GhostConv</span><span class="cover-tag">动态卷积</span><span class="cover-tag">边缘部署</span></div>
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    PAPER READING
+    <span class="dot-gray"></span>
+    农业工程学报 2026
+  </div>
+  <div class="anim" style="font-size: clamp(2.6rem, 5.6vw, 4.6rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px; color: var(--title);">GCMD-YOLO</div>
+  <div class="anim" style="font-size: clamp(17px, 2.1vw, 29px); font-weight: 700; color: var(--accent); margin-top: 12px; line-height: 1.35;">
+    基于 GCMD-YOLO 的轻量化多尺度中药材检测方法
+  </div>
+  <p class="anim subtitle">在 YOLOv11S 上以 GhostConv、C3K2-GL、MG-CA 与 Dysample 重构检测网络：100 类中药材上 mAP@0.5 达 92.8%，参数量降低 16%，Jetson Nano 实测 39 帧·s⁻¹。</p>
+  <div class="anim contributors">
+    <div class="author">孙鹏 · 唐永菁 · 孙传聪</div>
+    <div class="affil">山东药品食品职业学院医疗器械系 · 威海市妇幼保健院心内神经内科</div>
+  </div>
+  <div class="anim cover-meta">
+    <span class="cover-tag">中药材检测</span>
+    <span class="cover-tag">轻量化</span>
+    <span class="cover-tag">多尺度注意力</span>
+    <span class="cover-tag">边缘部署</span>
+    <span class="cover-tag">农业工程学报 2026, 42(5)</span>
+  </div>
 </section>
 
+<!-- 2 核心贡献 -->
 <section class="slide">
   <div class="anim slide-label">Contributions</div>
-  <div class="anim"><h2>四项改进：轻量化与多尺度特征增强</h2></div>
+  <div class="anim"><h2>核心贡献：轻量化与细粒度特征的双线改造</h2></div>
   <div class="anim divider"></div>
   <div class="anim card-grid cols-2">
-    <div class="card"><span class="card-num">01</span><h3>GhostConv 轻量化</h3><p class="body-text">用标准卷积和廉价变换双路径结构重构主干与颈部网络，减少约 50% 参数量与计算量。</p></div>
-    <div class="card"><span class="card-num">02</span><h3>C3K2-GL 动态卷积</h3><p class="body-text">全局-局部双通路动态卷积 GL-ODConv，生成动态卷积核自适应提取多尺度纹理特征。</p></div>
+    <div class="card tight">
+      <span class="card-num">01</span>
+      <h3>多源中药材数据集</h3>
+      <p class="body-text">覆盖 100 种常见中药材：根茎类 40%、果实种子类 30%、全草类 20%、叶花皮类 10%。原始 8 642 张经物理仿真增强扩充至 30 480 张，统一 640×640，按 7:2:1 划分训练、验证与测试集。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num">02</span>
+      <h3>主干与颈部轻量化重构</h3>
+      <p class="body-text">以 GhostConv 重构主干与颈部网络，设计 Conv-SPPF 用卷积替代浅层最大池化，并以 Dysample 动态上采样替代固定插值，在降低参数冗余的同时保留边缘与纹理。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num">03</span>
+      <h3>C3K2-GL 细粒度增强</h3>
+      <p class="body-text">引入全局-局部双通路动态卷积 GL-ODConv，让卷积核形状与感受野随输入自适应变化，专门捕捉根须、叶脉等纤细纹理与微小目标。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num">04</span>
+      <h3>MG-CA 背景抑制</h3>
+      <p class="body-text">以 1×1、2×2、4×4 三级池化粒度捕获不同尺度空间信息，结合全局通道校准抑制复杂背景干扰，提升相似品类的辨识度。</p>
+    </div>
   </div>
-  <div class="anim card-grid cols-2" style="margin-top:12px;">
-    <div class="card"><span class="card-num">03</span><h3>MG-CA 多尺度注意力</h3><p class="body-text">采用 1×1、2×2、4×4 三级池化粒度捕获不同尺度空间信息，抑制复杂背景干扰。</p></div>
-    <div class="card"><span class="card-num">04</span><h3>Dysample 动态上采样</h3><p class="body-text">通过动态权重生成和自适应特征插值实现精准尺度转换，替代固定插值规则。</p></div>
+  <div class="anim highlight-bar compact">
+    <p>自建数据集上精确率、召回率、F1 分别达 <span class="accent-word">93%、91%、92%</span>，mAP@0.5 为 <span class="accent-word">92.8%</span>；参数量降低 16%、推理速度提升 27%，Jetson Nano 达 <span class="accent-word">39 帧·s⁻¹</span>。</p>
   </div>
 </section>
 
+<!-- 3 研究动机 -->
 <section class="slide">
   <div class="anim slide-label">Motivation</div>
-  <div class="anim"><h2>中药材检测面临的困难</h2></div>
-  <div class="anim">
-    <ul class="bullet-list">
-      <li>药材种类繁多、形态各异、<span class="em">类间相似性高</span>，细微根须等特征提取困难</li>
-      <li>现有方法<span class="em">仅聚焦精度提升</span>，对轻量化与推理速度重视不足</li>
-      <li>传统卷积与池化机制易导致<span class="em">纹理细节丢失</span></li>
-      <li>在 100 种中药材的高细粒度分类任务中，模型鲁棒性有待提升</li>
-    </ul>
+  <div class="anim"><h2>研究动机：精度、细粒度与实时性的三重矛盾</h2></div>
+  <p class="anim body-text" style="margin-top:14px;max-width:1040px;">中药材种类繁多、形态各异，部分品类类间相似性高，细微根须、断面纹理等鉴别性特征难以提取，小目标漏检与品类混淆频发，直接影响临床疗效与用药安全。</p>
+  <div class="anim card-grid cols-3">
+    <div class="card tight">
+      <span class="card-num">A</span>
+      <h3>人工与理化鉴别受限</h3>
+      <p class="body-text">人工经验鉴别工作量大、主观性强；显微观察与化学检测受制于检验周期长、样品破坏性与操作复杂性，难以支撑现场快检。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num">B</span>
+      <h3>精度与轻量难以兼得</h3>
+      <p class="body-text">多数研究仅聚焦模型精度提升，对轻量化优化与推理速度重视不足，巨大的计算开销限制移动设备应用，边缘端难以兼顾高精度与实时性。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num">C</span>
+      <h3>特征融合策略单一</h3>
+      <p class="body-text">对根须、叶脉等关键纤细特征与微小目标的检测灵敏度较低，传统卷积操作与池化机制容易丢失纹理细节。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>本文切入点：在保持轻量级架构的同时引入细粒度特征提取能力，服务药房、集散市场、现场快检与移动巡检等算力受限、实时性要求高的场景。</p>
   </div>
 </section>
 
+<!-- 4 整体设计 fig2 -->
 <section class="slide">
-  <div class="glow glow-blue tr"></div>
-  <div class="anim slide-label">Method 01</div>
-  <div class="anim"><h2>GhostConv 与 Conv-SPPF 轻量化</h2></div>
-  <div class="anim">
-    <ul class="bullet-list">
-      <li>GhostConv 先经标准卷积 Conv 输出 n 个通道，再通过<span class="em">线性变换生成 s 个幻影特征图</span></li>
-      <li>参数压缩比近似为 s，可节省约 <span class="em">s 倍训练时间与参数量</span></li>
-      <li>Conv-SPPF 用 GhostConv 替代 SPPF 的浅层 MaxPool，保留原 SPPF 的深层池化框架</li>
-      <li>在维持多尺度聚合能力的同时避免关键鉴别信息的损失</li>
-    </ul>
+  <div class="anim slide-label">Method 01 · 网络整体设计</div>
+  <div class="anim"><h2>整体设计：YOLOv11S 上的结构重构</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>主干网络用 <span class="em">GhostConv</span> 替换传统卷积，C3K2 升级为 <span class="em">C3K2-GL</span>，末端以 <span class="em">Conv-SPPF</span> 替换原 SPPF。</li>
+        <li>颈部网络用 GhostConv 压缩冗余参数，引入 <span class="em">MG-CA</span> 聚焦鉴别性区域，并以 <span class="em">Dysample</span> 替换固定插值的 upsample。</li>
+        <li>各模块输入输出维度与基线保持一致，可直接替换原有组件；特征在颈部完成多尺度融合后送入 HEAD 输出检测结果。</li>
+        <li>基线 YOLOv11S 在 COCO 上 mAP@0.5:0.95 为 41.2%，模型体积 9.4 MB，RTX 3090 推理速度 47 帧·s⁻¹。</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/gcmd-yolo/fig2.png" alt="GCMD-YOLO 整体网络结构图"></div>
   </div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">GhostConv 计算量</div>
-    <p class="formula" style="font-size:clamp(14px,1.5vw,20px);">
-      <i>F</i><sub>2</sub> = <i>H'</i>×<i>W'</i>×<i>n</i>×<i>K</i><sup>2</sup>×<i>c</i> + (<i>s</i>−1)×<i>H'</i>×<i>W'</i>×(<i>n</i>/<i>s</i>)×<i>b</i><sup>2</sup>
-    </p>
-    <p class="formula-note">b 为线性变换卷积核尺寸，参数压缩比近似为 s。</p>
+  <div class="anim figure-caption">图 2　改进后的模型结构。轻量化主干负责形态与纹理抽取，自适应融合颈部完成多尺度整合，检测头输出 100 类药材的类别与位置。</div>
+</section>
+
+<!-- 5 GhostConv fig3 -->
+<section class="slide">
+  <div class="anim slide-label">Method 02 · GhostConv</div>
+  <div class="anim"><h2>GhostConv：廉价变换生成幻影特征</h2></div>
+  <p class="anim body-text" style="margin-top:12px;max-width:1060px;">输入先经标准卷积得到 <i>n</i> 个通道的本征特征图，再对每个通道做线性变换得到 <i>s</i> 个幻影特征图，拼接后共 <i>m = n + n×s</i> 个输出，只需对 <i>1/s</i> 的特征图做完整卷积。</p>
+  <div class="anim figure-box mid"><img src="../assets/paper-imgs/gcmd-yolo/fig3.png" alt="GhostConv 模块结构图"></div>
+  <div class="anim figure-caption">图 3　GhostConv 模块结构。标准卷积与本征特征图对应 <span class="cap-em">n</span> 个通道，线性变换生成 <span class="cap-em">n×s</span> 个幻影特征图，拼接得到 <span class="cap-em">m</span> 个通道。</div>
+  <div class="anim prompt-box slim">
+    <div class="prompt-label">计算量对比</div>
+    <p class="formula">F<sub>1</sub> = H′×W′×n×K<sup>2</sup>×c　　F<sub>2</sub> = H′×W′×n×K<sup>2</sup>×c + (s−1)×H′×W′×(n/s)×b<sup>2</sup></p>
+    <p class="formula-note">K 取 3 或 5，线性变换为 3×3 深度卷积（b=3，b ≤ K）；通道数较大时压缩比近似 s，该配置下参数与计算量约减少 50%。</p>
   </div>
 </section>
 
+<!-- 6 GL-ODConv fig4 -->
 <section class="slide">
-  <div class="anim slide-label">Method 02</div>
-  <div class="anim"><h2>C3K2-GL 全局-局部双通路动态卷积</h2></div>
-  <div class="anim">
-    <ul class="bullet-list">
-      <li>全局通路经<span class="em">全局平均池化</span>提取通道维度全局信息</li>
-      <li>局部通路经 1×1 Conv 提取局部信息</li>
-      <li>两路拼接后生成<span class="em">动态卷积核</span>自适应调整感受野与卷积核形态</li>
-      <li>多分支分别适配整体形态、纹理和细节的多尺度特征提取需求</li>
-    </ul>
+  <div class="anim slide-label">Method 03 · C3K2-GL 之一</div>
+  <div class="anim"><h2>GL-ODConv：全局-局部双通路动态卷积</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>全局通路经 GAP、FC 与 ReLU 提取通道维度全局信息；局部通路经 1×1 卷积、ReLU 与 GAP 提取局部信息，两路拼接后由 FC 调整维度。</li>
+        <li>拼接特征经 Sigmoid 生成通道注意力，以残差方式增强输入，得到与原特征同维度的 <i>z</i><sub>fused</sub>。</li>
+        <li>动态卷积核由 <i>z</i><sub>fused</sub> 生成，多个分支按权重加权融合，使卷积核形状与感受野随样本变化。</li>
+      </ul>
+      <div class="prompt-box slim">
+        <div class="prompt-label">核心计算</div>
+        <p class="formula">z<sub>fused</sub> = σ(FC([z<sub>g</sub>; z<sub>l</sub>])) ⊙ X + X</p>
+        <p class="formula">Y = Σ<sub>s=1</sub><sup>S</sup> α<sub>s</sub> · Conv<sub>s</sub>(X, W<sub>d</sub><sup>(s)</sup>)</p>
+      </div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/gcmd-yolo/fig4.png" alt="GL-ODConv 双路径动态卷积结构图"></div>
   </div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">动态权重融合</div>
-    <p class="formula" style="font-size:clamp(14px,1.5vw,20px);">
-      <i>z</i><sub>fused</sub> = σ(FC([<i>z</i><sub>g</sub>; <i>z</i><sub>l</sub>])) ⊙ <i>X</i> + <i>X</i>
-    </p>
-    <p class="formula-note">σ 为 Sigmoid，⊙ 为逐通道逐像素相乘，+X 为残差连接。</p>
+  <div class="anim figure-caption">图 4　GL-ODConv 结构。动态卷积核由输入特征自身生成，多分支分别适配整体形态、纹理与细节，α<sub>s</sub> 为第 s 个分支的贡献度。</div>
+</section>
+
+<!-- 7 C3K2-GL fig5 -->
+<section class="slide">
+  <div class="anim slide-label">Method 04 · C3K2-GL 之二</div>
+  <div class="anim"><h2>C3K2-GL：把动态卷积装进 C3K2</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>用 GL-ODConv 替换 C3K2 残差分支的标准卷积形成 <span class="em">C3K-GL</span>，再用其替换浅层 C3K 得到 <span class="em">C3K2-GL</span>，深层 C3K 保持不变。</li>
+        <li>1×1 卷积调整维度后 Split 成两路：主路径经 C3K-GL 自适应捕捉叶脉、纹理等深层特征，再经 C3K 融合整体特征；辅路径保留浅层特征直接传递。</li>
+        <li>两路拼接后经 1×1 卷积输出；模块接收 GhostConv 的特征，输出流向颈部特征融合层。</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/gcmd-yolo/fig5.png" alt="C3K2-GL 模块结构图"></div>
+  </div>
+  <div class="anim figure-caption">图 5　C3K2-GL 及子模块结构：<span class="cap-em">a</span> 为 C3K2-GL 整体，<span class="cap-em">b</span> 为 C3K-GL，<span class="cap-em">c</span> 为 C3K，<span class="cap-em">d</span> 为 Bottleneck；双路径拼接兼顾深层纹理与浅层信息。</div>
+</section>
+
+<!-- 8 Conv-SPPF fig6 -->
+<section class="slide">
+  <div class="anim slide-label">Method 05 · Conv-SPPF</div>
+  <div class="anim"><h2>Conv-SPPF：用卷积替换浅层最大池化</h2></div>
+  <p class="anim body-text" style="margin-top:12px;max-width:1060px;">原 SPPF 先以 1×1 卷积压缩通道，再用 5×5、9×9、13×13 三路并行最大池化捕捉不同尺度空间特征；Conv-SPPF 只把浅层 MaxPool 换成 GhostConv，保留深层池化框架。</p>
+  <div class="anim figure-box full"><img src="../assets/paper-imgs/gcmd-yolo/fig6.png" alt="Conv-SPPF 模块结构图"></div>
+  <div class="anim figure-caption">图 6　Conv-SPPF 模块结构。卷积替代池化后，边缘与纹理特征得以密集提取，避免关键鉴别信息在池化中被稀释；模块位于主干末端，聚合特征送入颈部参与多尺度融合。</div>
+  <div class="anim highlight-bar compact">
+    <p>保留 SPPF 的多尺度聚合能力，同时缓解浅层最大池化造成的<span class="accent-word">细微纹理丢失</span>。</p>
   </div>
 </section>
 
+<!-- 9 MG-CA fig7 -->
 <section class="slide">
-  <div class="glow glow-navy bl"></div>
-  <div class="anim slide-label">Method 03</div>
-  <div class="anim"><h2>MG-CA 多尺度全局注意力</h2></div>
-  <div class="anim">
-    <ul class="bullet-list">
-      <li><span class="em">s=1</span>（1×1 网格）：全局粒度，捕获整株药材形态特征，针对人参、黄芪等大尺度目标</li>
-      <li><span class="em">s=2</span>（2×2 网格）：中尺度粒度，提取切片纹理特征，针对当归、白术等纹理目标</li>
-      <li><span class="em">s=4</span>（4×4 网格）：局部粒度，定位颗粒细节，针对枸杞、虫草等小目标</li>
-      <li>三级特征拼接后经 1×1 卷积压缩通道，<span class="em">分开为宽高两并行支路</span>生成注意力权重</li>
-    </ul>
+  <div class="anim slide-label">Method 06 · MG-CA</div>
+  <div class="anim"><h2>MG-CA：三级池化粒度的坐标注意力</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>输入沿宽度与高度方向并行做 1×1、2×2、4×4 三级平均池化；拼接后经 1×1 卷积把通道从 C 压到 C/r（r=16），ReLU 激活后再拆分回宽高两支。</li>
+        <li><i>s</i>=1 对应全局粒度，捕获人参、黄芪等大尺度整株形态；<i>s</i>=2 对应中尺度，提取当归、白术等切片纹理；<i>s</i>=4 对应局部粒度，定位枸杞、虫草等小目标颗粒。</li>
+        <li>两支经 Sigmoid 生成空间注意力权重，联合作用于输入特征图；模块集成在颈部特征融合层。</li>
+      </ul>
+      <div class="prompt-box slim">
+        <div class="prompt-label">输出特征</div>
+        <p class="formula">F′ = F ⊗ g<sub>h</sub> ⊗ g<sub>w</sub></p>
+      </div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/gcmd-yolo/fig7.png" alt="MG-CA 模块结构图" style="max-height:62vh;"></div>
   </div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">空间关键区域增强</div>
-    <p class="formula"><i>F'</i> = <i>F</i> ⊗ <i>g</i><sub>h</sub> ⊗ <i>g</i><sub>w</sub></p>
-    <p class="formula-note">行注意力权重 g<sub>h</sub> 和列注意力权重 g<sub>w</sub> 联合作用于输入特征图。</p>
+  <div class="anim figure-caption">图 7　MG-CA 模块结构。三级池化等价于用三个感受野分别对齐三档目标尺度，在抑制背景干扰的同时突出鉴别性区域。</div>
+</section>
+
+<!-- 10 Dysample fig8 -->
+<section class="slide">
+  <div class="anim slide-label">Method 07 · Dysample</div>
+  <div class="anim"><h2>Dysample：动态采样点替代固定插值</h2></div>
+  <p class="anim body-text" style="margin-top:12px;max-width:1060px;">输入特征经采样点生成器得到采样集 S，再由 Grid_sample 按采样位置对输入特征重新插值，即 <i>X′ = Grid_sample(X, S)</i>；采样位置由网络动态预测，而非固定网格，使上采样核随语义内容变化。</p>
+  <div class="anim figure-box full"><img src="../assets/paper-imgs/gcmd-yolo/fig8.png" alt="DySample 动态上采样模块结构图"></div>
+  <div class="anim figure-caption">图 8　Dysample 模块结构。本文采用带动态范围因子的 LP 模式，经线性投影生成偏移集合以匹配目标空间尺寸，由动态权重引导加权融合；以点采样替代卷积，参数量与计算量大幅降低，并替换颈部原有的 upsample。</div>
+</section>
+
+<!-- 11 数据集 fig1 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 01 · 实验设置</div>
+  <div class="anim"><h2>100 类多源中药材数据集</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>覆盖 100 种常见中药材：根茎类 40%、果实种子类 30%、全草类 20%、叶花皮类 10%。</li>
+        <li>数据来自甘肃中医药大学与南京中医药大学的中药标本数据库、爬虫抓取的网络图片，以及 Kaggle 的 MedLeaves 开源数据集。</li>
+        <li>原始样本 8 642 张，经亮度、对比度、饱和度调整与旋转、平移、缩放、高斯噪声等物理仿真增强，扩充至 30 480 张。</li>
+        <li>所有图像统一缩放至 640×640 并经人工审核，按 7:2:1 划分训练、验证和测试集。</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/gcmd-yolo/fig1.png" alt="中药材数据增强效果示意图"></div>
+  </div>
+  <div class="anim figure-caption">图 1　同种药材原图及增强图。增强覆盖低质量拍摄场景常见的成像变化，提升模型对复杂场景的泛化能力。</div>
+</section>
+
+<!-- 12 训练 fig9 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 02 · 训练设置</div>
+  <div class="anim"><h2>训练设置与收敛过程</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>训练平台为 Intel Core i7-12700H、16 GB DDR4 与 NVIDIA GeForce RTX 4060；Windows 11、Python 3.8.20、CUDA 12.1、PyTorch 1.11.0。</li>
+        <li>学习率 0.001、批处理 16、迭代 150 轮。学习率 0.01 时损失震荡不收敛，0.0001 时收敛过慢；批处理 32 显存不足，8 则训练过慢；100 轮欠拟合，200 轮精度提升微弱。</li>
+        <li>评价指标包括精确率、召回率、F1 分数、mAP@0.5、mAP@0.5:0.95、参数量与运算量。</li>
+      </ul>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/gcmd-yolo/fig9.png" alt="训练损失与准确率曲线图"></div>
+  </div>
+  <div class="anim figure-caption">图 9　损失与准确率曲线。训练损失稳定在 0.2 以下、验证损失在 0.4 以下；前 40 轮 Top-1 由接近 0 升至 0.85、Top-5 由 0.1 升至 0.93，最终 Top-1 稳定在 0.92 以上、Top-5 接近 0.97。</div>
+</section>
+
+<!-- 13 对比 table2 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 03 · 对比实验</div>
+  <div class="anim"><h2>精度与轻量化同时占优</h2></div>
+  <div class="anim figure-box mid70"><img src="../assets/paper-imgs/gcmd-yolo/table2.png" alt="不同模型对比试验结果表"></div>
+  <div class="anim figure-caption">表 2　不同模型对比试验。GCMD-YOLO 的精确率、召回率、F1、mAP@0.5 与 mAP@0.5:0.95 分别为 <span class="cap-em">93%、91%、92%、92.8%、78.6%</span>，参数量 7.9M 与运算量 15.6G 均为表中最低；Faster R-CNN 为 28.5M/180.6G，SSD 指标全面落后，YOLOv8S 不及基线 YOLOv11S。</div>
+  <div class="anim highlight-bar compact">
+    <p>相较 YOLOv11S 基线，五项精度指标分别提升 <span class="accent-word">7.0、8.0、7.5、7.3、7.4 个百分点</span>，而参数量与运算量反而更低。</p>
   </div>
 </section>
 
+<!-- 14 消融 table1 -->
 <section class="slide">
-  <div class="anim slide-label">Experiments 01</div>
-  <div class="anim"><h2>消融实验：模块增益逐级叠加</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/gcmd-yolo/page7_img11.jpeg" alt="CAM 对比图" style="max-height: 55vh;"></div>
-  <div class="anim figure-caption">集成全部改进模块后参数量与运算量分别较基线降低 16% 与 27%，<span class="cap-em">精确率、召回率与 mAP@0.5 分别大幅提升至 93%、91% 和 92.8%</span>。</div>
-</section>
-
-<section class="slide">
-  <div class="anim slide-label">Experiments 02</div>
-  <div class="anim"><h2>对比实验：与主流模型全面对比</h2></div>
-  <div class="anim">
-    <table style="width:100%;border-collapse:collapse;font-size:clamp(12px,1.2vw,16px);margin-top:16px;">
-      <tr style="background:var(--card-bg);"><th style="padding:10px;border:1px solid var(--border);">模型</th><th style="padding:10px;border:1px solid var(--border);">Precision/%</th><th style="padding:10px;border:1px solid var(--border);">mAP@0.5/%</th><th style="padding:10px;border:1px solid var(--border);">Parameters/M</th><th style="padding:10px;border:1px solid var(--border);">FLOPs/G</th></tr>
-      <tr><td style="padding:8px;border:1px solid var(--border);">Faster R-CNN</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">82</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">82.1</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">28.5</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">180.6</td></tr>
-      <tr><td style="padding:8px;border:1px solid var(--border);">YOLOv11S</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">86</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">85.5</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">9.4</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">21.5</td></tr>
-      <tr style="font-weight:700;color:var(--title);"><td style="padding:8px;border:1px solid var(--border);">GCMD-YOLO</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">93</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">92.8</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">7.9</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">15.6</td></tr>
-    </table>
+  <div class="anim slide-label">Experiments 04 · 消融实验</div>
+  <div class="anim"><h2>逐模块叠加均有正增益</h2></div>
+  <div class="anim figure-box strip"><img src="../assets/paper-imgs/gcmd-yolo/table1.png" alt="消融试验结果表"></div>
+  <div class="anim figure-caption">表 1　消融试验。试验 2 仅加 GhostConv，参数量降低 18%、运算量减少 15%，精确率、召回率与 mAP@0.5 仍全面提升；试验 3 的精确率与 mAP@0.5 达 89% 与 88.6%；试验 4 将 mAP@0.5:0.95 提至 74%；试验 5 以 90%/87% 成为单模块最优；试验 6 的 FLOPs 降至 19.7G；试验 7 集成全部模块后达 <span class="cap-em">93%/91%/92.8%</span>，参数量与运算量较基线降低 16% 与 27%。</div>
+  <div class="anim highlight-bar compact">
+    <p>轻量化、动态卷积与多尺度注意力从不同环节贡献了<span class="accent-word">精度与效率的协同提升</span>，组合后进一步叠加。</p>
   </div>
-  <div class="anim highlight-bar"><p>相较基线 YOLOv11S，精确率提升 7.0 个百分点、mAP@0.5 提升 7.3 个百分点，参数量降低 16%、<span class="accent-word">推理速度提升 27%</span>。</p></div>
 </section>
 
+<!-- 15 部署表 table4 -->
 <section class="slide">
-  <div class="anim slide-label">Experiments 03</div>
-  <div class="anim"><h2>边缘部署与泛化验证</h2></div>
-  <div class="anim">
-    <table style="width:100%;border-collapse:collapse;font-size:clamp(12px,1.2vw,16px);margin-top:16px;">
-      <tr style="background:var(--card-bg);"><th style="padding:10px;border:1px solid var(--border);">指标</th><th style="padding:10px;border:1px solid var(--border);">YOLOv11-S</th><th style="padding:10px;border:1px solid var(--border);">GCMD-YOLO</th></tr>
-      <tr><td style="padding:8px;border:1px solid var(--border);">mAP@0.5</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">85%</td><td style="padding:8px;border:1px solid var(--border);text-align:center;font-weight:700;color:var(--title);">92%</td></tr>
-      <tr><td style="padding:8px;border:1px solid var(--border);">FPS</td><td style="padding:8px;border:1px solid var(--border);text-align:center;">25</td><td style="padding:8px;border:1px solid var(--border);text-align:center;font-weight:700;color:var(--title);">39</td></tr>
-    </table>
+  <div class="anim slide-label">Experiments 05 · 速度-精度权衡</div>
+  <div class="anim"><h2>Jetson Nano 上的部署性能</h2></div>
+  <p class="anim body-text" style="margin-top:12px;max-width:1060px;">为检验精度增益能否在边缘设备上兑现，将 PyTorch 权重部署到 Jetson Nano，并在 ChineseMedicine-163 数据集上对比基线与改进模型的推理性能。</p>
+  <div class="anim figure-box table4"><img src="../assets/paper-imgs/gcmd-yolo/table4.png" alt="Jetson Nano 部署性能对比表"></div>
+  <div class="anim figure-caption">表 4　部署性能对比。GCMD-YOLO 参数量 7.9M、运算量 15.6G，低于基线的 9.4M 与 21.5G；FPS 从 25 提升至 <span class="cap-em">39</span>，mAP@0.5 与 mAP@0.5:0.95 达 <span class="cap-em">92% 与 78%</span>，均高于基线的 85% 与 70.5%。</div>
+  <div class="anim highlight-bar compact">
+    <p>速度提升约 56% 而精度不降反升，轻量化设计与精度增益在边缘设备上可以兼得。</p>
   </div>
-  <div class="anim highlight-bar"><p>在 Jetson Nano 边缘设备上推理速度达到 <span class="accent-word">39 FPS</span>，跨数据集（ChinesMedicine-163）mAP@0.5 提升 7.6%，验证了轻量化优势和边缘部署可行性。</p></div>
 </section>
 
+<!-- 16 混淆矩阵 fig10 -->
 <section class="slide">
-  <div class="glow glow-blue tl"></div>
-  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Experiments 06 · 可视化分析</div>
+  <div class="anim"><h2>混淆矩阵：100 类别的错误分布</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>主对角线连续高亮，非对角线颜色暗淡、错误样本分布稀疏，未出现明显的类别混淆聚集。</li>
+        <li>对当归与川芎、党参与西洋参两组易混品类，平均误判率从基线模型的 <span class="em">12.5%</span> 降低至 <span class="em">4.2%</span>。</li>
+        <li>坐标 0–99 对应数据集中 100 种药材编号；矩阵结论与训练曲线、消融实验相互印证。</li>
+      </ul>
+      <div class="highlight-bar compact" style="margin-top:14px;">
+        <p>易混品类平均误判率 <span class="accent-word">12.5% → 4.2%</span></p>
+      </div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/gcmd-yolo/fig10.png" alt="100 种中药材测试集混淆矩阵图"></div>
+  </div>
+  <div class="anim figure-caption">图 10　测试集混淆矩阵。对角线的高亮与离对角线区域的稀疏错误共同说明，类间相似性导致的误判得到有效缓解。</div>
+</section>
+
+<!-- 17 CAM fig11 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 07 · 可视化分析</div>
+  <div class="anim"><h2>CAM：模型到底在看哪里</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li><span class="em">黄芪</span>：GCMD-YOLO 高亮集中于菊花心与环纹；基线响应弥散至整体轮廓甚至背景，对核心环纹关注微弱。</li>
+        <li><span class="em">薄荷叶</span>：GCMD-YOLO 沿叶脉走向强化叶片轮廓与锯齿边缘；基线仅能识别大致叶片区域，叶脉与边缘细节丢失。</li>
+        <li><span class="em">枸杞</span>：GCMD-YOLO 为堆叠果实生成独立激活中心并抑制背景阴影；基线未清晰区分个体，易把阴影误判为目标。</li>
+      </ul>
+      <div class="prompt-box slim">
+        <div class="prompt-label">类激活映射</div>
+        <p class="formula">CAM(x,y) = Σ<sub>k=1</sub><sup>K</sup> w<sub>k</sub><sup>c</sup> · A<sub>k</sub>(x,y)</p>
+      </div>
+    </div>
+    <div class="figure-box"><img src="../assets/paper-imgs/gcmd-yolo/fig11.png" alt="基线模型与 GCMD-YOLO 的 CAM 对比图"></div>
+  </div>
+  <div class="anim figure-caption">图 11　基线模型与 GCMD-YOLO 的 CAM 对比。高亮区域即模型判断时聚焦的位置；热力图表明模型对细粒度纹理与形态的聚焦能力更强。</div>
+</section>
+
+<!-- 18 泛化 table3 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 08 · 泛化能力验证</div>
+  <div class="anim"><h2>跨数据集直接测试</h2></div>
+  <p class="anim body-text" style="margin-top:12px;max-width:1060px;">选用百度飞桨 ChineseMedicine-163 中草药数据集，涵盖 163 类不同产地与加工状态的样本，且与自建数据集无交集；训练完成的 GCMD-YOLO 不经任何微调直接测试。</p>
+  <div class="anim figure-box mid70"><img src="../assets/paper-imgs/gcmd-yolo/table3.png" alt="跨数据集泛化试验结果表"></div>
+  <div class="anim figure-caption">表 3　泛化试验。GCMD-YOLO 精确率、召回率、F1 达 <span class="cap-em">89%、87%、88%</span>，mAP@0.5 与 mAP@0.5:0.95 为 <span class="cap-em">84.5% 与 70.2%</span>，各项均高于基线的 82%、79%、81%、78.5% 与 63.5%。</div>
+  <div class="anim highlight-bar compact">
+    <p>跨来源数据上仍保持全面领先，说明所学特征具有较强泛化能力，验证了模型应用的鲁棒性。</p>
+  </div>
+</section>
+
+<!-- 19 失败案例 fig12 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 09 · 失败案例与边缘部署</div>
+  <div class="anim"><h2>从「看边缘」到「看内部结构」</h2></div>
+  <p class="anim body-text" style="margin-top:10px;max-width:1060px;">以川木香和土木香这组易混淆样本考察典型失败模式：基线模型将川木香误判为土木香，激活区域模糊地落在切片边缘与外部残余上。</p>
+  <div class="anim figure-box mid"><img src="../assets/paper-imgs/gcmd-yolo/fig12.png" alt="川木香易混淆样本失败案例 CAM 对比图"></div>
+  <div class="anim figure-caption">图 12　川木香样本的 CAM 对比。GCMD-YOLO 成功识别为川木香，热力图精准高亮药材内部放射状韧皮部束的结构。</div>
+  <div class="anim highlight-bar compact">
+    <p>关注区域偏移是此类混淆的诱因，<span class="accent-word">对鉴别性内部结构的聚焦能够纠正误判</span>。</p>
+  </div>
+</section>
+
+<!-- 20 边缘部署 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 10 · 边缘部署</div>
+  <div class="anim"><h2>ONNX → TensorRT → Infer 的部署链路</h2></div>
+  <div class="anim flow">
+    <div class="node">PyTorch 权重<br>.pt</div>
+    <div class="arrow">→</div>
+    <div class="node">ONNX<br>工具链导出</div>
+    <div class="arrow">→</div>
+    <div class="node">ONNX-Simplifier<br>删冗余、合算子</div>
+    <div class="arrow">→</div>
+    <div class="node">TensorRT 引擎<br>层融合 + FP16</div>
+    <div class="arrow">→</div>
+    <div class="node">Infer 推理库<br>加载执行</div>
+    <div class="arrow">→</div>
+    <div class="node">Jetson Nano<br>39 帧·s⁻¹</div>
+  </div>
+  <div class="anim metric-row">
+    <div class="metric"><div class="v">7.9 M</div><div class="k">参数量（基线 9.4 M）</div></div>
+    <div class="metric"><div class="v">15.6 G</div><div class="k">运算量（基线 21.5 G）</div></div>
+    <div class="metric"><div class="v">25 → 39</div><div class="k">FPS（帧·s⁻¹）</div></div>
+    <div class="metric"><div class="v">92%</div><div class="k">mAP@0.5</div></div>
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>39 帧·s⁻¹ 的实测速度验证了边缘部署的可行性，满足药房、集散市场与移动巡检等场景对实时检测的需求。</p>
+  </div>
+</section>
+
+<!-- 21 总结 -->
+<section class="slide">
   <div class="anim slide-label">Summary</div>
   <div class="anim"><h2>优点和创新点</h2></div>
   <div class="anim divider"></div>
-  <div class="anim card-grid cols-3">
-    <div class="card"><span class="card-num">1</span><h3>轻量化重构</h3><p class="body-text">GhostConv + Dysample + Conv-SPPF 在参数量降低 16%、运算量减少 27% 的轻量化基础上实现精度提升。</p></div>
-    <div class="card"><span class="card-num">2</span><h3>动态卷积增强</h3><p class="body-text">C3K2-GL 全局-局部双通路动态卷积，自适应调整感受野，显著增强细粒度纹理特征捕捉能力。</p></div>
-    <div class="card"><span class="card-num">3</span><h3>多尺度注意力</h3><p class="body-text">MG-CA 三级池化粒度（1×1、2×2、4×4）捕获不同尺度空间信息，将易混淆品类误判率从 12.5% 降至 4.2%。</p></div>
+  <div class="anim card-grid cols-2">
+    <div class="card tight">
+      <span class="card-num">1</span>
+      <h3>从工程可用性切入</h3>
+      <p class="body-text">以 GhostConv 与 Dysample 重构主干和颈部网络，并设计 Conv-SPPF；参数量降低 16%、运算量减少 27%，精度不降反升，Jetson Nano 上实测 39 帧·s⁻¹。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num">2</span>
+      <h3>C3K2-GL 双通路动态卷积</h3>
+      <p class="body-text">以输入驱动的动态卷积核自适应调整感受野与卷积核形态，多分支结构分别适配形态、纹理与细节特征，兼顾多尺度适应性与细粒度纹理捕捉。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num">3</span>
+      <h3>MG-CA 多粒度注意力</h3>
+      <p class="body-text">1×1、2×2、4×4 三级池化分别对应大尺度形态、切片纹理与小目标颗粒细节；集成于特征融合层后，将易混淆品类的平均误判率从 12.5% 降至 4.2%。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num">4</span>
+      <h3>实验体系完整</h3>
+      <p class="body-text">涵盖对比、消融、混淆矩阵、CAM 可视化、跨数据集泛化与边缘部署六个方面，定量与定性相互印证，结论具有说服力。</p>
+    </div>
+  </div>
+  <div class="anim cover-meta" style="justify-content:center;margin-top:24px;">
+    <span class="cover-tag">100 类中药材</span>
+    <span class="cover-tag">mAP@0.5 92.8%</span>
+    <span class="cover-tag">参数 -16%</span>
+    <span class="cover-tag">39 帧·s⁻¹</span>
   </div>
 </section>
 
+<!-- 22 结尾 -->
 <section class="slide">
-  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+  <div class="glow glow-blue tl"></div>
+  <div class="glow glow-navy br"></div>
   <div class="end-card">
-    <div class="anim"><h2 style="color:var(--title);">GCMD-YOLO：中药材检测</h2></div>
-    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
-    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">100 种中药材，精确率 93%，mAP@0.5 <span style="color:var(--accent);font-weight:600;">92.8%</span>，Jetson Nano 39 FPS。</div>
-    <div class="anim cover-meta" style="margin-top:28px;"><span class="cover-tag">农业工程学报 2026</span></div>
+    <div class="anim slide-label">Outlook</div>
+    <h2 class="anim">局限与展望</h2>
+    <p class="anim subtitle" style="text-align:center;max-width:860px;">本文为中药材智能检测提供了一种高精度、轻量化的解决方案，但数据集中药材品类与场景覆盖仍有扩展空间；未来将探索在更复杂实际场景中的模型适配与优化。</p>
+    <div class="anim cover-meta" style="justify-content:center;margin-top:30px;">
+      <span class="cover-tag">农业工程学报 2026, 42(5): 1-10</span>
+      <span class="cover-tag">GCMD-YOLO</span>
+      <span class="cover-tag">感谢观看</span>
+    </div>
   </div>
 </section>
 
-</div>
+</div><!-- /deck -->
+
 <script>
 (function() {
   const slides = document.querySelectorAll('.slide');
@@ -272,5 +560,6 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   setTimeout(() => hideHint(), 5000);
 })();
 </script>
+
 </body>
 </html>

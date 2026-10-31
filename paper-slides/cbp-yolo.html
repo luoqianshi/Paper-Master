@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" href="../assets/favicon.png" type="image/png" />
-<title>CBP-YOLO: 玉米田间草地贪夜蛾侵染痕迹检测</title>
+<title>基于 CBP-YOLO 的玉米田间草地贪夜蛾侵染痕迹检测与试验</title>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 :root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
@@ -22,13 +22,11 @@ body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sa
 .hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
 .hint.hidden { opacity: 0; }
 .slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
-h1 { font-size: clamp(30px, 4vw, 54px); font-weight: 800; line-height: 1.18; color: var(--text); letter-spacing: -1.5px; }
-h1 .highlight { color: var(--title); }
 h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
 h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
-.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 800px; }
-.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
-.small-text { font-size: clamp(11px, 1.05vw, 14px); color: #777; line-height: 1.5; }
+.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #222; line-height: 1.55; margin-top: 16px; max-width: 900px; }
+.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #000; line-height: 1.65; }
+.small-text { font-size: clamp(11px, 1.05vw, 14px); color: #555; line-height: 1.5; }
 .divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
 .divider-accent { background: var(--accent); }
 .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 36px; text-transform: uppercase; width: fit-content; }
@@ -37,35 +35,29 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
 .contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
-.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
-.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
+.contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #222; font-weight: 500; }
+.contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #555; font-weight: 400; }
 .card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
 .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
 .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
 .card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(16px, 2vw, 26px); display: flex; flex-direction: column; }
 .card .card-num { font-size: clamp(26px, 3vw, 42px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
 .card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
 .card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
+.card.tight { padding: clamp(12px, 1.4vw, 18px); }
+.card.tight h3 { font-size: clamp(13px, 1.25vw, 17px); margin-bottom: 6px; }
+.card.tight .body-text { font-size: clamp(11px, 1.05vw, 14px); line-height: 1.55; }
 .highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px); margin-top: 16px; }
-.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: #000; line-height: 1.6; }
 .highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+.highlight-bar.compact p { font-size: clamp(12px, 1.15vw, 16px); }
 .bullet-list { list-style: none; padding: 0; margin-top: 12px; }
-.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
+.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #000; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
 .bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
 .bullet-list li .em { color: var(--accent); font-weight: 600; }
-.vs-row { display: flex; align-items: stretch; gap: 24px; margin-top: 16px; }
-.vs-col { flex: 1; border-radius: var(--radius); padding: clamp(14px, 1.7vw, 22px); display: flex; flex-direction: column; position: relative; }
-.vs-col.left-col { background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.15); }
-.vs-col.right-col { background: rgba(34,197,94,0.04); border: 1px solid rgba(34,197,94,0.15); }
-.vs-col .vs-tag { display: inline-block; font-size: clamp(10px, 0.9vw, 12px); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 6px; margin-bottom: 12px; width: fit-content; }
-.vs-col.left-col .vs-tag { background: rgba(239,68,68,0.1); color: #b91c1c; }
-.vs-col.right-col .vs-tag { background: rgba(34,197,94,0.1); color: #15803d; }
-.vs-col h3 { font-size: clamp(15px, 1.5vw, 21px); margin-bottom: 10px; }
-.vs-col ul { list-style: none; padding: 0; }
-.vs-col ul li { font-size: clamp(12px, 1.15vw, 16px); color: #333; line-height: 1.55; padding: 3px 0 3px 20px; position: relative; }
-.vs-col ul li::before { content: ''; position: absolute; left: 0; top: 11px; width: 7px; height: 7px; border-radius: 50%; }
-.vs-col.left-col ul li::before { background: #ef4444; }
-.vs-col.right-col ul li::before { background: #22c55e; }
+.bullet-list.compact li { font-size: clamp(11px, 1.1vw, 15px); line-height: 1.55; padding: 3px 0 3px 18px; }
+.bullet-list.compact li::before { top: 10px; width: 6px; height: 6px; }
 .prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
 .prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
 .prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
@@ -74,31 +66,36 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .prompt-box .formula i { color: #a8c6ec; font-style: italic; }
 .prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
 .prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
-.fx-inline { font-weight: 600; color: var(--accent); white-space: nowrap; }
-.frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; margin: 0 5px; line-height: 1.15; }
-.frac .num { padding: 0 6px 3px; border-bottom: 1.6px solid rgba(255,255,255,0.75); }
-.frac .den { padding: 3px 6px 0; }
+.prompt-box.slim { padding: clamp(11px, 1.3vw, 18px) clamp(16px, 1.8vw, 26px); }
+.prompt-box.slim .formula { font-size: clamp(12px, 1.3vw, 18px); }
 .glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
 .glow-blue { background: var(--title); }
 .glow-navy { background: var(--accent); }
 .glow.tl { top: -100px; left: -100px; }
-.glow.tr { top: -120px; right: -120px; }
 .glow.br { bottom: -120px; right: -100px; }
-.glow.bl { bottom: -120px; left: -100px; }
 .figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
 .figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
-.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-box.wide img { max-height: 40vh; }
+.figure-box.xwide img { max-height: 32vh; }
+.figure-box.hero img { max-height: 60vh; }
+.figure-box.gsd img { max-height: 44vh; }
+.figure-box.det img { max-height: 52vh; }
+.figure-box.table img { max-height: 42vh; }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #444; margin-top: 10px; line-height: 1.55; max-width: 1000px; }
 .figure-caption .cap-em { color: var(--title); font-weight: 600; }
 .split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
 .split .split-text { flex: 1.05; min-width: 0; }
 .split .figure-box { flex: 1; margin-top: 0; }
 .split .figure-box img { max-height: 56vh; }
-.steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
-.step { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-.step .step-num { font-size: clamp(10px, 0.9vw, 13px); font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; }
-.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
-.step .small-text { font-size: clamp(11px, 1vw, 14px); }
-.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b8c4d4; flex-shrink: 0; }
+.fig-col { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.fig-col img { max-width: 100%; max-height: 52vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.fig-col.tall img { max-height: 58vh; }
+.fig-col.land img { max-height: 48vh; }
+.fig-col .figure-caption { margin-top: 8px; max-width: 100%; text-align: center; }
+.fig-pair { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(14px, 2vw, 28px); margin-top: 14px; }
+.fig-pair .cell { display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.fig-pair .cell img { max-width: 100%; max-height: 44vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.fig-pair .cell .figure-caption { margin-top: 8px; max-width: 100%; }
 .end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
 .end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
 @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
@@ -109,7 +106,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
 .slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
 .slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
-@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .vs-row { flex-direction: column; gap: 12px; } .steps { flex-direction: column; } .dots { display: none; } .split { flex-direction: column; } }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3, .card-grid.cols-4 { grid-template-columns: 1fr; } .dots { display: none; } .split { flex-direction: column; } .fig-pair { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -128,178 +125,380 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
     <span class="dot-yellow"></span>
     PAPER READING
     <span class="dot-gray"></span>
-    农业工程学报 2026
+    农业工程学报 · 2026 · 42(10)
   </div>
-  <div class="anim" style="font-size: clamp(2.5rem, 6vw, 5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
-    <span class="highlight">CBP-YOLO</span>
+  <div class="anim" style="font-size: clamp(2.4rem, 5.5vw, 4.5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px; color: var(--title);">
+    CBP-YOLO
   </div>
   <div class="anim" style="font-size: clamp(16px, 2vw, 28px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35;">
     基于 CBP-YOLO 的玉米田间草地贪夜蛾侵染痕迹检测与试验
   </div>
-  <p class="anim subtitle">通过 Real-ESRGAN 超分辨率重建、协调注意力机制与 BiFPN 双向特征融合，系统提升无人机多尺度图像中小尺度虫害痕迹的检测精度。</p>
+  <p class="anim subtitle">以 YOLOv8m 为基线，把 Real-ESRGAN 超分辨率重建、C2f-CA 坐标注意力、BiFPN 双向特征融合与 P2 小目标检测头串成「重建—提取—融合—检测」流水线，在自建无人机多尺度数据集上 AP@0.5 达到 76.5%。</p>
   <div class="anim contributors">
     <div class="author">齐江涛 · 王硕 · 熊悦凇 · 高芳芳 · 王发赢 · 邹宗峰 · 刘英智 · 刘慧力</div>
-    <div class="affil">吉林大学 · 吉林省智慧农业装备与技术重点实验室 · 烟台市农业技术推广中心</div>
+    <div class="affil">吉林大学工程仿生教育部重点实验室 / 生物与农业工程学院 / 吉林省智慧农业装备与技术重点实验室 · 烟台市农业技术推广中心</div>
   </div>
   <div class="anim cover-meta">
-    <span class="cover-tag">超分辨率重建</span>
-    <span class="cover-tag">协调注意力</span>
-    <span class="cover-tag">BiFPN</span>
-    <span class="cover-tag">虫害检测</span>
+    <span class="cover-tag">无人机航拍</span>
+    <span class="cover-tag">草地贪夜蛾</span>
+    <span class="cover-tag">多尺度 GSD</span>
+    <span class="cover-tag">小目标检测</span>
+    <span class="cover-tag">智慧农业</span>
   </div>
 </section>
 
-<!-- 2 核心贡献 -->
+<!-- 2 研究动机 -->
 <section class="slide">
-  <div class="anim slide-label">Contributions</div>
-  <div class="anim"><h2>核心贡献：超分辨率 + 协调注意力 + BiFPN + P2 检测头</h2></div>
-  <div class="anim divider"></div>
+  <div class="anim slide-label">Motivation</div>
+  <div class="anim"><h2>研究动机：小目标、跨尺度与复杂背景的三重夹击</h2></div>
+  <p class="anim body-text" style="margin-top:14px;max-width:1050px;">幼虫啃食后叶片形成不规则孔洞、锯齿状缺刻和大面积啃食区域，痕迹尺寸小、特征表征不明显；人工田间观察效率低、主观性强，基于图像的自动监测又面临识别精度低、漏检率高的问题。</p>
   <div class="anim card-grid cols-3">
     <div class="card">
+      <span class="card-num">A</span>
+      <h3>小目标像素少</h3>
+      <p class="body-text">侵染斑块在图像中占比小、特征对比度低，经主干多次下采样后细节容易被忽略，漏检风险高。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">B</span>
+      <h3>尺度变化大</h3>
+      <p class="body-text">无人机在 3、5、7 m 不同高度采集，斑块像素尺寸差异显著，单一特征层级难以兼顾跨尺度目标。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">C</span>
+      <h3>背景干扰强</h3>
+      <p class="body-text">土壤裸露区、杂草、田间阴影叠加低分辨率纹理缺失，损伤区域的特征表达进一步被削弱。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>已有研究多从超分辨率、注意力或小目标检测层单点改进；<span class="accent-word">小目标检测、多尺度特征融合与特征表征三方面的协同仍显不足</span>，这正是 CBP-YOLO 的切入点。</p>
+  </div>
+</section>
+
+<!-- 3 核心贡献 -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>核心贡献：一条四段式协同改进链</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-4">
+    <div class="card tight">
       <span class="card-num">01</span>
-      <h3>Real-ESRGAN 超分辨率</h3>
-      <p class="body-text">对低分辨率图像进行超分辨率预处理，恢复叶片损伤区域的<span style="color:var(--title);font-weight:600;">纹理细节</span>，GSD 从 0.53 提升至 0.26 cm/像素。</p>
+      <h3>超分预处理</h3>
+      <p class="body-text">Real-ESRGAN 恢复低分辨率图像中叶片啃食区域的纹理；0.53→0.26 cm/像素后 AP@0.5 与 F1 分别提升 7.3、8.6 个百分点。</p>
     </div>
-    <div class="card">
+    <div class="card tight">
       <span class="card-num">02</span>
-      <h3>C2f-CA 协调注意力</h3>
-      <p class="body-text">将通道注意力分解为水平与垂直两个独立一维编码，<span style="color:var(--title);font-weight:600;">保留精确位置信息</span>，弥补 SE 模块空间细节丢失。</p>
+      <h3>坐标注意力</h3>
+      <p class="body-text">在主干 C2f 中嵌入 CA，沿高度与宽度两个方向做一维编码，兼顾长程依赖与精确位置信息。</p>
     </div>
-    <div class="card">
+    <div class="card tight">
       <span class="card-num">03</span>
-      <h3>BiFPN + P2 检测头</h3>
-      <p class="body-text">BiFPN 可学习权重动态调节跨尺度融合，新增 P2 检测头拓展对<span style="color:var(--title);font-weight:600;">小尺度目标</span>的感知能力。</p>
+      <h3>双向融合</h3>
+      <p class="body-text">用 BiFPN 替代 PANet，以非负可学习权重动态调节不同尺度的特征贡献，减少跨层信息损耗。</p>
+    </div>
+    <div class="card tight">
+      <span class="card-num">04</span>
+      <h3>小目标检测头</h3>
+      <p class="body-text">新增 160×160×64 的 P2 浅层检测头，把高分辨率浅层特征接入检测，扩展小尺度目标感知。</p>
     </div>
   </div>
   <div class="anim highlight-bar">
-    <p>CBP-YOLO 在自建数据集上 mAP@0.5 达 <span class="accent-word">76.5%</span>，较 YOLOv8m 提升 3.4 个百分点，较 YOLOv9m、YOLOv10m 分别提升 10.1、7.2 个百分点。</p>
+    <p>自建无人机多尺度叶片数据集上 <span class="accent-word">AP@0.5 达 76.5%</span>，较 YOLOv8m 提升 3.4 个百分点；较 YOLOv9m、YOLOv10m、YOLOv11m、Faster R-CNN、RetinaNet 分别提升 <span class="accent-word">10.1、7.2、5.1、9.3、17.9</span> 个百分点。</p>
   </div>
 </section>
 
-<!-- 3 研究动机 -->
-<section class="slide">
-  <div class="anim slide-label">Motivation</div>
-  <div class="anim"><h2>无人机多尺度图像中的虫害检测难点</h2></div>
-  <div class="anim vs-row">
-    <div class="vs-col left-col">
-      <span class="vs-tag">核心挑战</span>
-      <h3>检测难点</h3>
-      <ul>
-        <li>小目标尺度变化大、<span style="font-weight:600;">特征对比度低</span>容易被忽略</li>
-        <li>GSD 从 0.22 到 0.53 cm/像素的宽范围变化下模型鲁棒性不足</li>
-        <li>土壤、杂草、阴影等<span style="font-weight:600;">背景噪声干扰</span>严重</li>
-      </ul>
-    </div>
-    <div class="vs-col right-col">
-      <span class="vs-tag">本文方案</span>
-      <h3>系统改进</h3>
-      <ul>
-        <li>Real-ESRGAN 超分辨率恢复<span style="font-weight:600;">低分辨率纹理</span></li>
-        <li>CA 注意力增强<span style="font-weight:600;">位置感知</span></li>
-        <li>BiFPN + P2 检测头实现多尺度均衡检测</li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- 4 超分辨率 -->
+<!-- 4 fig1 -->
 <section class="slide">
   <div class="anim slide-label">Method 01</div>
-  <div class="anim"><h2>Real-ESRGAN 超分辨率预处理</h2></div>
-  <div class="anim">
-    <ul class="bullet-list">
-      <li>结合 RRDBs 生成器与 U-Net 判别器，<span class="em">恢复高频细节、抑制伪影</span></li>
-      <li>引入模糊、下采样、噪声和 JPEG 压缩等<span class="em">高阶退化过程</span>合成训练数据</li>
-      <li>Pixel Unshuffle 操作将空间分辨率降为 1/2、通道扩展 4 倍，<span class="em">减少 GPU 显存</span></li>
-      <li>GSD=0.53 图像经处理后尺寸由 800×650 提升至 1600×1300，GSD 减小为 <span class="em">0.26 cm/像素</span></li>
-    </ul>
+  <div class="anim"><h2>多尺度采集：用 GSD 统一分辨率口径</h2></div>
+  <p class="anim body-text" style="margin-top:10px;max-width:1050px;">DJI P4 多光谱无人机采集可见光图像（1600×1300 像素，水平视场角 62.7°，焦距 5.74 mm），飞行高度设为 3、5、7 m，对应 GSD 分别为 0.22、0.38、0.53 cm/像素。</p>
+  <div class="anim prompt-box slim">
+    <p class="formula" style="font-size:clamp(14px,1.6vw,21px);">GSD = 2<i>H</i> · tan(θ / 2) / <i>N</i></p>
+    <p class="formula-note">H 为飞行高度，θ 为水平视场角，N 为图像水平像素数；成像几何不变时，N 越大，单像素对应的地面距离越小。</p>
   </div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">退化建模流程</div>
-    <p class="formula"><i>I</i><sub>b</sub> = Blur(<i>I</i>) → <i>I</i><sub>n</sub> = Noise(<i>I</i><sub>b</sub>) → <i>I</i><sub>s</sub> = Down(<i>I</i><sub>n</sub>) → <i>I</i><sub>LR</sub> = JPEG(<i>I</i><sub>s</sub>)</p>
-    <p class="formula-note">正向退化建模逆向重建，使生成器学习真实世界退化的逆过程。</p>
+  <div class="anim figure-box gsd"><img src="../assets/paper-imgs/CBP-YOLO/fig1.png" alt="不同地面采样距离的典型图像样本"></div>
+  <div class="anim figure-caption">
+    图中依次为 <span class="cap-em">0.22、0.38、0.53 cm/像素</span> 的田间样本：GSD 越大，叶片啃食痕迹的像素占比越小，土壤裸露区等背景干扰相对增多。该口径既是数据分组的依据，也是超分辨率重建效果的度量尺度。
   </div>
 </section>
 
-<!-- 5 CA 注意力 -->
+<!-- 5 fig2 -->
 <section class="slide">
   <div class="anim slide-label">Method 02</div>
-  <div class="anim"><h2>C2f-CA 协调注意力机制</h2></div>
-  <div class="anim">
-    <ul class="bullet-list">
-      <li>将通道注意力分解为水平和垂直<span class="em">两个独立一维特征编码</span></li>
-      <li>一条路径沿空间维度捕捉<span class="em">长程依赖</span>，另一条路径保留精确<span class="em">位置信息</span></li>
-      <li>拼接后经 1×1 卷积变换，再分解为两个方向的注意力权重</li>
-    </ul>
-  </div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">CA 注意力输出</div>
-    <p class="formula"><i>y</i><sub>c</sub>(<i>i</i>, <i>j</i>) = <i>x</i><sub>c</sub>(<i>i</i>, <i>j</i>) × <i>g</i><sub>c</sub><sup>h</sup>(<i>i</i>) × <i>g</i><sub>c</sub><sup>w</sup>(<i>j</i>)</p>
-    <p class="formula-note">嵌入 YOLOv8 的 C2f 模块形成 C2f-CA 结构，有效削弱背景噪声干扰。</p>
+  <div class="anim"><h2>Real-ESRGAN：先学真实退化，再重建纹理</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>早期插值与浅层 SR 结果过于平滑；ESRGAN 引入 GAN，但仍基于简单退化模型，面对模糊、噪声与压缩伪影共存的真实场景表现受限。</li>
+        <li>Real-ESRGAN 以 <span class="em">RRDB 生成器 + U-Net 判别器</span> 重建高频细节，并用多次模糊、下采样、噪声与 JPEG 压缩合成高阶退化数据。</li>
+        <li>支持 ×2 放大；Pixel Unshuffle 把空间分辨率降为 1/2、通道扩为 4 倍；判别器引入谱归一化，抑制过度锐化与振铃伪影。</li>
+      </ul>
+      <div class="prompt-box slim" style="margin-top:10px;">
+        <p class="formula" style="font-size:clamp(10px,1.02vw,14px);line-height:1.7;">I<sub>b</sub> = Blur(I; k, σ) → I<sub>n</sub> = Noise(I<sub>b</sub>)<br>→ I<sub>s</sub> = Down(I<sub>n</sub>; r<sub>k</sub>) → I<sub>LR</sub> = JPEG(I<sub>s</sub>; Q)</p>
+        <p class="formula-note">让生成器学习真实退化的逆过程，而不是只对理想下采样做超分。</p>
+      </div>
+    </div>
+    <div class="fig-col">
+      <img src="../assets/paper-imgs/CBP-YOLO/fig2.png" alt="Real-ESRGAN 超分辨率重建算法架构">
+      <div class="figure-caption">图 2 · <span class="cap-em">Real-ESRGAN 超分辨率重建算法架构</span>：生成器由 Pixel Unshuffle 预处理、卷积层与多个 RRDB Block 串联后上采样重建。</div>
+    </div>
   </div>
 </section>
 
-<!-- 6 BiFPN -->
+<!-- 6 fig3 -->
 <section class="slide">
   <div class="anim slide-label">Method 03</div>
-  <div class="anim"><h2>BiFPN 双向特征金字塔网络</h2></div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">加权融合公式</div>
-    <p class="formula">
-      <i>P̂</i><sub>i</sub> =
-      <span class="frac"><span class="num">∑ <i>w</i><sub>j</sub> · <i>P</i><sub>j</sub></span><span class="den">∑ <i>w</i><sub>j</sub> + <i>ε</i></span></span>
-    </p>
-    <p class="formula-note">其中 <em>w<sub>j</sub></em> 为非负可学习权重，<em>ε</em> 为避免除零的常数。可学习权重通过归一化 softmax 获得。</p>
-  </div>
-  <div class="anim">
-    <ul class="bullet-list">
-      <li>构建 4 层特征金字塔：P2(160×160×64)、P3(80×80×128)、P4(40×40×256)、P5(20×20×512)</li>
-      <li>新增 P2 浅层检测头可检测 <span class="em">4×4 像素</span>感受野的小目标</li>
-      <li>4 个尺度并行输出检测结果，<span class="em">显著提升小尺度虫害感知</span></li>
-    </ul>
+  <div class="anim"><h2>重建之后：0.53 → 0.26 cm/像素的新子集</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>对 GSD=0.53 图像做 ×2 重建，尺寸由 <span class="em">800×650 提升至 1600×1300</span>；成像几何不变、水平像素数翻倍，GSD 减半为 0.26 cm/像素。</li>
+        <li>重建图再切分为 800×650 子图；跨切割线的标注框重新生成，经人工核查剔除不合理标注与无标注图像。</li>
+        <li>新子集单独划分：训练 / 验证 / 测试为 <span class="em">363 / 39 / 41</span> 张图像，对应 682 / 64 / 87 处标注，与原始三档 GSD 一同进入训练流程。</li>
+      </ul>
+      <div class="highlight-bar compact" style="margin-top:14px;">
+        <p>重建不是单纯的图像放大，而是为低分辨率航拍图像<span class="accent-word">补回可被检测器利用的高频纹理</span>。</p>
+      </div>
+    </div>
+    <div class="fig-col land">
+      <img src="../assets/paper-imgs/CBP-YOLO/fig3.png" alt="Real-ESRGAN 重建高分辨率图像">
+      <div class="figure-caption">图 3 · <span class="cap-em">Real-ESRGAN 重建高分辨率图像</span>：左为原始图像，右为 2 倍重建图像，重建后叶片边缘与啃食痕迹的纹理更加清晰。</div>
+    </div>
   </div>
 </section>
 
-<!-- 7 实验：GSD 对比 -->
+<!-- 7 fig4 -->
+<section class="slide">
+  <div class="anim slide-label">Method 04</div>
+  <div class="anim"><h2>CBP-YOLO 整体结构：重建—提取—融合—检测</h2></div>
+  <div class="anim figure-box hero"><img src="../assets/paper-imgs/CBP-YOLO/fig4.png" alt="CBP-YOLO 模型结构"></div>
+  <div class="anim figure-caption">
+    图 4 · <span class="cap-em">CBP-YOLO 模型结构</span>：Backbone 的 C2f 均重构为带坐标注意力的 C2f-CA；Neck 以 BiFPNConcat2/3 双向融合 P2–P5 四层特征；Head 新增 P2 小目标检测层，四个 Detect 并行输出，接 Bbox Loss 与 CLS Loss。
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>以 <span class="accent-word">YOLOv8m</span> 为基础模型，保持单阶段推理路径，仅在 Backbone、Neck、Head 三处做结构替换与扩展。</p>
+  </div>
+</section>
+
+<!-- 8 fig5 -->
+<section class="slide">
+  <div class="anim slide-label">Method 05</div>
+  <div class="anim"><h2>C2f-CA：把通道注意力拆成两个方向的一维编码</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>SE 经全局平均池化把空间维度压成标量，细粒度位置信息随之丢失；CBAM 关注局部关联且依赖全连接层，计算开销明显增加。</li>
+        <li>CA 沿高度与宽度分别聚合，生成两个方向感知的上下文描述子，在保留精确定位的同时捕捉长程依赖。</li>
+      </ul>
+      <div class="prompt-box slim">
+        <p class="formula" style="font-size:clamp(12px,1.3vw,18px);line-height:1.9;">z<sub>c</sub><sup>h</sup> = (1/W) Σ<sub>i=0</sub><sup>W−1</sup> X<sub>c</sub>(h, i)<br>z<sub>c</sub><sup>w</sup> = (1/H) Σ<sub>j=0</sub><sup>H−1</sup> X<sub>c</sub>(j, w)</p>
+        <p class="formula-note">W、H 为特征图宽度与高度；两个描述子分别保留水平与垂直方向的位置信息。</p>
+      </div>
+    </div>
+    <div class="fig-col tall">
+      <img src="../assets/paper-imgs/CBP-YOLO/fig5.png" alt="CA 注意力机制模块结构">
+    </div>
+  </div>
+  <div class="anim figure-caption">
+    图 5 · <span class="cap-em">CA 注意力机制模块结构</span>：输入经残差连接后分两路做 X、Y 方向全局平均池化，拼接后由共享卷积与批归一化变换，再经两个分支生成方向注意力并完成通道重标定。嵌入 C2f 后，输出特征继续经主干层传至 Neck 的 BiFPN。
+  </div>
+</section>
+
+<!-- 9 坐标注意力生成 -->
+<section class="slide">
+  <div class="anim slide-label">Method 06</div>
+  <div class="anim"><h2>坐标注意力生成与特征重标定</h2></div>
+  <p class="anim body-text" style="margin-top:12px;max-width:1050px;">两个方向的描述子拼接后，先经共享的 1×1 卷积 <i>F</i><sub>1</sub> 与 ReLU 激活，得到压缩比为 <i>r</i> 的中间特征 <i>f</i>；再沿空间维度拆成 <i>f</i><sub>h</sub>、<i>f</i><sub>w</sub>，分别经 <i>F</i><sub>h</sub>、<i>F</i><sub>w</sub> 与 Sigmoid 生成方向注意力。</p>
+  <div class="anim prompt-box">
+    <div class="prompt-label">Coordinate Attention · Generation &amp; Re-weighting</div>
+    <p class="formula" style="font-size:clamp(15px,1.7vw,23px);"><i>f</i> = δ(<i>F</i><sub>1</sub>([<i>z</i><sub>h</sub>, <i>z</i><sub>w</sub>]))</p>
+    <p class="formula" style="font-size:clamp(15px,1.7vw,23px);"><i>g</i><sup>h</sup> = σ(<i>F</i><sub>h</sub>(<i>f</i><sup>h</sup>)) &nbsp;&nbsp; <i>g</i><sup>w</sup> = σ(<i>F</i><sub>w</sub>(<i>f</i><sup>w</sup>))</p>
+    <p class="formula" style="font-size:clamp(15px,1.7vw,23px);"><i>y</i><sub>c</sub>(i, j) = <i>x</i><sub>c</sub>(i, j) × <i>g</i><sub>c</sub><sup>h</sup>(i) × <i>g</i><sub>c</sub><sup>w</sup>(j)</p>
+    <p class="formula-note">δ 为 ReLU，σ 为 Sigmoid；F<sub>1</sub>、F<sub>h</sub>、F<sub>w</sub> 为 1×1 卷积，r 为压缩比例系数。</p>
+  </div>
+  <div class="anim card-grid cols-3" style="margin-top:18px;">
+    <div class="card tight">
+      <h3>共享变换</h3>
+      <p class="body-text">两个方向的描述子进入同一中间表示，参数量与计算量保持在轻量级。</p>
+    </div>
+    <div class="card tight">
+      <h3>方向解耦</h3>
+      <p class="body-text">拆回高度、宽度两支后分别卷积，得到互不干扰的方向注意力。</p>
+    </div>
+    <div class="card tight">
+      <h3>逐位置重标定</h3>
+      <p class="body-text">任一位置的响应同时受水平与垂直权重调制，突出损伤痕迹并削弱背景噪声。</p>
+    </div>
+  </div>
+</section>
+
+<!-- 10 fig6 -->
+<section class="slide">
+  <div class="anim slide-label">Method 07</div>
+  <div class="anim"><h2>BiFPN：用可学习权重做双向跨尺度融合</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>PANet 虽实现跨尺度连接，但主要依赖低层细节与高层语义的简单拼接，融合效果有限。</li>
+        <li>BiFPN 增加跨层捷径连接，融合节点可同时接收相邻两个层级的输入；非负可学习权重经归一化后动态调节各尺度贡献。</li>
+        <li>本文据此构建 4 层金字塔：P2 160×160×64、P3 80×80×128、P4 40×40×256、P5 20×20×512。</li>
+      </ul>
+      <div class="prompt-box slim">
+        <p class="formula" style="font-size:clamp(13px,1.4vw,19px);">P̂<sub>i</sub> = Σ<sub>j</sub> w<sub>j</sub> · P<sub>j</sub> / (Σ<sub>j</sub> w<sub>j</sub> + ε)</p>
+        <p class="formula-note">P̂<sub>i</sub> 为第 i 层融合特征，P<sub>j</sub> 为第 j 层输入，w<sub>j</sub> 为非负可学习权重，ε 为防止除零的常数。</p>
+      </div>
+    </div>
+    <div class="fig-col">
+      <img src="../assets/paper-imgs/CBP-YOLO/fig6.png" alt="PANet 和 BiFPN 的特征网络结构">
+    </div>
+  </div>
+  <div class="anim figure-caption">
+    图 6 · <span class="cap-em">PANet 和 BiFPN 的特征网络结构</span>：左侧 PANet 自下而上再自上而下逐级传递，右侧 BiFPN 增加跨层捷径连接，融合节点可同时接收相邻两个层级的输入，高层语义与低层细节借此高效互补。（图 6 原注中 P2 的 160×160×16 为排版笔误，正文与本文设置均为 160×160×64。）
+  </div>
+</section>
+
+<!-- 11 fig7 -->
+<section class="slide">
+  <div class="anim slide-label">Method 08</div>
+  <div class="anim"><h2>P2 检测头：把浅层高分辨率特征接进检测</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>原始 YOLOv8 采用 P3、P4、P5 三个检测头；小目标经主干多次下采样后，纹理与边界细节逐渐丢失。</li>
+        <li>浅层特征图分辨率更高、感受野更小，更适合小目标；新增 <span class="em">160×160×64</span> 的 P2 检测头，可覆盖 640×640 输入中 4×4 像素感受野的目标。</li>
+        <li>四个尺度并行输出检测结果，减少小目标细节丢失，输出对接边界框回归与分类两支损失。</li>
+      </ul>
+      <div class="highlight-bar compact" style="margin-top:14px;">
+        <p>P2 把检测粒度从 P3 的 80×80 推进到 <span class="accent-word">160×160</span>，是对小尺度侵染痕迹最直接的结构补偿。</p>
+      </div>
+    </div>
+    <div class="fig-col">
+      <img src="../assets/paper-imgs/CBP-YOLO/fig7.png" alt="增加小目标检测头示意图">
+    </div>
+  </div>
+  <div class="anim figure-caption">
+    图 7 · <span class="cap-em">增加小目标检测头示意图</span>：四个特征层自深向浅依次为 20×20×512、40×40×256、80×80×128、160×160×64，各接一个 Detect 检测头并行输出。
+  </div>
+</section>
+
+<!-- 12 table1 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 01</div>
-  <div class="anim"><h2>不同地面采样距离 GSD 的检测对比</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/CBP-YOLO/page6_img7.jpeg" alt="不同 GSD 检测结果" style="max-height: 44vh;"></div>
+  <div class="anim"><h2>数据集：879 张有效标注图像，按 8:1:1 划分</h2></div>
+  <p class="anim body-text" style="margin-top:10px;max-width:1080px;">2024 年 7 月在山东省烟台市烟台农业科学院采集；每幅图像均匀切为 4 张不重叠的 800×650 子图，用 LabelImg 人工框选侵染区域，剔除无标注图像后保留 879 张有效标注图像。</p>
+  <div class="anim figure-box table"><img src="../assets/paper-imgs/CBP-YOLO/table1.png" alt="无人机航拍图像数据集"></div>
   <div class="anim figure-caption">
-    GSD=0.38 cm/像素取得最佳效果（AP@0.5=79.8%），GSD=0.53 条件下应用 Real-ESRGAN 后 <span class="cap-em">AP@0.5 提高 7.3 个百分点</span>，F1-score 提高 8.6 个百分点。
+    表 1 · <span class="cap-em">无人机航拍图像数据集</span>：训练 / 验证 / 测试集分别含 <span class="cap-em">703 / 88 / 88</span> 张图像，对应 <span class="cap-em">2749 / 305 / 336</span> 处标注；三个子集均覆盖 0.22、0.38、0.53 三档 GSD，且以 0.22 cm/像素样本为主。
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>训练集内部分布为 0.22 / 0.38 / 0.53 各 <span class="accent-word">393 / 213 / 97</span> 张，验证集 46 / 31 / 11 张，测试集 51 / 25 / 12 张。</p>
   </div>
 </section>
 
-<!-- 8 消融实验 -->
+<!-- 13 table2 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 02</div>
-  <div class="anim"><h2>消融实验：多模块协同增益</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/CBP-YOLO/page7_img3.jpeg" alt="消融实验" style="max-height: 38vh;"></div>
-  <div class="anim">
-    <ul class="bullet-list">
-      <li>基准 AP@0.5=73.1%，P2 模块引入提升至 75.1%（<span class="em">+2.0%</span>），CA 提升约 1%，BiFPN 达 73.8%</li>
-      <li>三模块协同：<span class="em">精确率 74.7%，AP@0.5=76.5%，F1=73.5%</span></li>
-      <li>多模块协同优化实现精确率与召回率的有效平衡</li>
-    </ul>
+  <div class="anim"><h2>重建子集与训练配置</h2></div>
+  <div class="anim figure-box table"><img src="../assets/paper-imgs/CBP-YOLO/table2.png" alt="超分辨率重建数据集统计"></div>
+  <div class="anim figure-caption">
+    表 2 · <span class="cap-em">超分辨率重建数据集统计</span>：GSD=0.26 的重建子集按 8:1:1 划分为 <span class="cap-em">363 / 39 / 41</span> 张图像，对应 <span class="cap-em">682 / 64 / 87</span> 处标注。
+  </div>
+  <div class="anim card-grid cols-3" style="margin-top:16px;">
+    <div class="card tight">
+      <h3>数据增强</h3>
+      <p class="body-text">对 1066 张训练图像（703 原始 + 363 重建）做旋转、翻转、亮度与对比度调整、模糊及锐化，扩展至 12792 张。</p>
+    </div>
+    <div class="card tight">
+      <h3>实验平台</h3>
+      <p class="body-text">Intel Core i9-13900K、128 GB 内存、NVIDIA GeForce RTX 4090；PyTorch 2.2.1 + cuDNN 12.1 加速。</p>
+    </div>
+    <div class="card tight">
+      <h3>训练与指标</h3>
+      <p class="body-text">输入 640×640，训练 100 轮，batch size 8，AdamW，初始学习率 0.01，动量 0.937，权重衰减 0.0005；评价 P、R、AP@0.5、AP@0.5:0.95 与 F1。</p>
+    </div>
   </div>
 </section>
 
-<!-- 9 对比实验 -->
+<!-- 14 fig8 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 03</div>
-  <div class="anim"><h2>与主流模型性能对比</h2></div>
-  <div class="anim">
-    <ul class="bullet-list tight">
-      <li>CBP-YOLO 在各项指标上均优于其他模型，AP@0.5 较 YOLOv9m 提升 <span class="em">10.1</span>、较 YOLOv10m 提升 <span class="em">7.2</span>、较 RetinaNet 提升 <span class="em">17.9</span> 个百分点</li>
-    </ul>
-  </div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/CBP-YOLO/page7_img3.jpeg" alt="检测效果对比" style="max-height: 40vh;"></div>
+  <div class="anim"><h2>GSD 对比：0.53 档漏检明显，重建后改善</h2></div>
+  <div class="anim figure-box det"><img src="../assets/paper-imgs/CBP-YOLO/fig8.png" alt="不同 GSD 检测结果可视化对比"></div>
   <div class="anim figure-caption">
-    红框为真实标注框，蓝框为检测框。CBP-YOLO 在多个尺度下均能更准确定位虫害痕迹，<span class="cap-em">漏检和误检数量明显减少</span>。
+    图 8 · <span class="cap-em">不同 GSD 检测结果可视化对比</span>：上行为真实标注、下行为检测结果；红框为真实标注框，蓝框为模型检测框，黄框标出漏检，粉框标出误检。GSD=0.53 一档漏检明显增多，重建后的 0.26 cm/像素图像上检测框与标注框的重合程度明显改善。
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>0.38 cm/像素在空间覆盖与局部细节之间取得平衡，四档中 AP@0.5 最高；0.53 细节丢失严重，重建后的 0.26 明显回升。</p>
   </div>
 </section>
 
-<!-- 10 总结 -->
+<!-- 15 table3 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 04</div>
+  <div class="anim"><h2>四档 GSD 的定量结果：0.38 最佳</h2></div>
+  <div class="anim figure-box table"><img src="../assets/paper-imgs/CBP-YOLO/table3.png" alt="CBP-YOLO 模型在不同 GSD 图像上的检测结果"></div>
+  <div class="anim figure-caption">
+    表 3 · <span class="cap-em">CBP-YOLO 模型在不同 GSD 图像上的检测结果</span>：0.38 cm/像素的 AP@0.5 与 F1 分别达 <span class="cap-em">79.8% / 74.3%</span>，为四档最高；0.22 的 AP@0.5 降至 74.5%，0.53 仅 56.8% / 55.9%；重建后的 0.26 回升至 64.1% / 64.5%，AP@0.5 与 F1 分别提高 7.3 和 8.6 个百分点。
+  </div>
+  <div class="anim">
+    <ul class="bullet-list compact">
+      <li>0.22 cm/像素的召回率 72.8% 高于 0.38 档的 70.5%，但精确率仅 69.2%；更高分辨率引入更多噪声与无关信息，整体 AP@0.5 与 F1 反而低于 0.38 档。</li>
+      <li>0.53 cm/像素采集效率高，却因细节丢失叠加背景噪声，AP@0.5:0.95 仅 31.5%，为四档最低；Real-ESRGAN 对纹理与边缘的增强有效提升了啃咬痕迹检测能力。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 16 table4 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 05</div>
+  <div class="anim"><h2>消融：P2 单点收益最大，三模块协同最佳</h2></div>
+  <div class="anim figure-box table"><img src="../assets/paper-imgs/CBP-YOLO/table4.png" alt="不同模块的消融实验"></div>
+  <div class="anim figure-caption">
+    表 4 · <span class="cap-em">不同模块的消融实验</span>：单独引入 P2 把 AP@0.5 由基线 73.1% 提高到 <span class="cap-em">75.4%</span>，CA、BiFPN 单独为 74.1%、73.8%；CA+P2、P2+BiFPN 分别到 75.7%、75.5%；三模块同开取得 <span class="cap-em">76.5% / 43.2% / 73.5%</span>，较基线分别提升 3.4、1.7、3.6 个百分点。
+  </div>
+  <div class="anim">
+    <ul class="bullet-list compact">
+      <li>更高分辨率的 P2 特征图直接增强对小尺度损伤区域的感知，是单模块中收益最大的改进。</li>
+      <li>CA 引导模型关注虫害相关通道、抑制冗余特征；BiFPN 兼顾细节与高层语义。三者协同在提升特征表达的同时平衡了精确率与召回率。</li>
+    </ul>
+  </div>
+</section>
+
+<!-- 17 table5 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 06</div>
+  <div class="anim"><h2>与主流检测器对比：AP@0.5 全面领先</h2></div>
+  <div class="anim figure-box table"><img src="../assets/paper-imgs/CBP-YOLO/table5.png" alt="不同 YOLO 模型检测结果的比较"></div>
+  <div class="anim figure-caption">
+    表 5 · <span class="cap-em">不同 YOLO 模型检测结果的比较</span>：CBP-YOLO 精确率 74.7%、召回率 72.4%、AP@0.5 <span class="cap-em">76.5%</span>、AP@0.5:0.95 43.2%、F1 73.5%；AP@0.5 较 YOLOv9m、YOLOv10m、YOLOv11m、Faster R-CNN、RetinaNet 分别高 10.1、7.2、5.1、9.3、17.9 个百分点。
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>YOLOv11m 的精确率 73.1% 与 YOLOv8m 接近，但召回率仅 <span class="accent-word">60.4%</span>，精确性与召回率之间尚未实现良好平衡。</p>
+  </div>
+</section>
+
+<!-- 18 fig9 -->
+<section class="slide">
+  <div class="anim slide-label">Visualization</div>
+  <div class="anim"><h2>定性对比：CBP-YOLO 的框更完整、误漏检更少</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>各行依次为 GSD 等于 0.22、0.38、0.53、0.26 cm/像素的样本；各列依次为原始图、YOLOv8m 与 CBP-YOLO 的检测结果。</li>
+        <li>CBP-YOLO 在各尺度下的检测框更完整地覆盖侵染痕迹，误检与漏检数量明显少于基线模型。</li>
+        <li>尤其在 0.53 的低分辨率条件下仍能保持较稳定的定位效果，与消融、对比实验的定量结论一致。</li>
+      </ul>
+    </div>
+    <div class="fig-col tall">
+      <img src="../assets/paper-imgs/CBP-YOLO/fig9.png" alt="YOLOv8 m 与 CBP-YOLOv8 检测效果">
+      <div class="figure-caption">图 9 · <span class="cap-em">YOLOv8 m 与 CBP-YOLOv8 检测效果</span></div>
+    </div>
+  </div>
+  <div class="anim highlight-bar compact">
+    <p>在 0.53 cm/像素的低分辨率条件下仍能保持较稳定的定位效果，说明超分、注意力与多尺度融合的收益<span class="accent-word">在定性结果上同样成立</span>。</p>
+  </div>
+</section>
+
+<!-- 19 总结 -->
 <section class="slide">
   <div class="glow glow-blue tl"></div>
   <div class="glow glow-navy br"></div>
@@ -309,40 +508,29 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   <div class="anim card-grid cols-3">
     <div class="card">
       <span class="card-num">1</span>
-      <h3>超分辨率预处理</h3>
-      <p class="body-text">Real-ESRGAN 恢复低分辨率纹理细节，GSD=0.53 条件下 AP@0.5 提升 7.3 个百分点。</p>
+      <h3>超分前置，收益可量化</h3>
+      <p class="body-text">把 Real-ESRGAN 纳入检测预处理，恢复低分辨率图像中啃食区域的纹理细节，使 GSD=0.53 cm/像素图像的 AP@0.5 提升 7.3 个百分点，为航拍图像增强提供了实用方案。</p>
     </div>
     <div class="card">
       <span class="card-num">2</span>
-      <h3>协调注意力 CA</h3>
-      <p class="body-text">二维坐标注意力分解同时捕捉空间位置信息和通道重要性，增强小目标局部细节提取。</p>
+      <h3>坐标注意力兼顾位置与开销</h3>
+      <p class="body-text">在 C2f 模块中嵌入协调注意力，通过沿高度与宽度的两个一维特征编码同时捕捉长程依赖与精确位置信息，兼顾计算开销与细节表达，在复杂农田背景下有效突出侵染痕迹特征。</p>
     </div>
     <div class="card">
       <span class="card-num">3</span>
-      <h3>BiFPN + P2 检测头</h3>
-      <p class="body-text">可学习权重动态调节跨尺度融合，配合 P2 小目标检测头实现多尺度均衡检测。</p>
+      <h3>融合与检测头协同</h3>
+      <p class="body-text">用 BiFPN 的加权双向融合替代 PANet 的简单拼接，配合新增的 P2 浅层检测头实现跨尺度特征互补与小目标感知扩展；GSD 对比、消融、多模型对比与可视化构成完整证据链。</p>
     </div>
+  </div>
+  <div class="anim cover-meta" style="justify-content:center;margin-top:30px;">
+    <span class="cover-tag">农业工程学报 2026 · 42(10)</span>
+    <span class="cover-tag">AP@0.5 76.5%</span>
+    <span class="cover-tag">较 YOLOv8m +3.4</span>
+    <span class="cover-tag">感谢观看</span>
   </div>
 </section>
 
-<!-- 11 结尾 -->
-<section class="slide">
-  <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
-  <div class="end-card">
-    <div class="anim"><h2 style="color:var(--title);">CBP-YOLO</h2></div>
-    <div class="anim divider divider-accent" style="margin:16px auto;"></div>
-    <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">
-      超分辨率重建 + 协调注意力 + BiFPN，<br>
-      为无人机多尺度图像中<span style="color:var(--accent);font-weight:600;">「草地贪夜蛾侵染检测」</span>提供系统方案。
-    </div>
-    <div class="anim cover-meta" style="margin-top:28px;">
-      <span class="cover-tag">农业工程学报 2026</span>
-      <span class="cover-tag">感谢观看</span>
-    </div>
-  </div>
-</section>
-
-</div>
+</div><!-- /deck -->
 
 <script>
 (function() {
@@ -357,7 +545,8 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
   function next() { goTo(current + 1); }
   function prev() { goTo(current - 1); }
-  slides[0].classList.add('active'); progress.style.width = (1 / total * 100) + '%';
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
   document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
   let touchX = 0, touchY = 0;
   document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
@@ -369,5 +558,6 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
   setTimeout(() => hideHint(), 5000);
 })();
 </script>
+
 </body>
 </html>

@@ -51,6 +51,10 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
 .bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
 .bullet-list li .em { color: var(--accent); font-weight: 600; }
+.bullet-list.compact { margin-top: 8px; }
+.bullet-list.compact li { font-size: clamp(11px, 1.12vw, 15px); line-height: 1.55; padding: 3px 0 3px 18px; }
+.bullet-list.compact li::before { top: 10px; width: 6px; height: 6px; }
+.content-block { margin-top: 12px; }
 .vs-row { display: flex; align-items: stretch; gap: 24px; margin-top: 16px; }
 .vs-col { flex: 1; border-radius: var(--radius); padding: clamp(14px, 1.7vw, 22px); display: flex; flex-direction: column; position: relative; }
 .vs-col.left-col { background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.15); }
@@ -77,16 +81,35 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .glow-navy { background: var(--accent); }
 .glow.tl { top: -100px; left: -100px; }
 .glow.tr { top: -120px; right: -120px; }
-.glow.br { bottom: -120px; right: -100px; }
-.glow.bl { bottom: -120px; left: -100px; }
+.glow.br { bottom: 0; right: -100px; }
+.glow.bl { bottom: 0; left: -100px; }
 .figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
-.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
-.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 960px; }
+.figure-box img { max-width: 100%; max-height: 44vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); background: #ffffff; }
+.figure-box.strip img { max-height: 24vh; }
+.figure-box.big img { max-height: 48vh; }
+.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 10px; line-height: 1.55; max-width: 1000px; margin-left: auto; margin-right: auto; }
 .figure-caption .cap-em { color: var(--title); font-weight: 600; }
 .split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
 .split .split-text { flex: 1.05; min-width: 0; }
 .split .figure-box { flex: 1; margin-top: 0; }
-.split .figure-box img { max-height: 56vh; }
+.split .figure-box img { max-height: 52vh; }
+.split .figure-box.h44 img { max-height: 44vh; }
+.split .figure-box.h46 img { max-height: 46vh; }
+.split .figure-box.h48 img { max-height: 48vh; }
+.split .figure-box.h50 img { max-height: 50vh; }
+.split .figure-box.h52 img { max-height: 52vh; }
+.split .figure-box.h54 img { max-height: 54vh; }
+.split .figure-box.h56 img { max-height: 56vh; }
+.split .figure-box.h58 img { max-height: 58vh; }
+.split .figure-box.h60 img { max-height: 60vh; }
+.split.fig-wide .split-text { flex: 0.92; }
+.split.fig-wide .figure-box { flex: 1.18; }
+.split.fig-narrow .split-text { flex: 1.28; }
+.split.fig-narrow .figure-box { flex: 0.88; }
+.fig-pair { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(14px, 2vw, 28px); margin-top: 14px; }
+.fig-pair .cell { display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.fig-pair .cell img { max-width: 100%; max-height: 42vh; object-fit: contain; border-radius: 8px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); }
+.fig-pair .cell .figure-caption { margin-top: 8px; max-width: 100%; }
 .steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
 .step { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px); text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .step .step-num { font-size: clamp(10px, 0.9vw, 13px); font-weight: 700; color: var(--accent); letter-spacing: 2px; margin-bottom: 8px; }
@@ -103,7 +126,7 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
 .slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
 .slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
-@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .vs-row { flex-direction: column; gap: 12px; } .steps { flex-direction: column; } .dots { display: none; } .split { flex-direction: column; } }
+@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; } .vs-row { flex-direction: column; gap: 12px; } .steps { flex-direction: column; } .dots { display: none; } .split { flex-direction: column; } .fig-pair { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -112,152 +135,330 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 <div class="hint" id="hint">← → 或点击翻页</div>
 <div class="deck" id="deck">
 
+<!-- 1 封面 -->
 <section class="slide">
   <div class="glow glow-blue tl"></div><div class="glow glow-navy br"></div>
   <div class="anim badge"><span class="dot-yellow"></span>PAPER READING<span class="dot-gray"></span>CVPR 2024 · CCF-A</div>
   <div class="anim" style="font-size:clamp(2.2rem,5.5vw,4.5rem);font-weight:900;line-height:1.05;letter-spacing:-2px;"><span class="highlight">DCNv4</span></div>
   <div class="anim" style="font-size:clamp(16px,2vw,28px);font-weight:700;color:var(--accent);margin-top:10px;line-height:1.35;">Efficient Deformable ConvNets: Rethinking<br>Dynamic and Sparse Operator for Vision</div>
-  <p class="anim subtitle">从动态性质与内存访问两个维度重新设计可变形卷积，移除 softmax 放开权重取值，用线程复用与向量化读写消除冗余内存访问，前向速度达到 DCNv3 的 3 倍以上且收敛显著更快。</p>
+  <p class="anim subtitle">从动态性质与内存访问两个维度重新设计可变形卷积：移除 softmax 放开权重取值，用线程复用与向量化读写消除冗余内存访问，前向速度达到 DCNv3 的 3 倍以上且收敛显著更快。</p>
   <div class="anim contributors"><div class="author">Yuwen Xiong · Zhiqi Li · Yuntao Chen · Feng Wang · Xizhou Zhu · Jifeng Dai 等</div><div class="affil">University of Toronto · Shanghai AI Laboratory · Nanjing University · Tsinghua University</div></div>
   <div class="anim cover-meta"><span class="cover-tag">骨干网络</span><span class="cover-tag">可变形卷积</span><span class="cover-tag">GPU 效率优化</span><span class="cover-tag">CVPR 2024</span></div>
 </section>
 
+<!-- 2 核心贡献 -->
 <section class="slide">
   <div class="anim slide-label">Contributions</div>
   <div class="anim"><h2>核心贡献：DCNv3 的双重瓶颈一次解决</h2></div>
   <div class="anim divider"></div>
   <div class="anim card-grid cols-3">
-    <div class="card"><span class="card-num">01</span><h3>移除 softmax 归一化</h3><p class="body-text">调制标量变为 <span style="color:var(--title);font-weight:600;">无界动态权重</span>，增强表达能力，同时修复初期收敛慢。</p></div>
-    <div class="card"><span class="card-num">02</span><h3>内存访问系统优化</h3><p class="body-text">线程复用 + 向量化读写 + 半精度，<span style="color:var(--title);font-weight:600;">消除冗余内存指令</span>，3 倍提速。</p></div>
-    <div class="card"><span class="card-num">03</span><h3>通用视觉算子</h3><p class="body-text">在 InternImage、ConvNeXt、ViT、扩散模型上 <span style="color:var(--title);font-weight:600;">即插即用</span>，覆盖 5 类任务。</p></div>
+    <div class="card"><span class="card-num">01</span><h3>移除 softmax 归一化</h3><p class="body-text">调制标量变为 <span style="color:var(--title);font-weight:600;">无界动态权重</span>，增强算子动态性与表达能力，同时修复训练初期收敛慢的问题。</p></div>
+    <div class="card"><span class="card-num">02</span><h3>内存访问系统优化</h3><p class="body-text">指令级剖析定位瓶颈后，用同组通道线程复用、向量化读写与半精度，<span style="color:var(--title);font-weight:600;">消除冗余内存读取与指令</span>。</p></div>
+    <div class="card"><span class="card-num">03</span><h3>通用视觉算子</h3><p class="body-text">在 InternImage、ConvNeXt、ViT 与扩散模型 U-Net 上<span style="color:var(--title);font-weight:600;">即插即用</span>，覆盖分类、检测、分割、3D 与生成五类任务。</p></div>
   </div>
-  <div class="anim highlight-bar"><p>DCNv4 前向速度达到 DCNv3 的 <span class="accent-word">3 倍以上</span>，FlashInternImage 吞吐提升 50%~80% 且精度进一步提高。</p></div>
+  <div class="anim highlight-bar"><p>DCNv4 前向速度达到 DCNv3 的 <span class="accent-word">3 倍以上</span>；替换 InternImage 得到的 FlashInternImage 吞吐提升 <span class="accent-word">50%~80%</span>，精度还进一步提高。</p></div>
 </section>
 
+<!-- 3 研究动机 -->
 <section class="slide">
   <div class="anim slide-label">Motivation</div>
-  <div class="anim"><h2>DCN 的两个瓶颈：运行慢 + 初期收敛慢</h2></div>
+  <div class="anim"><h2>两个瓶颈：算子运行慢 + 训练初期收敛慢</h2></div>
   <div class="anim vs-row">
     <div class="vs-col left-col">
       <span class="vs-tag">瓶颈一</span>
       <h3>运行速度</h3>
       <ul>
         <li>采样非邻近位置带来额外开销，使 DCN 不适应现代卷积算法</li>
-        <li>DCNv3 甚至比 <span style="font-weight:600;">优化后的稠密全局注意力更慢</span></li>
+        <li>对比测量中 DCNv3 <span style="font-weight:600;">甚至比充分优化的稠密全局注意力更慢</span></li>
       </ul>
     </div>
     <div class="vs-col right-col">
       <span class="vs-tag">瓶颈二</span>
       <h3>收敛行为</h3>
       <ul>
-        <li>DCNv3 在骨干训练初期 <span style="font-weight:600;">收敛速度慢于全局注意力</span></li>
-        <li>与卷积归纳偏置的直觉相悖</li>
+        <li>DCNv3 在骨干训练初期 <span style="font-weight:600;">收敛速度慢于全局注意力</span>，与自带的卷积归纳偏置直觉相悖</li>
+        <li>DCN 始终没有成为视觉骨干网络的首选方案</li>
       </ul>
     </div>
   </div>
-  <div class="anim highlight-bar"><p>暂未有工作在保留动态稀疏聚合能力的前提下，<span class="accent-word">同时解决运行慢与初期收敛慢</span>两个瓶颈。</p></div>
+  <div class="anim highlight-bar"><p>问题收窄为：暂未有工作在<strong>保留动态稀疏聚合能力</strong>的前提下，<span class="accent-word">同时解决运行慢与初期收敛慢</span>这两个瓶颈。</p></div>
 </section>
 
+<!-- 4 算子性质对比 fig2 -->
 <section class="slide">
   <div class="glow glow-blue tr"></div>
   <div class="anim slide-label">Method 01</div>
-  <div class="anim"><h2>移除 softmax：独立聚合窗口不需要有界权重</h2></div>
-  <div class="anim">
-    <ul class="bullet-list">
-      <li>softmax 在注意力中是必需的：去掉后退化为线性投影；但对 <span class="em">每个点拥有独立窗口</span> 的算子（DWConv、DCNv3），退化问题不复存在</li>
-      <li>ConvNeXt 加 softmax 后第 5 epoch 精度从 29.9 <span class="em">跌到 8.5</span>，300 epoch 仍落后 2.2 个点</li>
-      <li>DCNv4 移除 softmax，调制标量变为无界动态权重，<span class="em">收敛曲线全程快于 DCNv3</span></li>
-    </ul>
+  <div class="anim"><h2>算子性质对比：保留动态稀疏，放开权重取值</h2></div>
+  <div class="anim split fig-wide">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>注意力与 DCNv3 都用取值 (0, 1) 的<span class="em">有界动态权重</span>聚合空间特征，差别在窗口——注意力共享且固定，DCNv3 每个位置独立</li>
+        <li>卷积拥有独立滑窗与<span class="em">无界权重</span>，但窗口形状与权重都与输入无关</li>
+        <li>DCNv4 同时具备<span class="em">自适应聚合窗口、动态聚合权重与无界取值范围</span></li>
+      </ul>
+    </div>
+    <div class="figure-box h48"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/fig2.png" alt="注意力、DCNv3、卷积与 DCNv4 四种算子的聚合性质对比"></div>
   </div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/fig2.png" alt="算子性质对比" style="max-height:28vh;"></div>
-  <div class="anim figure-caption">DCNv4 同时具备 <span class="cap-em">自适应聚合窗口、动态聚合权重与无界取值范围</span>，四种算子中性质最完整。</div>
+  <div class="anim figure-caption">图 2：四种算子在聚合窗口、权重动态性与权重取值范围三个维度上的定位。这张图把 DCNv4 的改造方向表述为<span class="cap-em">「保留动态稀疏、放开权重取值」</span>，直接引出下一节移除 softmax 的操作。</div>
 </section>
 
+<!-- 5 消除冗余负载与内存指令 fig3 -->
 <section class="slide">
   <div class="anim slide-label">Method 02</div>
-  <div class="anim"><h2>GPU 效率：瓶颈在内存访问而非计算</h2></div>
-  <div class="anim prompt-box">
-    <div class="prompt-label">内存访问成本</div>
-    <p class="formula">MAC = 2HWC + 27HWG</p>
-    <p class="formula-note">第一项是输入/输出特征图，第二项是偏移与权重。理想值约 3.7HWC，无缓存极端达 64HWC（17 倍）。</p>
+  <div class="anim"><h2>消除冗余负载与冗余内存指令</h2></div>
+  <div class="anim split fig-wide">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>旧实现按 H×W×C 建线程，每线程只算一个输出位置的一个通道；同组 D = C/G 个通道共享偏移与权重，多线程重复读取对内存受限算子是巨大浪费</li>
+        <li>每线程处理 D′ 个通道后，偏移/权重读取与双线性插值系数计算成本都降低 D′ 倍</li>
+        <li>但线程数减少使并行度下降、单线程负载增 D′ 倍，<span class="em">单纯复用线程并不提速</span></li>
+        <li>channel-last 布局下 D′ 个通道连续：一条 128 位向量化加载替代四次 32 位读取，写回同理；半精度再把读写字节数减半</li>
+      </ul>
+    </div>
+    <div class="figure-box h44"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/fig3.png" alt="DCNv4 线程复用与内存访问合并示意"></div>
   </div>
+  <div class="anim figure-caption">图 3：DCNv3 (a) 每个通道一个线程、重复读取同组偏移与权重；DCNv4 (b) 让一个线程处理同组多个通道并合并访存，标注 <span class="cap-em">2× fewer memory access cost</span>，内核时间由 1.45 ms 降到 0.404 ms。</div>
+</section>
+
+<!-- 6 移除 softmax table1_softmax_convnext -->
+<section class="slide">
+  <div class="glow glow-blue bl"></div>
+  <div class="anim slide-label">Method 03</div>
+  <div class="anim"><h2>移除 softmax：独立聚合窗口不需要有界权重</h2></div>
   <div class="anim">
-    <ul class="bullet-list">
-      <li>指令级剖析：<span class="em">计算开销不足 1%，内存访问占 99%</span></li>
-      <li>同组 D=C/G 个通道共享偏移与权重 → 多线程重复读取是巨大浪费</li>
-      <li>优化：线程复用 + 向量化 128 位加载 + 半精度格式减半读写字节数</li>
+    <ul class="bullet-list compact content-block">
+      <li>softmax 在注意力中是必需的：去掉后 K<sup>⊤</sup>V ∈ R<sup>d×d</sup> 可先算，同一窗口内所有查询退化为一次线性投影</li>
+      <li>但对 DWConv、DCNv3 这类每点拥有独立聚合窗口的算子，各窗口取值本就不同、也不存在「键」，退化问题不复存在</li>
+      <li>归一化反而把权重压在 0 到 1 之间：ConvNeXt 加 7×7 窗内 softmax 后第 5 epoch 精度从 29.9 跌到 <span class="em">8.5</span>，第 300 epoch 仍落后 2.2 个点</li>
+      <li>DCNv4 移除 softmax，把调制标量变为无界动态权重，收敛曲线全程快于 DCNv3、卷积与稠密注意力</li>
     </ul>
   </div>
+  <div class="anim figure-box strip"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table1_softmax_convnext.png" alt="ConvNeXt 加 softmax 前后在不同训练 epoch 的 ImageNet-1K 精度"></div>
+  <div class="anim figure-caption">ConvNeXt 深度卷积权重做 7×7 窗内 softmax 后的 ImageNet-1K 精度（括号内为相对基线的差值）。<span class="cap-em">有界权重同时损害收敛速度与最终性能</span>，这正是 DCNv4 去掉 softmax 的直接依据。</div>
 </section>
 
-<section class="slide">
-  <div class="anim slide-label">Method 03</div>
-  <div class="anim"><h2>优化环节的累积贡献</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table10.png" alt="运行时间消融"></div>
-  <div class="anim figure-caption">微设计降到 2.12ms → 线程复用 2.20ms → <span class="cap-em">向量化读写大幅降到 0.606ms</span> → 半精度压到 0.404ms。
-    3 倍提速来自多项优化叠加，<span class="cap-em">消除冗余内存指令是最关键一步</span>。</div>
-</section>
-
+<!-- 7 算子级基准 table2 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 01</div>
-  <div class="anim"><h2>算子级速度基准：各档全面超越</h2></div>
-  <div class="anim figure-box"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/fig1_runtime_convergence.png" alt="运行时间与收敛曲线"></div>
-  <div class="anim figure-caption">左图：DCNv4 各分辨率 <span class="cap-em">相对运行时间均低于 0.5</span>（比 DCNv3 快 3 倍以上）；
-    右图：DCNv4 精度曲线 <span class="cap-em">全程位于 DWConv、稠密注意力与 DCNv3 之上</span>。</div>
+  <div class="anim"><h2>算子级速度基准：标准分辨率</h2></div>
+  <div class="anim split fig-wide">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>设置：224×224 输入经 4/8/16/32 倍下采样，外加 ViT 的 14×14×768；batch 64，只测核心空间聚合操作</li>
+        <li>稠密注意力随分辨率显著变慢甚至显存溢出；FlashAttention-2 大幅提速但不改变二次复杂度</li>
+        <li>DCNv3 快于朴素深度卷积，却<span class="em">慢于 cuDNN 优化版</span>——3×3 稀疏窗口的速度优势并未兑现</li>
+        <li>DCNv4 全面超越基线：56×56×128 的 FP16 耗时从 <span class="em">1.52 ms 降到 0.404 ms</span></li>
+      </ul>
+    </div>
+    <div class="figure-box h54"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table2.png" alt="原文 §4.1 算子级基准设置（PDF 页裁剪）"></div>
+  </div>
+  <div class="anim figure-caption">原文 §4.1 算子级基准设置（PDF 页裁剪）：表 2 的完整运行时间见左侧结论，DCNv4 在四档降采样率与 ViT 等宽形状上均快于 DCNv3。</div>
 </section>
 
+<!-- 8 算子级基准 table3 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 02</div>
-  <div class="anim"><h2>FlashInternImage：吞吐提升 50%~80%</h2></div>
-  <div class="anim split">
+  <div class="anim"><h2>算子级速度基准：高分辨率</h2></div>
+  <div class="anim split fig-wide">
     <div class="split-text">
-      <ul class="bullet-list">
-        <li>分类：FlashInternImage-S <span class="em">84.4%</span> 超 ConvNeXt-B 且更快</li>
-        <li>FlashInternImage-L <span class="em">88.1%</span> 超 InternImage-XL 且快 30%~130%</li>
-        <li>实例分割：追平更大的 InternImage-S/B 且 <span class="em">快 80%~90%</span></li>
-        <li>语义分割：Large 达 <span class="em">55.6/56.0 SS/MS mIoU</span></li>
-        <li>3D 检测：FlashInternImage-B <span class="em">63.1 NDS</span>，骨干快 2~3 倍</li>
+      <ul class="bullet-list compact">
+        <li>设置：800×1280 层级特征图与 1024×1024 各向同性特征图，batch size 1，对应检测等下游任务的常用输入</li>
+        <li>高分辨率下稠密全局注意力显存溢出，FlashAttention-2 也无法消除二次复杂度</li>
+        <li>窗口注意力与深度卷积在高分辨率下同样落后于 DCNv4</li>
+        <li>各档输入上 DCNv4 均比 DCNv3 快 <span class="em">3 倍以上</span>，稀疏窗口的速度优势只有在内存访问优化后才成为现实</li>
       </ul>
     </div>
-    <div class="figure-box"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table4.png" alt="ImageNet 分类"></div>
+    <div class="figure-box h54"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table3.png" alt="原文 §4.1–4.2 结果页（PDF 页裁剪）"></div>
   </div>
+  <div class="anim figure-caption">原文 §4.1–4.2 结果页（PDF 页裁剪）：表 3 的高分辨率数据见左侧结论，DCNv4 在各档输入上均优于 cuDNN 深度卷积、窗口注意力与 FlashAttention-2。</div>
 </section>
 
+<!-- 9 运行时间消融 table10 -->
 <section class="slide">
   <div class="anim slide-label">Experiments 03</div>
-  <div class="anim"><h2>通用算子验证：即插即用于 ConvNeXt、ViT、扩散模型</h2></div>
-  <div class="anim split">
+  <div class="anim"><h2>运行时间消融：3 倍提速来自多项叠加</h2></div>
+  <div class="anim split fig-wide">
     <div class="split-text">
-      <ul class="bullet-list">
-        <li>ConvNeXt-B + DCNv4：<span class="em">83.8→84.0</span>，吞吐 +20%/+33%</li>
-        <li>ViT-B + DCNv4：<span class="em">81.8→81.9</span>，吞吐 +24%/+17%</li>
-        <li>扩散模型 U-Net：参数 <span class="em">860M→566M</span>，FID <span class="em">2.94→2.44</span></li>
-        <li>均未做任何超参调整</li>
+      <ul class="bullet-list compact">
+        <li>测试输入 56×56×128、batch size 64、4 组（每组 32 通道）</li>
+        <li>微设计（合并线性层、去掉 LN-GELU）把模块时间 3.28 → <span class="em">2.12 ms</span></li>
+        <li>单纯线程复用消除冗余内存访问后反而升到 2.20 ms：并行度下降抵消了访存收益；复用插值系数收益也不显著</li>
+        <li>向量化读写消除冗余内存指令后内核 1.45 → <span class="em">0.606 ms</span>，半精度进一步压到 0.404 ms</li>
+        <li>最终模块 0.873 ms / 内核 0.404 ms，<span class="em">消除冗余内存指令是最关键一步</span></li>
       </ul>
     </div>
-    <div class="figure-box"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table9.png" alt="生成结果"></div>
+    <div class="figure-box h56"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table9.png" alt="各优化环节的运行时间消融"></div>
   </div>
+  <div class="anim figure-caption">表 10：各优化环节的累积运行时间（ms）。Module 为模块级、Kernel 为内核级，灰色行即最终 DCNv4。</div>
 </section>
 
+<!-- 10 ImageNet 分类 table4 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 04</div>
+  <div class="anim"><h2>ImageNet-1K 分类：吞吐提升 50%~80%</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>用 DCNv4 替换 InternImage 中的 DCNv3 得到 FlashInternImage，架构与超参保持不变</li>
+        <li>同规模对比吞吐提升 <span class="em">50%~80%</span>，精度还略有提升</li>
+        <li>FlashInternImage-S 以 84.4% 超过 ConvNeXt-B 的 83.8% 且更快；L 达 88.1%，超过 ConvNeXt-XL 与 InternImage-XL 且快 30%~130%</li>
+        <li>T/S/B 训练 300 epochs；L 先在 ImageNet-22K 训练 90 epochs，再在 ImageNet-1K 微调 20 epochs</li>
+      </ul>
+    </div>
+    <div class="figure-box h50"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table4.png" alt="ImageNet-1K 分类结果与吞吐"></div>
+  </div>
+  <div class="anim figure-caption">表 4：ImageNet-1K 分类精度与吞吐（images/s，FP32/FP16）。<span class="cap-em">FlashInternImage 在更高精度下同时更快</span>。</div>
+</section>
+
+<!-- 11 COCO 实例分割 table5 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 05</div>
+  <div class="anim"><h2>COCO 实例分割：小模型追平更大基线</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>检测头用 Mask R-CNN 与 Cascade Mask R-CNN，1×（12 epoch）看收敛速度，3×+MS（36 epoch）看最终性能</li>
+        <li>短边 800、长边不超过 1333；AdamW，weight decay 0.05，骨干用分类预训练权重初始化</li>
+        <li>FlashInternImage-T/S 在实例分割上超过所有同规模模型，追平更大的 InternImage-S/B 且快 <span class="em">80%~90%</span></li>
+        <li>3×+MS 下 FlashInternImage-B 达 <span class="em">50.6 AP<sup>b</sup> / 45.4 AP<sup>m</sup></span></li>
+      </ul>
+    </div>
+    <div class="figure-box h54"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table5.png" alt="COCO 实例分割结果"></div>
+  </div>
+  <div class="anim figure-caption">表 5：COCO val2017 上的 Mask R-CNN / Cascade Mask R-CNN 结果与 FPS，覆盖 1× 与 3×+MS 两种 schedule。</div>
+</section>
+
+<!-- 12 ADE20K 语义分割 table6 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 06</div>
+  <div class="anim"><h2>ADE20K 语义分割：Large 规模刷新最好结果</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>用 UperNet 在 ADE20K 上验证，T/S/B 的 crop size 为 512、L 为 640，batch 16 训练 160k iterations</li>
+        <li>骨干同样以分类预训练权重初始化，其余设置对齐 InternImage</li>
+        <li>FlashInternImage-L 达到 <span class="em">55.6 / 56.0 的 SS/MS mIoU</span>，刷新当时的最好结果</li>
+        <li>与 InternImage 同架构同超参，收益完全来自算子替换</li>
+      </ul>
+    </div>
+    <div class="figure-box h48"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table10.png" alt="原文 §4.5 消融设置（PDF 页裁剪）"></div>
+  </div>
+  <div class="anim figure-caption">原文 §4.5 消融设置页（PDF 页裁剪）：ADE20K 的 SS/MS mIoU 与 FPS 以左侧结论为准；表 6 图版未包含在现有素材中。</div>
+</section>
+
+<!-- 13 nuScenes 3D 检测 table7 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 07</div>
+  <div class="anim"><h2>nuScenes 3D 检测：骨干快 2~3 倍</h2></div>
+  <div class="anim split">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>用 BEVFormerV2 验证，骨干在 COCO 上预训练，使用前后共 8 秒的数据</li>
+        <li>FlashInternImage-B 取得 <span class="em">63.1 NDS 与 57.4 mAP</span></li>
+        <li>同 NDS/mAP 下整体快 50%~90%；只算骨干时快 <span class="em">200%~300%</span></li>
+        <li>检测头尚未充分优化，算子级提速仍能完整转化为系统级收益</li>
+      </ul>
+    </div>
+    <div class="figure-box h56"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table6.png" alt="nuScenes 3D 检测结果"></div>
+  </div>
+  <div class="anim figure-caption">表 7：nuScenes test set 上的 BEVFormerV2 结果；FPS<sup>†</sup> 为骨干吞吐，FPS 为整体吞吐（检测头未充分优化）。</div>
+</section>
+
+<!-- 14 通用算子验证 table8 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 08</div>
+  <div class="anim"><h2>通用算子验证：ConvNeXt 与 ViT 即插即用</h2></div>
+  <div class="anim split fig-narrow">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>把 ConvNeXt 的深度卷积、ViT 的注意力替换为 DCNv4，不改其它架构与超参，ImageNet-1K 监督训练</li>
+        <li>ConvNeXt-B + DCNv4：83.8 → <span class="em">84.0</span>，吞吐提升 20%/33%</li>
+        <li>ViT-B + DCNv4：81.8 → <span class="em">81.9</span>，吞吐提升 24%/17%</li>
+        <li>在为特定算子精心调参的架构中，DCNv4 仍能保持精度并获得更快速度</li>
+      </ul>
+    </div>
+    <div class="figure-box h52"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table7.png" alt="原文 ConvNeXt/ViT 替换页（PDF 页裁剪）"></div>
+  </div>
+  <div class="anim figure-caption">原文 §4.3–4.4 页裁剪：ConvNeXt 与 ViT 替换 DCNv4 的精度与吞吐以左侧结论为准；表 8 图版未包含在现有素材中。</div>
+</section>
+
+<!-- 15 生成任务 table9 -->
+<section class="slide">
+  <div class="anim slide-label">Experiments 09</div>
+  <div class="anim"><h2>扩散模型替换：参数更少、FID 更好</h2></div>
+  <div class="anim split fig-narrow">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>U-Net 中的卷积与注意力替换为 DCNv4，基于 U-ViT 代码库与 Stable Diffusion 图像潜变量训练</li>
+        <li>参数量 <span class="em">860M → 566M</span>，FID <span class="em">2.94 → 2.44</span>，FPS 4.82 → 4.92</li>
+        <li>未做任何超参调整即取得更好的 FID 与吞吐，验证其作为通用视觉算子的潜力</li>
+        <li>作者指出该架构与超参未必对 DCNv4 最优，重新设计模型或搜索超参可能更好</li>
+      </ul>
+    </div>
+    <div class="figure-box h60"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/table8.png" alt="ImageNet 256×256 类条件生成结果（同页含 Table 10 消融表）"></div>
+  </div>
+  <div class="anim figure-caption">原文 Table 9 生成结果（同页含 Table 10 消融表，PDF 页裁剪）：潜扩散模型从零训练，U-Net 中的卷积被替换为 DCNv4。</div>
+</section>
+
+<!-- 16 可视化分析 fig1 -->
+<section class="slide">
+  <div class="glow glow-blue tl"></div>
+  <div class="anim slide-label">Visualization 01</div>
+  <div class="anim"><h2>可视化分析：生成样本结构清晰、语义合理</h2></div>
+  <div class="anim split fig-wide">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>在潜扩散模型的 U-Net 中以 DCNv4 替换卷积，做 ImageNet 256×256 类条件生成</li>
+        <li>生成样本<span class="em">结构清晰、语义合理</span>，说明 DCNv4 在生成任务中同样可用</li>
+        <li>这组定性结果为表中 FID 2.44（对比 2.94）的定量结论提供了直观佐证</li>
+      </ul>
+    </div>
+    <div class="figure-box h50"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/fig1.png" alt="U-Net + DCNv4 潜扩散模型的 ImageNet 256×256 生成结果"></div>
+  </div>
+  <div class="anim figure-caption">图 1：U-Net + DCNv4 潜扩散模型的 ImageNet 256×256 生成结果。<span class="cap-em">结构清晰、语义合理</span>，DCNv4 在生成任务中同样可用。</div>
+</section>
+
+<!-- 17 可视化分析 fig1_runtime_convergence -->
+<section class="slide">
+  <div class="glow glow-navy br"></div>
+  <div class="anim slide-label">Visualization 02</div>
+  <div class="anim"><h2>可视化分析：速度快 3 倍，初期收敛不再落后</h2></div>
+  <div class="anim split fig-wide">
+    <div class="split-text">
+      <ul class="bullet-list compact">
+        <li>左图（相对运行时间，以 DCNv3 为基线）：DCNv4 各分辨率档均低于 <span class="em">0.5</span>，即比 DCNv3 快 3 倍以上，且低于 FlashAttention、窗口注意力与深度卷积</li>
+        <li>右图（ImageNet Top-1 收敛）：DCNv4 曲线全程位于 DWConv、稠密注意力与 DCNv3 之上</li>
+        <li>DCNv3 在训练初期明显落后，移除 softmax 后这一现象被修复</li>
+        <li>结论：移除 softmax 与内存访问优化，<span class="em">既兑现稀疏算子的速度潜力，也修复了初期收敛慢</span></li>
+      </ul>
+    </div>
+    <div class="figure-box h46"><img src="../assets/paper-imgs/Efficient-Deformable-ConvNets/fig1_runtime_convergence.png" alt="算子相对运行时间与 ImageNet 收敛曲线对比"></div>
+  </div>
+  <div class="anim figure-caption">图 1(a)(b)：相同网络架构下各算子的相对运行时间与 ImageNet Top-1 精度收敛曲线，DCNv4 在两项上都领先。</div>
+</section>
+
+<!-- 18 总结 -->
 <section class="slide">
   <div class="glow glow-blue tl"></div><div class="glow glow-navy br"></div>
   <div class="anim slide-label">Summary</div>
   <div class="anim"><h2>优点和创新点</h2></div>
   <div class="anim divider"></div>
   <div class="anim card-grid cols-3">
-    <div class="card"><span class="card-num">1</span><h3>指令级内核剖析</h3><p class="body-text">定位到瓶颈在 99% 的内存访问，用线程复用、向量化读写与半精度系统消除冗余，分析路径可供参考。</p></div>
-    <div class="card"><span class="card-num">2</span><h3>softmax 对照实验</h3><p class="body-text">用「给 ConvNeXt 加 softmax」验证独立窗口不需要有界权重，移除后同时收获收敛速度与精度。</p></div>
-    <div class="card"><span class="card-num">3</span><h3>五任务通用算子</h3><p class="body-text">在 InternImage、ConvNeXt、ViT、扩散模型三种替换设置下覆盖分类、检测、分割、3D、生成。</p></div>
+    <div class="card"><span class="card-num">1</span><h3>指令级内核剖析</h3><p class="body-text">从剖析出发定位到瓶颈是占 99% 的内存访问而非计算，再用线程复用、向量化读写与半精度系统消除冗余，把稀疏算子的理论速度优势变为现实。</p></div>
+    <div class="card"><span class="card-num">2</span><h3>softmax 对照实验</h3><p class="body-text">用「给 ConvNeXt 卷积权重加 softmax」的反事实实验验证独立窗口算子不需要有界权重，据此移除 softmax 同时收获收敛速度与精度。</p></div>
+    <div class="card"><span class="card-num">3</span><h3>三种替换设置</h3><p class="body-text">InternImage 替换、ConvNeXt 与 ViT 即插即用、扩散模型 U-Net 替换，覆盖分类、检测、分割、3D 检测与生成五类任务，实验丰富。</p></div>
   </div>
+  <div class="anim highlight-bar"><p>可复用的路径：先用 roofline 与指令级剖析<span class="accent-word">量化瓶颈</span>，再用一个反事实对照实验<span class="accent-word">验证设计假设</span>。</p></div>
 </section>
 
+<!-- 19 结尾 -->
 <section class="slide">
   <div class="glow glow-blue" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
   <div class="end-card">
     <div class="anim"><h2 style="color:var(--title);">DCNv4：高效可变形卷积</h2></div>
     <div class="anim divider divider-accent" style="margin:16px auto;"></div>
     <div class="anim subtitle" style="max-width:620px;text-align:center;margin:0 auto;">移除 softmax + 内存访问优化，<br><span style="color:var(--accent);font-weight:600;">让动态稀疏算子的理论速度优势变为现实</span>。</div>
-    <div class="anim cover-meta" style="margin-top:28px;"><span class="cover-tag">CVPR 2024</span><span class="cover-tag">代码开源 github.com/OpenGVLab/DCNv4</span><span class="cover-tag">感谢观看</span></div>
+    <div class="anim cover-meta" style="margin-top:28px;justify-content:center;"><span class="cover-tag">CVPR 2024</span><span class="cover-tag">github.com/OpenGVLab/DCNv4</span><span class="cover-tag">感谢观看</span></div>
   </div>
 </section>
 
