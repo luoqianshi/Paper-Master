@@ -1,6 +1,14 @@
 {
-  "generatedAt": "2026-09-23T21:19:12.210587+00:00",
+  "generatedAt": "2026-11-03T05:29:12.235225+00:00",
   "blogs": [
+    {
+      "title": "葡萄成熟度与采摘点同步检测方法",
+      "file": "paper-blogs/GrapickNet.md",
+      "category": "YOLO 应用",
+      "date": "2026-11-03",
+      "source_url": "https://doi.org/10.11975/j.issn.1002-6819.202512115",
+      "thumbnail": "assets/paper-imgs/GrapickNet/fig2.png"
+    },
     {
       "title": "UAV remote sensing detection of tea leaf blight based on DDMA-YOLO",
       "file": "paper-blogs/DDMA-YOLO.md",
