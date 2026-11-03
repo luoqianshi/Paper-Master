@@ -7,113 +7,397 @@
 <title>YOLOv12: Attention-Centric Real-Time Object Detectors</title>
 <style>
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-:root { --bg: #ffffff; --text: #000000; --title: #3966A2; --accent: #132843; --dim: #6191D3; --card-bg: #f7f9fc; --border: #e2e8f0; --radius: 12px; }
+
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --title: #3966A2;
+  --accent: #132843;
+  --dim: #6191D3;
+  --card-bg: #f7f9fc;
+  --border: #e2e8f0;
+  --radius: 12px;
+}
+
 html { font-size: 16px; scroll-behavior: smooth; }
-body { background: var(--bg); color: var(--text); font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif; -webkit-font-smoothing: antialiased; overflow: hidden; height: 100vh; cursor: default; user-select: none; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  height: 100vh;
+  cursor: default;
+  user-select: none;
+}
+
 .deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-.slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; padding: 5vh 7vw; background: var(--bg); opacity: 0; visibility: hidden; transform: translateY(60px) scale(0.97); transition: opacity 0.6s cubic-bezier(.4,0,.2,1), transform 0.6s cubic-bezier(.4,0,.2,1), visibility 0.6s; will-change: opacity, transform; }
-.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
-.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
-.progress { position: fixed; top: 0; left: 0; height: 2px; background: linear-gradient(90deg, var(--title), var(--accent)); z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1); border-radius: 0 1px 1px 0; }
-.dots { position: fixed; right: 20px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 8px; z-index: 100; }
-.dot { width: 6px; height: 6px; border-radius: 50%; background: #d4dce8; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5vh 7vw;
+  background: var(--bg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(60px) scale(0.97);
+  transition: opacity 0.6s cubic-bezier(.4,0,.2,1),
+              transform 0.6s cubic-bezier(.4,0,.2,1),
+              visibility 0.6s;
+  will-change: opacity, transform;
+}
+.slide.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+}
+.slide.exit-up {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-60px) scale(0.97);
+}
+
+.progress {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--title), var(--accent));
+  z-index: 100;
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  border-radius: 0 1px 1px 0;
+}
+.dots {
+  position: fixed;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 100;
+}
+.dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: #d4dce8;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+}
 .dot.active { background: var(--title); transform: scale(1.6); }
 .dot:hover { background: var(--dim); }
-.hint { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%); font-size: 12px; color: #999; z-index: 90; opacity: 1; transition: opacity 1s; pointer-events: none; }
+.hint {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #999;
+  z-index: 90;
+  opacity: 1;
+  transition: opacity 1s;
+  pointer-events: none;
+}
 .hint.hidden { opacity: 0; }
-.slide-label { font-size: clamp(11px, 1.1vw, 14px); font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--dim); margin-bottom: 12px; }
-h2 { font-size: clamp(24px, 2.9vw, 40px); font-weight: 700; line-height: 1.25; color: var(--title); letter-spacing: -1px; }
-h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); margin-bottom: 8px; }
-.subtitle { font-size: clamp(15px, 1.6vw, 21px); font-weight: 400; color: #555; line-height: 1.55; margin-top: 16px; max-width: 860px; }
-.body-text { font-size: clamp(13px, 1.35vw, 18px); font-weight: 400; color: #333; line-height: 1.65; }
-.small-text { font-size: clamp(11px, 1.05vw, 14px); color: #777; line-height: 1.5; }
+
+.slide-label {
+  font-size: clamp(11px, 1.1vw, 14px);
+  font-weight: 600;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-bottom: 12px;
+}
+h1 {
+  font-size: clamp(30px, 4vw, 54px);
+  font-weight: 800;
+  line-height: 1.18;
+  color: var(--text);
+  letter-spacing: -1.5px;
+}
+h1 .highlight { color: var(--title); }
+h2 {
+  font-size: clamp(24px, 2.9vw, 40px);
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--title);
+  letter-spacing: -1px;
+}
+h3 {
+  font-size: clamp(15px, 1.6vw, 22px);
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.subtitle {
+  font-size: clamp(15px, 1.6vw, 21px);
+  font-weight: 400;
+  color: #555;
+  line-height: 1.55;
+  margin-top: 16px;
+  max-width: 800px;
+}
+.body-text {
+  font-size: clamp(13px, 1.35vw, 18px);
+  font-weight: 400;
+  color: #333;
+  line-height: 1.65;
+}
+.small-text {
+  font-size: clamp(11px, 1.05vw, 14px);
+  color: #777;
+  line-height: 1.5;
+}
 .divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 16px 0; }
 .divider-accent { background: var(--accent); }
-.badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(57,102,162,0.08); border: 1px solid rgba(57,102,162,0.15); border-radius: 100px; padding: 8px 16px; font-size: 0.78rem; font-weight: 600; color: var(--title); letter-spacing: 0.06em; margin-bottom: 32px; text-transform: uppercase; width: fit-content; }
-.badge .dot-yellow { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; flex-shrink: 0; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(57,102,162,0.08);
+  border: 1px solid rgba(57,102,162,0.15);
+  border-radius: 100px;
+  padding: 8px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--title);
+  letter-spacing: 0.06em;
+  margin-bottom: 36px;
+  text-transform: uppercase;
+  width: fit-content;
+}
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--dim); border-radius: 50%; flex-shrink: 0; }
 .badge .dot-gray { width: 4px; height: 4px; background: rgba(57,102,162,0.3); border-radius: 50%; flex-shrink: 0; }
-.cover-meta { margin-top: 26px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-.cover-tag { font-size: clamp(11px, 1vw, 14px); font-weight: 500; color: var(--dim); background: rgba(57,102,162,0.06); border: 1px solid rgba(57,102,162,0.12); padding: 5px 14px; border-radius: 100px; }
-.contributors { margin-top: 24px; display: flex; flex-direction: column; gap: 4px; }
+.cover-meta { margin-top: 28px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.cover-tag {
+  font-size: clamp(11px, 1vw, 14px);
+  font-weight: 500;
+  color: var(--dim);
+  background: rgba(57,102,162,0.06);
+  border: 1px solid rgba(57,102,162,0.12);
+  padding: 5px 14px;
+  border-radius: 100px;
+}
+.contributors { margin-top: 26px; display: flex; flex-direction: column; gap: 4px; }
 .contributors .author { font-size: clamp(14px, 1.4vw, 19px); color: #444; font-weight: 500; }
 .contributors .affil { font-size: clamp(12px, 1.1vw, 15px); color: #888; font-weight: 400; }
-.card-grid { display: grid; gap: 16px; margin-top: 22px; flex: 0; }
+
+.card-grid { display: grid; gap: 16px; margin-top: 24px; flex: 0; }
 .card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
 .card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
-.card-grid.cols-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
-.card { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px); display: flex; flex-direction: column; }
-.card .card-num { font-size: clamp(24px, 2.8vw, 40px); font-weight: 800; color: var(--title); opacity: 0.25; line-height: 1; margin-bottom: 8px; }
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(16px, 2vw, 26px);
+  display: flex;
+  flex-direction: column;
+}
+.card .card-num {
+  font-size: clamp(26px, 3vw, 42px);
+  font-weight: 800;
+  color: var(--title);
+  opacity: 0.25;
+  line-height: 1;
+  margin-bottom: 8px;
+}
 .card h3 { font-size: clamp(14px, 1.5vw, 20px); margin-bottom: 8px; color: var(--accent); }
 .card .body-text { font-size: clamp(12px, 1.2vw, 16px); }
-.card.tight { padding: clamp(12px, 1.4vw, 18px); }
-.card.tight h3 { font-size: clamp(13px, 1.25vw, 17px); margin-bottom: 6px; }
-.card.tight .body-text { font-size: clamp(11px, 1.05vw, 14px); line-height: 1.55; }
-.highlight-bar { background: rgba(57,102,162,0.06); border-left: 3px solid var(--dim); border-radius: 0 var(--radius) var(--radius) 0; padding: clamp(11px, 1.4vw, 18px) clamp(16px, 2vw, 26px); margin-top: 16px; }
-.highlight-bar p { font-size: clamp(13px, 1.35vw, 18px); color: var(--text); line-height: 1.6; }
-.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
-.highlight-bar.compact p { font-size: clamp(12px, 1.15vw, 16px); }
-.bullet-list { list-style: none; padding: 0; margin-top: 10px; }
-.bullet-list li { font-size: clamp(13px, 1.35vw, 18px); color: #333; line-height: 1.65; padding: 4px 0 4px 22px; position: relative; }
-.bullet-list li::before { content: ''; position: absolute; left: 0; top: 13px; width: 7px; height: 7px; border-radius: 50%; background: var(--title); }
-.bullet-list li .em { color: var(--accent); font-weight: 600; }
-.bullet-list.compact li { font-size: clamp(11px, 1.12vw, 15px); line-height: 1.58; padding: 3px 0 3px 18px; }
-.bullet-list.compact li::before { top: 10px; width: 6px; height: 6px; }
-.prompt-box { background: var(--accent); border-radius: var(--radius); padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.2vw, 30px); margin-top: 14px; }
-.prompt-box .prompt-label { font-size: clamp(9px, 0.85vw, 12px); font-weight: 600; color: #9db8d9; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
-.prompt-box p { font-size: clamp(13px, 1.3vw, 17px); color: #dce6f2; line-height: 1.6; }
-.prompt-box p em { color: #ffffff; font-style: normal; font-weight: 600; }
-.prompt-box .formula { font-size: clamp(16px, 2vw, 27px); font-weight: 600; color: #ffffff; line-height: 1.55; letter-spacing: 0.5px; }
-.prompt-box .formula i { color: #a8c6ec; font-style: italic; }
-.prompt-box .formula sub, .prompt-box .formula sup { font-size: 62%; }
-.prompt-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 8px; }
-.prompt-box.slim { padding: clamp(11px, 1.3vw, 18px) clamp(16px, 1.8vw, 26px); }
-.prompt-box.slim .formula { font-size: clamp(13px, 1.45vw, 20px); }
-.glow { position: absolute; width: 400px; height: 400px; border-radius: 50%; filter: blur(120px); opacity: 0.10; pointer-events: none; }
-.glow-blue { background: var(--title); }
-.glow-navy { background: var(--accent); }
-.glow.tl { top: -100px; left: -100px; }
-.glow.br { bottom: -120px; right: -100px; }
-.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 12px; min-width: 0; }
-.figure-box img { max-width: 100%; max-height: 46vh; object-fit: contain; border-radius: 6px; box-shadow: 0 2px 16px rgba(19,40,67,0.08); background: #fff; }
-.figure-box.h20 img { max-height: 20vh; }
-.figure-box.h24 img { max-height: 24vh; }
-.figure-box.h28 img { max-height: 28vh; }
-.figure-box.h31 img { max-height: 31vh; }
-.figure-box.h33 img { max-height: 33vh; }
-.figure-box.h36 img { max-height: 36vh; }
-.figure-box.h40 img { max-height: 40vh; }
-.figure-box.h42 img { max-height: 42vh; }
-.figure-box.h50 img { max-height: 50vh; }
-.figure-box.h56 img { max-height: 56vh; }
-.figure-box.h58 img { max-height: 58vh; }
-.figure-box.crop-a, .figure-box.crop-b, .figure-box.crop-c { overflow: hidden; }
-.figure-box.crop-a img { margin-top: -7.6vh; }
-.figure-box.crop-b img { margin-top: -5.9vh; }
-.figure-box.crop-c img { margin-top: -11.8vh; margin-bottom: -10.1vh; }
-.figure-caption { text-align: center; font-size: clamp(11px, 1vw, 14px); color: #555; margin-top: 8px; line-height: 1.55; max-width: 1000px; margin-left: auto; margin-right: auto; }
+
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 22px; }
+.stat {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--dim);
+  border-radius: var(--radius);
+  padding: clamp(14px, 1.6vw, 20px);
+}
+.stat .stat-val { font-size: clamp(24px, 2.8vw, 40px); font-weight: 800; color: var(--title); line-height: 1.1; }
+.stat .stat-val small { font-size: 0.55em; font-weight: 700; color: var(--dim); margin-left: 2px; }
+.stat .stat-label { font-size: clamp(11px, 1vw, 13px); color: #666; margin-top: 6px; line-height: 1.45; }
+
+.highlight-bar {
+  background: rgba(57,102,162,0.06);
+  border-left: 3px solid var(--dim);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: clamp(12px, 1.6vw, 20px) clamp(16px, 2vw, 26px);
+  margin-top: 16px;
+}
+.highlight-bar p { font-size: clamp(14px, 1.4vw, 19px); color: var(--text); line-height: 1.6; }
+.highlight-bar .accent-word { color: var(--title); font-weight: 600; }
+
+.quote {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(16px, 1.9vw, 24px) clamp(18px, 2.2vw, 30px);
+  margin-top: 18px;
+}
+.quote p { font-size: clamp(13px, 1.3vw, 17px); color: #333; line-height: 1.7; }
+.quote .quote-src { display: block; margin-top: 10px; font-size: clamp(11px, 1vw, 13px); color: #888; }
+
+.bullet-list { list-style: none; padding: 0; margin-top: 12px; }
+.bullet-list li {
+  font-size: clamp(13px, 1.35vw, 18px);
+  color: #333;
+  line-height: 1.65;
+  padding: 4px 0 4px 22px;
+  position: relative;
+}
+.bullet-list li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 13px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--title);
+}
+.bullet-list li .em { color: var(--title); font-weight: 600; }
+.bullet-list.tight li { font-size: clamp(12px, 1.2vw, 16px); line-height: 1.55; padding: 3px 0 3px 20px; }
+.bullet-list.tight li::before { top: 11px; }
+.bullet-list.two-col { columns: 2; column-gap: 40px; }
+.bullet-list.two-col li { break-inside: avoid; }
+
+.card-grid .bullet-list { margin-top: 2px; }
+.card-grid .bullet-list li { font-size: clamp(11px, 1.1vw, 15px); line-height: 1.55; padding: 2px 0 2px 18px; }
+.card-grid .bullet-list li::before { top: 9px; width: 6px; height: 6px; }
+
+.vs-row { display: flex; align-items: stretch; gap: 24px; margin-top: 16px; }
+.vs-col {
+  flex: 1;
+  border-radius: var(--radius);
+  padding: clamp(14px, 1.7vw, 22px);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.vs-col.left-col { background: rgba(239,68,68,0.04); border: 1px solid rgba(239,68,68,0.15); }
+.vs-col.right-col { background: rgba(34,197,94,0.04); border: 1px solid rgba(34,197,94,0.15); }
+.vs-col .vs-tag {
+  display: inline-block;
+  font-size: clamp(10px, 0.9vw, 12px);
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  width: fit-content;
+}
+.vs-col.left-col .vs-tag { background: rgba(239,68,68,0.1); color: #b91c1c; }
+.vs-col.right-col .vs-tag { background: rgba(34,197,94,0.1); color: #15803d; }
+.vs-col h3 { font-size: clamp(15px, 1.5vw, 21px); margin-bottom: 10px; }
+.vs-col ul { list-style: none; padding: 0; }
+.vs-col ul li {
+  font-size: clamp(12px, 1.15vw, 16px);
+  color: #333;
+  line-height: 1.55;
+  padding: 3px 0 3px 20px;
+  position: relative;
+}
+.vs-col ul li::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 11px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+}
+.vs-col.left-col ul li::before { background: #ef4444; }
+.vs-col.right-col ul li::before { background: #22c55e; }
+
+.formula-box {
+  background: var(--accent);
+  border-radius: var(--radius);
+  padding: clamp(12px, 1.5vw, 18px) clamp(16px, 2vw, 24px);
+  margin-top: 14px;
+}
+.formula-box .formula {
+  font-size: clamp(15px, 1.8vw, 24px);
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.5;
+  letter-spacing: 0.3px;
+}
+.formula-box .formula i { color: #a8c6ec; font-style: italic; }
+.formula-box .formula sub, .formula-box .formula sup { font-size: 62%; }
+.formula-box .formula-note { font-size: clamp(11px, 1.05vw, 14px); color: #9db8d9; margin-top: 6px; }
+.fx { font-weight: 600; color: var(--title); white-space: nowrap; }
+.fx i { font-style: italic; }
+.fx sub, .fx sup { font-size: 68%; }
+
+.figure-box { display: flex; justify-content: center; align-items: center; margin-top: 14px; min-width: 0; }
+.figure-box img {
+  max-width: 100%;
+  max-height: 46vh;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #e8edf5;
+  box-shadow: 0 2px 16px rgba(19,40,67,0.06);
+  background: #fff;
+}
+.figure-box.fig-xxl img { max-height: 66vh; }
+.figure-box.fig-xl img { max-height: 62vh; }
+.figure-box.fig-lg img { max-height: 54vh; }
+.figure-box.fig-md img { max-height: 48vh; }
+.figure-box.fig-sm img { max-height: 42vh; }
+.figure-caption {
+  text-align: center;
+  font-size: clamp(11px, 1vw, 14px);
+  color: #555;
+  margin-top: 10px;
+  line-height: 1.55;
+  max-width: 960px;
+}
 .figure-caption .cap-em { color: var(--title); font-weight: 600; }
-.source-note { font-size: clamp(9px, 0.82vw, 11px); color: #9aa3ad; margin-top: 6px; line-height: 1.45; max-width: 1000px; margin-left: auto; margin-right: auto; text-align: center; }
-.split { display: flex; gap: clamp(18px, 3vw, 44px); align-items: center; margin-top: 12px; min-height: 0; }
+
+.split { display: flex; gap: clamp(20px, 3vw, 44px); align-items: center; margin-top: 16px; min-height: 0; }
 .split .split-text { flex: 1.05; min-width: 0; }
-.split .fig-cell { flex: 1; display: flex; flex-direction: column; align-items: center; min-width: 0; }
-.split .fig-cell .figure-box { margin-top: 0; }
-.split .fig-cell .figure-caption { text-align: center; }
+.split .figure-box { flex: 1; margin-top: 0; }
 .split .figure-box img { max-height: 56vh; }
-.stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(10px, 1.4vw, 18px); margin-top: 14px; }
-.stat { background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: clamp(10px, 1.4vw, 18px) clamp(12px, 1.6vw, 20px); }
-.stat .stat-num { font-size: clamp(18px, 2.1vw, 29px); font-weight: 800; color: var(--title); line-height: 1.1; letter-spacing: -0.5px; }
-.stat .stat-num .arrow { color: var(--dim); font-weight: 700; }
-.stat .stat-num small { font-size: 0.55em; font-weight: 700; color: var(--accent); }
-.stat .stat-label { font-size: clamp(10px, 0.95vw, 13px); color: #666; margin-top: 6px; line-height: 1.45; }
-.mini-table { width: 100%; border-collapse: collapse; margin-top: 14px; font-size: clamp(11px, 1.15vw, 15px); }
-.mini-table th { text-align: left; font-weight: 600; color: var(--accent); background: rgba(57,102,162,0.06); padding: 7px 12px; border-bottom: 2px solid rgba(57,102,162,0.2); }
-.mini-table td { padding: 6px 12px; border-bottom: 1px solid var(--border); color: #333; line-height: 1.45; }
-.mini-table tr:last-child td { border-bottom: none; }
-.dual-list { display: grid; grid-template-columns: 1fr 1fr; gap: 2px 30px; margin-top: 8px; }
-.dual-list .bullet-list { margin-top: 0; }
-.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.split .figure-box.fig-tall img { max-height: 58vh; }
+
+.steps { display: flex; gap: 10px; margin-top: 20px; align-items: stretch; }
+.step {
+  flex: 1;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: clamp(12px, 1.6vw, 22px) clamp(10px, 1.3vw, 18px);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.step .step-num {
+  font-size: clamp(10px, 0.9vw, 13px);
+  font-weight: 700;
+  color: var(--dim);
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+}
+.step h3 { font-size: clamp(12px, 1.25vw, 17px); margin-bottom: 4px; }
+.step .small-text { font-size: clamp(11px, 1vw, 14px); }
+.step-arrow { display: flex; align-items: center; font-size: 18px; color: #b8c4d4; flex-shrink: 0; }
+
+.end-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
 .end-card h2 { font-size: clamp(30px, 3.5vw, 50px); margin-bottom: 12px; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
 .slide.active .anim { animation: fadeUp 0.5s ease both; }
 .slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
 .slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
@@ -121,7 +405,16 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 .slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
 .slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
 .slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
-@media (max-width: 900px) { .slide { padding: 4vh 5vw; } .card-grid.cols-2, .card-grid.cols-3, .card-grid.cols-4 { grid-template-columns: 1fr; } .dots { display: none; } .split { flex-direction: column; } .stat-row { grid-template-columns: 1fr; } .dual-list { grid-template-columns: 1fr; } }
+
+@media (max-width: 900px) {
+  .slide { padding: 4vh 5vw; }
+  .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+  .vs-row { flex-direction: column; gap: 12px; }
+  .steps { flex-direction: column; }
+  .dots { display: none; }
+  .split { flex-direction: column; }
+}
 </style>
 </head>
 <body>
@@ -134,430 +427,531 @@ h3 { font-size: clamp(15px, 1.6vw, 22px); font-weight: 600; color: var(--text); 
 
 <!-- 1 封面 -->
 <section class="slide">
-  <div class="glow glow-blue tl"></div>
-  <div class="glow glow-navy br"></div>
   <div class="anim badge">
     <span class="dot-yellow"></span>
     PAPER READING
     <span class="dot-gray"></span>
-    arXiv 2025 · TECHNICAL REPORT
+    arXiv 2025
   </div>
-  <div class="anim" style="font-size: clamp(2.8rem, 6.2vw, 5.2rem); font-weight: 900; line-height: 1.02; letter-spacing: -2px; color: var(--accent);">
-    YOLOv12
+  <div class="anim" style="font-size: clamp(3rem, 6.5vw, 5rem); font-weight: 900; line-height: 1.05; letter-spacing: -2px;">
+    <span class="highlight">YOLOv12</span>
   </div>
-  <div class="anim" style="font-size: clamp(16px, 2vw, 28px); font-weight: 700; color: var(--title); margin-top: 10px; line-height: 1.35;">
+  <div class="anim" style="font-size: clamp(16px, 2vw, 28px); font-weight: 700; color: var(--accent); margin-top: 10px; line-height: 1.35;">
     Attention-Centric Real-Time Object Detectors
   </div>
-  <p class="anim subtitle">把区域注意力 A2、R-ELAN 与一整套原生注意力改造组合起来，让注意力成为 YOLO 的主干：YOLOv12-N 在 T4 上以 1.64 ms 取得 40.6% mAP，N 到 X 五个尺度全面领先同级检测器精度。</p>
+  <p class="anim subtitle">以区域注意力（Area Attention）降低注意力的空间复杂度，以 R-ELAN 稳定大模型训练，再用一套面向 YOLO 的结构精简，把“注意力很慢”这件事拆开重解。</p>
   <div class="anim contributors">
     <div class="author">Yunjie Tian · Qixiang Ye · David Doermann</div>
-    <div class="affil">纽约州立大学布法罗分校（University at Buffalo） · 中国科学院大学（University of Chinese Academy of Sciences）</div>
+    <div class="affil">University at Buffalo · University of Chinese Academy of Sciences</div>
   </div>
   <div class="anim cover-meta">
-    <span class="cover-tag">注意力中心</span>
-    <span class="cover-tag">区域注意力 A2</span>
+    <span class="cover-tag">Technical Report</span>
+    <span class="cover-tag">区域注意力</span>
     <span class="cover-tag">R-ELAN</span>
-    <span class="cover-tag">实时目标检测</span>
     <span class="cover-tag">arXiv:2502.12524</span>
   </div>
 </section>
 
-<!-- 2 研究动机 -->
+<!-- 2 原文摘要 -->
 <section class="slide">
-  <div class="anim slide-label">Motivation</div>
-  <div class="anim"><h2>注意力为什么始终进不了 YOLO 主线</h2></div>
-  <p class="anim body-text" style="margin-top:12px;max-width:1060px;">实时目标检测要在资源受限的平台上以足够低的时延给出检测结果，网络架构设计因此始终是 YOLO 系研究的首要议题。以注意力为中心的视觉 Transformer 已被证明拥有更强的建模能力，即便在小模型上也是如此，却始终没有成为 YOLO 的主线——原因落在注意力机制的低效上。</p>
-  <div class="anim card-grid cols-3">
-    <div class="card">
-      <span class="card-num">A</span>
-      <h3>算得更贵</h3>
-      <p class="body-text">自注意力的计算复杂度随序列长度<span style="color:var(--title);font-weight:600;">二次增长</span>，卷积却只线性增长；输入越大，差距越明显。</p>
+  <div class="anim slide-label">Abstract / 原文摘要</div>
+  <h1 class="anim">把注意力机制搬进 YOLO</h1>
+  <div class="anim divider"></div>
+  <div class="anim stat-grid">
+    <div class="stat">
+      <div class="stat-val">40.6<small>% mAP</small></div>
+      <div class="stat-label">YOLOv12-N，COCO val</div>
     </div>
-    <div class="card">
-      <span class="card-num">B</span>
-      <h3>搬得更慢</h3>
-      <p class="body-text">注意力图与 softmax 图要在 GPU SRAM 与高带宽内存之间反复存取，不规则访存进一步推高时延，而 SRAM 的读写速度是后者的十倍以上。</p>
+    <div class="stat">
+      <div class="stat-val">1.64<small>ms</small></div>
+      <div class="stat-label">T4 · TensorRT FP16</div>
     </div>
-    <div class="card">
-      <span class="card-num">C</span>
-      <h3>设计更重</h3>
-      <p class="body-text">Swin 一类窗口划分、位置编码等复杂设计会逐层累积速度开销，使相似计算预算下 <span style="color:var(--title);font-weight:600;">CNN 架构明显跑赢注意力架构</span>。</p>
+    <div class="stat">
+      <div class="stat-val">+2.1<small>/ +1.2</small></div>
+      <div class="stat-label">相对 YOLOv10-N / YOLOv11-N 的 mAP</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val">42<small>% faster</small></div>
+      <div class="stat-label">YOLOv12-S 相对 RT-DETR-R18</div>
     </div>
   </div>
-  <div class="anim highlight-bar compact">
-    <p>缺口收窄为：<span class="accent-word">暂未有工作把注意力作为核心建模组件引入 YOLO 框架，同时保住实时速度。</span></p>
+  <div class="anim quote">
+    <p>YOLO 框架长期依赖 CNN 结构，尽管注意力在建模能力上已被证明更强——根本原因是注意力模型的速度跟不上。本文提出 YOLOv12：以区域注意力（Area Attention）降低计算复杂度，以残差高效层聚合网络（R-ELAN）改善特征聚合，并保留简洁的层级设计。</p>
+    <span class="quote-src">— 原文 Abstract（意译）</span>
   </div>
 </section>
 
-<!-- 3 核心贡献 -->
+<!-- 3 研究动机 -->
 <section class="slide">
-  <div class="anim slide-label">Contributions</div>
-  <div class="anim"><h2>核心贡献：把注意力做成 YOLO 的主干</h2></div>
+  <div class="anim slide-label">Motivation / 研究动机</div>
+  <h1 class="anim">注意力更强，却始终进不了实时检测</h1>
   <div class="anim divider"></div>
   <div class="anim card-grid cols-3">
     <div class="card">
-      <span class="card-num">01</span>
-      <h3>区域注意力 A2</h3>
-      <p class="body-text">把特征图沿竖直或水平方向均分为若干区域（默认 <b>l = 4</b>），只需一次 reshape 就把注意力计算量降到原来的<span style="color:var(--title);font-weight:600;">四分之一</span>，同时保住大感受野。</p>
+      <div class="card-num">01</div>
+      <h3>速度差距是硬约束</h3>
+      <p class="body-text">RT-DETR 使用的 ResNet-50 仅约 15 FPS，而 YOLOv6-3.0-C 可达 30+ FPS；YOLOv7 在精度更高的同时比 R50 快 2 倍以上。</p>
     </div>
     <div class="card">
-      <span class="card-num">02</span>
-      <h3>R-ELAN</h3>
-      <p class="body-text">在 ELAN 基础上引入<span style="color:var(--title);font-weight:600;">块级残差与缩放因子</span>（默认 0.01），并把特征聚合改为瓶颈结构，化解大尺度模型的收敛困难。</p>
+      <div class="card-num">02</div>
+      <h3>同等预算下 CNN 约快 3×</h3>
+      <p class="body-text">论文引用现有结论：在相近计算预算下，CNN 架构比注意力架构快约 3 倍，这直接限制了注意力在 YOLO 中的落地。</p>
     </div>
     <div class="card">
-      <span class="card-num">03</span>
-      <h3>原生注意力改造</h3>
-      <p class="body-text">引入 <span style="color:var(--title);font-weight:600;">FlashAttention</span>、移除位置编码、MLP 比例 4 调到 1.2、用 Conv+BN 替换 Linear+LN，并加入 7×7 位置感知器。</p>
+      <div class="card-num">03</div>
+      <h3>端到端检测器也受限于此</h3>
+      <p class="body-text">RT-DETR 通过高效编码器与查询选择进入实时区间，但精度与时延的权衡仍不及同量级 YOLO。</p>
     </div>
   </div>
   <div class="anim highlight-bar">
-    <p>实验表明，YOLOv12-N 在 MSCOCO 2017 上以 <span class="accent-word">1.64 ms</span> 时延取得 <span class="accent-word">40.6% mAP</span>，超过 YOLOv10-N 与 YOLOv11-N 达 2.1% 与 1.2% mAP，且优势在 N 到 X 五个尺度上一致保持。</p>
+    <p>于是问题变成：<span class="accent-word">能否在 YOLO 的实时约束下，真正把注意力用起来？</span>论文的答案不是换回 CNN，而是先把注意力的效率问题拆开。</p>
   </div>
 </section>
 
-<!-- 4 效率瓶颈分析 -->
+<!-- 4 效率瓶颈 -->
 <section class="slide">
-  <div class="anim slide-label">Method 01 · Efficiency</div>
-  <div class="anim"><h2>效率瓶颈：一个拖慢「算」，一个拖慢「搬」</h2></div>
-  <p class="anim body-text" style="margin-top:10px;max-width:1060px;">效率分析用于定量回答「注意力为什么比 CNN 慢」，为后续每个设计提供靶点。自注意力与卷积的计算复杂度可分别写为：</p>
-  <div class="anim prompt-box">
-    <div class="prompt-label">Complexity</div>
-    <p class="formula">C<sub>attn</sub> = O(<i>L</i><sup>2</sup><i>d</i>) &nbsp;&nbsp;&nbsp;&nbsp; C<sub>conv</sub> = O(<i>kLd</i>)</p>
-    <p class="formula-note">其中 L 是输入序列长度，d 为特征维度，k 是卷积核大小且通常远小于 L；每个 token 都要关注所有 token，序列变长时计算量按平方膨胀。</p>
-  </div>
-  <div class="anim card-grid cols-2">
-    <div class="card tight">
-      <h3>复杂度：二次 vs 线性</h3>
-      <p class="body-text">自注意力的 <b>L²d</b> 项在高分辨率图像或长序列上迅速变得不可承受，而卷积的滑动窗口只随空间尺寸线性增长。</p>
+  <div class="anim slide-label">Efficiency Analysis / 效率分析</div>
+  <h1 class="anim">两座大山：二次复杂度与低效访存</h1>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <h3>复杂度：随序列长度平方增长</h3>
+      <p class="body-text">自注意力需要每个 token 与全部 token 交互，计算量为 <span class="fx">O(L<sup>2</sup>d)</span>；卷积则为 <span class="fx">O(kLd)</span>，k 远小于 L。高分辨率输入下差距被迅速放大。</p>
     </div>
-    <div class="card tight">
-      <h3>访存：SRAM 与 HBM 往返</h3>
-      <p class="body-text">注意力图 QK<sup>T</sup> 与 L×L 的 softmax 图要从高速 SRAM 存到 HBM、计算时再取回；CNN 则是结构化、局部化的滑动窗口访存。</p>
+    <div class="card">
+      <h3>访存：SRAM 与 HBM 差 10 倍以上</h3>
+      <p class="body-text">注意力图 <span class="fx">QK<sup>T</sup></span> 与 softmax 图（L×L）需要在 SRAM 与 HBM 之间反复搬运，而 SRAM 读写速度是 HBM 的 10 倍以上。</p>
+    </div>
+    <div class="card">
+      <h3>访问模式：不规则、难缓存</h3>
+      <p class="body-text">卷积依赖固定感受野与滑窗，访存规则、易缓存；注意力的稀疏与不规则访问进一步拉高延迟。</p>
     </div>
   </div>
-  <div class="anim highlight-bar compact">
-    <p>两个因素一个拖慢「算」、一个拖慢「搬」；本文用 <span class="accent-word">A2 对付前者</span>、用 <span class="accent-word">FlashAttention 对付后者</span>，其余设计则避免再叠加新的速度开销。</p>
+  <div class="anim formula-box">
+    <div class="formula">注意力 <i>O</i>(<i>L</i><sup>2</sup><i>d</i>) &nbsp;→&nbsp; 卷积 <i>O</i>(<i>kLd</i>)</div>
+    <div class="formula-note">设计目标：降低空间复杂度、让访存变规则、把结构做简单——而不是靠更多模块堆叠。</div>
   </div>
 </section>
 
-<!-- 5 整体架构 -->
+<!-- 5 核心贡献 -->
 <section class="slide">
-  <div class="anim slide-label">Method 02 · Architecture</div>
-  <div class="anim"><h2>整体架构：层级式 YOLO，骨干后段换成注意力</h2></div>
-  <p class="anim body-text" style="margin-top:10px;max-width:1080px;">YOLOv12 保留此前 YOLO 系统的层级式设计而非 plain 视觉 Transformer 结构，共含 N、S、M、L、X 五个尺度。骨干前两阶段继承 YOLOv11 的 C3k2 块、不引入注意力，后续阶段以 R-ELAN 为基本块、块内嵌 A2 注意力；颈部与检测头沿用 YOLOv11 的设定。</p>
-  <table class="anim mini-table">
-    <thead>
-      <tr><th style="width:24%;">组件</th><th style="width:34%;">模块</th><th>功能</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>Backbone 前两阶段</td><td>C3k2（GELAN 特例）</td><td>继承 YOLOv11 的高效浅层特征提取</td></tr>
-      <tr><td>Backbone 后两阶段</td><td>R-ELAN + A2</td><td>注意力建模与稳定聚合</td></tr>
-      <tr><td>末阶段</td><td>单个 R-ELAN 块</td><td>移除三块堆叠，减少块数、利于优化</td></tr>
-      <tr><td>加速组件</td><td>FlashAttention</td><td>攻克注意力访存瓶颈</td></tr>
-    </tbody>
-  </table>
-  <div class="anim highlight-bar compact">
-    <p>注意力只出现在骨干后段：<span class="accent-word">浅层继续用 C3k2 控制开销，深层的区域注意力负责大感受野建模</span>；末阶段由三块堆叠改为单块，总块数更少、更易优化。</p>
+  <div class="anim slide-label">Contributions / 核心贡献</div>
+  <h1 class="anim">三项改动，把注意力做成实时检测器</h1>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <div class="card-num">01</div>
+      <h3>Area Attention</h3>
+      <p class="body-text">把特征图按行或列等分为 <span class="fx">l</span> 段（默认 4），每段做 2D 注意力；只需 reshape，避免显式划窗。计算量从 <span class="fx">2n<sup>2</sup>hd</span> 降到 <span class="fx">½n<sup>2</sup>hd</span>，感受野缩为 1/4 但仍足够大。</p>
+    </div>
+    <div class="card">
+      <div class="card-num">02</div>
+      <h3>R-ELAN</h3>
+      <p class="body-text">在 ELAN 上增加 block 级残差捷径（带缩放因子）与新的聚合瓶颈，解决梯度阻断与大模型不收敛，同时降低隐藏维扩张和冗余计算。</p>
+    </div>
+    <div class="card">
+      <div class="card-num">03</div>
+      <h3>面向 YOLO 的结构精简</h3>
+      <p class="body-text">引入 FlashAttention，移除位置编码，MLP ratio 从 4 调到 1.2，尽量用卷积算子，并减少末段堆叠深度。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>整体仍沿用 YOLO 的层级结构：<span class="accent-word">stage 1–2 直接复用 YOLOv11</span>，backbone 末段只保留 1 个 R-ELAN，而不是继续堆 3 个 block。</p>
   </div>
 </section>
 
-<!-- 6 区域注意力 A2 -->
+<!-- 6 区域注意力 -->
 <section class="slide">
-  <div class="anim slide-label">Method 03 · Area Attention</div>
-  <div class="anim"><h2>区域注意力 A2：一次 reshape 省掉窗口划分</h2></div>
-  <ul class="anim bullet-list compact">
-    <li>线性注意力把复杂度从 2n²hd 降到 2nhd²，却有全局依赖退化、不稳定与分布敏感，且受低秩瓶颈限制，在 640×640 输入的 YOLO 上速度优势有限；窗口、criss-cross、轴向等局部注意力则因划分操作引入开销或缩小感受野。</li>
-    <li>A2 把 (H, W) 特征图沿竖直或水平方向均分为 <b>l</b> 段、每段 (H/l, W) 或 (H, W/l)，默认 <b>l = 4</b>；与窗口注意力不同，它不需要显式划分与还原，只需<span class="em">一次 reshape</span>。</li>
-    <li>计算量降为 C<sub>A2</sub> = ¼ · 2n²hd，感受野缩到原来的四分之一但仍属大感受野；在 640×640 输入、n 固定时，即便复杂度仍是 n² 量级也足以满足 YOLO 的实时要求。</li>
+  <div class="anim slide-label">Method 01 / Area Attention</div>
+  <h1 class="anim">区域注意力：把全局注意力切成 4 块</h1>
+  <div class="anim divider"></div>
+  <div class="figure-box" style="margin-top:10px;">
+    <img src="../assets/paper-imgs/YOLOv12_Attention-Centric/fig2.png" alt="Figure 2：区域注意力与其他局部注意力机制对比">
+  </div>
+  <p class="anim figure-caption"><span class="cap-em">Figure 2.</span> 代表性局部注意力与区域注意力对比：按行/列等分 l 段（默认 4），避免显式划窗，同时保留较大感受野。</p>
+  <ul class="anim bullet-list two-col">
+    <li>将 <span class="fx">(H, W)</span> 特征图按行或列等分为 <span class="fx">l</span> 段，每段尺寸为 <span class="fx">(H/l, W)</span> 或 <span class="fx">(H, W/l)</span>，默认 <span class="fx">l = 4</span>。</li>
+    <li>只做一次 reshape，省去 window partition 与还原的额外开销。</li>
+    <li>计算量从 <span class="fx">2n<sup>2</sup>hd</span> 降至 <span class="fx">½n<sup>2</sup>hd</span>；感受野缩为 1/4，但仍足够大。</li>
+    <li>640×640 输入下平方复杂度仍满足实时要求；论文称精度仅轻微受影响，速度提升明显。</li>
   </ul>
-  <div class="anim figure-box h33"><img src="../assets/paper-imgs/YOLOv12/fig2.png" alt="区域注意力与代表性局部注意力机制的对比"></div>
-  <div class="anim figure-caption">
-    区域注意力与代表性局部注意力机制的对比。A2 用最朴素的等分方式切开特征图，省去窗口划分与还原的全部开销；
-    实验显示它对精度<span class="cap-em">只有轻微影响却显著提速</span>，这正是「简单即高效」的落点。
-  </div>
 </section>
 
 <!-- 7 R-ELAN -->
 <section class="slide">
-  <div class="anim slide-label">Method 04 · R-ELAN</div>
-  <div class="anim"><h2>R-ELAN：给 ELAN 补上残差，聚合改成瓶颈</h2></div>
-  <ul class="anim bullet-list compact">
-    <li>原 ELAN 把 transition 层（1×1 卷积）的输出分成两支，一支经多个模块处理后与另一支拼接；该结构<span class="em">梯度阻塞、缺少输入到输出的残差</span>，叠加注意力后 L 与 X 尺度即使换用 Adam 或 AdamW 也无法收敛或持续不稳定。</li>
-    <li>改进一：块内加入输入到输出的残差捷径并乘缩放因子（默认 0.01），思路类似深层 ViT 的 layer scaling；但把 layer scaling 加在每个 A2 上既不能解决收敛又会拖慢时延，说明症结在 ELAN 结构本身。</li>
-    <li>改进二：transition 只调整通道数产出单张特征图，经后续块处理后再拼接，形成<span class="em">瓶颈结构</span>，保留特征整合能力并降低计算、参数与内存。</li>
-    <li>代价：L 尺度上，残差 + 特征整合相对只加残差把 FLOPs 从 94.3 G 压到 88.9 G、参数从 27.8 M 压到 26.4 M，mAP 仅从 53.8% 微降到 53.7%。</li>
-  </ul>
-  <div class="anim figure-box h31"><img src="../assets/paper-imgs/YOLOv12/fig3.png" alt="CSPNet、ELAN、C3K2 与 R-ELAN 的架构对比"></div>
-  <div class="anim figure-caption">
-    CSPNet、ELAN、C3K2 与 R-ELAN 的架构对比。R-ELAN 在块级加入带 0.01 缩放的残差捷径，并把两分支聚合改成「先降维、再处理、后拼接」的瓶颈结构；
-    它作为骨干后段的基本块承载 A2，让注意力大模型重新可训。
+  <div class="anim slide-label">Method 02 / R-ELAN</div>
+  <h1 class="anim">R-ELAN：给 ELAN 加一条残差捷径</h1>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <h3>ELAN 的三个问题</h3>
+      <ul class="bullet-list">
+        <li>4 分支输出拼接，隐藏维扩张过大，冗余计算多。</li>
+        <li>输入到输出缺少残差，梯度容易被阻断。</li>
+        <li>L/X 尺度不收敛或不稳定，换 Adam/AdamW 也无效。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>改进 ①：残差捷径</h3>
+      <ul class="bullet-list">
+        <li>整个 block 增加输入到输出的 shortcut。</li>
+        <li>带缩放因子，正文称默认 0.01，类似 layer scaling。</li>
+        <li>单独给每个注意力加 scaling 无效，说明问题在 ELAN 结构本身。</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>改进 ②：聚合瓶颈</h3>
+      <ul class="bullet-list">
+        <li>先用 1×1 卷积统一通道，再送入后续 block。</li>
+        <li>拼接形成瓶颈结构，降低隐藏维与参数量。</li>
+        <li>保留原 ELAN 的特征整合能力，同时更省算力。</li>
+      </ul>
+    </div>
   </div>
+  <div class="figure-box fig-sm">
+    <img src="../assets/paper-imgs/YOLOv12_Attention-Centric/fig3.png" alt="Figure 3：CSPNet、ELAN、C3K2 与 R-ELAN 结构对比">
+  </div>
+  <p class="figure-caption"><span class="cap-em">Figure 3.</span> (a) CSPNet、(b) ELAN、(c) C3K2 与 (d) 本文 R-ELAN 的结构对比。</p>
 </section>
 
-<!-- 8 结构层与注意力内部改造 -->
+<!-- 8 架构改进 -->
 <section class="slide">
-  <div class="anim slide-label">Method 05 · Adaptation</div>
-  <div class="anim"><h2>让注意力适配 YOLO：结构层与注意力内部</h2></div>
-  <div class="anim card-grid cols-2">
-    <div class="card">
-      <h3>结构层面的三项改造</h3>
-      <ul class="bullet-list compact">
-        <li>引入 <span class="em">FlashAttention</span> 攻克 HBM 访存瓶颈（直接采用，非本文首创）</li>
-        <li>保留<span class="em">层级式设计</span>：plain ViT 精度大幅下跌，省略第一 / 第四阶段也分别损失 0.5% / 0.8%</li>
-        <li>末阶段三块堆叠改为<span class="em">单个 R-ELAN</span>，减少总块数、利于优化</li>
-      </ul>
+  <div class="anim slide-label">Method 03 / Architecture</div>
+  <h1 class="anim">为 YOLO 定制的 5 处结构调整</h1>
+  <div class="anim divider"></div>
+  <div class="anim steps">
+    <div class="step">
+      <div class="step-num">LAYER</div>
+      <h3>保留层级设计</h3>
+      <p class="small-text">维持多尺度结构；stage 1–2 沿用 YOLOv11，不套用 R-ELAN。</p>
     </div>
-    <div class="card">
-      <h3>注意力内部的适配</h3>
-      <ul class="bullet-list compact">
-        <li>移除位置编码，架构更干净、推理更快</li>
-        <li>MLP 比例 4 调至 1.2（N/S/M 为 2），把更多计算让给注意力</li>
-        <li>Linear+LN 改为 <span class="em">nn.Conv2d+BN</span>，充分利用卷积算子的效率</li>
-        <li>7×7 大核可分离卷积作为<span class="em">位置感知器</span>，作用于注意力值 v 并加到 v@attn 上</li>
-      </ul>
+    <div class="step">
+      <div class="step-num">DEPTH</div>
+      <h3>减少堆叠</h3>
+      <p class="small-text">backbone 末段不再堆 3 个 block，只保留 1 个 R-ELAN。</p>
+    </div>
+    <div class="step">
+      <div class="step-num">MLP</div>
+      <h3>算力偏向注意力</h3>
+      <p class="small-text">MLP ratio 从 4 降到 1.2；N/S/M 尺度取 2。</p>
+    </div>
+    <div class="step">
+      <div class="step-num">OP</div>
+      <h3>用卷积算子</h3>
+      <p class="small-text">Conv2d + BN 取代 Linear + LN；移除位置编码。</p>
+    </div>
+    <div class="step">
+      <div class="step-num">POS</div>
+      <h3>Position Perceiver</h3>
+      <p class="small-text">7×7 深度可分离卷积作用于 v，输出再加回 v@attn。</p>
     </div>
   </div>
-  <div class="anim highlight-bar compact">
-    <p>位置感知器沿用 YOLOv10 PSA 的思路并把核扩到 <span class="accent-word">7×7</span>，在不影响速度的前提下提升性能；MLP 比例下调则把算力从 FFN 让给注意力，凸显区域注意力的地位。</p>
+  <div class="anim highlight-bar">
+    <p>配合 <span class="accent-word">FlashAttention</span> 解决访存问题。论文同时说明：这些改动多数并非首次提出，价值在于把它们组合成适配 YOLO 的完整方案。</p>
   </div>
 </section>
 
 <!-- 9 实验设置 -->
 <section class="slide">
-  <div class="anim slide-label">Experiments 01 · Setup</div>
-  <div class="anim"><h2>实验设置：MSCOCO 2017，从零训练 600 epoch</h2></div>
-  <div class="anim card-grid cols-3">
-    <div class="card">
-      <h3>数据与模型</h3>
-      <p class="body-text">MSCOCO 2017，输入 640×640；YOLOv12 含 N、S、M、L、X 五个变体；基线为 YOLOv11，模型缩放策略与其相同。</p>
-    </div>
-    <div class="card">
-      <h3>训练配置</h3>
-      <p class="body-text">SGD 优化器，初始学习率 0.01 线性衰减到 1×10⁻⁴，动量 0.937，权重衰减 5×10⁻⁴，batch 32×8，前 3 个 epoch 线性 warm-up，共 600 epoch，8 块 NVIDIA A6000。</p>
-    </div>
-    <div class="card">
-      <h3>评测协议</h3>
-      <p class="body-text">时延在 T4 GPU 上用 TensorRT FP16 测得，与 YOLOv10、RT-DETR 一致；指标为 mAP@0.5:0.95、mAP@0.5、mAP@0.75 及按尺度划分的 AP。</p>
-    </div>
-  </div>
-  <div class="anim highlight-bar compact">
-    <p>不使用预训练，也不引入 YOLOv11 之外的任何技巧，<span class="accent-word">保证对比只反映架构与训练设定的差异</span>。</p>
-  </div>
-</section>
-
-<!-- 10 定性效果对比 fig5 -->
-<section class="slide">
-  <div class="anim slide-label">Experiments 02 · Qualitative</div>
-  <div class="anim"><h2>定性效果：更清晰的轮廓，更精确的前景激活</h2></div>
-  <p class="anim body-text" style="margin-top:10px;max-width:1060px;">X 尺度模型骨干第三阶段的热力图，高亮区域代表模型激活的位置；同一行从左到右依次为输入、YOLOv10、YOLOv11 与 YOLOv12。</p>
-  <div class="anim figure-box h50"><img src="../assets/paper-imgs/YOLOv12/fig5.png" alt="YOLOv10、YOLOv11 与 YOLOv12 的热力图对比"></div>
-  <div class="anim figure-caption">
-    YOLOv10、YOLOv11 与 YOLOv12 的热力图对比。相比 YOLOv10 与 YOLOv11，YOLOv12 给出更清晰的物体轮廓与更精确的前景激活；
-    本文的解释是区域注意力拥有比卷积网络更大的感受野，更擅长捕获整体上下文，<span class="cap-em">这一特性被视为 YOLOv12 性能优势的来源</span>。
-  </div>
-</section>
-
-<!-- 11 定量对比 fig1 -->
-<section class="slide">
-  <div class="anim slide-label">Experiments 03 · Trade-off</div>
-  <div class="anim"><h2>时延-精度与 FLOPs-精度：两条边界都外推</h2></div>
-  <ul class="anim bullet-list compact">
-    <li><span class="em">N</span>：40.6% mAP / 1.64 ms，比 YOLOv6-3.0-N、YOLOv8-N、YOLOv10-N、YOLOv11-N 分别高 3.6%、3.3%、2.1%、1.2% mAP。</li>
-    <li><span class="em">S</span>：21.4 G FLOPs、9.3 M 参数取得 48.0% mAP，比 YOLOv8-S 至 YOLOv11-S 高 3.0%、1.2%、1.7%、1.1%；比 RT-DETR-R18 / RT-DETRv2-R18 快 42%，只用其 36% 计算与 45% 参数。</li>
-    <li><span class="em">X</span>：55.2% mAP，超过 YOLOv10-X / YOLOv11-X 达 0.8% 与 0.6%，注意力红利在五个尺度上一致兑现。</li>
-  </ul>
-  <div class="anim figure-box h36 crop-a"><img src="../assets/paper-imgs/YOLOv12/fig1.png" alt="时延-精度与 FLOPs-精度权衡对比"></div>
-  <div class="anim figure-caption">
-    时延-精度与 FLOPs-精度权衡对比。YOLOv12 在两张散点图上<span class="cap-em">都压出更优的边界</span>：同等精度下时延更低，同等计算下精度更高。
-  </div>
-</section>
-
-<!-- 12 定量对比 table1 -->
-<section class="slide">
-  <div class="anim slide-label">Experiments 04 · Comparison</div>
-  <div class="anim"><h2>与主流实时检测器逐尺度对比</h2></div>
-  <div class="anim split">
-    <div class="split-text">
-      <ul class="bullet-list compact">
-        <li><span class="em">N</span>：6.5 G FLOPs、2.6 M 参数、40.6% mAP、1.64 ms，计算与参数与同级相当。</li>
-        <li><span class="em">M</span>：67.5 G FLOPs、20.2 M 参数、52.5% mAP、4.86 ms。</li>
-        <li><span class="em">L</span>：比 YOLOv10-L 少 31.4 G FLOPs 仍取胜；比 RT-DETR-R50 / RT-DETRv2-R50 少 34.6% FLOPs 与 37.1% 参数。</li>
-        <li><span class="em">X</span>：199.0 G FLOPs、59.1 M 参数、55.2% mAP，比 YOLOv10-X / YOLOv11-X 高 0.8% / 0.6%。</li>
-      </ul>
-      <div class="highlight-bar compact" style="margin-top:14px;">
-        <p>从 N 到 X，<span class="accent-word">同一尺度内的更强精度基本都落在相当的计算预算内</span>，这才是表格最值得看的地方。</p>
-      </div>
-    </div>
-    <div class="fig-cell">
-      <div class="figure-box h58"><img src="../assets/paper-imgs/YOLOv12/table1.png" alt="与主流实时检测器在 COCO 上的对比"></div>
-      <div class="figure-caption">
-        与主流实时检测器在 COCO 上的对比（640×640 输入）。N 到 X 五个尺度上，YOLOv12 均在更少或相当的计算下取得更高 mAP。
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- 13 定量对比 table6 + fig4 -->
-<section class="slide">
-  <div class="anim slide-label">Experiments 05 · Details</div>
-  <div class="anim"><h2>细分指标与参数 / CPU 效率</h2></div>
-  <div class="anim figure-box h20"><img src="../assets/paper-imgs/YOLOv12/table6.png" alt="YOLOv12 各尺度在 COCO 上的细分指标"></div>
-  <div class="anim figure-caption">
-    YOLOv12 各尺度在 COCO 上的细分指标。从 N 到 X，小目标 AP 由 20.2% 升到 39.6%、大目标 AP 由 58.4% 升到 70.9%，
-    各尺度子指标随模型容量单调改善，<span class="cap-em">说明架构收益并非只集中在某一类目标上</span>。
-  </div>
-  <div class="anim figure-box h28 crop-b" style="margin-top:12px;"><img src="../assets/paper-imgs/YOLOv12/fig4.png" alt="参数量-精度与 CPU 时延-精度权衡对比"></div>
-  <div class="anim figure-caption">
-    参数量-精度与 CPU 时延-精度权衡对比。左图边界越过以参数少著称的 YOLOv10，右图在 Intel Core i7-10700K 上 YOLOv12 同样占住更优边界，
-    表明其<span class="cap-em">效率优势不依赖特定 GPU</span>。
-  </div>
-</section>
-
-<!-- 14 R-ELAN 消融 table2 -->
-<section class="slide">
-  <div class="anim slide-label">Experiments 06 · R-ELAN Ablation</div>
-  <div class="anim"><h2>R-ELAN 消融：小模型怕残差，大模型靠残差</h2></div>
-  <ul class="anim bullet-list compact">
-    <li><span class="em">N</span>：40.8%（Vanilla）→ 40.6%（Re-Aggre）→ 40.3%（+Resi 0.1），残差不影响收敛但会损害性能。</li>
-    <li><span class="em">L / X</span>：无残差的两种配置均不收敛；X 还需要最小缩放因子 0.01 才能收敛，L 取 0.1 时 mAP 只有 53.3%。</li>
-    <li><span class="em">L 的聚合改造</span>：残差 + 特征整合让 FLOPs 94.3→88.9 G、参数 27.8→26.4 M，mAP 仅 53.8→53.7，瓶颈聚合以几乎免费的精度代价换来复杂度下降。</li>
-  </ul>
-  <div class="anim figure-box h36"><img src="../assets/paper-imgs/YOLOv12/table2.png" alt="R-ELAN 消融实验结果"></div>
-  <div class="anim figure-caption">
-    R-ELAN 消融实验结果（N / L / X 三个尺度）。小模型上残差是性能负担，大模型上却是稳定训练的必要条件；
-    这也说明问题不在注意力本身，而在 ELAN 的结构。
-  </div>
-</section>
-
-<!-- 15 八组设计诊断 table5 -->
-<section class="slide">
-  <div class="anim slide-label">Experiments 07 · Diagnostics</div>
-  <div class="anim"><h2>八组设计诊断：每项改造都有对照</h2></div>
-  <div class="anim figure-box h56 crop-c"><img src="../assets/paper-imgs/YOLOv12/table5.png" alt="八组设计诊断实验"></div>
-  <div class="anim figure-caption">
-    八组设计诊断实验（a–h）：每张子表只改变待诊断因素，默认在 YOLOv12-N 上从零训练 600 epoch，逐条印证第 3 节的每项改造。
-  </div>
-  <div class="anim dual-list">
-    <ul class="bullet-list compact">
-      <li>Conv+BN 以 40.6% mAP / 1.64 ms 胜过 Linear+LN 的 40.5% / 1.68 ms；plain 结构仅 38.3%，省略第一 / 第四阶段各损失 0.5% / 0.8%。</li>
-      <li>训练轮数在 600 epoch 达峰（N 40.6%、S 48.0%），800 epoch 回落到 40.4% / 47.7%。</li>
-    </ul>
-    <ul class="bullet-list compact">
-      <li>位置感知器 3×3 40.4% → 7×7 40.6%（+0.2%），时延仅 +0.04 ms；9×9 升到 40.7% 但 1.79 ms 明显变慢。</li>
-      <li>不用位置编码反而最好（40.6% 对 RPE 40.3%、APE 40.5%）；FlashAttention 让区域注意力 1.70→1.64 ms 只损失 0.2%；MLP 比例 1.2 在 L 上以 53.8% 领先 2.0 / 4.0。</li>
-    </ul>
-  </div>
-</section>
-
-<!-- 16 速度与效率 table3 -->
-<section class="slide">
-  <div class="anim slide-label">Experiments 08 · Speed</div>
-  <div class="anim"><h2>区域注意力：GPU 与 CPU 双端提速</h2></div>
-  <div class="anim stat-row">
-    <div class="stat">
-      <div class="stat-num">2.7 <span class="arrow">→</span> 2.0 <small>ms</small></div>
-      <div class="stat-label">RTX 3080 · FP32 · YOLOv12-N</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">62.9 <span class="arrow">→</span> 31.4 <small>ms</small></div>
-      <div class="stat-label">CPU · YOLOv12-N</div>
-    </div>
-    <div class="stat">
-      <div class="stat-num">804.2 <span class="arrow">→</span> 512.5 <small>ms</small></div>
-      <div class="stat-label">CPU · YOLOv12-X</div>
-    </div>
-  </div>
-  <ul class="anim bullet-list compact">
-    <li>YOLOv12-S 的 CPU 时延从 130.0 ms 降到 78.4 ms；FP16 下 N 在 RTX 3080 上从 1.5 ms 降到 1.3 ms，提速在 GPU 与 CPU、FP32 与 FP16 上全面一致。</li>
-    <li>该实验未启用 FlashAttention，以免掩盖区域注意力带来的速度差；这也是区域注意力单独贡献的直接证据。</li>
-  </ul>
-  <div class="anim figure-box h24"><img src="../assets/paper-imgs/YOLOv12/table3.png" alt="区域注意力在 GPU 与 CPU 上的提速消融"></div>
-  <div class="anim figure-caption">
-    区域注意力在 GPU 与 CPU 上的提速消融。RTX 3080 上 N 的 FP32 时延减少 0.7 ms，CPU 时延几乎减半；
-    S 与 X 在 CPU 上的提速同样显著，<span class="cap-em">且无需 FlashAttention 参与</span>。
-  </div>
-</section>
-
-<!-- 17 跨 GPU 速度 table4 -->
-<section class="slide">
-  <div class="anim slide-label">Experiments 09 · GPU</div>
-  <div class="anim"><h2>跨 GPU 推理速度：与 CNN 阵营持平</h2></div>
-  <div class="anim split">
+  <div class="anim slide-label">Setup / 实验设置</div>
+  <h1 class="anim">只沿用 YOLOv11 的训练与评测口径</h1>
+  <div class="anim divider"></div>
+  <div class="split">
     <div class="split-text">
       <ul class="bullet-list">
-        <li>RTX 3080 上 YOLOv9-T 的 FP32/FP16 时延为 2.4/1.5 ms，YOLOv12-N 为 <span class="em">1.7/1.1 ms</span>。</li>
-        <li>A5000 上对应 2.4/1.6 ms 与 1.7/1.0 ms，A6000 上 2.3/1.7 ms 与 1.7/1.1 ms，趋势一致。</li>
-        <li>YOLOv12 显著快于 YOLOv9，并与 YOLOv10、YOLOv11 持平，<span class="em">注意力架构首次在速度上追平 CNN 阵营</span>。</li>
+        <li><span class="em">数据与尺度：</span>MS COCO 2017，640×640 输入；N/S/M/L/X 五个尺度。</li>
+        <li><span class="em">训练：</span>600 epochs，SGD，学习率 1e-2 线性衰减到 1e-4，warm-up 3 epochs，8× A6000。</li>
+        <li><span class="em">时延：</span>Table 1 在 T4 + TensorRT FP16 上测；Table 4 另测 RTX 3080 / A5000 / A6000。</li>
+        <li><span class="em">Baseline：</span>YOLOv11，缩放策略一致；不使用预训练等额外技巧。</li>
       </ul>
-      <div class="highlight-bar compact" style="margin-top:14px;">
-        <p>同一硬件、同一套 ultralytics 代码库评测，<span class="accent-word">排除了实现差异对速度结论的干扰</span>。</p>
+      <div class="highlight-bar">
+        <p>训练配方对五个尺度共用，只有 Mixup 与 Copy-paste 的强度随尺度递增。</p>
       </div>
     </div>
-    <div class="fig-cell">
-      <div class="figure-box h58"><img src="../assets/paper-imgs/YOLOv12/table4.png" alt="YOLOv9 至 YOLOv12 在三款 GPU 上的推理时延对比"></div>
-      <div class="figure-caption">
-        YOLOv9 至 YOLOv12 在三款 GPU 上的推理时延对比（FP32/FP16，ms）。三款 GPU 上 YOLOv12 都保持同一量级的速度优势。
-      </div>
+    <div class="figure-box fig-tall">
+      <img src="../assets/paper-imgs/YOLOv12_Attention-Centric/table7.png" alt="Table 7：YOLOv12 训练超参数">
     </div>
+  </div>
+  <p class="anim figure-caption"><span class="cap-em">Table 7.</span> YOLOv12-N/S/M/L/X 在 COCO 上微调的超参数。</p>
+</section>
+
+<!-- 10 主结果（上） -->
+<section class="slide">
+  <div class="anim slide-label">Results / 主结果 · N/S/M</div>
+  <h1 class="anim">五个尺度都在同量级里领先</h1>
+  <div class="anim divider"></div>
+  <div class="figure-box fig-xxl">
+    <img src="../assets/paper-imgs/YOLOv12_Attention-Centric/table1a.png" alt="Table 1 上半：N/S/M 尺度与主流实时检测器对比">
+  </div>
+  <p class="anim figure-caption"><span class="cap-em">Table 1（上）.</span> N/S/M 尺度对比（COCO val，640×640，时延为 T4 + TensorRT FP16）。N/S/M 的 AP 分别为 40.6 / 48.0 / 52.5，均为同量级最高。</p>
+</section>
+
+<!-- 11 主结果（下） -->
+<section class="slide">
+  <div class="anim slide-label">Results / 主结果 · L/X</div>
+  <h1 class="anim">更大尺度继续拉开差距</h1>
+  <div class="anim divider"></div>
+  <div class="figure-box fig-lg">
+    <img src="../assets/paper-imgs/YOLOv12_Attention-Centric/table1b.png" alt="Table 1 下半：L/X 尺度与主流实时检测器对比">
+  </div>
+  <p class="anim figure-caption"><span class="cap-em">Table 1（下）.</span> L/X 尺度对比；列依次为 FLOPs (G)、#Param. (M)、AP<sub>50:95</sub>、AP<sub>50</sub>、AP<sub>75</sub>、Latency (ms)。</p>
+  <div class="anim highlight-bar" style="margin-top:12px;">
+    <p>L 以 88.9 GFLOPs 达到 53.7 AP，比 YOLOv10-L 少 31.4 GFLOPs、AP 高 0.5；X 为 199.0 GFLOPs / 55.2 AP。</p>
   </div>
 </section>
 
-<!-- 18 总结 -->
+<!-- 11 精度-时延 -->
 <section class="slide">
-  <div class="glow glow-blue tl"></div>
-  <div class="glow glow-navy br"></div>
-  <div class="anim slide-label">Summary</div>
-  <div class="anim"><h2>优点和创新点</h2></div>
+  <div class="anim slide-label">Trade-off / 权衡曲线</div>
+  <h1 class="anim">精度-时延与精度-FLOPs：曲线整体左移</h1>
+  <div class="anim divider"></div>
+  <div class="figure-box fig-md">
+    <img src="../assets/paper-imgs/YOLOv12_Attention-Centric/fig1.png" alt="Figure 1：精度-时延与精度-FLOPs 对比">
+  </div>
+  <p class="anim figure-caption"><span class="cap-em">Figure 1.</span> 与主流方法的精度-时延（左）和精度-FLOPs（右）权衡；红色曲线为 YOLOv12。</p>
+  <div class="anim card-grid cols-3" style="margin-top:14px;">
+    <div class="card"><p class="body-text"><span class="em">N：</span>1.64 ms / 40.6 AP</p></div>
+    <div class="card"><p class="body-text"><span class="em">S：</span>2.61 ms / 48.0 AP</p></div>
+    <div class="card"><p class="body-text"><span class="em">X：</span>11.79 ms / 55.2 AP</p></div>
+  </div>
+</section>
+
+<!-- 12 对比 RT-DETR -->
+<section class="slide">
+  <div class="anim slide-label">Comparison / 对比 RT-DETR</div>
+  <h1 class="anim">对端到端检测器：更快、更省、更小</h1>
   <div class="anim divider"></div>
   <div class="anim card-grid cols-3">
     <div class="card">
-      <span class="card-num">1</span>
-      <h3>注意力成为核心组件</h3>
-      <p class="body-text">用区域注意力与 FlashAttention 攻克复杂度与访存两大瓶颈，YOLOv12-N 以同档速度超 YOLOv11-N 达 1.2% mAP，让注意力真正站上 YOLO 的主干位置。</p>
+      <div class="card-num">S</div>
+      <h3>48.0 vs 46.5 AP</h3>
+      <p class="body-text">对 RT-DETR-R18，时延 2.61 vs 4.58 ms，快 42%；计算量少 36%，参数少 45%。</p>
     </div>
     <div class="card">
-      <span class="card-num">2</span>
-      <h3>R-ELAN 化解收敛难题</h3>
-      <p class="body-text">块级残差加 0.01 缩放与瓶颈式聚合改造 ELAN，N、L、X 三档消融把收敛性、FLOPs 与 mAP 的证据链给得完整，工程上可直接复用。</p>
+      <div class="card-num">L</div>
+      <h3>FLOPs −34.6%</h3>
+      <p class="body-text">对 RT-DETR-R50，参数少 37.1%，且推理更快。</p>
     </div>
     <div class="card">
-      <span class="card-num">3</span>
-      <h3>诊断体系完备</h3>
-      <p class="body-text">注意力实现、层级结构、训练轮数、位置感知器、位置编码、区域注意力、MLP 比例与 FlashAttention 八项设计逐条配表验证，结论可复核、说服力强。</p>
+      <div class="card-num">X</div>
+      <h3>FLOPs −23.4%</h3>
+      <p class="body-text">对 RT-DETR-R101，参数少 22.2%，速度同样更快。</p>
     </div>
   </div>
-  <div class="anim small-text" style="margin-top:18px;text-align:center;">工程约束：依赖 FlashAttention，需要 Turing / Ampere / Ada / Hopper 架构的 GPU（T4、RTX 20/30/40 系列、A5000/6000、A100、H100 等）。</div>
-  <div class="anim cover-meta" style="justify-content:center;margin-top:20px;">
-    <span class="cover-tag">arXiv:2502.12524</span>
-    <span class="cover-tag">2025</span>
-    <span class="cover-tag">5 个尺度</span>
-    <span class="cover-tag">感谢观看</span>
+  <div class="figure-box fig-sm">
+    <img src="../assets/paper-imgs/YOLOv12_Attention-Centric/fig4.png" alt="Figure 4：精度-参数量与 CPU 精度-时延对比">
+  </div>
+  <p class="figure-caption"><span class="cap-em">Figure 4.</span> 精度-参数量（左）与 CPU 精度-时延（右）对比，CPU 为 Intel Core i7-10700K @ 3.80GHz。</p>
+</section>
+
+<!-- 13 R-ELAN 消融 -->
+<section class="slide">
+  <div class="anim slide-label">Ablation 01 / R-ELAN</div>
+  <h1 class="anim">小模型可以省，大模型必须稳</h1>
+  <div class="anim divider"></div>
+  <div class="figure-box fig-md">
+    <img src="../assets/paper-imgs/YOLOv12_Attention-Centric/table2.png" alt="Table 2：R-ELAN 消融实验">
+  </div>
+  <p class="anim figure-caption"><span class="cap-em">Table 2.</span> R-ELAN 消融：Vanilla 为原始 ELAN，Re-Aggre. 为新聚合方式，Resi. 为残差，Scaling 为缩放因子。</p>
+  <div class="anim card-grid cols-3" style="margin-top:14px;">
+    <div class="card"><p class="body-text"><span class="em">N：</span>40.8（6.9 G / 2.7 M）→ 40.6（6.5 G / 2.6 M），AP 微降但更轻。</p></div>
+    <div class="card"><p class="body-text"><span class="em">L：</span>无残差不收敛；缩放 0.01 时达 53.7 AP。</p></div>
+    <div class="card"><p class="body-text"><span class="em">X：</span>0.01 下 199.0 G / 59.1 M / 55.2；原始聚合为 211.3 G / 62.3 M / 55.3。</p></div>
   </div>
 </section>
 
-</div><!-- /deck -->
+<!-- 14 区域注意力速度消融 -->
+<section class="slide">
+  <div class="anim slide-label">Ablation 02 / Area Attention</div>
+  <h1 class="anim">区域注意力：CPU 时延接近减半</h1>
+  <div class="anim divider"></div>
+  <div class="figure-box fig-md">
+    <img src="../assets/paper-imgs/YOLOv12_Attention-Centric/table3.png" alt="Table 3：区域注意力速度消融">
+  </div>
+  <p class="anim figure-caption"><span class="cap-em">Table 3.</span> 区域注意力速度消融；CUDA 在 RTX 3080/A5000，CPU 在 i7-10700K，均未启用 FlashAttention。</p>
+  <div class="anim card-grid cols-3" style="margin-top:14px;">
+    <div class="card"><p class="body-text"><span class="em">N：</span>CUDA FP32 2.7 → 2.0 ms；CPU 62.9 → 31.4 ms。</p></div>
+    <div class="card"><p class="body-text"><span class="em">S / X：</span>CPU 130.0 → 78.4 ms；804.2 → 512.5 ms。</p></div>
+    <div class="card"><p class="body-text"><span class="em">口径：</span>刻意关闭 FlashAttention，以放大区域注意力本身的速度差异。</p></div>
+  </div>
+</section>
+
+<!-- 15 诊断实验 -->
+<section class="slide">
+  <div class="anim slide-label">Diagnosis / 逐项诊断</div>
+  <h1 class="anim">八个子表，逐项确认默认配置</h1>
+  <div class="anim divider"></div>
+  <div class="figure-box fig-sm">
+    <img src="../assets/paper-imgs/YOLOv12_Attention-Centric/table5.png" alt="Table 5：八组诊断实验 (a)-(h)">
+  </div>
+  <p class="anim figure-caption"><span class="cap-em">Table 5.</span> 诊断实验 (a)–(h)；除特别说明外均为 YOLOv12-N、600 epochs 从头训练。</p>
+  <div class="anim card-grid cols-3" style="margin-top:12px;">
+    <div class="card"><p class="body-text"><span class="em">实现：</span>Conv+BN 最优（40.6 AP / 1.64 ms）；Linear+LN 为 40.5 / 1.68 ms。</p></div>
+    <div class="card"><p class="body-text"><span class="em">结构：</span>plain ViT 仅 38.3 AP；600 epochs 最佳，800 epochs 反降至 40.4。</p></div>
+    <div class="card"><p class="body-text"><span class="em">细节：</span>7×7 卷积核平衡速度与精度；无位置编码最好；MLP 1.2 让 L 达 53.8。</p></div>
+  </div>
+</section>
+
+<!-- 16 跨 GPU 速度 -->
+<section class="slide">
+  <div class="anim slide-label">Speed / 推理速度</div>
+  <h1 class="anim">跨 GPU：与 v10/v11 持平，快于 v9</h1>
+  <div class="anim divider"></div>
+  <div class="split">
+    <div class="split-text">
+      <ul class="bullet-list">
+        <li><span class="em">RTX 3080：</span>YOLOv12-N 为 1.7 / 1.1 ms（FP32 / FP16），YOLOv9-N 为 2.4 / 1.5 ms。</li>
+        <li><span class="em">A5000 / A6000：</span>YOLOv12-N 分别为 1.7 / 1.0 与 1.7 / 1.1 ms，优势保持一致。</li>
+        <li><span class="em">整体：</span>与 YOLOv10、YOLOv11 基本持平，显著快于 YOLOv9。</li>
+        <li><span class="em">口径：</span>所有对比都在同一硬件、同一代码库下测得。</li>
+      </ul>
+    </div>
+    <div class="figure-box fig-tall">
+      <img src="../assets/paper-imgs/YOLOv12_Attention-Centric/table4.png" alt="Table 4：多 GPU 推理速度对比">
+    </div>
+  </div>
+  <p class="anim figure-caption"><span class="cap-em">Table 4.</span> 三种 GPU、FP32 / FP16 精度下的推理速度对比（ms）。</p>
+</section>
+
+<!-- 17 细分精度 -->
+<section class="slide">
+  <div class="anim slide-label">Details / 细分指标</div>
+  <h1 class="anim">小目标提升最明显</h1>
+  <div class="anim divider"></div>
+  <div class="figure-box fig-md">
+    <img src="../assets/paper-imgs/YOLOv12_Attention-Centric/table6.png" alt="Table 6：YOLOv12 在 COCO 上的细分 AP">
+  </div>
+  <p class="anim figure-caption"><span class="cap-em">Table 6.</span> YOLOv12 在 COCO 上的详细性能（AP50:95、AP50、AP75 与 small/medium/large）。</p>
+  <div class="anim card-grid cols-3" style="margin-top:14px;">
+    <div class="card"><p class="body-text"><span class="em">X 尺度：</span>55.2 AP、72.0 AP50、60.2 AP75。</p></div>
+    <div class="card"><p class="body-text"><span class="em">分尺度：</span>小 / 中 / 大目标 AP 为 39.6 / 60.7 / 70.9。</p></div>
+    <div class="card"><p class="body-text"><span class="em">趋势：</span>N → X 的小目标 AP 从 20.2 提升到 39.6。</p></div>
+  </div>
+</section>
+
+<!-- 18 热力图 -->
+<section class="slide">
+  <div class="anim slide-label">Visualization / 可视化</div>
+  <h1 class="anim">热力图：前景更聚焦，轮廓更清楚</h1>
+  <div class="anim divider"></div>
+  <div class="figure-box fig-lg">
+    <img src="../assets/paper-imgs/YOLOv12_Attention-Centric/fig5.png" alt="Figure 5：YOLOv10、YOLOv11 与 YOLOv12 热力图对比">
+  </div>
+  <p class="anim figure-caption"><span class="cap-em">Figure 5.</span> YOLOv10、YOLOv11 与 YOLOv12 热力图对比；均取 X 尺度模型的 backbone 第三阶段特征。</p>
+  <div class="anim highlight-bar" style="margin-top:12px;">
+    <p>论文认为，区域注意力的感受野大于卷积网络，更擅长捕捉整体上下文，因此前景激活更精确。</p>
+  </div>
+</section>
+
+<!-- 19 结论与局限 -->
+<section class="slide">
+  <div class="anim slide-label">Conclusion / 结论与局限</div>
+  <h1 class="anim">注意力能用，但前提是先解决效率</h1>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <h3>结论</h3>
+      <p class="body-text">区域注意力降低复杂度，R-ELAN 稳定训练，结构精简补齐实时性；三者组合后，YOLOv12 在 COCO 上取得领先的时延-精度权衡。</p>
+    </div>
+    <div class="card">
+      <h3>局限</h3>
+      <p class="body-text">论文明确指出：YOLOv12 依赖 FlashAttention，仅支持 Turing、Ampere、Ada Lovelace、Hopper 等 NVIDIA GPU。</p>
+    </div>
+    <div class="card">
+      <h3>边界</h3>
+      <p class="body-text">论文的实测与支持列表均限定在 NVIDIA GPU，未给出移动端或非 NVIDIA 硬件的结果；Table 3 与 Figure 4 的 CPU 数据来自 i7-10700K。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p><span class="accent-word">不是把 CNN 换成注意力，而是先把注意力的代价降下来</span>——这是 YOLOv12 最值得带走的一条工程经验。</p>
+  </div>
+</section>
+
+<!-- 20 结束 -->
+<section class="slide">
+  <div class="end-card">
+    <div class="anim slide-label" style="margin-bottom:18px;">THANKS FOR WATCHING</div>
+    <h2 class="anim">谢谢</h2>
+    <p class="anim body-text" style="margin-top:10px;">YOLOv12: Attention-Centric Real-Time Object Detectors</p>
+    <p class="anim small-text" style="margin-top:8px;">arXiv:2502.12524v1 · 18 Feb 2025 · Technical Report</p>
+    <p class="anim small-text" style="margin-top:20px;">文中图表均取自原论文，未做重绘；数据与结论以原文为准。</p>
+  </div>
+</section>
+
+</div>
 
 <script>
 (function() {
   const slides = document.querySelectorAll('.slide');
   const total = slides.length;
   let current = 0;
+
   const progress = document.getElementById('progress');
   const dotsWrap = document.getElementById('dots');
   const hint = document.getElementById('hint');
-  for (let i = 0; i < total; i++) { const d = document.createElement('div'); d.className = 'dot' + (i === 0 ? ' active' : ''); d.addEventListener('click', () => goTo(i)); dotsWrap.appendChild(d); }
+
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+  }
   const dots = dotsWrap.querySelectorAll('.dot');
-  function goTo(idx) { if (idx < 0 || idx >= total || idx === current) return; const prev = slides[current]; const next = slides[idx]; prev.classList.remove('active'); prev.classList.add('exit-up'); requestAnimationFrame(() => { next.classList.remove('exit-up'); next.classList.add('active'); }); setTimeout(() => { prev.classList.remove('exit-up'); }, 700); dots[current].classList.remove('active'); current = idx; dots[current].classList.add('active'); progress.style.width = ((current + 1) / total * 100) + '%'; }
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= total || idx === current) return;
+    const prev = slides[current];
+    const next = slides[idx];
+
+    prev.classList.remove('active');
+    prev.classList.add('exit-up');
+
+    requestAnimationFrame(() => {
+      next.classList.remove('exit-up');
+      next.classList.add('active');
+    });
+
+    setTimeout(() => {
+      prev.classList.remove('exit-up');
+    }, 700);
+
+    dots[current].classList.remove('active');
+    current = idx;
+    dots[current].classList.add('active');
+    progress.style.width = ((current + 1) / total * 100) + '%';
+  }
+
   function next() { goTo(current + 1); }
   function prev() { goTo(current - 1); }
+
   slides[0].classList.add('active');
   progress.style.width = (1 / total * 100) + '%';
-  document.addEventListener('keydown', (e) => { if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); } if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); } if (e.key === 'Home') { e.preventDefault(); goTo(0); } if (e.key === 'End') { e.preventDefault(); goTo(total - 1); } });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+
   let touchX = 0, touchY = 0;
-  document.addEventListener('touchstart', (e) => { touchX = e.changedTouches[0].screenX; touchY = e.changedTouches[0].screenY; }, { passive: true });
-  document.addEventListener('touchend', (e) => { const dx = e.changedTouches[0].screenX - touchX; const dy = e.changedTouches[0].screenY - touchY; if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); } }, { passive: true });
-  document.addEventListener('click', (e) => { if (e.target.closest('.dot')) return; next(); });
+  document.addEventListener('touchstart', (e) => {
+    touchX = e.changedTouches[0].screenX;
+    touchY = e.changedTouches[0].screenY;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].screenX - touchX;
+    const dy = e.changedTouches[0].screenY - touchY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      dx < 0 ? next() : prev();
+    }
+  }, { passive: true });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.dot')) return;
+    next();
+  });
+
   function hideHint() { hint.classList.add('hidden'); }
   document.addEventListener('keydown', hideHint, { once: true });
   document.addEventListener('click', hideHint, { once: true });

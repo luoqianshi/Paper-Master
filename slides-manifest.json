@@ -348,7 +348,7 @@
     {
       "title": "YOLO-Master: MOE-Accelerated with Specialized Transformers for Enhanced Real-time Detection",
       "file": "paper-slides/YOLO-Master.html",
-      "description": "arXiv 2025 论文演示，聚焦首个面向实时目标检测的混合专家条件计算框架：ES-MoE 多尺度专家与动态路由、软/硬 Top-K 分阶段路由、负载均衡监督，COCO 42.4% AP @ 1.62ms 五基准 SOTA。",
+      "description": "arXiv:2512.23273v1（2025-12-29）论文演示，聚焦首个面向实时目标检测的专家混合条件计算框架：ES-MoE 多尺度深度可分离专家与轻量动态路由、软/硬 Top-K 分阶段路由、负载均衡监督，在 COCO、VOC、VisDrone、KITTI、SKU-110K 五个基准上取得同尺度领先，COCO 42.4% AP、1.62 ms。",
       "kind": "arXiv 预印本",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/YOLO-Master.png"
