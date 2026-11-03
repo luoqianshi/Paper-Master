@@ -488,6 +488,14 @@
       "kind": "期刊",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/GrapickNet.png"
+    },
+    {
+      "title": "CityGrounding: Graph-structured relation modeling for urban-scale 3D visual grounding",
+      "file": "paper-slides/CityGrounding.html",
+      "description": "Neurocomputing 709 (2027) 135289；面向城市级 3D 视觉定位，提出 CityRel-Net（GSREM 依存图关系建模 + NGRE 邻域关系增强）并构建 CityGrounding 基准；CityRefer Overall 27.05%→58.29%（+31.24）。",
+      "kind": "期刊",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/CityGrounding.png"
     }
   ]
 }

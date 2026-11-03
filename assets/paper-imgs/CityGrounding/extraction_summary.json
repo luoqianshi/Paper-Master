@@ -1,0 +1,98 @@
+{
+  "pdf_path": "D:\\Data\\LQS_Skill\\Accumulate-PPTs\\pdf-papers\\Friends and Fun\\2026 CityGrounding_Graph-structured relation modeling for urban-scale 3D visual grounding.pdf",
+  "output_dir": "d:\\Data\\LQS_Skill\\Accumulate-PPTs\\assets\\paper-imgs\\CityGrounding",
+  "total_pages": 11,
+  "total_items": 14,
+  "total_figures": 7,
+  "total_tables": 7,
+  "total_algorithms": 0,
+  "total_unknowns": 0,
+  "rendered_pages": 0,
+  "note": "Figure/Table 均按 image bbox 与文本块坐标手工重裁，300 dpi，RGB PNG。",
+  "items": [
+    {
+      "label": "Figure 1",
+      "filename": "fig1_dataset_compare.png",
+      "width": 1678,
+      "height": 636
+    },
+    {
+      "label": "Figure 2",
+      "filename": "fig2_pipeline.png",
+      "width": 2145,
+      "height": 1047
+    },
+    {
+      "label": "Figure 3",
+      "filename": "fig3_scene.png",
+      "width": 2145,
+      "height": 944
+    },
+    {
+      "label": "Figure 4",
+      "filename": "fig4_framework.png",
+      "width": 1961,
+      "height": 1123
+    },
+    {
+      "label": "Figure 5",
+      "filename": "fig5_qual_citygrounding.png",
+      "width": 1596,
+      "height": 660
+    },
+    {
+      "label": "Figure 6",
+      "filename": "fig6_qual_cityrefer.png",
+      "width": 1583,
+      "height": 651
+    },
+    {
+      "label": "Figure 7",
+      "filename": "fig7_qual_cityanchor.png",
+      "width": 1586,
+      "height": 1002
+    },
+    {
+      "label": "Table 1",
+      "filename": "tab1_datasets.png",
+      "width": 1084,
+      "height": 451
+    },
+    {
+      "label": "Table 2",
+      "filename": "tab2_prompts.png",
+      "width": 1084,
+      "height": 1289
+    },
+    {
+      "label": "Table 3",
+      "filename": "tab3_cityrefer.png",
+      "width": 1093,
+      "height": 447
+    },
+    {
+      "label": "Table 4",
+      "filename": "tab4_citygrounding.png",
+      "width": 1080,
+      "height": 297
+    },
+    {
+      "label": "Table 5",
+      "filename": "tab5_cityanchor.png",
+      "width": 1080,
+      "height": 330
+    },
+    {
+      "label": "Table 6",
+      "filename": "tab6_ablation.png",
+      "width": 817,
+      "height": 230
+    },
+    {
+      "label": "Table 7",
+      "filename": "tab7_neighbor_k.png",
+      "width": 1080,
+      "height": 201
+    }
+  ]
+}

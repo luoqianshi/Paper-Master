@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="../assets/favicon.png" type="image/png" />
+<title>CityGrounding: Graph-structured relation modeling for urban-scale 3D visual grounding</title>
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #ffffff;
+  --text: #000000;
+  --title: #3966A2;
+  --accent: #132843;
+  --dim: #6191D3;
+  --card-bg: #f7f9fc;
+  --border: #e2e8f0;
+}
+
+html { font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', 'Noto Sans SC', -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  height: 100vh;
+  cursor: default;
+  user-select: none;
+}
+
+/* ═══════════ SLIDE ENGINE ═══════════ */
+.deck { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4.5vh 6.5vw;
+  background: var(--bg);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(60px) scale(0.97);
+  transition: opacity 0.6s cubic-bezier(.4,0,.2,1),
+              transform 0.6s cubic-bezier(.4,0,.2,1),
+              visibility 0.6s;
+  will-change: opacity, transform;
+}
+.slide.active { opacity: 1 !important; visibility: visible !important; transform: translateY(0) scale(1) !important; }
+.slide.exit-up { opacity: 0; visibility: hidden; transform: translateY(-60px) scale(0.97); }
+
+/* ═══════════ CHROME ═══════════ */
+.progress {
+  position: fixed; top: 0; left: 0; height: 2px;
+  background: linear-gradient(90deg, var(--title), var(--accent));
+  z-index: 100; transition: width 0.5s cubic-bezier(.4,0,.2,1);
+  border-radius: 0 1px 1px 0;
+}
+.dots {
+  position: fixed; right: 20px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 7px; z-index: 100;
+}
+.dot {
+  width: 6px; height: 6px; border-radius: 50%; background: #ccc;
+  cursor: pointer; transition: background 0.3s, transform 0.3s;
+}
+.dot.active { background: var(--title); transform: scale(1.6); }
+.dot:hover { background: #999; }
+.hint {
+  position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%);
+  font-size: 12px; color: #aaa; z-index: 90; opacity: 1;
+  transition: opacity 1s; pointer-events: none;
+}
+.hint.hidden { opacity: 0; }
+
+/* ═══════════ TYPOGRAPHY ═══════════ */
+.slide-label {
+  font-size: clamp(11px, 1.1vw, 14px); font-weight: 600;
+  letter-spacing: 3px; text-transform: uppercase;
+  color: var(--dim); margin-bottom: 10px;
+}
+h1 {
+  font-size: clamp(28px, 3.6vw, 46px); font-weight: 800;
+  line-height: 1.18; color: var(--text); letter-spacing: -1px;
+}
+h1 .highlight { color: var(--title); }
+h1 .accent { color: var(--accent); }
+h2 {
+  font-size: clamp(23px, 2.7vw, 36px); font-weight: 700;
+  line-height: 1.25; color: var(--title); letter-spacing: -0.8px;
+}
+h3 { font-size: clamp(15px, 1.5vw, 21px); font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.subtitle {
+  font-size: clamp(14px, 1.4vw, 19px); font-weight: 400;
+  color: #555; line-height: 1.6; margin-top: 14px;
+}
+.body-text { font-size: clamp(14px, 1.25vw, 17px); font-weight: 400; color: #333; line-height: 1.62; }
+.small-text { font-size: clamp(11px, 0.95vw, 13px); color: #777; line-height: 1.55; }
+
+.divider { width: 48px; height: 3px; background: var(--title); border-radius: 2px; margin: 10px 0 16px; flex: none; }
+.divider-accent { background: var(--accent); }
+
+/* ═══════════ BADGE / TAGS ═══════════ */
+.badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(57,102,162,0.07);
+  border: 1px solid rgba(57,102,162,0.22);
+  border-radius: 100px; padding: 7px 15px;
+  font-size: 0.72rem; font-weight: 600; color: var(--title);
+  letter-spacing: 0.08em; margin-bottom: 26px;
+  text-transform: uppercase; width: fit-content;
+}
+.badge .dot-yellow { width: 7px; height: 7px; background: var(--title); border-radius: 50%; }
+.badge .dot-gray { width: 4px; height: 4px; background: rgba(0,0,0,0.18); border-radius: 50%; }
+
+.cover-meta { margin-top: 22px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.cover-tag {
+  font-size: clamp(10px, 0.85vw, 12px); font-weight: 500; color: var(--dim);
+  background: var(--card-bg); border: 1px solid var(--border);
+  padding: 5px 13px; border-radius: 100px;
+}
+
+/* ═══════════ CARDS ═══════════ */
+.card-grid { display: grid; gap: 14px; margin-top: 16px; }
+.card-grid.cols-2 { grid-template-columns: 1fr 1fr; }
+.card-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.card {
+  background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 12px; padding: clamp(13px, 1.5vw, 20px);
+  display: flex; flex-direction: column;
+}
+.card .card-num {
+  font-size: clamp(20px, 2vw, 28px); font-weight: 800;
+  color: var(--title); opacity: 0.35; line-height: 1; margin-bottom: 6px;
+}
+.card h3 { font-size: clamp(13px, 1.2vw, 16px); margin-bottom: 5px; }
+.card .body-text { font-size: clamp(11.5px, 1vw, 14px); }
+
+/* ═══════════ LAYOUT ═══════════ */
+.two-col { display: grid; grid-template-columns: 0.94fr 1.06fr; gap: 2.4vw; align-items: center; }
+.two-col.wide-right { grid-template-columns: 0.8fr 1.2fr; }
+.stack { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+
+/* ═══════════ BULLETS ═══════════ */
+.bullet-list { list-style: none; padding: 0; margin-top: 6px; }
+.bullet-list li {
+  font-size: clamp(12px, 1.08vw, 15px); color: #333; line-height: 1.62;
+  padding: 3px 0 3px 19px; position: relative;
+}
+.bullet-list li::before {
+  content: ''; position: absolute; left: 0; top: 10px;
+  width: 6px; height: 6px; border-radius: 50%; background: var(--title);
+}
+.bullet-list li .em { color: var(--accent); font-weight: 600; }
+.bullet-list.compact li { font-size: clamp(11px, 0.98vw, 13.5px); line-height: 1.55; padding: 2px 0 2px 18px; }
+
+/* ═══════════ COMPONENTS ═══════════ */
+.highlight-bar {
+  background: linear-gradient(135deg, rgba(57,102,162,0.10), rgba(57,102,162,0.03));
+  border: 1px solid rgba(57,102,162,0.22);
+  border-radius: 12px; padding: clamp(11px, 1.3vw, 16px) clamp(14px, 1.7vw, 22px);
+  margin-top: 10px;
+}
+.highlight-bar p { font-size: clamp(12px, 1.05vw, 15px); color: var(--text); line-height: 1.55; }
+.highlight-bar .accent-word { color: var(--accent); font-weight: 600; }
+
+.quote-block {
+  border-left: 3px solid var(--accent);
+  background: rgba(19,40,67,0.03);
+  border-radius: 0 10px 10px 0;
+  padding: 10px 16px; margin: 6px 0;
+}
+.quote-block p {
+  font-size: clamp(11px, 1vw, 13.5px); font-weight: 500;
+  color: var(--accent); line-height: 1.5; font-style: italic;
+}
+
+.steps { display: flex; gap: 10px; margin-top: 14px; align-items: stretch; }
+.step {
+  flex: 1; background: var(--card-bg); border: 1px solid var(--border);
+  border-radius: 12px; padding: clamp(11px, 1.2vw, 16px);
+  display: flex; flex-direction: column;
+}
+.step .step-num {
+  font-size: clamp(9px, 0.78vw, 11px); font-weight: 700; color: var(--title);
+  letter-spacing: 1.5px; margin-bottom: 5px;
+}
+.step h3 { font-size: clamp(12px, 1.1vw, 14.5px); margin-bottom: 4px; }
+.step p { font-size: clamp(10px, 0.88vw, 12px); color: #666; line-height: 1.5; }
+
+.note {
+  border-left: 2px solid var(--dim);
+  padding: 5px 0 5px 10px; margin-top: 8px;
+  font-size: clamp(10px, 0.88vw, 12px); color: #666; line-height: 1.5;
+}
+.note b { color: var(--accent); font-weight: 600; }
+
+/* ═══════════ METRICS ═══════════ */
+.metric-row { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+.metric { flex: 1; min-width: 105px; border-top: 2px solid var(--title); padding-top: 7px; }
+.metric .m-val { font-size: clamp(19px, 1.9vw, 27px); font-weight: 800; color: var(--title); line-height: 1.1; letter-spacing: -0.5px; }
+.metric .m-lab { font-size: clamp(10px, 0.82vw, 12px); color: #777; margin-top: 4px; line-height: 1.4; }
+
+/* ═══════════ FIGURES ═══════════ */
+.figure-box { display: flex; justify-content: center; align-items: center; }
+.figure-box img {
+  max-width: 100%; max-height: 50vh; border-radius: 6px;
+  border: 1px solid var(--border); background: #fff;
+}
+.figure-caption {
+  text-align: center; font-size: clamp(9px, 0.76vw, 11px);
+  color: #8a97a8; margin-top: 6px; line-height: 1.4;
+}
+.figure-caption b { color: var(--title); font-weight: 600; }
+
+.eq {
+  font-family: 'Cambria Math', 'Times New Roman', serif;
+  font-size: clamp(11px, 1vw, 14px); color: var(--accent);
+  background: #f5f8fc; border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 12px; margin-top: 6px; text-align: center; letter-spacing: 0.2px;
+}
+
+/* ═══════════ ENDCARD ═══════════ */
+.end-card { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.end-card h2 { font-size: clamp(26px, 3vw, 42px); margin-bottom: 10px; }
+
+/* ═══════════ ANIMATIONS ═══════════ */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.slide.active .anim { animation: fadeUp 0.5s ease both; }
+.slide.active .anim:nth-child(1) { animation-delay: 0.08s; }
+.slide.active .anim:nth-child(2) { animation-delay: 0.16s; }
+.slide.active .anim:nth-child(3) { animation-delay: 0.24s; }
+.slide.active .anim:nth-child(4) { animation-delay: 0.32s; }
+.slide.active .anim:nth-child(5) { animation-delay: 0.40s; }
+.slide.active .anim:nth-child(6) { animation-delay: 0.48s; }
+
+/* ═══════════ RESPONSIVE ═══════════ */
+@media (max-width: 900px) {
+  .slide { padding: 4vh 5vw; }
+  .card-grid.cols-2, .card-grid.cols-3 { grid-template-columns: 1fr; }
+  .two-col, .two-col.wide-right { grid-template-columns: 1fr; }
+  .steps { flex-direction: column; }
+  .dots { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="dots" id="dots"></div>
+<div class="hint" id="hint">← → 或点击翻页</div>
+
+<div class="deck" id="deck">
+
+<!-- ═══════════ 01 封面 ═══════════ -->
+<section class="slide">
+  <div class="anim badge">
+    <span class="dot-yellow"></span>
+    NEUROCOMPUTING 709 (2027) 135289
+    <span class="dot-gray"></span>
+    2026
+  </div>
+  <div class="anim" style="font-size: clamp(1.75rem, 3.3vw, 3rem); font-weight: 900; line-height: 1.22; letter-spacing: -1px;">
+    <span class="highlight">CityGrounding:</span><br>
+    <span style="color: var(--text);">Graph-structured relation modeling</span><br>
+    <span class="accent">for urban-scale 3D visual grounding</span>
+  </div>
+  <p class="anim subtitle" style="max-width: 880px;">
+    面向城市级 3D 视觉定位的图结构关系建模：语言侧用依存图表达句法与空间关系，场景侧用邻域实例补足上下文。
+  </p>
+  <div class="anim cover-meta">
+    <span class="cover-tag">Xiaorong Zhang · Lingfei Chen · Yang Luo · Ting Han</span>
+    <span class="cover-tag">Zilong Huang · Guorong Cai · Yiping Chen · Jinhe Su</span>
+  </div>
+  <div class="anim cover-meta" style="margin-top: 10px;">
+    <span class="cover-tag">集美大学 计算机工程学院</span>
+    <span class="cover-tag">中山大学 测绘科学与技术学院</span>
+    <span class="cover-tag">DOI: 10.1016/j.neucom.2026.135289</span>
+  </div>
+</section>
+
+<!-- ═══════════ 02 摘要 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Abstract</div>
+  <div class="anim"><h2>一页读懂：问题、方法与收益</h2></div>
+  <div class="anim divider"></div>
+  <div class="two-col">
+    <div class="stack">
+      <ul class="bullet-list">
+        <li><span class="em">任务</span>：依据自然语言，在城市级点云中定位目标实例。</li>
+        <li><span class="em">难点</span>：语言关系复杂、同类目标密集且外观同质，室内方法难以直接迁移。</li>
+        <li><span class="em">方案</span>：CityRel-Net = GSREM（语言→语义图）+ NGRE（邻域实例上下文）。</li>
+        <li><span class="em">数据</span>：新建城市基准 CityGrounding，32,901 条描述、11,000 个实例。</li>
+      </ul>
+      <div class="quote-block">
+        <p>“Existing methods largely rely on implicit sequence modeling and isolated instance representations…”</p>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="metric-row" style="margin-top: 0;">
+        <div class="metric">
+          <div class="m-val">58.29%</div>
+          <div class="m-lab">CityRefer Overall<br>27.05% → 58.29%（+31.24）</div>
+        </div>
+        <div class="metric">
+          <div class="m-val">51.68%</div>
+          <div class="m-lab">CityAnchor Overall<br>47.81% → 51.68%（+3.87）</div>
+        </div>
+        <div class="metric">
+          <div class="m-val">69.83%</div>
+          <div class="m-lab">CityGrounding Overall<br>67.90% → 69.83%（+1.93）</div>
+        </div>
+      </div>
+      <div class="highlight-bar">
+        <p>三个城市级基准均取得最优；CityRefer 的提升主要来自 <span class="accent-word">Building（+34.06）</span> 与 <span class="accent-word">Car（+33.68）</span> 这两类最依赖关系理解的目标。</p>
+      </div>
+      <p class="small-text">注：增益数值取自论文摘要与 Table 3–5，均为 Overall Accuracy（%）。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 03 背景 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Background</div>
+  <div class="anim"><h2>从室内走向城市：任务没变，难度变了</h2></div>
+  <div class="anim divider"></div>
+  <div class="two-col wide-right">
+    <div class="stack">
+      <ul class="bullet-list">
+        <li><span class="em">尺度</span>：城市点云覆盖数平方公里，远大于单房间场景。</li>
+        <li><span class="em">密度</span>：同类目标成片分布，外观与几何高度相似。</li>
+        <li><span class="em">语言</span>：查询含多层嵌套空间从句，如 “the bus stop behind the red car near the mall”。</li>
+        <li><span class="em">后果</span>：仅靠隐式序列编码，难以判断“哪一个才是被指代的目标”。</li>
+      </ul>
+      <div class="note">论文指出：室内关系推理方法面对物体布局紧凑、上下文单一的室内有效，但城市的长程空间依赖与视觉同质化使其不足。</div>
+    </div>
+    <div class="stack">
+      <div class="figure-box">
+        <img src="../assets/paper-imgs/CityGrounding/fig1_dataset_compare.png" alt="Fig. 1 数据集对比与三基准性能">
+      </div>
+      <p class="figure-caption"><b>Fig. 1</b> (a) Previous datasets suffer from incomplete point clouds and limited scene coverage. We construct a larger-scale and higher-quality urban visual grounding dataset using UAV-captured city scenes. The right side shows results before and after applying the relation-aware module, where light Orange dashed circles mark the neighbors of the target instance. (b) our method achieves state-of-the-art performance on the CityRefer, CityAnchor, and CityGrounding datasets, where Ref_Acc denotes the proportion of correctly grounded target instances. The dashed lines indicate that the corresponding values are not available.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 04 现有方法不足 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Limitations</div>
+  <div class="anim"><h2>三条现存路线，三个不同的短板</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>CityRefer（NeurIPS 2023）</h3>
+      <p class="body-text">把 InstanceRefer 从室内搬到室外，架构适配有限，语言建模与目标间关系推理仍停留在室内范式。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>CityAnchor（ICLR 2025）</h3>
+      <p class="body-text">两阶段：粗定位 + MLLM 精细匹配。依赖数据质量、人工 ROI 调整与任务特定微调，跨场景可扩展性受限。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>共性缺口</h3>
+      <p class="body-text">文本编码器把语言当作扁平 token 序列，忽略语法结构与空间从句；实例又被当作孤立实体，缺少邻居上下文。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>结果：在城市里“背靠红色小车的公交站”这类表达，模型既 <span class="accent-word">读不懂句法层级</span>，也 <span class="accent-word">看不见周围参照物</span>。</p>
+  </div>
+</section>
+
+<!-- ═══════════ 05 贡献 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Contributions</div>
+  <div class="anim"><h2>本文的四件事</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-2">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>CityRel-Net 框架</h3>
+      <p class="body-text">显式建模跨模态关系结构，替代隐式序列建模与孤立实例推理，面向密集城市场景。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>GSREM</h3>
+      <p class="body-text">Graph-Structured Relation Extraction Module：把描述解析为依存语义图，用边感知注意力建模词间与空间关系。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>NGRE</h3>
+      <p class="body-text">Neighbor-Guided Relation Enhancement：聚合候选实例与关键地标的邻域特征，补足目标周围的几何与语义上下文。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">04</span>
+      <h3>CityGrounding 基准</h3>
+      <p class="body-text">真实、厘米级、高密度的城市点云定位数据：32.9k 描述、11,000 实例、1,110 pts/m²。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>CityRefer、CityAnchor 与 CityGrounding 三个基准上均取得 <span class="accent-word">state-of-the-art</span>，其中 CityRefer Overall 提升 <span class="accent-word">+31.24</span> 个百分点。</p>
+  </div>
+</section>
+
+<!-- ═══════════ 06 数据集概览 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Dataset · Overview</div>
+  <div class="anim"><h2>CityGrounding：两个城市的真实城市底图</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim metric-row" style="margin-top: 0;">
+    <div class="metric"><div class="m-val">25 km²</div><div class="m-lab">源点云覆盖面积（两座城市）</div></div>
+    <div class="metric"><div class="m-val">459</div><div class="m-lab">100 m × 100 m 非重叠区块</div></div>
+    <div class="metric"><div class="m-val">4.59 km²</div><div class="m-lab">区块总地面覆盖面积</div></div>
+    <div class="metric"><div class="m-val">32,901</div><div class="m-lab">自然语言描述</div></div>
+    <div class="metric"><div class="m-val">11,000</div><div class="m-lab">目标物体实例</div></div>
+  </div>
+  <div class="anim figure-box" style="margin-top: 10px;">
+    <img src="../assets/paper-imgs/CityGrounding/fig3_scene.png" alt="Fig. 3 场景级可视化" style="max-height: 40vh;">
+  </div>
+  <p class="anim figure-caption"><b>Fig. 3</b> Scene-level qualitative visualization of our dataset, shown in a representative urban environment.</p>
+</section>
+
+<!-- ═══════════ 07 构建流程 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Dataset · Construction</div>
+  <div class="anim"><h2>两阶段全自动标注：先切实例，再写描述</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim two-col wide-right" style="align-items: flex-start; gap: 2vw;">
+    <div class="stack">
+      <ul class="bullet-list compact">
+        <li><span class="em">分割</span>：STPLS3D 预训练的 SoftGroup 得实例掩码，IoU 过滤 + 人工抽样验证；覆盖建筑、植被、车辆、卡车、灯杆五类。</li>
+        <li><span class="em">场景图</span>：计算实例间方位（前 / 左 / 右 / 后），写入 <span class="em">context_info</span> 供提示词使用。</li>
+        <li><span class="em">生成</span>：Doubao-1.5-Vision-Pro 依据俯视图与场景图，每实例生成 4 条 20–30 词描述（Table 2）。</li>
+        <li><span class="em">清洗</span>：自动去除模糊、低置信、缺框或无关输出，最终存为 ScanRefer 风格 JSON。</li>
+      </ul>
+      <div class="note">作者称这是首个厘米级、真实、由 MLLM 全自动标注的城市级定位数据集；仍以 IoU 过滤与人工抽样校验控制标注噪声。</div>
+    </div>
+    <div class="stack">
+      <div class="figure-box">
+        <img src="../assets/paper-imgs/CityGrounding/fig2_pipeline.png" alt="Fig. 2 数据构建流程">
+      </div>
+      <p class="figure-caption"><b>Fig. 2</b> Overview of the CityGrounding data construction process. The left side shows our spatial partitioning strategy. We perform instance segmentation on raw point clouds, compute inter-instance angular relations to build a scene graph, and use an MLLM to generate natural language descriptions from instance top-down views.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 08 数据集对比 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Dataset · Comparison</div>
+  <div class="anim"><h2>与现有基准相比：点密度与实例密度最高</h2></div>
+  <div class="anim divider"></div>
+  <div class="two-col wide-right" style="align-items: center;">
+    <div class="stack">
+      <ul class="bullet-list compact">
+        <li><span class="em">1,110 pts/m²</span>：Table 1 中最高，CityRefer 为 474，KITTI360Pose 为 73。</li>
+        <li><span class="em">32.9k 描述 / 11,000 实例</span>：单位面积实例更密，更适合评估密集场景定位。</li>
+        <li><span class="em">平均描述长度 14.5 词</span>：比 CityRefer（26.3）更短，更接近口语化城市指代。</li>
+        <li><span class="em">五类目标</span>：建筑、植被、车辆、卡车、灯杆，覆盖大小尺度。</li>
+      </ul>
+      <div class="note"><b>口径说明</b>：CityQA（450k）与 NuScenes-QA（460k）的描述总量高于本数据集，但其任务与场景口径不同；论文的比较重点是城市定位基准的点云密度与实例密度。</div>
+    </div>
+    <div class="stack">
+      <div class="figure-box">
+        <img src="../assets/paper-imgs/CityGrounding/tab1_datasets.png" alt="Table 1 数据集对比" style="max-height: 46vh;">
+      </div>
+      <p class="figure-caption"><b>Table 1</b> Comparison of existing 3D visual grounding datasets. L<sub>desc</sub> indicates the average length of natural language descriptions, and points/m² represents the number of points per square meter in the scene.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 09 方法总览 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Method · Overview</div>
+  <div class="anim"><h2>CityRel-Net：两条关系分支，一次打分</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim figure-box">
+    <img src="../assets/paper-imgs/CityGrounding/fig4_framework.png" alt="Fig. 4 框架总览" style="max-height: 39vh;">
+  </div>
+  <p class="anim figure-caption"><b>Fig. 4</b> Overview of the proposed framework. The model first extracts text embeddings using the Graph-Structured Relation Extraction Module. For the point cloud, candidate objects, neighboring objects, and landmarks are encoded by a SparseConv backbone. Landmark features are further enriched with their textual names. The fused features from text, candidate, neighboring, and landmark branches are processed by a BiGRU and softmax layer to predict the target object corresponding to the input text query.</p>
+  <div class="anim steps" style="margin-top: 8px;">
+    <div class="step"><span class="step-num">TEXT</span><h3>GSREM</h3><p>依存句法图 + 边感知注意力 → relation-aware 文本特征</p></div>
+    <div class="step"><span class="step-num">POINT CLOUD</span><h3>NGRE</h3><p>候选 / 邻居 / 地标三支 SparseConv，地标再叠加文本名称</p></div>
+    <div class="step"><span class="step-num">FUSION</span><h3>BiGRU + Softmax</h3><p>多模态融合后对候选实例打分，取最高分作为定位结果</p></div>
+  </div>
+</section>
+
+<!-- ═══════════ 10 GSREM ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Method · GSREM</div>
+  <div class="anim"><h2>把句子解析成图，而不是压平成 token 串</h2></div>
+  <div class="anim divider"></div>
+  <div class="two-col">
+    <div class="stack">
+      <ul class="bullet-list">
+        <li><span class="em">显式句法先验</span>：用 Stanford CoreNLP 做依存分析，词为节点、依存关系为有向边，保留多层嵌套的空间从句结构。</li>
+        <li><span class="em">边嵌入</span>：每种依存关系分配独立 ID，经线性投影得到初始边表示 <i>ê</i><sub>ij</sub>；节点表示取文本特征 <i>ĥ</i><sub>i</sub>。</li>
+        <li><span class="em">边感知注意力</span>：边嵌入直接加到注意力 logits 上，只在有效依存路径上传播信息。</li>
+        <li><span class="em">双路文本</span>：BERT + 线性层 + BiGRU 得 W<sub>B</sub>，与图 Transformer 的 W<sub>D</sub> 融合为 W<sub>F</sub>。</li>
+        <li><span class="em">改造 SWA</span>：去掉原版的显式 padding mask，改为 edge-aware 的跨模态聚合，保留残差、LayerNorm 与 dropout。</li>
+      </ul>
+    </div>
+    <div class="stack">
+      <div class="eq">α<sub>ij</sub> = softmax<sub>j</sub> ( (ĥ<sub>i</sub>Q)(ĥ<sub>j</sub>K)<sup>T</sup> / √d + ê<sub>ij</sub>E )</div>
+      <div class="eq">W<sub>D</sub> = Σ<sub>j∈N(i)</sub> α<sub>ij</sub> (ĥ<sub>j</sub>V)</div>
+      <div class="eq">A = Softmax( QK<sup>T</sup>/√d + E )，F<sub>D</sub> = LayerNorm( Q + Dropout(AV) )</div>
+      <div class="highlight-bar" style="margin-top: 4px;">
+        <p>要点：句法结构不是学出来的软约束，而是 <span class="accent-word">确定性的结构先验</span>；注意力只能沿依存边流动，从而抑制扁平编码带来的结构歧义。</p>
+      </div>
+      <p class="small-text">式 (5)–(9)，其中 E 为可选 mask 或边嵌入；Q 为候选实例特征，K/V 为文本特征。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 11 NGRE ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Method · NGRE</div>
+  <div class="anim"><h2>从“孤立实例”到“以邻居为锚的局部参考系”</div></div>
+  <div class="anim divider"></div>
+  <div class="two-col">
+    <div class="stack">
+      <ul class="bullet-list">
+        <li><span class="em">邻居选取</span>：对每个候选 o<sub>b</sub>，取其 k 个最近语义邻居 N<sub>K</sub>(o<sub>b</sub>)，包含候选实例与关键地标；k 经验取 5。</li>
+        <li><span class="em">逐邻居编码</span>：邻居点云体素化为稀疏张量，经 SparseConv 与池化得 F̂<sub>pc</sub>、F̂<sub>lm</sub> ∈ ℝ<sup>B×K×d</sup>。</li>
+        <li><span class="em">邻域聚合</span>：F<sub>nbr</sub> = Fuse([F̂<sub>pc</sub>, F̂<sub>lm</sub>])，Fuse 为均值池化 + 可学习变换。</li>
+        <li><span class="em">上下文融合</span>：F̃<sub>geo</sub> = FuseContext([F<sub>geo</sub>, F<sub>nbr</sub>])，把邻域关系并入目标自身的几何特征。</li>
+      </ul>
+      <div class="note">设计动机：城市里同类目标成片出现，孤立编码无法区分；邻居提供“旁边是谁、在哪一侧”的判别线索。</div>
+    </div>
+    <div class="stack">
+      <div class="eq">F̂<sub>pc</sub> = Pool( SparseConv( S<sup>pc</sup><sub>b,k</sub> ) ) &nbsp;&nbsp;·&nbsp;&nbsp; F̂<sub>lm</sub> = Pool( SparseConv( S<sup>lm</sup><sub>b,k</sub> ) )</div>
+      <div class="eq">F<sub>nbr</sub> = Fuse([F̂<sub>pc</sub>, F̂<sub>lm</sub>]) ∈ ℝ<sup>B×d</sup></div>
+      <div class="eq">F̃<sub>geo</sub> = FuseContext([F<sub>geo</sub>, F<sub>nbr</sub>])</div>
+      <div class="highlight-bar" style="margin-top: 4px;">
+        <p>与 GSREM 互补：GSREM 约束 <span class="accent-word">语言内部</span>的关系，NGRE 补足 <span class="accent-word">场景之中</span>的关系；二者共同支撑关系感知定位。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 12 融合与损失 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Method · Fusion &amp; Objective</div>
+  <div class="anim"><h2>多模态融合与训练目标</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">01</span>
+      <h3>特征融合</h3>
+      <p class="body-text">文本侧 W<sub>F</sub> 与视觉侧 F̃<sub>geo</sub> 融合为统一的多模态表示，再经 BiGRU 建模序列上下文。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">02</span>
+      <h3>候选打分</h3>
+      <p class="body-text">softmax 层对场景内候选实例输出 grounding score，取最高分实例作为最终定位结果。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">03</span>
+      <h3>Reference Loss</h3>
+      <p class="body-text">对每个场景的候选分数与真值标签计算 Softmax Ranking Loss，按 batch 求平均。</p>
+    </div>
+  </div>
+  <div class="anim eq" style="margin-top: 16px;">L<sub>ref</sub> = (1/B) Σ<sub>i=1..B</sub> SoftmaxRankingLoss( s<sub>i</sub>, y<sub>i</sub> )&nbsp;&nbsp;&nbsp;<small>式 (10)</small></div>
+  <div class="anim highlight-bar">
+    <p>评估口径：预测框与真值框的 <span class="accent-word">IoU 阈值 0.25</span>，所有实验一致；论文仅给出这一项 Reference Loss 作为训练目标。</p>
+  </div>
+</section>
+
+<!-- ═══════════ 13 实验设置 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Experiments · Setup</div>
+  <div class="anim"><h2>三个基准、统一配置</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">CityRefer</span>
+      <h3>6 km² · 35k 描述</h3>
+      <p class="body-text">SensatUrban 点云 + 语言标注，含 5k 地标；四类：Building、Car、Ground、Parking。测试集不可用，报告验证集结果。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">CityAnchor</span>
+      <h3>25 场景 · 1,448 对</h3>
+      <p class="body-text">STPLS3D 城市场景，九类目标。验证时合并 NO（新物体）与 ND（新描述）子集。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">CityGrounding</span>
+      <h3>459 场景 · 8:2</h3>
+      <p class="body-text">367 场景训练 / 92 场景验证，按场景划分，同一场景的描述与目标不跨集，避免数据泄漏。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>实现：PyTorch；Adam，学习率 <span class="accent-word">1×10⁻⁴</span>，weight decay <span class="accent-word">1×10⁻⁵</span>；指标为 IoU 0.25 下的 grounding accuracy。</p>
+  </div>
+</section>
+
+<!-- ═══════════ 14 CityRefer 结果 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Results · CityRefer</div>
+  <div class="anim"><h2>CityRefer：27.05% → 58.29%，翻了一倍多</h2></div>
+  <div class="anim divider"></div>
+  <div class="two-col wide-right" style="align-items: center;">
+    <div class="stack">
+      <div class="metric-row" style="margin-top: 0;">
+        <div class="metric"><div class="m-val">+31.24</div><div class="m-lab">Overall 绝对提升（27.05 → 58.29）</div></div>
+        <div class="metric"><div class="m-val">+34.06</div><div class="m-lab">Building（30.79 → 64.85）</div></div>
+        <div class="metric"><div class="m-val">+33.68</div><div class="m-lab">Car（17.13 → 50.81）</div></div>
+      </div>
+      <ul class="bullet-list compact">
+        <li><span class="em">Parking 90.08</span>：本表最高类别，接近人类 94.50 的上限。</li>
+        <li><span class="em">Human 95.00</span>：人工标注者上限，仍有约 36 个点差距。</li>
+        <li><span class="em">CityAnchor 50.69</span>：此前该表最强方法，仍低于本文 58.29。</li>
+      </ul>
+      <div class="note"><b>表注口径</b>：3DVG-Transformer、EDA、CityAnchor 的 CityRefer 数值取自 CityAnchor 论文（改版数据集），非本文统一复现；InstanceRefer* 为作者复现结果。</div>
+    </div>
+    <div class="stack">
+      <div class="figure-box">
+        <img src="../assets/paper-imgs/CityGrounding/tab3_cityrefer.png" alt="Table 3 CityRefer 结果" style="max-height: 46vh;">
+      </div>
+      <p class="figure-caption"><b>Table 3</b> Evaluation (%) of 3D visual grounding methods on CityRefer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 15 CityAnchor 结果 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Results · CityAnchor</div>
+  <div class="anim"><h2>CityAnchor：47.81% → 51.68%，小幅但稳定</h2></div>
+  <div class="anim divider"></div>
+  <div class="two-col wide-right" style="align-items: center;">
+    <div class="stack">
+      <ul class="bullet-list">
+        <li><span class="em">+3.87</span>：Overall 从 47.81 提升到 51.68，超过此前最强 CityAnchor。</li>
+        <li><span class="em">室内方法迁移失效</span>：CityRefer 6.07、InstanceRefer 3.04、3DVG-Transformer 6.25、EDA 7.14，均在个位数。</li>
+        <li><span class="em">开放词表设定</span>：验证集合并 NO + ND，覆盖未见物体与新颖描述两种情况。</li>
+      </ul>
+      <div class="note"><b>表注口径</b>：InstanceRefer、3DVG-Transformer、EDA 与 CityAnchor 的数值按 CityAnchor 论文官方精度报告，不是本文重新训练的结果。</div>
+      <div class="highlight-bar">
+        <p>解读：这一基准的绝对提升小于 CityRefer，但起点已接近 50%，<span class="accent-word">增量空间更窄</span>；同时它更接近“开放词表”真实部署条件。</p>
+      </div>
+    </div>
+    <div class="stack">
+      <div class="figure-box">
+        <img src="../assets/paper-imgs/CityGrounding/tab5_cityanchor.png" alt="Table 5 CityAnchor 结果" style="max-height: 40vh;">
+      </div>
+      <p class="figure-caption"><b>Table 5</b> Performance comparison (%) on the CityAnchor dataset.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 16 CityGrounding 结果 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Results · CityGrounding</div>
+  <div class="anim"><h2>自建基准：所有类别同步提升</h2></div>
+  <div class="anim divider"></div>
+  <div class="two-col wide-right" style="align-items: center;">
+    <div class="stack">
+      <ul class="bullet-list compact">
+        <li><span class="em">Overall 69.83</span>：较 CityRefer 的 67.90 提升 1.93。</li>
+        <li><span class="em">分类别</span>：Building 75.76、High Veg. 61.25、Light pole 74.78、Truck 83.01、Vehicle 70.49，全部高于 CityRefer 对应项。</li>
+        <li><span class="em">室内方法坍塌</span>：InstanceRefer 12.53、3D-SPS 4.34，说明室内范式难以直接搬到城市点云。</li>
+        <li><span class="em">Random 1.95</span>：均匀随机基线重复 50 次的均值。</li>
+      </ul>
+      <div class="note"><b>口径说明</b>：Table 4 只比较 CityRefer 与三种迁移方法，并非完整榜单；所有方法在同一 8:2 场景划分下评估。</div>
+    </div>
+    <div class="stack">
+      <div class="figure-box">
+        <img src="../assets/paper-imgs/CityGrounding/tab4_citygrounding.png" alt="Table 4 CityGrounding 结果" style="max-height: 40vh;">
+      </div>
+      <p class="figure-caption"><b>Table 4</b> Evaluation (%) of urban 3D visual grounding methods on CityGrounding.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 17 模块消融 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Ablation · Modules</div>
+  <div class="anim"><h2>GSREM 与 NGRE：各自有效，且能叠加</h2></div>
+  <div class="anim divider"></div>
+  <div class="two-col wide-right" style="align-items: center;">
+    <div class="stack">
+      <ul class="bullet-list compact">
+        <li><span class="em">(a) 27.05</span>：两模块都去掉，只剩基线，说明隐式建模难以处理城市关系。</li>
+        <li><span class="em">(b) +GSREM → 31.78</span>：+4.73，语言结构带来的收益。</li>
+        <li><span class="em">(c) +NGRE → 50.37</span>：+23.32，邻域上下文是主要增益来源。</li>
+        <li><span class="em">(d) 两者合并 → 58.29</span>：比单用 NGRE 再 +7.92，两模块互补。</li>
+      </ul>
+      <div class="note"><b>口径说明</b>：Table 6 仅报告 Overall 精度，未给出 Building / Car 等分类别数值，因此无法判断两模块在各维度上的差异。</div>
+    </div>
+    <div class="stack">
+      <div class="figure-box">
+        <img src="../assets/paper-imgs/CityGrounding/tab6_ablation.png" alt="Table 6 模块消融" style="max-height: 30vh;">
+      </div>
+      <p class="figure-caption"><b>Table 6</b> Performance gains (%) from ablating the GSREM and NGRE modules.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 18 邻居数量 k ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Ablation · Neighbor Count</div>
+  <div class="anim"><h2>k = 5 是最佳平衡点，k = 7 反而掉点</h2></div>
+  <div class="anim divider"></div>
+  <div class="two-col wide-right" style="align-items: center;">
+    <div class="stack">
+      <ul class="bullet-list">
+        <li><span class="em">k = 3 → 57.38</span>：邻居不足，上下文关系覆盖不全。</li>
+        <li><span class="em">k = 5 → 58.29</span>：Overall 最高，作为全部实验的默认配置。</li>
+        <li><span class="em">k = 7 → 54.38</span>：性能回落，Car 从 50.81 跌到 43.74。</li>
+      </ul>
+      <div class="note"><b>原因（论文解释）</b>：城市里车辆等目标高度密集，邻居过多会引入无关或噪声上下文；k = 5 在关系多样性与噪声鲁棒性之间取得平衡。</div>
+    </div>
+    <div class="stack">
+      <div class="figure-box">
+        <img src="../assets/paper-imgs/CityGrounding/tab7_neighbor_k.png" alt="Table 7 邻居数量消融" style="max-height: 30vh;">
+      </div>
+      <p class="figure-caption"><b>Table 7</b> Ablation results (%) of varying the number of neighboring instances k in the NGRE module.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 19 定性 · CityGrounding / CityRefer ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Qualitative Results</div>
+  <div class="anim"><h2>定性对比：关系表达是分水岭</h2></div>
+  <div class="anim divider"></div>
+  <div class="two-col" style="align-items: flex-start; gap: 1.6vw;">
+    <div class="stack">
+      <div class="figure-box">
+        <img src="../assets/paper-imgs/CityGrounding/fig5_qual_citygrounding.png" alt="Fig. 5 CityGrounding 定性对比" style="max-height: 27vh;">
+      </div>
+      <p class="figure-caption"><b>Fig. 5</b> Qualitative comparison between CityRefer and our CityRel-Net on the CityGrounding dataset.</p>
+      <div class="figure-box" style="margin-top: 4px;">
+        <img src="../assets/paper-imgs/CityGrounding/fig6_qual_cityrefer.png" alt="Fig. 6 CityRefer 定性对比" style="max-height: 27vh;">
+      </div>
+      <p class="figure-caption"><b>Fig. 6</b> Qualitative comparison between CityRefer and our CityRel-Net on the CityRefer dataset.</p>
+    </div>
+    <div class="stack">
+      <ul class="bullet-list compact">
+        <li><span class="em">基线失败模式</span>：误读关系表达，或把紧邻的相似目标当成交付目标。</li>
+        <li><span class="em">本文策略</span>：关系感知推理 + 邻居上下文，专门消解 behind、beside、near 等空间依赖。</li>
+        <li><span class="em">遮挡与杂乱</span>：密集场景中仍能把真实指代物与视觉相似干扰物区分开。</li>
+        <li><span class="em">尺度跨度</span>：从建筑、植被等大结构到车辆、街道设施等小目标均可定位。</li>
+      </ul>
+      <div class="note">图 5 与图 6 分别为 CityGrounding、CityRefer 上的可视化；绿框为真值，其余为预测框。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 20 定性 · CityAnchor ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Qualitative Results</div>
+  <div class="anim"><h2>CityAnchor：四条描述里的细粒度关系</h2></div>
+  <div class="anim divider"></div>
+  <div class="two-col" style="align-items: flex-start; gap: 2vw;">
+    <div class="stack">
+      <div class="figure-box">
+        <img src="../assets/paper-imgs/CityGrounding/fig7_qual_cityanchor.png" alt="Fig. 7 CityAnchor 定性对比" style="max-height: 52vh;">
+      </div>
+      <p class="figure-caption"><b>Fig. 7</b> Qualitative comparison between CityRefer and our CityRel-Net on the CityAnchor dataset.</p>
+    </div>
+    <div class="stack">
+      <ul class="bullet-list compact">
+        <li>示例描述包含“白色屋顶的狭长建筑、旁边是几栋其他颜色的建筑”“三栋建筑环绕的绿树”等典型组合关系。</li>
+        <li>基线在关系从句上更容易偏到相邻的同色或同形目标。</li>
+        <li>本文借助 GSREM 的依存结构与 NGRE 的邻居上下文，把“由谁环绕、在哪一侧”纳入判别。</li>
+      </ul>
+      <div class="note">可视化仅用于定性观察，未给出定量误差统计；颜色对应关系以图内图例为准。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 21 结论与讨论 ═══════════ -->
+<section class="slide">
+  <div class="anim slide-label">Conclusion</div>
+  <div class="anim"><h2>结论、边界与下一步</h2></div>
+  <div class="anim divider"></div>
+  <div class="anim card-grid cols-3">
+    <div class="card">
+      <span class="card-num">结论</span>
+      <h3>关系建模有效</h3>
+      <p class="body-text">GSREM 管语言结构、NGRE 管场景邻域，二者互补；三基准均达 SOTA，CityRefer +31.24。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">边界</span>
+      <h3>标注与数据约束</h3>
+      <p class="body-text">描述由 MLLM 自动生成，虽有结构化提示、自动过滤与人工抽样，仍存在标注噪声风险；CityRefer 仅验证集可评。</p>
+    </div>
+    <div class="card">
+      <span class="card-num">下一步</span>
+      <h3>扩展数据集</h3>
+      <p class="body-text">作者表示将继续扩展与完善 CityGrounding，以支持更广泛的城市定位研究。</p>
+    </div>
+  </div>
+  <div class="anim highlight-bar">
+    <p>一句话总结：城市级 3D 定位的瓶颈不在“看见”，而在 <span class="accent-word">“读懂关系”</span>；把语言解析成图、把目标放回邻居之中，是本文给出的可复现答案。</p>
+  </div>
+  <p class="anim small-text" style="margin-top: 6px;">注：论文未给出定量局限分析；上表“边界”一栏依据正文与表注整理，未替作者补充结论。</p>
+</section>
+
+<!-- ═══════════ 22 结尾 ═══════════ -->
+<section class="slide">
+  <div class="end-card">
+    <div class="anim"><h2>Thanks for listening</h2></div>
+    <div class="anim divider divider-accent" style="margin: 12px auto 18px;"></div>
+    <div class="anim subtitle" style="max-width: 640px; text-align: center;">
+      CityGrounding · CityRel-Net<br>
+      <span style="color: var(--accent); font-weight: 600;">Graph-structured relation modeling for urban-scale 3D visual grounding</span>
+    </div>
+    <div class="anim cover-meta" style="justify-content: center; margin-top: 26px;">
+      <span class="cover-tag">Neurocomputing 709 (2027) 135289</span>
+      <span class="cover-tag">集美大学 · 中山大学</span>
+    </div>
+  </div>
+</section>
+
+</div><!-- /deck -->
+
+<script>
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  let current = 0;
+
+  const progress = document.getElementById('progress');
+  const dotsWrap = document.getElementById('dots');
+  const hint = document.getElementById('hint');
+
+  for (let i = 0; i < total; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === 0 ? ' active' : '');
+    d.addEventListener('click', () => goTo(i));
+    dotsWrap.appendChild(d);
+  }
+  const dots = dotsWrap.querySelectorAll('.dot');
+
+  function goTo(idx) {
+    if (idx < 0 || idx >= total || idx === current) return;
+    const prev = slides[current];
+    const next = slides[idx];
+
+    prev.classList.remove('active');
+    prev.classList.add('exit-up');
+
+    requestAnimationFrame(() => {
+      next.classList.remove('exit-up');
+      next.classList.add('active');
+    });
+
+    setTimeout(() => { prev.classList.remove('exit-up'); }, 700);
+
+    dots[current].classList.remove('active');
+    current = idx;
+    dots[current].classList.add('active');
+    progress.style.width = ((current + 1) / total * 100) + '%';
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  slides[0].classList.add('active');
+  progress.style.width = (1 / total * 100) + '%';
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+    if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+    if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+    if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.clientX < window.innerWidth / 2) prev(); else next();
+  });
+
+  let touchX = 0, touchY = 0;
+  document.addEventListener('touchstart', (e) => {
+    touchX = e.changedTouches[0].screenX;
+    touchY = e.changedTouches[0].screenY;
+  }, { passive: true });
+  document.addEventListener('touchend', (e) => {
+    const dx = e.changedTouches[0].screenX - touchX;
+    const dy = e.changedTouches[0].screenY - touchY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+  }, { passive: true });
+
+  function hideHint() { hint.classList.add('hidden'); }
+  document.addEventListener('keydown', hideHint, { once: true });
+  document.addEventListener('click', hideHint, { once: true });
+  setTimeout(hideHint, 5000);
+})();
+</script>
+</body>
+</html>
