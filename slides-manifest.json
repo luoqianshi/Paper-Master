@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-23T21:19:12.213264+00:00",
+  "generatedAt": "2026-11-03T05:57:05.622373+00:00",
   "slides": [
     {
       "title": "ASF-YOLO: A novel YOLO model with attentional scale sequence fusion for cell instance segmentation",
@@ -480,6 +480,14 @@
       "kind": "期刊/会议",
       "accent": "rgba(57,102,162,.18)",
       "thumbnail": "assets/thumbnails/YOLOv7-Sugarcane-Seedling.png"
+    },
+    {
+      "title": "葡萄成熟度与采摘点同步检测方法",
+      "file": "paper-slides/GrapickNet.html",
+      "description": "农业工程学报 2026, 42(15)；提出 GrapickNet，以 EIFT 与 RFAConv 改进 YOLO12n-pose，并通过 RBPM 同步关联葡萄成熟度与采摘点，成熟度 mAP@0.5 达 88.9%。",
+      "kind": "期刊",
+      "accent": "rgba(57,102,162,.18)",
+      "thumbnail": "assets/thumbnails/GrapickNet.png"
     }
   ]
 }
