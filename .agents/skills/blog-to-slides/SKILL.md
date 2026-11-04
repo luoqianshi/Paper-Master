@@ -119,7 +119,7 @@ description: 生成苹果风/Notion 风的论文阅读 HTML 演示文稿（PPT�
 1. **生成素材账本**：
 
    ```
-   python .qoder/skills/blog-to-slides/scripts/build_asset_ledger.py <论文名>
+   python .agents/skills/blog-to-slides/scripts/build_asset_ledger.py <论文名>
    ```
 
    依赖 `pymupdf` 与 `Pillow`（缺失时 `pip install pymupdf Pillow`）。产出 `.cache/blog-to-slides/<论文名>/` 下的 `asset_ledger.json`、`asset_ledger.md`、`paper_text.txt`，并打印 PDF 定位结果与页数预算。PDF 定位三级兜底：`extraction_summary.json` 的 `pdf_path` → 文件名/标题模糊匹配（**top1 ≥ 0.85 且与次优差距 ≥ 0.15**，否则不采用）→ `--pdf <路径>` 人工指定。
@@ -146,14 +146,14 @@ description: 生成苹果风/Notion 风的论文阅读 HTML 演示文稿（PPT�
 7. **跑门禁**：
 
    ```
-   python .qoder/skills/blog-to-slides/scripts/verify_slides.py <论文名>
+   python .agents/skills/blog-to-slides/scripts/verify_slides.py <论文名>
    ```
 
    **不通过则回到第 6 步修补，禁止跳过、禁止进入第 8 步。** 豁免须显式：`--allow-missing <图>` / `--allow-extra-pages <n>`，并在收尾说明豁免理由。
 
 8. **登记清单**：按上方格式在 `slides-manifest.json` 追加条目。
 
-9. **生成缩略图**：运行 `python .qoder/skills/blog-to-slides/scripts/generate-thumbnails.py` 为新生成的 HTML 幻灯片截取首屏封面，输出到 `assets/thumbnails/`，并自动更新 `slides-manifest.json` 中的 `thumbnail` 字段。依赖 `playwright`（缺失时 `pip install playwright && playwright install chromium`）。注意该脚本会遍历全部 HTML，若只想更新单篇请确认副作用可接受。
+9. **生成缩略图**：运行 `python .agents/skills/blog-to-slides/scripts/generate-thumbnails.py` 为新生成的 HTML 幻灯片截取首屏封面，输出到 `assets/thumbnails/`，并自动更新 `slides-manifest.json` 中的 `thumbnail` 字段。依赖 `playwright`（缺失时 `pip install playwright && playwright install chromium`）。注意该脚本会遍历全部 HTML，若只想更新单篇请确认副作用可接受。
 
 10. **人工浏览复核**：逐页翻看，确认无溢出、无图片变形、图注与结论同页。
 

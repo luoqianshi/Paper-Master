@@ -51,7 +51,7 @@ description: >
 然后调用以下命令生成 frontmatter + 五节骨架，再往里填：
 
 ```
-python .qoder/skills/lzk-paper-reading/scripts/new_note.py "paper-blogs/<英文短标题>.md" --title "<论文英文标题>" --category "<分类>"
+python .agents/skills/lzk-paper-reading/scripts/new_note.py "paper-blogs/<英文短标题>.md" --title "<论文英文标题>" --category "<分类>"
 ```
 
 （可选参数：`--date`、`--url`、`--variant 标准|预备知识|survey|方法名`、`--venue 会议|期刊`）
@@ -76,10 +76,10 @@ python .qoder/skills/lzk-paper-reading/scripts/new_note.py "paper-blogs/<英文�
 
 ### Step 4 · 图表落盘
 图片存到 `assets/paper-imgs/<论文名>/`，正文用相对路径 `![](../assets/paper-imgs/<论文名>/xx_01.png)` 引用。
-可先运行 `python .qoder/skills/html-paper-slides/scripts/pdf_extractor.py <pdf路径> --output-dir assets/paper-imgs/<论文名>` 从 PDF 提取图表（依赖 `pymupdf`、`Pillow`）。
+可先运行 `python .agents/skills/html-paper-slides/scripts/pdf_extractor.py <pdf路径> --output-dir assets/paper-imgs/<论文名>` 从 PDF 提取图表（依赖 `pymupdf`、`Pillow`）。
 
 ### Step 5 · 自检与交付
-跑 `python .qoder/skills/lzk-paper-reading/scripts/check_note.py <文件>`，再人工过 §6 清单，把未通过项改掉后才交付。
+跑 `python .agents/skills/lzk-paper-reading/scripts/check_note.py <文件>`，再人工过 §6 清单，把未通过项改掉后才交付。
 
 ---
 
@@ -271,7 +271,7 @@ python .qoder/skills/lzk-paper-reading/scripts/new_note.py "paper-blogs/<英文�
 
 ## §6 质量自检清单
 
-交付前逐项打勾（先跑 `python .qoder/skills/lzk-paper-reading/scripts/check_note.py <文件>`，机器项以脚本结果为准）：
+交付前逐项打勾（先跑 `python .agents/skills/lzk-paper-reading/scripts/check_note.py <文件>`，机器项以脚本结果为准）：
 
 - [ ] **公式、数值、数据集名、实验结论全部可在论文原文中找到出处，无编造**（§0 铁律）
 - [ ] frontmatter 四字段齐全；免责声明一字不差
@@ -304,7 +304,7 @@ python .qoder/skills/lzk-paper-reading/scripts/new_note.py "paper-blogs/<英文�
 
 ## §8 参考资源索引
 
-以下资源均位于本技能目录 `.qoder/skills/lzk-paper-reading/` 下（路径相对项目根目录）：
+以下资源均位于本技能目录 `.agents/skills/lzk-paper-reading/` 下（路径相对项目根目录）：
 
 | 资源 | 内容 |
 | --- | --- |

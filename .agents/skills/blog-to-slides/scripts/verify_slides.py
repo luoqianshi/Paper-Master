@@ -83,7 +83,7 @@ def main():
     name = a.paper
     ledger_path = CACHE / name / "asset_ledger.json"
     if not ledger_path.exists():
-        sys.exit(f"[verify] 缺少账本：{ledger_path}\n请先运行：python .qoder/skills/blog-to-slides/scripts/build_asset_ledger.py {name}")
+        sys.exit(f"[verify] 缺少账本：{ledger_path}\n请先运行：python .agents/skills/blog-to-slides/scripts/build_asset_ledger.py {name}")
     ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
 
     html_path = Path(a.html) if a.html else SLIDES / f"{name}.html"

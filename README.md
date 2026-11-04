@@ -44,7 +44,7 @@ cd Paper-Master
 >
 > 仓库自带作者本人的论文阅读成果:`pdf-papers/` 中的原始论文 PDF、`paper-blogs/` 中的 58 篇阅读笔记、`paper-slides/` 中的 61 份 HTML PPT(含各自的 `*_assets/` 配图目录)、`assets/paper-imgs/` 中的 59 个论文配图文件夹与 `assets/thumbnails/` 中的 61 张首屏缩略图。开始制作自己的内容前,请先清空这 5 个目录下的资源(保留目录本身),再清空 `slides-manifest.json`、`blogs-manifest.json` 中的数组,或运行 `python scripts/generate_manifests.py` 重建空清单——`index.html` 画廊只读取这两份清单。此外,`other-htmls/` 中的 4 个主题讲解页同样是作者内容,不需要可一并删除。
 
-用 Claude Code / TRAE / CodeBuddy 等任意支持 Skills 的 AI 编程工具 / AI 办公工具打开,然后把下面任意一句发给 Agent:
+用 Codex / Qoder / TRAE / Claude Code / CodeBuddy 等任意支持 Skills 的 AI 编程工具 / AI 办公工具打开,然后把下面任意一句发给 Agent:
 
 **产出中文阅读笔记:**
 
@@ -72,6 +72,33 @@ cd Paper-Master
 ```
 
 几分钟后,`paper-blogs/` 下会出现一篇结构化中文阅读笔记,或 `paper-slides/` 下会出现一份可浏览器放映的单文件 HTML 演示文稿,后者还会通过 `index.html` 自动收录进电子书柜画廊。
+
+### 在 Codex 中使用
+
+仓库为以下平台内置了完整的三个技能及其脚本、模板和参考资料:
+
+| 平台 | 项目级技能目录 |
+|------|----------------|
+| Codex | [`.agents/skills/`](.agents/skills/) |
+| TRAE | [`.trae/skills/`](.trae/skills/) |
+| Qoder | [`.qoder/skills/`](.qoder/skills/) |
+
+Codex 按[官方技能发现规则](https://learn.chatgpt.com/docs/build-skills)读取项目内的 `.agents/skills/`。在 Codex 中打开本仓库后,可直接输入 `$` 选择技能,或使用下面的提示词:
+
+```text
+$lzk-paper-reading 为 pdf-papers/my-paper.pdf 写一篇中文论文阅读笔记。
+$html-paper-slides 为 pdf-papers/my-paper.pdf 制作 HTML 论文汇报 PPT。
+$blog-to-slides 把 paper-blogs/my-paper.md 转成 HTML 论文汇报 PPT。
+```
+
+任选一行发送即可。新增技能未出现在列表中时,重启 Codex 后重试。脚本命令均在项目根目录执行;PDF 提取依赖 `pymupdf`、`Pillow`,幻灯片校验与缩略图依赖 `playwright` 及 Chromium:
+
+```bash
+python -m pip install pymupdf Pillow playwright
+python -m playwright install chromium
+```
+
+维护技能时,请同步更新各平台目录中的指令、脚本、模板与参考资料,并使用对应平台的脚本路径。
 
 ---
 
@@ -238,6 +265,8 @@ Paper-Master/
 │       │   └── generate-thumbnails.py  # 为 HTML 幻灯片生成首屏缩略图
 │       └── templates/
 │           └── presentation.html  # 论文汇报场景专用 HTML 幻灯片模板
+├── .agents/skills/       # Codex 技能目录:完整收录三个技能及配套资源
+├── .qoder/skills/        # Qoder 技能目录:完整收录三个技能及配套资源
 ├── .trae/skills/         # TRAE 技能目录:收录 lzk-paper-reading / html-paper-slides / blog-to-slides
 │   └── blog-to-slides/           # 阅读笔记 → HTML 汇报 PPT(输入笔记,无需 PDF)
 │       ├── SKILL.md

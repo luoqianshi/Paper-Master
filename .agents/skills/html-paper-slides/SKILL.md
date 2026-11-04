@@ -91,7 +91,7 @@ description: 生成苹果风/Notion 风的论文阅读 HTML 演示文稿（PPT�
 1. **理解论文**：先通读论文内容，然后运行提取脚本获取论文原始图表（透明背景裁剪）：
 
    ```
-   python .qoder/skills/html-paper-slides/scripts/pdf_extractor.py <pdf路径> --output-dir paper-slides/<论文名>_assets
+   python .agents/skills/html-paper-slides/scripts/pdf_extractor.py <pdf路径> --output-dir paper-slides/<论文名>_assets
    ```
 
    依赖 `pymupdf` 与 `Pillow`（缺失时先 `pip install pymupdf Pillow`）。脚本按 Figure/Table 出现顺序逐一提取，输出 `crop_XXX_pageYYY_regZ.png` 语义化命名；提取效果不佳时可加 `--fallback-blind-crop --clean` 盲裁剪兜底。按分页规划建议各部分结构提取论文内容。
@@ -114,7 +114,7 @@ description: 生成苹果风/Notion 风的论文阅读 HTML 演示文稿（PPT�
 
 6. **登记清单**：按上方格式在 `slides-manifest.json` 追加条目。
 
-7. **生成缩略图**：运行 `python .qoder/skills/html-paper-slides/scripts/generate-thumbnails.py` 为新生成的 HTML 幻灯片截取首屏封面，输出到 `assets/thumbnails/`，并自动更新 `slides-manifest.json` 中的 `thumbnail` 字段，使电子书柜首页（index.html）的卡片能展示真实的幻灯片封面而非默认示意图。依赖 `playwright`（缺失时 `pip install playwright && playwright install chromium`）。
+7. **生成缩略图**：运行 `python .agents/skills/html-paper-slides/scripts/generate-thumbnails.py` 为新生成的 HTML 幻灯片截取首屏封面，输出到 `assets/thumbnails/`，并自动更新 `slides-manifest.json` 中的 `thumbnail` 字段，使电子书柜首页（index.html）的卡片能展示真实的幻灯片封面而非默认示意图。依赖 `playwright`（缺失时 `pip install playwright && playwright install chromium`）。
 
 ## 分页规划建议
 

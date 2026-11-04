@@ -45,7 +45,7 @@ cd Paper-Master
 >
 > The repository ships with the author's own paper-reading output: the original paper PDFs in `pdf-papers/`, 58 reading notes in `paper-blogs/`, 61 HTML decks in `paper-slides/` (each with its own `*_assets/` figure folder), 59 per-paper figure folders in `assets/paper-imgs/`, and 61 first-screen thumbnails in `assets/thumbnails/`. Before producing your own content, clear the resources in these five folders (keep the folders themselves), then clear the arrays in `slides-manifest.json` and `blogs-manifest.json` — or run `python scripts/generate_manifests.py` to rebuild empty manifests. The `index.html` gallery only reads these two manifests. `other-htmls/` also contains four topic-explainer pages from the author — remove them as well if you don't need them.
 
-Open the project in any AI coding tool / AI office tool that supports Skills (Claude Code / TRAE / CodeBuddy), and send the Agent either prompt:
+Open the project in any AI coding tool / AI office tool that supports Skills (Codex / Qoder / TRAE / Claude Code / CodeBuddy), and send the Agent any of these prompts:
 
 **Produce a Chinese reading note:**
 
@@ -74,6 +74,33 @@ paper-slides directory.
 ```
 
 A few minutes later, a structured Chinese note appears in `paper-blogs/`, or a browser-playable single-file HTML deck appears in `paper-slides/` — the latter is auto-listed in the gallery at `index.html`.
+
+### Using Codex
+
+The repository includes all three skills, with their scripts, templates, and references, for these platforms:
+
+| Platform | Repository skill directory |
+|----------|----------------------------|
+| Codex | [`.agents/skills/`](.agents/skills/) |
+| TRAE | [`.trae/skills/`](.trae/skills/) |
+| Qoder | [`.qoder/skills/`](.qoder/skills/) |
+
+Codex discovers repository skills in `.agents/skills/` according to the [official skill discovery rules](https://learn.chatgpt.com/docs/build-skills). Open this repository in Codex, then type `$` to select a skill or use one of these prompts:
+
+```text
+$lzk-paper-reading Write a Chinese reading note for pdf-papers/my-paper.pdf.
+$html-paper-slides Create an HTML paper-presentation deck for pdf-papers/my-paper.pdf.
+$blog-to-slides Turn paper-blogs/my-paper.md into an HTML paper-presentation deck.
+```
+
+Send one line at a time. If the new skills do not appear, restart Codex. Run script commands from the repository root; PDF extraction requires `pymupdf` and `Pillow`, while slide validation and thumbnails require `playwright` and Chromium:
+
+```bash
+python -m pip install pymupdf Pillow playwright
+python -m playwright install chromium
+```
+
+When maintaining skills, update the instructions, scripts, templates, and references in each platform directory together, using that platform's script paths.
 
 ---
 
@@ -240,6 +267,8 @@ Paper-Master/
 │       │   └── generate-thumbnails.py  # Generate first-screen thumbnails
 │       └── templates/
 │           └── presentation.html  # Paper-presentation HTML slide template
+├── .agents/skills/       # Codex skills dir: all three skills and their supporting resources
+├── .qoder/skills/        # Qoder skills dir: all three skills and their supporting resources
 ├── .trae/skills/         # TRAE skills dir: hosts lzk-paper-reading / html-paper-slides / blog-to-slides
 │   └── blog-to-slides/           # Reading note → HTML deck (no PDF needed)
 │       ├── SKILL.md

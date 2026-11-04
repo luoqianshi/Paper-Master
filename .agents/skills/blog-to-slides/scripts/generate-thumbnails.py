@@ -9,7 +9,7 @@ import os
 from pathlib import Path
 from playwright.async_api import async_playwright
 
-# 本脚本位于 <项目根>/.qoder/skills/blog-to-slides/scripts/，
+# 本脚本位于 <项目根>/.agents/skills/blog-to-slides/scripts/，
 # 向上 5 级回到项目根目录
 BASE_DIR = Path(__file__).resolve().parents[4]
 SLIDES_DIR = BASE_DIR / "paper-slides"

@@ -9,7 +9,9 @@ import os
 from pathlib import Path
 from playwright.async_api import async_playwright
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent.parent
+# 本脚本位于 <项目根>/.agents/skills/html-paper-slides/scripts/，
+# 向上 5 级回到项目根目录
+BASE_DIR = Path(__file__).resolve().parents[4]
 SLIDES_DIR = BASE_DIR / "paper-slides"
 THUMB_DIR = BASE_DIR / "assets" / "thumbnails"
 MANIFEST_PATH = BASE_DIR / "slides-manifest.json"
