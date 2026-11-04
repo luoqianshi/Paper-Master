@@ -50,7 +50,7 @@ Open the project in any AI coding tool / AI office tool that supports Skills (Co
 **Produce a Chinese reading note:**
 
 ```markdown
-Please use the lzk-paper-reading skill (skills\lzk-paper-reading\SKILL.md)
+Please use the lzk-paper-reading skill (.agents\skills\lzk-paper-reading\SKILL.md)
 to write a Chinese paper-reading note for ./pdf-papers/my-paper.pdf.
 The final .md file should be saved in the paper-blogs directory,
 with extracted figures archived under assets/paper-imgs (one folder per paper title).
@@ -59,7 +59,7 @@ with extracted figures archived under assets/paper-imgs (one folder per paper ti
 **Produce an HTML deck:**
 
 ```markdown
-Please use the html-paper-slides skill (skills\html-paper-slides\SKILL.md)
+Please use the html-paper-slides skill (.agents\skills\html-paper-slides\SKILL.md)
 to make an HTML paper-presentation PPT for ./pdf-papers/my-paper.pdf.
 The final file should be saved in the paper-slides directory.
 ```
@@ -67,7 +67,7 @@ The final file should be saved in the paper-slides directory.
 **Turn an existing note into an HTML deck (no PDF needed):**
 
 ```markdown
-Please use the blog-to-slides skill (.trae\skills\blog-to-slides\SKILL.md)
+Please use the blog-to-slides skill (.agents\skills\blog-to-slides\SKILL.md)
 to make an HTML paper-presentation PPT for paper-blogs/my-paper.md
 (a Chinese reading note). The final file should be saved in the
 paper-slides directory.
@@ -77,11 +77,11 @@ A few minutes later, a structured Chinese note appears in `paper-blogs/`, or a b
 
 ### Using Codex
 
-The repository includes all three skills, with their scripts, templates, and references, for these platforms:
+The original directory for the project's custom SKILLs is [`.agents/skills/`](.agents/skills/) — all three skills with their scripts, templates, and references — synced to each platform's project-level skill directory below:
 
 | Platform | Repository skill directory |
 |----------|----------------------------|
-| Codex | [`.agents/skills/`](.agents/skills/) |
+| Codex | [`.agents/skills/`](.agents/skills/) (source directory) |
 | TRAE | [`.trae/skills/`](.trae/skills/) |
 | Qoder | [`.qoder/skills/`](.qoder/skills/) |
 
@@ -100,7 +100,7 @@ python -m pip install pymupdf Pillow playwright
 python -m playwright install chromium
 ```
 
-When maintaining skills, update the instructions, scripts, templates, and references in each platform directory together, using that platform's script paths.
+When maintaining skills, update the instructions, scripts, templates, and references in the source directory `.agents/skills/` first, then sync to platform directories such as `.trae/skills/` and `.qoder/skills/`, using each platform's script paths.
 
 ---
 
@@ -110,9 +110,9 @@ The repository ships with 3 SKILLs, covering the core ways of distilling "readin
 
 | SKILL | Typical Scenario | Input | Output | Typical Time |
 |------|------------------|-------|--------|--------------|
-| [`lzk-paper-reading`](skills/lzk-paper-reading/SKILL.md) | Paper deep-reading · Blog note · Knowledge distillation | A PDF / arXiv link / title | Structured Chinese Markdown note (`paper-blogs/`) + figure library (`assets/paper-imgs/`) | 5–12 min |
-| [`html-paper-slides`](skills/html-paper-slides/SKILL.md) | Group meeting · Thesis defense · Research progress report | One PDF paper | Single-file HTML deck + thumbnail | 8–15 min |
-| [`blog-to-slides`](.trae/skills/blog-to-slides/SKILL.md) | Note-to-deck · Fast group-meeting draft | A finished Chinese reading note (`paper-blogs/*.md`) + extracted figures | Single-file HTML deck + thumbnail | 5–10 min |
+| [`lzk-paper-reading`](.agents/skills/lzk-paper-reading/SKILL.md) | Paper deep-reading · Blog note · Knowledge distillation | A PDF / arXiv link / title | Structured Chinese Markdown note (`paper-blogs/`) + figure library (`assets/paper-imgs/`) | 5–12 min |
+| [`html-paper-slides`](.agents/skills/html-paper-slides/SKILL.md) | Group meeting · Thesis defense · Research progress report | One PDF paper | Single-file HTML deck + thumbnail | 8–15 min |
+| [`blog-to-slides`](.agents/skills/blog-to-slides/SKILL.md) | Note-to-deck · Fast group-meeting draft | A finished Chinese reading note (`paper-blogs/*.md`) + extracted figures | Single-file HTML deck + thumbnail | 5–10 min |
 
 - **`lzk-paper-reading`** produces a Chinese note on a fixed five-section skeleton (Motivation / Contributions / Method / Experiments / Strengths & Innovations) + a paper-info table + a disclaimer. It enforces the formula pattern "lead-in sentence → LaTeX → where-explanation", the "2–3 sentences + 1 figure" experiment rhythm, and gates output with `scripts/new_note.py` (scaffold) and `scripts/check_note.py` (validator).
 - **`html-paper-slides`** generates Apple-style / Notion-style single-file HTML decks: zero external dependencies, `file://` open, keyboard navigation, fade-in animations, CSS-Grid responsive layout. Deploy with one click to GitHub Pages / Vercel / Netlify.
@@ -218,7 +218,7 @@ The output layer of the `lzk-paper-reading` skill: each PDF paper maps to one st
 Paper figures are centralized: key screenshots extracted by `pdf_extractor.py` go into a folder named after the paper title, under `assets/paper-imgs/<paper-title>/`, shared by both the note flow and the deck flow.
 
 ### 3. `paper-slides/` — HTML Decks
-Produced by `html-paper-slides` (PDF input) or `blog-to-slides` (reading-note input from `paper-blogs/`, no PDF needed) — single-file decks built on the same paper's reading note and the figures in `assets/paper-imgs/`, compressed into a 13–22 page presentation structure. Keep a clear chapter flow: **Cover → Abstract → Introduction → Method → Experiments → Ablation → Conclusion & Outlook**, reinforced with cards, flow diagrams, comparison tables, metric highlights, and navigation controls. After a deck is added, **always update `slides-manifest.json`** so `index.html` can render title, path, description, kind, and accent correctly. Then run `python skills/html-paper-slides/scripts/generate-thumbnails.py` to generate real cover thumbnails for the gallery cards.
+Produced by `html-paper-slides` (PDF input) or `blog-to-slides` (reading-note input from `paper-blogs/`, no PDF needed) — single-file decks built on the same paper's reading note and the figures in `assets/paper-imgs/`, compressed into a 13–22 page presentation structure. Keep a clear chapter flow: **Cover → Abstract → Introduction → Method → Experiments → Ablation → Conclusion & Outlook**, reinforced with cards, flow diagrams, comparison tables, metric highlights, and navigation controls. After a deck is added, **always update `slides-manifest.json`** so `index.html` can render title, path, description, kind, and accent correctly. Then run `python .agents/skills/html-paper-slides/scripts/generate-thumbnails.py` to generate real cover thumbnails for the gallery cards.
 
 ### Quality Checklist
 Before moving to the next stage, confirm:
@@ -253,29 +253,28 @@ Paper-Master/
 │   ├── Attention_Is_All_You_Need.html
 │   ├── DETRs_Beat_YOLOs_on_Real-time_Object_Detection.html
 │   └── ... (more paper decks)
-├── skills/               # Note/slide-creation skills, scripts, and template docs
+├── .agents/skills/       # Source directory for the project's custom SKILLs: all three skills + supporting resources (read directly by Codex)
 │   ├── lzk-paper-reading/        # Paper reading → Chinese reading note
 │   │   ├── SKILL.md
 │   │   ├── scripts/
 │   │   │   ├── new_note.py        # Generate frontmatter + five-section skeleton
 │   │   │   └── check_note.py      # Note gate validation
 │   │   └── references/            # Skeleton variants, phrase corpus, domain transfer, examples
-│   └── html-paper-slides/        # Paper reading → HTML presentation deck
-│       ├── SKILL.md
-│       ├── scripts/
-│       │   ├── pdf_extractor.py   # Caption-driven Figure/Table extraction (shared by both flows)
-│       │   └── generate-thumbnails.py  # Generate first-screen thumbnails
-│       └── templates/
-│           └── presentation.html  # Paper-presentation HTML slide template
-├── .agents/skills/       # Codex skills dir: all three skills and their supporting resources
-├── .qoder/skills/        # Qoder skills dir: all three skills and their supporting resources
-├── .trae/skills/         # TRAE skills dir: hosts lzk-paper-reading / html-paper-slides / blog-to-slides
+│   ├── html-paper-slides/        # Paper reading → HTML presentation deck
+│   │   ├── SKILL.md
+│   │   ├── scripts/
+│   │   │   ├── pdf_extractor.py   # Caption-driven Figure/Table extraction (shared by both flows)
+│   │   │   └── generate-thumbnails.py  # Generate first-screen thumbnails
+│   │   └── templates/
+│   │       └── presentation.html  # Paper-presentation HTML slide template
 │   └── blog-to-slides/           # Reading note → HTML deck (no PDF needed)
 │       ├── SKILL.md
 │       ├── scripts/
 │       │   └── generate-thumbnails.py  # Generate first-screen thumbnails
 │       └── templates/
 │           └── presentation.html  # Paper-presentation HTML slide template
+├── .qoder/skills/        # Qoder skills dir: kept in sync with .agents/skills/
+├── .trae/skills/         # TRAE skills dir: kept in sync with .agents/skills/
 ├── assets/               # Shared static assets
 │   ├── paper-imgs/       # Paper figure library: one folder per paper title
 │   │   └── <paper-title>/ # key figures extracted from that paper
@@ -310,7 +309,7 @@ Open the project in an AI coding tool / AI office tool such as `Claude Code` / `
 **Chinese reading-note scenario:**
 
 ```markdown
-Please use the lzk-paper-reading skill (skills\lzk-paper-reading\SKILL.md)
+Please use the lzk-paper-reading skill (.agents\skills\lzk-paper-reading\SKILL.md)
 to write a Chinese paper-reading note for [path to your PDF paper].
 The final .md file should be saved in the paper-blogs directory,
 with extracted figures archived under assets/paper-imgs (one folder per paper title).
@@ -319,7 +318,7 @@ with extracted figures archived under assets/paper-imgs (one folder per paper ti
 **Paper presentation scenario:**
 
 ```markdown
-Please use the html-paper-slides skill (skills\html-paper-slides\SKILL.md)
+Please use the html-paper-slides skill (.agents\skills\html-paper-slides\SKILL.md)
 to make an HTML paper-presentation PPT for [path to your PDF paper].
 The final file should be saved in the paper-slides directory.
 ```
@@ -327,7 +326,7 @@ The final file should be saved in the paper-slides directory.
 **Note-to-deck scenario (input: an existing reading note, no PDF needed):**
 
 ```markdown
-Please use the blog-to-slides skill (.trae\skills\blog-to-slides\SKILL.md)
+Please use the blog-to-slides skill (.agents\skills\blog-to-slides\SKILL.md)
 to make an HTML paper-presentation PPT for [path to a Chinese reading
 note .md file under paper-blogs/]. The final file should be saved in
 the paper-slides directory.
@@ -338,7 +337,7 @@ the paper-slides directory.
 ### 3. Generate thumbnails and auto-include in the gallery
 
 ```bash
-python skills/html-paper-slides/scripts/generate-thumbnails.py
+python .agents/skills/html-paper-slides/scripts/generate-thumbnails.py
 ```
 
 After that, the new HTML PPT will appear in the `index.html` gallery with its **real first-screen cover**. Pushing to GitHub triggers GitHub Actions to auto-deploy to GitHub Pages.
@@ -365,7 +364,7 @@ We pursue an 80-point stable, usable experience rather than 100-point perfection
 1. **PDF figure extraction has redundancy**: we recommend manually deleting redundant images after the first version, with VLM-based figure selection coming in future releases
 2. **Multimodal models work best**: native multimodal models like KIMI K2.6 and Minimax M3 are recommended — pure text models will miss paper figures
 3. **Current version is a high-quality first draft**: we recommend multiple rounds of dialog refinement with the Agent, e.g. "replace page 5 method diagram with architecture diagram" / "add the school logo to the footer"
-4. **Note paradigm has domain skew**: the `lzk-paper-reading` corpus is mostly tabular-data ML; for vision/detection papers, switch the experiments-section style per `references/research/domain-transfer.md`
+4. **Note paradigm has domain skew**: the `lzk-paper-reading` corpus is mostly tabular-data ML; for vision/detection papers, switch the experiments-section style per `.agents/skills/lzk-paper-reading/references/research/domain-transfer.md`
 5. **No direct generation from LaTeX source**: if you need LaTeX fidelity, please use Beamer; this repository focuses on "start with PDF / Markdown"
 6. **Thumbnails depend on Playwright**: the first run requires `pip install playwright && playwright install chromium`; headless server environments need `--with-deps`
 
@@ -392,4 +391,4 @@ If this repository helps you, please consider giving a Star to support our conti
 
 ---
 
-*Last Updated: 2026-09-06 · v1.2 · AI-native paper knowledge base for researchers · 3 SKILLs · 8 paper decks collected*
+*Last Updated: 2026-11-04 · v1.2 · AI-native paper knowledge base for researchers · 3 SKILLs · 8 paper decks collected*

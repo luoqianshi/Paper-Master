@@ -49,7 +49,7 @@ cd Paper-Master
 **产出中文阅读笔记:**
 
 ```markdown
-请你使用 lzk-paper-reading 技能(skills\lzk-paper-reading\SKILL.md),
+请你使用 lzk-paper-reading 技能(.agents\skills\lzk-paper-reading\SKILL.md),
 帮我为 ./pdf-papers/my-paper.pdf 写一篇中文论文阅读笔记,
 最终 .md 文件存放在 paper-blogs 目录下,
 提取的论文配图按论文标题归档到 assets/paper-imgs 目录下。
@@ -58,7 +58,7 @@ cd Paper-Master
 **产出 HTML 汇报 PPT:**
 
 ```markdown
-请你使用 html-paper-slides 技能(skills\html-paper-slides\SKILL.md),
+请你使用 html-paper-slides 技能(.agents\skills\html-paper-slides\SKILL.md),
 帮我为 ./pdf-papers/my-paper.pdf 制作一份 HTML 格式的论文汇报 PPT,
 最终文件存放在 paper-slides 目录下。
 ```
@@ -66,7 +66,7 @@ cd Paper-Master
 **已有阅读笔记,转成 HTML 汇报 PPT(无需 PDF):**
 
 ```markdown
-请你使用 blog-to-slides 技能(.trae\skills\blog-to-slides\SKILL.md),
+请你使用 blog-to-slides 技能(.agents\skills\blog-to-slides\SKILL.md),
 帮我为 paper-blogs/my-paper.md 这篇中文阅读笔记制作一份 HTML 格式的
 论文汇报 PPT,最终文件存放在 paper-slides 目录下。
 ```
@@ -75,11 +75,11 @@ cd Paper-Master
 
 ### 在 Codex 中使用
 
-仓库为以下平台内置了完整的三个技能及其脚本、模板和参考资料:
+项目自定义 SKILL 的原始目录为 [`.agents/skills/`](.agents/skills/),完整收录三个技能及其脚本、模板和参考资料,并按各平台的技能发现规则同步出以下项目级技能目录:
 
 | 平台 | 项目级技能目录 |
 |------|----------------|
-| Codex | [`.agents/skills/`](.agents/skills/) |
+| Codex | [`.agents/skills/`](.agents/skills/)(原始目录) |
 | TRAE | [`.trae/skills/`](.trae/skills/) |
 | Qoder | [`.qoder/skills/`](.qoder/skills/) |
 
@@ -98,7 +98,7 @@ python -m pip install pymupdf Pillow playwright
 python -m playwright install chromium
 ```
 
-维护技能时,请同步更新各平台目录中的指令、脚本、模板与参考资料,并使用对应平台的脚本路径。
+维护技能时,请在原始目录 `.agents/skills/` 中更新指令、脚本、模板与参考资料,再同步到 `.trae/skills/`、`.qoder/skills/` 等平台目录,并使用对应平台的脚本路径。
 
 ---
 
@@ -108,9 +108,9 @@ python -m playwright install chromium
 
 | SKILL | 典型场景 | 输入 | 交付物 | 典型耗时 |
 |------|----------|------|--------|----------|
-| [`lzk-paper-reading`](skills/lzk-paper-reading/SKILL.md) | 论文精读 · 博客笔记 · 知识沉淀 | 一篇 PDF / arXiv 链接 / 标题 | 结构化中文 Markdown 笔记(`paper-blogs/`)+ 配图库(`assets/paper-imgs/`) | 5–12 min |
-| [`html-paper-slides`](skills/html-paper-slides/SKILL.md) | 组会汇报 · 答辩演练 · 研究进展展示 | 一篇 PDF 论文 | 单文件 HTML deck + 首屏缩略图 | 8–15 min |
-| [`blog-to-slides`](.trae/skills/blog-to-slides/SKILL.md) | 笔记转 PPT · 组会汇报快速成稿 | 一份已产出的中文阅读笔记(`paper-blogs/*.md`)+ 已提取配图 | 单文件 HTML deck + 首屏缩略图 | 5–10 min |
+| [`lzk-paper-reading`](.agents/skills/lzk-paper-reading/SKILL.md) | 论文精读 · 博客笔记 · 知识沉淀 | 一篇 PDF / arXiv 链接 / 标题 | 结构化中文 Markdown 笔记(`paper-blogs/`)+ 配图库(`assets/paper-imgs/`) | 5–12 min |
+| [`html-paper-slides`](.agents/skills/html-paper-slides/SKILL.md) | 组会汇报 · 答辩演练 · 研究进展展示 | 一篇 PDF 论文 | 单文件 HTML deck + 首屏缩略图 | 8–15 min |
+| [`blog-to-slides`](.agents/skills/blog-to-slides/SKILL.md) | 笔记转 PPT · 组会汇报快速成稿 | 一份已产出的中文阅读笔记(`paper-blogs/*.md`)+ 已提取配图 | 单文件 HTML deck + 首屏缩略图 | 5–10 min |
 
 - **`lzk-paper-reading`** 按固定五节骨架(研究动机 / 文章贡献 / 本文方法 / 实验结果 / 优点和创新点)+ 论文概况表 + 免责声明产出中文笔记,强制执行公式"铺垫句→LaTeX→其中解释"三段式、"2-3 句 + 1 图"实验节奏,并用 `scripts/new_note.py` 起稿、`scripts/check_note.py` 门禁验收。
 - **`html-paper-slides`** 生成苹果风 / Notion 风的单文件 HTML 演示文稿:无外部依赖、可直接 `open file://` 播放、键盘翻页、淡入动画、CSS Grid 响应式排版,适合 GitHub Pages / Vercel / Netlify 一键部署。
@@ -216,7 +216,7 @@ python -m playwright install chromium
 论文配图统一入库:由 `pdf_extractor.py` 提取的重要截图,按**论文标题**创建文件夹,存入 `assets/paper-imgs/<论文标题>/`,供笔记与 PPT 两条流共用。
 
 ### 3. `paper-slides/` —— HTML 汇报 PPT
-由 `html-paper-slides`(输入 PDF)或 `blog-to-slides`(输入 `paper-blogs/` 中同一篇论文的阅读笔记,无需 PDF)产出,单文件演示文稿,基于 `paper-blogs/` 中的阅读笔记与 `assets/paper-imgs/` 配图,按分页规划压缩成 13–22 页的讲述结构。章节流为**封面 → 摘要 → 引言 → 方法 → 实验 → 消融 → 结论与展望**,通过卡片、流程图、对比表、指标高亮、导航控件强化阅读节奏。成品入库后,**必须同步更新 `slides-manifest.json`**,确保 `index.html` 画廊可以正确展示标题、路径、简介、类型与主题色。随后运行 `python skills/html-paper-slides/scripts/generate-thumbnails.py` 生成首屏缩略图,画廊卡片便会直接展示真实幻灯片封面。
+由 `html-paper-slides`(输入 PDF)或 `blog-to-slides`(输入 `paper-blogs/` 中同一篇论文的阅读笔记,无需 PDF)产出,单文件演示文稿,基于 `paper-blogs/` 中的阅读笔记与 `assets/paper-imgs/` 配图,按分页规划压缩成 13–22 页的讲述结构。章节流为**封面 → 摘要 → 引言 → 方法 → 实验 → 消融 → 结论与展望**,通过卡片、流程图、对比表、指标高亮、导航控件强化阅读节奏。成品入库后,**必须同步更新 `slides-manifest.json`**,确保 `index.html` 画廊可以正确展示标题、路径、简介、类型与主题色。随后运行 `python .agents/skills/html-paper-slides/scripts/generate-thumbnails.py` 生成首屏缩略图,画廊卡片便会直接展示真实幻灯片封面。
 
 ### 质量检查清单
 在进入下一阶段前建议确认:
@@ -251,29 +251,28 @@ Paper-Master/
 │   ├── Attention_Is_All_You_Need.html
 │   ├── DETRs_Beat_YOLOs_on_Real-time_Object_Detection.html
 │   └── ... (更多论文演示)
-├── skills/               # 幻灯片 / 笔记制作技能、脚本与模板文档
+├── .agents/skills/       # 项目自定义 SKILL 原始目录:完整收录三个技能及配套资源(Codex 按官方规则直接读取)
 │   ├── lzk-paper-reading/        # 论文精读 → 中文阅读笔记
 │   │   ├── SKILL.md
 │   │   ├── scripts/
 │   │   │   ├── new_note.py        # 生成 frontmatter + 五节骨架
 │   │   │   └── check_note.py      # 笔记门禁校验
 │   │   └── references/            # 骨架变体、句式语料、领域迁移映射、典范样例
-│   └── html-paper-slides/        # 论文精读 → HTML 汇报 PPT
-│       ├── SKILL.md
-│       ├── scripts/
-│       │   ├── pdf_extractor.py   # 从论文 PDF 中提取核心配图(两条流共用)
-│       │   └── generate-thumbnails.py  # 为 HTML 幻灯片生成首屏缩略图
-│       └── templates/
-│           └── presentation.html  # 论文汇报场景专用 HTML 幻灯片模板
-├── .agents/skills/       # Codex 技能目录:完整收录三个技能及配套资源
-├── .qoder/skills/        # Qoder 技能目录:完整收录三个技能及配套资源
-├── .trae/skills/         # TRAE 技能目录:收录 lzk-paper-reading / html-paper-slides / blog-to-slides
+│   ├── html-paper-slides/        # 论文精读 → HTML 汇报 PPT
+│   │   ├── SKILL.md
+│   │   ├── scripts/
+│   │   │   ├── pdf_extractor.py   # 从论文 PDF 中提取核心配图(两条流共用)
+│   │   │   └── generate-thumbnails.py  # 为 HTML 幻灯片生成首屏缩略图
+│   │   └── templates/
+│   │       └── presentation.html  # 论文汇报场景专用 HTML 幻灯片模板
 │   └── blog-to-slides/           # 阅读笔记 → HTML 汇报 PPT(输入笔记,无需 PDF)
 │       ├── SKILL.md
 │       ├── scripts/
 │       │   └── generate-thumbnails.py  # 为 HTML 幻灯片生成首屏缩略图
 │       └── templates/
 │           └── presentation.html  # 论文汇报场景专用 HTML 幻灯片模板
+├── .qoder/skills/        # Qoder 技能目录:与 .agents/skills/ 保持同步
+├── .trae/skills/         # TRAE 技能目录:与 .agents/skills/ 保持同步
 ├── assets/               # 通用静态资源
 │   ├── paper-imgs/       # 论文重要截图库:按论文标题分文件夹归档
 │   │   └── <论文标题>/    # 每篇论文提取的重要配图
@@ -308,7 +307,7 @@ cd Paper-Master
 **中文阅读笔记场景:**
 
 ```markdown
-请你使用 lzk-paper-reading 技能(skills\lzk-paper-reading\SKILL.md),
+请你使用 lzk-paper-reading 技能(.agents\skills\lzk-paper-reading\SKILL.md),
 帮我为 [给定你要阅读的 PDF 论文文件路径] 写一篇中文论文阅读笔记,
 最终 .md 文件存放在 paper-blogs 目录下,
 提取的论文配图按论文标题归档到 assets/paper-imgs 目录下。
@@ -317,7 +316,7 @@ cd Paper-Master
 **论文汇报 PPT 场景:**
 
 ```markdown
-请你使用 html-paper-slides 技能(skills\html-paper-slides\SKILL.md),
+请你使用 html-paper-slides 技能(.agents\skills\html-paper-slides\SKILL.md),
 帮我为 [给定你要制作的 PDF 格式的论文的文件路径] 制作一份
 HTML 格式的 PPT,最终文件存放在 paper-slides 目录下。
 ```
@@ -325,7 +324,7 @@ HTML 格式的 PPT,最终文件存放在 paper-slides 目录下。
 **笔记转 PPT 场景(输入已有阅读笔记,无需 PDF):**
 
 ```markdown
-请你使用 blog-to-slides 技能(.trae\skills\blog-to-slides\SKILL.md),
+请你使用 blog-to-slides 技能(.agents\skills\blog-to-slides\SKILL.md),
 帮我为 [给定 paper-blogs 目录下中文阅读笔记的 .md 文件路径] 制作一份
 HTML 格式的论文汇报 PPT,最终文件存放在 paper-slides 目录下。
 ```
@@ -335,7 +334,7 @@ HTML 格式的论文汇报 PPT,最终文件存放在 paper-slides 目录下。
 ### 3. 生成缩略图,自动收录到电子书柜
 
 ```bash
-python skills/html-paper-slides/scripts/generate-thumbnails.py
+python .agents/skills/html-paper-slides/scripts/generate-thumbnails.py
 ```
 
 完成后,新的 HTML PPT 会以**真实首屏封面**出现在 `index.html` 画廊中。推送至 GitHub 后,GitHub Actions 会自动部署至 GitHub Pages。
@@ -362,7 +361,7 @@ python skills/html-paper-slides/scripts/generate-thumbnails.py
 1. **PDF 配图存在冗余提取**:首版生成后建议手动删除冗余图片,后续会引入视觉语言模型做精选
 2. **多模态模型效果更佳**:推荐使用 KIMI K2.6、Minimax M3 等原生多模态模型,纯文本模型会丢失论文配图
 3. **当前版本为高质量初稿**:建议在初稿生成后与 Agent 进行多轮对话精修,例如"第 5 页方法图换成架构图" / "页脚加学校 logo"
-4. **笔记范式有领域偏斜**:`lzk-paper-reading` 语料以表格数据 ML 为主,写视觉检测类论文时按 `references/research/domain-transfer.md` 切换实验节写法
+4. **笔记范式有领域偏斜**:`lzk-paper-reading` 语料以表格数据 ML 为主,写视觉检测类论文时按 `.agents/skills/lzk-paper-reading/references/research/domain-transfer.md` 切换实验节写法
 5. **不直接从 LaTeX 源生成**:若需 LaTeX 高保真,请使用 Beamer;本仓库主打"用 PDF/Markdown 就能上手"
 6. **缩略图依赖 Playwright**:首次运行需 `pip install playwright && playwright install chromium`,无图形环境(headless 服务器)需补 `--with-deps` 步骤
 
@@ -389,4 +388,4 @@ python skills/html-paper-slides/scripts/generate-thumbnails.py
 
 ---
 
-*Last Updated: 2026-09-06 · v1.2 · 科研人的 AI 原生论文知识库 · 3 个 SKILL · 累计收录论文演示 8 份*
+*Last Updated: 2026-11-04 · v1.2 · 科研人的 AI 原生论文知识库 · 3 个 SKILL · 累计收录论文演示 8 份*
