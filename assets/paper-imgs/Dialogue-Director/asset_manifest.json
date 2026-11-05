@@ -1,0 +1,290 @@
+{
+  "schema_version": 1,
+  "paper_id": "Dialogue-Director",
+  "pdf": {
+    "path": "pdf-papers/Friends and Fun/2026 Dialogue Director Bridging the Gap in Dialogue Visualization for Multimodal Storytelling.pdf",
+    "sha256": "6ccb17674d779852e5b5d35d8f5005ce802afdd475572394615c64e5bf07c819",
+    "pages": 6
+  },
+  "inventory": {
+    "reviewed": true,
+    "note": "已逐页查看全部 6 页：第 1 页图 1，第 3 页图 2，第 4 页表 I，第 5 页图 3、图 4、表 II、表 III；第 2、6 页无新增图表。已补登记表 II，核对无附录、续表或其他遗漏。",
+    "pdf_sha256": "6ccb17674d779852e5b5d35d8f5005ce802afdd475572394615c64e5bf07c819",
+    "asset_fingerprint": "95c6aece2fe7b30508cebfcbf1dd9ff9b712c47db7d3502ecf5f009ec158f12b"
+  },
+  "assets": [
+    {
+      "id": "figure-1-p001",
+      "kind": "figure",
+      "number": "1",
+      "page": 1,
+      "caption": "Fig. 1. Motivation of Dialogue Visualization and our framework. Traditional\nstory visualization methods meet with challenges when handling dialogues,\nwhile Dialogues play a significant role in storytelling. Existing methods may\nbe good at ID-preserving, but rely on extra manual effort, perform not well\nin details preserving, character’s orientation, and cinematic knowledge.",
+      "caption_bbox": [
+        311.9779968261719,
+        462.2616271972656,
+        563.0328369140625,
+        506.0976257324219
+      ],
+      "bbox": [
+        307.0,
+        213.0,
+        568.0,
+        458.0
+      ],
+      "file": "figure-1-p001.png",
+      "status": "verified",
+      "method": "manual-bbox",
+      "reason": "已对照第 1 页：电影示例、传统方法、三项挑战及底部智能体全部完整，无图注或正文混入。",
+      "dpi": 300,
+      "sha256": "bc13a45dad7b440da2f5009c821f6c92756ebb7d947fd20aff26faedbf8d97f2",
+      "width": 1088,
+      "height": 1022,
+      "review": {
+        "note": "已对照第 1 页：电影示例、传统方法、三项挑战及底部智能体全部完整，无图注或正文混入。",
+        "sha256": "bc13a45dad7b440da2f5009c821f6c92756ebb7d947fd20aff26faedbf8d97f2",
+        "pdf_sha256": "6ccb17674d779852e5b5d35d8f5005ce802afdd475572394615c64e5bf07c819",
+        "page": 1,
+        "bbox": [
+          307.0,
+          213.0,
+          568.0,
+          458.0
+        ]
+      }
+    },
+    {
+      "id": "figure-2-p003",
+      "kind": "figure",
+      "number": "2",
+      "page": 3,
+      "caption": "Fig. 2. Pipeline of our dialogue visualization system, Dialogue Director, consists of three components leveraging LLM for human-like textual understanding.\n(a) Story Director: Bridges the gap between the dialogue script and detailed scene descriptions for generative models by extracting and enriching key elements.\n(b) Cinematographer: Visualizes characters and scenes, generating multi-view portraits based on the Story Director’s instructions. (c) Storyboard Maker:\nCombines cinematic knowledge with the dialogue script to plan layouts, select portraits, and compose visual elements into the final storyboard.",
+      "caption_bbox": [
+        48.9639892578125,
+        299.0658874511719,
+        563.0357055664062,
+        334.0076599121094
+      ],
+      "bbox": [
+        67.0,
+        45.0,
+        541.0,
+        298.7
+      ],
+      "file": "figure-2-p003.png",
+      "status": "verified",
+      "method": "manual-bbox",
+      "reason": "已对照第 3 页：三智能体、人物多视角、全部箭头和图例完整；底部 Stage #3 完整保留，未含紧邻图注。",
+      "dpi": 300,
+      "sha256": "c74db4a3a4ff43d75180ed1520bce2ff44797b98f879defe5546c67a97d33410",
+      "width": 1976,
+      "height": 1058,
+      "review": {
+        "note": "已对照第 3 页：三智能体、人物多视角、全部箭头和图例完整；底部 Stage #3 完整保留，未含紧邻图注。",
+        "sha256": "c74db4a3a4ff43d75180ed1520bce2ff44797b98f879defe5546c67a97d33410",
+        "pdf_sha256": "6ccb17674d779852e5b5d35d8f5005ce802afdd475572394615c64e5bf07c819",
+        "page": 3,
+        "bbox": [
+          67.0,
+          45.0,
+          541.0,
+          298.7
+        ]
+      }
+    },
+    {
+      "id": "table-i-p004",
+      "kind": "table",
+      "number": "I",
+      "page": 4,
+      "caption": "TABLE I\nQUANTITIVE CAMPARISONS WITH STATE-OF-THE-ART METHODS, NIQE\nWEIGHTS THE QUALITY OF IMAGE GENERATION. CLIP-T WEIGHTS THE\nCOHERENCE WITH THE VISUAL INFORMATION.",
+      "caption_bbox": [
+        316.05999755859375,
+        38.69245529174805,
+        558.9533081054688,
+        73.56241607666016
+      ],
+      "bbox": [
+        311.0,
+        79.0,
+        563.0,
+        133.0
+      ],
+      "file": "table-i-p004.png",
+      "status": "verified",
+      "method": "manual-bbox",
+      "reason": "已对照第 4 页：全部表头、四行方法、NIQE 和 CLIP-T 数值以及底线完整。",
+      "dpi": 350,
+      "sha256": "e223c60b7ce961b2d718f6dab6c3edb43616deac47532ec8b40738ef0d6d25c2",
+      "width": 1226,
+      "height": 263,
+      "review": {
+        "note": "已对照第 4 页：全部表头、四行方法、NIQE 和 CLIP-T 数值以及底线完整。",
+        "sha256": "e223c60b7ce961b2d718f6dab6c3edb43616deac47532ec8b40738ef0d6d25c2",
+        "pdf_sha256": "6ccb17674d779852e5b5d35d8f5005ce802afdd475572394615c64e5bf07c819",
+        "page": 4,
+        "bbox": [
+          311.0,
+          79.0,
+          563.0,
+          133.0
+        ]
+      }
+    },
+    {
+      "id": "figure-3-p005",
+      "kind": "figure",
+      "number": "3",
+      "page": 5,
+      "caption": "Fig. 3.\nIn-the-wild scripts Dialogue Visualization evaluation. Methods in\nyellow frame mean the use of script only, without any manual effort; methods\nin green frame mean use textual information with manual effort; methods\nin blue frame mean the use of reference images generated by the agent\ncinematographer.",
+      "caption_bbox": [
+        48.964,
+        187.962,
+        300.019,
+        231.797
+      ],
+      "bbox": [
+        44.0,
+        45.0,
+        305.0,
+        182.0
+      ],
+      "file": "figure-3-p005.png",
+      "status": "verified",
+      "method": "manual-bbox",
+      "reason": "已对照第 5 页：各方法输入、书店和街道分镜、三色图例完整；已拆分误合并的表 II 标题。",
+      "dpi": 400,
+      "sha256": "3e9c3b0677864a2ade1868110e1004059454d94fcc39d3ebf5dbe89bcc525f05",
+      "width": 1451,
+      "height": 762,
+      "review": {
+        "note": "已对照第 5 页：各方法输入、书店和街道分镜、三色图例完整；已拆分误合并的表 II 标题。",
+        "sha256": "3e9c3b0677864a2ade1868110e1004059454d94fcc39d3ebf5dbe89bcc525f05",
+        "pdf_sha256": "6ccb17674d779852e5b5d35d8f5005ce802afdd475572394615c64e5bf07c819",
+        "page": 5,
+        "bbox": [
+          44.0,
+          45.0,
+          305.0,
+          182.0
+        ]
+      }
+    },
+    {
+      "id": "table-iii-p005",
+      "kind": "table",
+      "number": "III",
+      "page": 5,
+      "caption": "TABLE III\nABLATION ANALYSIS. WE MAKE ABLATION ANALYSIS ON OUR METHOD\nON NIQE AND CLIP-T. NOTICING THAT OUR METHOD IS\nPLUG-AND-PLAY, WE USE IT ON OMNIGEN TO COMPARE THE RESULTS.",
+      "caption_bbox": [
+        315.7209777832031,
+        52.8654899597168,
+        559.2957153320312,
+        87.7354507446289
+      ],
+      "bbox": [
+        311.0,
+        95.0,
+        563.0,
+        157.0
+      ],
+      "file": "table-iii-p005.png",
+      "status": "verified",
+      "method": "manual-bbox",
+      "reason": "已对照第 5 页：OmniGen 两种输入、三个删除组件变体与完整方法六行全部完整，数值与原文一致。",
+      "dpi": 350,
+      "sha256": "e6bf8d03fa5905c95fdb9a95d287f81ca6821e36b11846797ce734774b90ecc7",
+      "width": 1226,
+      "height": 303,
+      "review": {
+        "note": "已对照第 5 页：OmniGen 两种输入、三个删除组件变体与完整方法六行全部完整，数值与原文一致。",
+        "sha256": "e6bf8d03fa5905c95fdb9a95d287f81ca6821e36b11846797ce734774b90ecc7",
+        "pdf_sha256": "6ccb17674d779852e5b5d35d8f5005ce802afdd475572394615c64e5bf07c819",
+        "page": 5,
+        "bbox": [
+          311.0,
+          95.0,
+          563.0,
+          157.0
+        ]
+      }
+    },
+    {
+      "id": "figure-4-p005",
+      "kind": "figure",
+      "number": "4",
+      "page": 5,
+      "caption": "Fig. 4. Ablation analysis on our method and OmniGen. It can be seen the\nagents in our method can act as plug-and-play component in other generative\nmethod like OmniGen. The three components perform their duties as we\nexpect.",
+      "caption_bbox": [
+        311.9779968261719,
+        434.67962646484375,
+        563.0326538085938,
+        469.54864501953125
+      ],
+      "bbox": [
+        307.0,
+        160.0,
+        568.0,
+        430.0
+      ],
+      "file": "figure-4-p005.png",
+      "status": "verified",
+      "method": "manual-bbox",
+      "reason": "已对照第 5 页：OmniGen 对比、三个删除组件变体和完整框架共五排全部完整，人物和方法标签可读。",
+      "dpi": 350,
+      "sha256": "2b4551ea395eea95cb223864995f72d4e123ae69006cb04f320bef583ec599b0",
+      "width": 1270,
+      "height": 1314,
+      "review": {
+        "note": "已对照第 5 页：OmniGen 对比、三个删除组件变体和完整框架共五排全部完整，人物和方法标签可读。",
+        "sha256": "2b4551ea395eea95cb223864995f72d4e123ae69006cb04f320bef583ec599b0",
+        "pdf_sha256": "6ccb17674d779852e5b5d35d8f5005ce802afdd475572394615c64e5bf07c819",
+        "page": 5,
+        "bbox": [
+          307.0,
+          160.0,
+          568.0,
+          430.0
+        ]
+      }
+    },
+    {
+      "id": "table-ii-p005",
+      "kind": "table",
+      "number": "II",
+      "page": 5,
+      "bbox": [
+        48.0,
+        286.0,
+        301.0,
+        352.0
+      ],
+      "caption": "TABLE II\nHUMAN EVALUATION WITH EXISTING STORYTELLING METHODS ON THREE METRICS: THE STORYBOARD SHOULD REFLECT COMPLEX RELATIONSHIP, MAINTAIN DETAILS IN DIFFERENT VIEWS AND APPLY KNOWLEDGE OF CINEMA PROPERLY.",
+      "file": "table-ii-p005.png",
+      "status": "verified",
+      "method": "manual-bbox",
+      "reason": "已对照第 5 页：手工补登记自动漏检的人类评价表；五列表头、六行方法和底线全部完整。",
+      "dpi": 350,
+      "sha256": "4a7d114dd76fd0d2461e43a441e021567b7a2cffa454e32b7989327ad17f77e2",
+      "width": 1231,
+      "height": 322,
+      "caption_bbox": [
+        48.964,
+        236.0,
+        300.019,
+        278.271
+      ],
+      "review": {
+        "note": "已对照第 5 页：手工补登记自动漏检的人类评价表；五列表头、六行方法和底线全部完整。",
+        "sha256": "4a7d114dd76fd0d2461e43a441e021567b7a2cffa454e32b7989327ad17f77e2",
+        "pdf_sha256": "6ccb17674d779852e5b5d35d8f5005ce802afdd475572394615c64e5bf07c819",
+        "page": 5,
+        "bbox": [
+          48.0,
+          286.0,
+          301.0,
+          352.0
+        ]
+      }
+    }
+  ]
+}
