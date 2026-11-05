@@ -16,7 +16,17 @@ description: >
 一套「读到一篇新论文 → 产出一篇中文阅读笔记」的方法论流水线，从 97 篇公开博客笔记全量统计 + 逐篇通读中蒸馏而来。
 **这是方法论模仿，不是人物扮演**——不模拟人格、不编造作者观点，只复用骨架、句式与格式规范。
 
-本技能的全部脚本与参考资源位于本技能目录内，以下所有命令均以项目根目录为工作目录执行。
+笔记专属脚本与参考资源位于本技能目录；共享素材脚本位于项目 `scripts/`，以下所有命令均以项目根目录为工作目录执行。
+
+## 共享素材准备与核验（先执行）
+
+三个技能共用 `assets/paper-imgs/<论文ID>/asset_manifest.json` 和同目录的图片。论文 ID 使用已有素材目录名；同一 PDF 不另建第二套素材。按 [共享素材工作流](../../../docs/paper-assets-workflow.md) 执行 `prepare → review-sheet → 逐图修复/review → review-inventory → check`。未通过 `check` 时先处理待提取/待核验项，不得宣称素材齐全。
+
+- PDF 原文是盘点依据；自动标题检测不能证明已找全。查看全部原页，补登记漏掉的图表和续表。
+- 已核验素材直接复用。修改只针对指定素材 ID，禁止清空共享目录；补提后重新核验。
+- `excluded` 仅用于经核实的重复图、正文误检或非论文素材，必须记录理由；不得用排除来缩短 PPT。
+- PPT 必须可读呈现全部未排除图表，包括博客未引用的图。可放主讲或附录，不能只在注释、隐藏节点或缩略图墙中出现。
+
 
 - **产出物契约**：单个 `.md` 文件（输出到 `paper-blogs/`）+ `assets/paper-imgs/<论文名>/` 图片目录。不产出多文件、不改动用户已有笔记。
 - **领域**：骨架与规范是**通用**的。语料本身偏表格数据机器学习，跨领域（尤其视觉检测）的替换映射见 `references/research/domain-transfer.md`（本技能目录内），实测 95/97 篇手法可迁移。当 `domain-transfer.md` 与本文件冲突时，**以 domain-transfer.md 为准**（它是针对具体领域的特化规则）。
@@ -76,10 +86,10 @@ python .agents/skills/lzk-paper-reading/scripts/new_note.py "paper-blogs/<英文
 
 ### Step 4 · 图表落盘
 图片存到 `assets/paper-imgs/<论文名>/`，正文用相对路径 `![](../assets/paper-imgs/<论文名>/xx_01.png)` 引用。
-可先运行 `python .agents/skills/html-paper-slides/scripts/pdf_extractor.py <pdf路径> --output-dir assets/paper-imgs/<论文名>` 从 PDF 提取图表（依赖 `pymupdf`、`Pillow`）。
+复用已通过共享素材核验的图片；缺失图表使用 `scripts/paper_assets.py extract` 按素材 ID 补提并重新核验。不得重新批量提取或改用 PPT 私有素材目录。
 
 ### Step 5 · 自检与交付
-跑 `python .agents/skills/lzk-paper-reading/scripts/check_note.py <文件>`，再人工过 §6 清单，把未通过项改掉后才交付。
+先跑 `python scripts/paper_assets.py check --paper "<论文ID>"`，再跑 `python .agents/skills/lzk-paper-reading/scripts/check_note.py <文件>`，再人工过 §6 清单，把未通过项改掉后才交付。
 
 ---
 

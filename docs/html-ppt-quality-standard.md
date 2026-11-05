@@ -1,7 +1,7 @@
 # HTML 格式 PPT 质量核查标准
 
 > 版本 v1.0 · 制定日期 2026-11-04 · 适用对象：`paper-slides/*.html`（当前 62 份）
-> 本标准为「成品验收规范」，与 `skills/html-paper-slides/SKILL.md`、`skills/blog-to-slides/SKILL.md` 的「生成规范」配套使用。判定一律以本文件为准。
+> 本标准为「成品验收规范」，与 `.agents/skills/html-paper-slides/SKILL.md`、`.agents/skills/blog-to-slides/SKILL.md` 的「生成规范」配套使用。判定一律以本文件为准。
 
 ---
 
@@ -50,20 +50,30 @@
 
 ### 3.1 依据对照表
 
+> **引用约定与路径映射**：核查期间仓库做过一次目录重构，`skills/` 已迁移为 `.agents/skills/`、`.qoder/skills/`、`.trae/skills/` 三份同步副本，脚本另复制到 `scripts/` 根目录；README 与 SKILL.md 内容也有更新，原有行号已漂移。因此本标准的依据一律按「**文件路径 + 章节标题**」定位，不保留易失效的行号。当前可访问路径：
+>
+> | 本表简称 | 当前真实路径 |
+> |---|---|
+> | `html-paper-slides/SKILL.md` | `.agents/skills/html-paper-slides/SKILL.md`（`.qoder/`、`.trae/` 有同步副本） |
+> | `blog-to-slides/SKILL.md` | `.agents/skills/blog-to-slides/SKILL.md` |
+> | `verify_slides.py` | `scripts/verify_slides.py` 或 `.agents/skills/blog-to-slides/scripts/verify_slides.py` |
+> | `README.md` / `README.en.md` | 仓库根目录，见 §「质量检查清单」 |
+> | 设计稿 | `docs/superpowers/specs/2026-10-29-blog-to-slides-pdf-augmented-design.md` |
+
 | 依据 | 关键条款 | 被本标准吸收为 |
 |---|---|---|
-| `skills/html-paper-slides/SKILL.md:35-59` | 配色 5 色值、系统字体栈、标题 700-800 / 正文 400-500、16:9 + `padding:5vh 7vw`、Grid/Flex、`clamp()` | V4.1、V4.2、T3.2、T3.5、L2.1、L2.3、L2.6 |
-| `skills/html-paper-slides/SKILL.md:65-70` | 必需组件：Slide Engine / Progress Bar / Dots / Animations | V4.3、I5.6 |
-| `skills/html-paper-slides/SKILL.md:99-130` | 13~22 页、8 段式结构、分页规划表 | C1.2 |
-| `skills/html-paper-slides/SKILL.md:132-139` | 每页 3-5 要点、标题配色、glow 装饰、动画递增、封面 badge/cover-tag、保留左右键但不要显式控制器 | C1.4、V4.4、V4.5、I5.5、I5.6 |
-| `skills/html-paper-slides/SKILL.md:141-154` | 已知问题 1（零外部依赖避免字体 404）、问题 2（`.slide.active` 三属性 `!important`、JS 禁 inline style） | T3.2、A6.5、I5.1 |
-| `skills/blog-to-slides/SKILL.md:46-59` | L1 叙事层 / L2 事实层 / L3 素材层；「信息拿不到就省略，宁可少写，不可编造」 | C1.3、C1.9 |
-| `skills/blog-to-slides/SKILL.md:162-183` | 动态页数预算 `min = 7 + ceil(N/2)`、`max = min(8+N, 30)` | C1.2（页数合理性参考，不作硬阈值） |
-| `skills/blog-to-slides/SKILL.md:185-196` | 图注与结论不拆散、横长图排版、表格以图片为准 | C1.5、L2.4、T3.6 |
-| `skills/blog-to-slides/SKILL.md:200-225` | 已知问题 1-5：字体、翻页空白、图片路径、丢图顽疾、双栏抽取 | T3.2、I5.1、C1.8 |
-| `README.md:194-201` | 6 条质量清单：PDF 溯源、笔记门禁、配图归档、HTML 单文件打开/键盘翻页/视觉层级、manifest 全覆盖、缩略图 | C1.1、A6.5、I5.2、T3.5、外围附注 |
-| `skills/blog-to-slides/scripts/verify_slides.py:7-16,31-34,42-71,121-129` | 六项门禁（图覆盖率、图片加载、页数上下限、src 前缀、含图页中文 ≥20）、`PAGE_RE` 精确页数正则、Playwright DOM 探测范式 | C1.7、C1.8、A6.1、附录 A |
-| `docs/superpowers/specs/2026-10-29-blog-to-slides-pdf-augmented-design.md:420-431,527` | 十项验收标准；「1280×720 下 19 页全部无溢出」人工验证基线 | A6.1、L2.2 |
+| `.agents/skills/html-paper-slides/SKILL.md` | 配色 5 色值、系统字体栈、标题 700-800 / 正文 400-500、16:9 + `padding:5vh 7vw`、Grid/Flex、`clamp()` | V4.1、V4.2、T3.2、T3.5、L2.1、L2.3、L2.6 |
+| `.agents/skills/html-paper-slides/SKILL.md` | 必需组件：Slide Engine / Progress Bar / Dots / Animations | V4.3、I5.6 |
+| `.agents/skills/html-paper-slides/SKILL.md` | 13~22 页、8 段式结构、分页规划表 | C1.2 |
+| `.agents/skills/html-paper-slides/SKILL.md` | 每页 3-5 要点、标题配色、glow 装饰、动画递增、封面 badge/cover-tag、保留左右键但不要显式控制器 | C1.4、V4.4、V4.5、I5.5、I5.6 |
+| `.agents/skills/html-paper-slides/SKILL.md` | 已知问题 1（零外部依赖避免字体 404）、问题 2（`.slide.active` 三属性 `!important`、JS 禁 inline style） | T3.2、A6.5、I5.1 |
+| `.agents/skills/blog-to-slides/SKILL.md` | L1 叙事层 / L2 事实层 / L3 素材层；「信息拿不到就省略，宁可少写，不可编造」 | C1.3、C1.9 |
+| `.agents/skills/blog-to-slides/SKILL.md` | 动态页数预算 `min = 7 + ceil(N/2)`、`max = min(8+N, 30)` | C1.2（页数合理性参考，不作硬阈值） |
+| `.agents/skills/blog-to-slides/SKILL.md` | 图注与结论不拆散、横长图排版、表格以图片为准 | C1.5、L2.4、T3.6 |
+| `.agents/skills/blog-to-slides/SKILL.md` | 已知问题 1-5：字体、翻页空白、图片路径、丢图顽疾、双栏抽取 | T3.2、I5.1、C1.8 |
+| `README.md` | 6 条质量清单：PDF 溯源、笔记门禁、配图归档、HTML 单文件打开/键盘翻页/视觉层级、manifest 全覆盖、缩略图 | C1.1、A6.5、I5.2、T3.5、外围附注 |
+| `.agents/skills/blog-to-slides/scripts/verify_slides.py` | 六项门禁（图覆盖率、图片加载、页数上下限、src 前缀、含图页中文 ≥20）、`PAGE_RE` 精确页数正则、Playwright DOM 探测范式 | C1.7、C1.8、A6.1、附录 A |
+| `docs/superpowers/specs/2026-10-29-blog-to-slides-pdf-augmented-design.md` | 十项验收标准；「1280×720 下 19 页全部无溢出」人工验证基线 | A6.1、L2.2 |
 
 > **现状结论**：以上材料是「生成规范 + 流程清单 + 单流程门禁」，此前**没有**一份成文、统一、面向全部成品的核查标准，也未覆盖视觉一致性、打印导出、16:9 实现、缩放兜底、页码自洽、误触、投影适配等维度。
 
@@ -93,7 +103,8 @@
 2. 在标准中仍完整成文（它们是必须补齐的规范条款）；
 3. 在核查报告「共性问题」章节单列，每项给出**一条全库级**改进建议；
 4. 在待优化清单中各写 **1 条「全库」条目**（放 P1 / P2 段），不重复 62 次；
-5. 逐份评级只由文件自身可区分的差异决定：失效图片、内容溢出、章节缺失、页码错误、字号/对比度、交互误触、配色字体偏离等。
+5. 逐份评级只由文件自身可区分的差异决定：失效图片、内容溢出、章节缺失、页码错误、字号/对比度、交互误触、配色字体偏离等；
+6. **模板级共性**（仅 B 类有的整页 click 误触 I5.3、仅 A 类有的显式控制器 I5.5）并非全库同犯，仍逐份参与 I 维扣分，但在待优化清单中合并为 **1 条「模板级」条目**，避免 54 份重复同一条建议。
 
 此决策须在核查报告 §6 同步说明，不得在评分时偷偷剔除其它非 `G` 项。
 
@@ -107,15 +118,15 @@
 
 | 编号 | 检查项与达标判据 | 方法 | 严重度 | 类型 | 依据 |
 |---|---|---|---|---|---|
-| C1.1 | 封面须含论文标题 + 作者 + 期刊/会议或 arXiv/DOI/年份；`<title>` 与封面标题一致 | S+B | S1 | 核心 | SKILL.md:101-109、README:196 |
-| C1.2 | **8 段式叙事链**：封面 → 摘要/概述 → 引言/动机 → 方法 → 实验 → (消融) → 总结与展望 → 结尾。**必需段**＝封面、方法、实验、总结；缺任一即不达标（R-S1）。等效标签：`Method/方法/架构/模块/Pipeline`、`Experiments/实验/Results/结果/Ablation/消融`、`Summary/总结/结论/Conclusion/致谢/感谢观看`；`Contributions` 视为概述段。实验段出现在方法段之前视为顺序错乱 | S+B | S1 | 核心 | SKILL.md:99-130、README:192 |
-| C1.3 | 无 `TODO` / `Lorem` / 占位文案 / 公式乱码 / 明显编造数值 | S+R | S1 | 核心 | blog-to-slides:46-59 |
-| C1.4 | 每页要点数（`li` / `.card` / `.step`）3-5 个；>8 记「信息过载」 | R | S2 | 核心 | SKILL.md:134 |
-| C1.5 | 含图页须有图注或结论文字，图注与图同页 | S+B | S2 | 次要 | blog-to-slides:193 |
+| C1.1 | 封面须含论文标题 + 作者 + 期刊/会议或 arXiv/DOI/年份；`<title>` 与封面标题一致 | S+B | S1 | 核心 | SKILL.md、README |
+| C1.2 | **8 段式叙事链**：封面 → 摘要/概述 → 引言/动机 → 方法 → 实验 → (消融) → 总结与展望 → 结尾。**必需段**＝封面、方法、实验、总结；缺任一即不达标（R-S1）。等效标签：`Method/方法/架构/模块/Pipeline`、`Experiments/实验/Results/结果/Ablation/消融`、`Summary/总结/结论/Conclusion/致谢/感谢观看`；`Contributions` 视为概述段。实验段出现在方法段之前视为顺序错乱 | S+B | S1 | 核心 | SKILL.md、README |
+| C1.3 | 无 `TODO` / `Lorem` / 占位文案 / 公式乱码 / 明显编造数值 | S+R | S1 | 核心 | blog-to-slides |
+| C1.4 | 每页要点数（`li` / `.card` / `.step`）3-5 个；>8 记「信息过载」 | R | S2 | 核心 | SKILL.md |
+| C1.5 | 含图页须有图注或结论文字，图注与图同页 | S+B | S2 | 次要 | blog-to-slides |
 | C1.6 | 末页或页脚给出参考文献/出处章节；仅封面含 arXiv/DOI 视为「最低要求已满足、章节缺失」 | S | S3 | `G` | 本次补齐 |
-| C1.7 | 无空页/重复页：含图页中文字符 ≥20；无正文且无图的页判空页 | S+R | S2 | 核心 | verify_slides.py:13,64-65 |
-| **C1.8** | **每个 `<img src>` 指向磁盘实际存在文件，且渲染 `naturalWidth > 0`**。两套历史路径均允许：`../assets/paper-imgs/<论文名>/` 与 `paper-slides/<同名子目录>/`；指向不存在目录或命名不符文件即不达标 | S+R+B | **S0** | 核心 | blog-to-slides:57,212-215；verify_slides.py 检查 2/5 |
-| C1.9 | 实验数值与 PDF/笔记一致（标注「事实层未逐份核验」，不作推断） | B | S3 | 次要 | blog-to-slides:46-59 |
+| C1.7 | 无空页/重复页：含图页中文字符 ≥20；无正文且无图的页判空页 | S+R | S2 | 核心 | verify_slides.py |
+| **C1.8** | **每个 `<img src>` 指向磁盘实际存在文件，且渲染 `naturalWidth > 0`**。两套历史路径均允许：`../assets/paper-imgs/<论文名>/` 与 `paper-slides/<同名子目录>/`；指向不存在目录或命名不符文件即不达标 | S+R+B | **S0** | 核心 | blog-to-slides；verify_slides.py 检查 2/5 |
+| C1.9 | 实验数值与 PDF/笔记一致（标注「事实层未逐份核验」，不作推断） | B | S3 | 次要 | blog-to-slides |
 
 ### 4.2 L 维 · 版式布局（权重 18）
 
@@ -214,15 +225,25 @@ G 全局项：不进入逐份折算
 
 同一检查项在多个页面重复命中时，按「项」计一次扣分，但命中数量记入评级依据（如 `C1.8×13`），用于清单排序与优先级判断。
 
+**实施期严重度微调（v1.1，均已在核查报告 §8 披露，不改变条款本身）**
+
+| 条款 | 条款标定 | 实际判定 | 理由 |
+|---|---|---|---|
+| `A6.2` | S1 | 主屏三档正常、仅辅助档溢出/小字时按 **S2** | 不阻断桌面/投影主档演示，属适配缺陷而非内容不可读 |
+| `T3.1` | S1 | 未达标仅来自 `figure-caption` 等装饰性小字且正文主体可读时按 **S2** | 图注略小不等于关键页不可读 |
+| `T3.3` | S2 | 正文最低对比度 **<3:1** 时升级 **S1** 并触发 `R-S3` | 投影下该文字实际难以辨认 |
+| `L2.2` | S0 | 仅人工复核确认「裁切关键内容」时按 **S0** 触发 `R-F3`；未裁切但版式偏紧按 **S2** 记 P1 | 避免把底部几像素留白误判为致命缺陷 |
+
 ### 6.3 分档
 
 | 等级 | 条件 |
 |---|---|
-| **优秀** | 总分 ≥85 且无红线、无 `S1` 级未达标核心项、C/L/T/A 四维均 ≥80 |
-| **合格** | 70 ≤ 总分 <85 且无红线 |
-| **待优化** | 总分 <70 **或**命中任一红线（红线优先，覆盖分数） |
+| **优秀** | 总分 ≥97 且无红线、无 `S1` 级未达标核心项、C/L/T/A 四维均 ≥85 |
+| **合格** | 93 ≤ 总分 <97 且无红线 |
+| **待优化** | 总分 <93 **或**命中任一红线（红线优先，覆盖分数） |
 
-- 边界值 85 / 70 取上档；命中红线但总分 ≥85 仍为「待优化」，依据栏写明「红线优先否决 + 红线编号」。
+- 边界值 97 / 93 取上档；命中红线但总分 ≥97 仍为「待优化」，依据栏写明「红线优先否决 + 红线编号」。
+- **v1.1 阈值校准（2026-11-04，实施阶段公开修订）**：§3.3 把 6 个 `G` 全局项从逐份评分剔除后，六维得分分母变小，量表含义变为「排除全库共性缺陷后的相对质量」，整体高于绝对 100 分制。首次全量实测 62 份得分落在 **91.5~99.0（中位数 97.9）**，v1.0 的绝对阈值 85/70 **从未被触发**，全部文件挤在同一档、评级失去区分度。故按量表实际分布把阈值校准为 **97 / 93**，并把优秀档 C/L/T/A 四维门槛由 80 提到 85。**权重、检查项、红线清单、`G` 项剔除规则均未改动**；校准后分布为优秀 31 / 合格 24 / 待优化 7。校准依据与前后对比在核查报告 §2 同步披露。后续若评分模型变化须重新校准并写明理由，不得为凑某档人数临时调整阈值。
 - 同分同档按文件名升序排列。
 - **未验证降级**：渲染不可用时，相关维度标「未验证」，不扣分、不计达标，按剩余维权重归一化；该文件**最高只能评「合格」**，并在报告中说明原因。
 - 三档若出现「全员一档」的坍缩，必须回到本标准调整阈值并写明理由，**不得**为迁就结果而临时增删检查项。
@@ -281,6 +302,8 @@ G 全局项：不进入逐份折算
 | 硬编码页码 | 以人工复核「JS 是否动态覆盖」为准（§4.5 I5.4） |
 | 无法判定 | 一律标「未验证 + 原因」，不计达标、不扣分、不写「通过 / 失败」、不臆测 |
 | 事实层 | 实验数值不逐份比对 PDF，统一标注「事实层未逐份核验」 |
+| 对比度背景 | 半透明背景（如 `rgba(57,102,162,0.06)`）须与下层底色按 alpha 合成后再算 WCAG 对比度，不得当作不透明纯色；否则黑色正文会被误报为对比度不足 |
+| 叙事顺序 | 章节归一化的「顺序可疑」只是静态提示，须人工复核确认为真实错乱才判 C1.2 不达标；人工确认无误的标 `narrative_ok=true` 并在报告 §8 留痕 |
 | 差异留痕 | 所有被驳回的疑似项、静态/渲染差异，列入核查报告 §8 |
 
 ---

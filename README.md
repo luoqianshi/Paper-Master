@@ -42,7 +42,7 @@ cd Paper-Master
 
 > **先清空作者的示例内容,再换成你自己的论文**
 >
-> 仓库自带作者本人的论文阅读成果:`pdf-papers/` 中的原始论文 PDF、`paper-blogs/` 中的 58 篇阅读笔记、`paper-slides/` 中的 61 份 HTML PPT(含各自的 `*_assets/` 配图目录)、`assets/paper-imgs/` 中的 59 个论文配图文件夹与 `assets/thumbnails/` 中的 61 张首屏缩略图。开始制作自己的内容前,请先清空这 5 个目录下的资源(保留目录本身),再清空 `slides-manifest.json`、`blogs-manifest.json` 中的数组,或运行 `python scripts/generate_manifests.py` 重建空清单——`index.html` 画廊只读取这两份清单。此外,`other-htmls/` 中的 4 个主题讲解页同样是作者内容,不需要可一并删除。
+> 仓库自带作者本人的论文阅读成果:`pdf-papers/` 中的原始论文 PDF、`paper-blogs/` 中的 58 篇阅读笔记、`paper-slides/` 中的 61 份 HTML PPT(含历史 `*_assets/` 配图目录,可按共享素材工作流迁移)、`assets/paper-imgs/` 中的 59 个论文配图文件夹与 `assets/thumbnails/` 中的 61 张首屏缩略图。开始制作自己的内容前,请先清空这 5 个目录下的资源(保留目录本身),再清空 `slides-manifest.json`、`blogs-manifest.json` 中的数组,或运行 `python scripts/generate_manifests.py` 重建空清单——`index.html` 画廊只读取这两份清单。此外,`other-htmls/` 中的 4 个主题讲解页同样是作者内容,不需要可一并删除。
 
 用 Codex / Qoder / TRAE / Claude Code / CodeBuddy 等任意支持 Skills 的 AI 编程工具 / AI 办公工具打开,然后把下面任意一句发给 Agent:
 
@@ -98,7 +98,9 @@ python -m pip install pymupdf Pillow playwright
 python -m playwright install chromium
 ```
 
-维护技能时,请在原始目录 `.agents/skills/` 中更新指令、脚本、模板与参考资料,再同步到 `.trae/skills/`、`.qoder/skills/` 等平台目录,并使用对应平台的脚本路径。
+三个技能共用 `assets/paper-imgs/<论文ID>/asset_manifest.json` 和同目录图片。PDF 直接转 PPT 也使用这套素材,不再新建 PPT 私有图片目录。先准备和核验图表,再生成博客或 PPT;两条 PPT 流程都按实际可见图片检查全部素材覆盖率。操作步骤、逐图补提和旧目录迁移见[共享素材工作流](docs/paper-assets-workflow.md)。
+
+维护技能指令时更新 `.agents/skills/`;公共图表脚本位于 `scripts/`,模板源文件为 `templates/presentation.html`。运行 `python scripts/sync_skill_resources.py` 分发指令、脚本入口和模板,运行 `python scripts/sync_skill_resources.py --check` 检查同步状态。笔记脚本及语料资料仍在技能目录内维护。
 
 ---
 
@@ -114,11 +116,11 @@ python -m playwright install chromium
 
 - **`lzk-paper-reading`** 按固定五节骨架(研究动机 / 文章贡献 / 本文方法 / 实验结果 / 优点和创新点)+ 论文概况表 + 免责声明产出中文笔记,强制执行公式"铺垫句→LaTeX→其中解释"三段式、"2-3 句 + 1 图"实验节奏,并用 `scripts/new_note.py` 起稿、`scripts/check_note.py` 门禁验收。
 - **`html-paper-slides`** 生成苹果风 / Notion 风的单文件 HTML 演示文稿:无外部依赖、可直接 `open file://` 播放、键盘翻页、淡入动画、CSS Grid 响应式排版,适合 GitHub Pages / Vercel / Netlify 一键部署。
-- **`blog-to-slides`** 以 `lzk-paper-reading` 产出的中文阅读笔记为**唯一信息源**,复用 `assets/paper-imgs/` 已提取配图,无需 PDF:把五节骨架笔记映射为「首页 → 概述 → 引言 → 方法 → 实验 → 总结与讨论」的单文件 HTML deck,公式用 HTML/CSS 排版、图片以相对路径直接引用(不复制图片),保持 `file://` 协议下零外部依赖。
+- **`blog-to-slides`** 以 `lzk-paper-reading` 产出的中文阅读笔记为**叙事输入**,复用 `assets/paper-imgs/` 已核验配图,需要补证或补提时回查原 PDF:把五节骨架笔记映射为「首页 → 概述 → 引言 → 方法 → 实验 → 总结与讨论」的单文件 HTML deck,公式用 HTML/CSS 排版、图片以相对路径直接引用(不复制图片),保持 `file://` 协议下零外部依赖。
 
-> `lzk-paper-reading` 与 `html-paper-slides` 共享同一套"论文理解"能力:先用 `pdf_extractor.py` 从 PDF 提取透明背景原图,按论文标题统一归档到 `assets/paper-imgs/<论文标题>/`,再分别喂给笔记流与 PPT 流;`blog-to-slides` 则补上第三条路径——直接以上一条流产出的笔记与配图为输入,把已有笔记快速转成 PPT,全程无需再读 PDF。同一篇论文,可以一次生成"笔记 + PPT"两份资产。
+> `lzk-paper-reading` 与 `html-paper-slides` 共享同一套"论文理解"能力:先用 `pdf_extractor.py` 从 PDF 提取透明背景原图,按论文标题统一归档到 `assets/paper-imgs/<论文标题>/`,再分别喂给笔记流与 PPT 流;`blog-to-slides` 则补上第三条路径——直接以上一条流产出的笔记与配图为输入,把已有笔记快速转成 PPT,已核验素材可直接复用,缺项时回查 PDF。同一篇论文,可以一次生成"笔记 + PPT"两份资产。
 
-其中 `pdf_extractor.py` 采用**标题驱动**的提取模式:先定位 `Figure/Table` 标题(文本模式 + 动词黑名单 + 邻近视觉内容三重过滤,排除正文里的 "Figure 3 shows..." 引用),再按「Figure 向上找图、Table 向下找表」关联图表区域,最后在搜索窗口内取矢量/图片外接矩形做像素级裁切,输出语义化命名的 `fig1.png` / `table2.png`;标题驱动失败时可加 `--fallback-blind-crop` 启用盲裁剪兜底。完整实现原理见 [PDF 论文图表精准定位与裁切实现原理](qna/PDF论文图表精准定位与裁切实现原理_20261028_154824.md),标题检测 / 区域关联 / 边界精修三个阶段的可视化解读见 `qna/html-vis/`。
+其中 `pdf_extractor.py` 采用**标题驱动**的提取模式:先定位 `Figure/Table` 标题(文本模式 + 动词黑名单 + 邻近视觉内容三重过滤,排除正文里的 "Figure 3 shows..." 引用),再按「Figure 向上找图、Table 向下找表」关联图表区域,最后在搜索窗口内取矢量/图片外接矩形做像素级裁切,新素材按类型、编号、页码分配稳定 ID;定位失败项保留在规范清单中,用 `paper_assets.py extract --asset ... --page ... --bbox ...` 逐图补提并核验。完整实现原理见 [PDF 论文图表精准定位与裁切实现原理](qna/PDF论文图表精准定位与裁切实现原理_20261028_154824.md),标题检测 / 区域关联 / 边界精修三个阶段的可视化解读见 `qna/html-vis/`。
 
 ---
 
@@ -216,7 +218,7 @@ python -m playwright install chromium
 论文配图统一入库:由 `pdf_extractor.py` 提取的重要截图,按**论文标题**创建文件夹,存入 `assets/paper-imgs/<论文标题>/`,供笔记与 PPT 两条流共用。
 
 ### 3. `paper-slides/` —— HTML 汇报 PPT
-由 `html-paper-slides`(输入 PDF)或 `blog-to-slides`(输入 `paper-blogs/` 中同一篇论文的阅读笔记,无需 PDF)产出,单文件演示文稿,基于 `paper-blogs/` 中的阅读笔记与 `assets/paper-imgs/` 配图,按分页规划压缩成 13–22 页的讲述结构。章节流为**封面 → 摘要 → 引言 → 方法 → 实验 → 消融 → 结论与展望**,通过卡片、流程图、对比表、指标高亮、导航控件强化阅读节奏。成品入库后,**必须同步更新 `slides-manifest.json`**,确保 `index.html` 画廊可以正确展示标题、路径、简介、类型与主题色。随后运行 `python .agents/skills/html-paper-slides/scripts/generate-thumbnails.py` 生成首屏缩略图,画廊卡片便会直接展示真实幻灯片封面。
+由 `html-paper-slides`(输入 PDF)或 `blog-to-slides`(输入 `paper-blogs/` 中同一篇论文的阅读笔记,无需 PDF)产出,单文件演示文稿,基于 `paper-blogs/` 中的阅读笔记与 `assets/paper-imgs/` 配图,按全部素材规划主讲与可读附录,不以固定页数截断内容。章节流为**封面 → 摘要 → 引言 → 方法 → 实验 → 消融 → 结论与展望**,通过卡片、流程图、对比表、指标高亮、导航控件强化阅读节奏。成品入库后,**必须同步更新 `slides-manifest.json`**,确保 `index.html` 画廊可以正确展示标题、路径、简介、类型与主题色。随后运行 `python .agents/skills/html-paper-slides/scripts/generate-thumbnails.py` 生成首屏缩略图,画廊卡片便会直接展示真实幻灯片封面。
 
 ### 质量检查清单
 在进入下一阶段前建议确认:
@@ -247,7 +249,7 @@ Paper-Master/
 ├── README.md             # 中文 README(默认)
 ├── README.en.md          # 英文 README
 ├── LICENSE               # MIT 协议
-├── paper-slides/         # html-paper-slides 产出的 HTML PPT 成品 + 对应 _assets/ 配图
+├── paper-slides/         # HTML PPT 成品;新增作品引用 assets/paper-imgs/ 共享素材
 │   ├── Attention_Is_All_You_Need.html
 │   ├── DETRs_Beat_YOLOs_on_Real-time_Object_Detection.html
 │   └── ... (更多论文演示)

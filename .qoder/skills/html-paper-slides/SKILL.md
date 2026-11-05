@@ -7,14 +7,24 @@ description: 生成苹果风/Notion 风的论文阅读 HTML 演示文稿（PPT�
 
 生成苹果风/Notion 风的 HTML 演示文稿，用于 AI&CS 专业组会论文阅读汇报或内容展示。
 
-本技能的全部资源（脚本、模板）位于本技能目录内，以下所有命令均以项目根目录为工作目录执行。
+技能专属资源位于本技能目录；公共素材脚本位于项目 `scripts/`，模板源文件位于 `templates/presentation.html`，以下所有命令均以项目根目录为工作目录执行。
+
+## 共享素材准备与核验（先执行）
+
+三个技能共用 `assets/paper-imgs/<论文ID>/asset_manifest.json` 和同目录的图片。论文 ID 使用已有素材目录名；同一 PDF 不另建第二套素材。按 [共享素材工作流](../../../docs/paper-assets-workflow.md) 执行 `prepare → review-sheet → 逐图修复/review → review-inventory → check`。未通过 `check` 时先处理待提取/待核验项，不得宣称素材齐全。
+
+- PDF 原文是盘点依据；自动标题检测不能证明已找全。查看全部原页，补登记漏掉的图表和续表。
+- 已核验素材直接复用。修改只针对指定素材 ID，禁止清空共享目录；补提后重新核验。
+- `excluded` 仅用于经核实的重复图、正文误检或非论文素材，必须记录理由；不得用排除来缩短 PPT。
+- PPT 必须可读呈现全部未排除图表，包括博客未引用的图。可放主讲或附录，不能只在注释、隐藏节点或缩略图墙中出现。
+
 
 ## 项目约定（本仓库专属，必须遵循）
 
 | 项 | 约定 |
 | --- | --- |
 | 幻灯片输出 | `paper-slides/<论文名>.html`（单文件 HTML，与现有幻灯片同级） |
-| 论文图表素材 | 提取到 `paper-slides/<论文名>_assets/`，HTML 内用相对路径 `<论文名>_assets/xxx.png` 引用 |
+| 论文图表素材 | 复用 `assets/paper-imgs/<论文ID>/`，HTML 引用 `../assets/paper-imgs/<论文ID>/xxx.png` |
 | 论文 PDF 输入 | 用户通常放在 `pdf-papers/`，也可能给出任意路径或 arXiv 链接 |
 | 缩略图 | `assets/thumbnails/<论文名>.png`，由脚本自动生成 |
 | 清单登记 | 生成后必须在 `slides-manifest.json` 的 `slides` 数组末尾追加条目 |
@@ -88,15 +98,16 @@ description: 生成苹果风/Notion 风的论文阅读 HTML 演示文稿（PPT�
 
 ## 工作流程
 
-1. **理解论文**：先通读论文内容，然后运行提取脚本获取论文原始图表（透明背景裁剪）：
+1. **准备素材与理解论文**：先按共享素材工作流核验 PDF 图表，全部脚本从项目根目录运行：
 
+   ```bash
+   python scripts/paper_assets.py prepare --paper "<论文ID>" --pdf "<PDF路径>"
+   python scripts/paper_assets.py review-sheet --paper "<论文ID>"
    ```
-   python .qoder/skills/html-paper-slides/scripts/pdf_extractor.py <pdf路径> --output-dir paper-slides/<论文名>_assets
-   ```
 
-   依赖 `pymupdf` 与 `Pillow`（缺失时先 `pip install pymupdf Pillow`）。脚本按 Figure/Table 出现顺序逐一提取，输出 `crop_XXX_pageYYY_regZ.png` 语义化命名；提取效果不佳时可加 `--fallback-blind-crop --clean` 盲裁剪兜底。按分页规划建议各部分结构提取论文内容。
+   逐页查看对照页、逐图核验并处理漏项。随后运行 `python scripts/paper_assets.py check --paper "<论文ID>"`；只有通过后才进入成稿阶段。
 
-2. **内容规划**：将内容拆分为 13~22 页，每页聚焦单一主题。
+2. **内容规划**：运行 `python scripts/build_asset_ledger.py "<论文ID>" --no-blog`，逐一把清单中的素材 ID 分配到 `页码 | 主题 | 素材ID | 原文页码 | 结论` 规划表。页数按素材需求调整，主讲以外的图表进入可读附录，不设统一硬上限。
 
 3. **结构设计**：
    - 首页（标题 + 作者 + 作者单位 + 发表期刊）
@@ -108,9 +119,9 @@ description: 生成苹果风/Notion 风的论文阅读 HTML 演示文稿（PPT�
    - 总结与讨论
    - 结尾
 
-4. **填充内容**：根据模板组件填充具体内容，用 Write 工具将 HTML 保存到 `paper-slides/<论文名>.html`（单文件，图片用相对路径引用 `<论文名>_assets/` 内的图表）。
+4. **填充内容**：根据模板组件填充具体内容，用 Write 工具将 HTML 保存到 `paper-slides/<论文名>.html`（单文件，图片用相对路径引用 `../assets/paper-imgs/<论文ID>/` 内的图表，保留 `data-asset-id` 对应关系）。
 
-5. **预览调整**：生成后检查效果并微调。
+5. **验收与修复**：运行 `python scripts/verify_slides.py "<论文ID>" --html "paper-slides/<论文名>.html" --json`。按报告逐页修复缺图、不可见、尺寸不足、变形与交互错误。失败或 `unverified` 不得登记交付；浏览器环境缺失时先安装 Playwright 和 Chromium。
 
 6. **登记清单**：按上方格式在 `slides-manifest.json` 追加条目。
 

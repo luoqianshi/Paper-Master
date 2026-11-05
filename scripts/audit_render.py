@@ -60,14 +60,26 @@ PROBE_JS = r"""
   const lin = (v) => { v = v/255; return v <= 0.03928 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); };
   const lum = (c) => 0.2126*lin(c.r)+0.7152*lin(c.g)+0.0722*lin(c.b);
   const ratio = (a,b) => { const l1=lum(a), l2=lum(b); return (Math.max(l1,l2)+0.05)/(Math.min(l1,l2)+0.05); };
+  // 半透明背景（如 rgba(57,102,162,0.06)）必须与下层白色合成，
+  // 否则会被当成纯深蓝底，把黑字误判成对比度不足。
   const bgOf = (el) => {
+    const layers = [];
     let p = el;
     while (p) {
       const c = parseRGB(getComputedStyle(p).backgroundColor);
-      if (c && c.a > 0.05) return c;
+      if (c && c.a > 0.001) layers.push(c);
       p = p.parentElement;
     }
-    return {r:255,g:255,b:255,a:1};
+    let out = {r:255, g:255, b:255};
+    for (let i = layers.length-1; i >= 0; i--) {
+      const c = layers[i];
+      out = {
+        r: Math.round(c.r*c.a + out.r*(1-c.a)),
+        g: Math.round(c.g*c.a + out.g*(1-c.a)),
+        b: Math.round(c.b*c.a + out.b*(1-c.a))
+      };
+    }
+    return out;
   };
   const titleOf = (s) => {
     const h = s.querySelector('h2,.slide-label,.slide-title');
@@ -181,7 +193,9 @@ PRINT_VISIBLE_JS = ("() => [...document.querySelectorAll('.slide')].filter(s => 
                     "const c = getComputedStyle(s); return c.visibility === 'visible' && parseFloat(c.opacity) > 0.05;"
                     "}).length")
 SET_ACTIVE_JS = ("(i) => { [...document.querySelectorAll('.slide')].forEach((s,j) => {"
-                 "s.style.transition='none'; s.classList.toggle('active', j===i); }); }")
+                 "s.style.transition='none'; s.style.opacity = j===i ? '1' : '0';"
+                 "s.style.visibility = j===i ? 'visible' : 'hidden';"
+                 "s.classList.toggle('active', j===i); }); }")
 
 
 def now_iso():
@@ -281,7 +295,7 @@ async def render_one(browser, path, logbuf):
             outdir.mkdir(parents=True, exist_ok=True)
             for p in dict.fromkeys(shots[:MAX_SHOTS_PER_FILE]):
                 await page.evaluate(SET_ACTIVE_JS, p - 1)
-                await page.wait_for_timeout(60)
+                await page.wait_for_timeout(700)  # 等过 0.6s CSS 过渡，否则截图全白
                 await page.screenshot(path=str(outdir / f"1280x720_p{p}.png"))
             rec["screens"] = [f"screens/{path.stem}/1280x720_p{p}.png" for p in dict.fromkeys(shots[:MAX_SHOTS_PER_FILE])]
         rec["ok"] = True
@@ -305,8 +319,9 @@ async def run(args):
     if args.limit:
         files = files[:args.limit]
 
+    # 即使 --force 也要保留已有文件的数据：--force --files A,B 不应把其余 60 份抹掉
     existing = {}
-    if RENDER_JSON.exists() and not args.force:
+    if RENDER_JSON.exists():
         try:
             existing = json.loads(RENDER_JSON.read_text(encoding="utf-8")).get("files", {})
         except Exception:

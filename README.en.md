@@ -43,7 +43,7 @@ cd Paper-Master
 
 > **Clear the author's sample content before adding your own papers**
 >
-> The repository ships with the author's own paper-reading output: the original paper PDFs in `pdf-papers/`, 58 reading notes in `paper-blogs/`, 61 HTML decks in `paper-slides/` (each with its own `*_assets/` figure folder), 59 per-paper figure folders in `assets/paper-imgs/`, and 61 first-screen thumbnails in `assets/thumbnails/`. Before producing your own content, clear the resources in these five folders (keep the folders themselves), then clear the arrays in `slides-manifest.json` and `blogs-manifest.json` — or run `python scripts/generate_manifests.py` to rebuild empty manifests. The `index.html` gallery only reads these two manifests. `other-htmls/` also contains four topic-explainer pages from the author — remove them as well if you don't need them.
+> The repository ships with the author's own paper-reading output: the original paper PDFs in `pdf-papers/`, 58 reading notes in `paper-blogs/`, 61 HTML decks in `paper-slides/` (including legacy `*_assets/` folders that can be migrated through the shared asset workflow), 59 per-paper figure folders in `assets/paper-imgs/`, and 61 first-screen thumbnails in `assets/thumbnails/`. Before producing your own content, clear the resources in these five folders (keep the folders themselves), then clear the arrays in `slides-manifest.json` and `blogs-manifest.json` — or run `python scripts/generate_manifests.py` to rebuild empty manifests. The `index.html` gallery only reads these two manifests. `other-htmls/` also contains four topic-explainer pages from the author — remove them as well if you don't need them.
 
 Open the project in any AI coding tool / AI office tool that supports Skills (Codex / Qoder / TRAE / Claude Code / CodeBuddy), and send the Agent any of these prompts:
 
@@ -100,7 +100,9 @@ python -m pip install pymupdf Pillow playwright
 python -m playwright install chromium
 ```
 
-When maintaining skills, update the instructions, scripts, templates, and references in the source directory `.agents/skills/` first, then sync to platform directories such as `.trae/skills/` and `.qoder/skills/`, using each platform's script paths.
+All three skills share `assets/paper-imgs/<paper-id>/asset_manifest.json` and its image files, including the direct PDF-to-deck workflow. Prepare and review assets before generating content; both deck workflows verify that every required asset is actually visible. See the [shared asset workflow](docs/paper-assets-workflow.md) for per-asset repair and legacy-directory migration.
+
+Maintain skill instructions in `.agents/skills/`, shared asset scripts in `scripts/`, and the source template in `templates/presentation.html`. Run `python scripts/sync_skill_resources.py` to distribute instructions, entrypoints, and templates; use `--check` to detect drift. Note-specific scripts and reference materials remain in their skill directories.
 
 ---
 
@@ -116,11 +118,11 @@ The repository ships with 3 SKILLs, covering the core ways of distilling "readin
 
 - **`lzk-paper-reading`** produces a Chinese note on a fixed five-section skeleton (Motivation / Contributions / Method / Experiments / Strengths & Innovations) + a paper-info table + a disclaimer. It enforces the formula pattern "lead-in sentence → LaTeX → where-explanation", the "2–3 sentences + 1 figure" experiment rhythm, and gates output with `scripts/new_note.py` (scaffold) and `scripts/check_note.py` (validator).
 - **`html-paper-slides`** generates Apple-style / Notion-style single-file HTML decks: zero external dependencies, `file://` open, keyboard navigation, fade-in animations, CSS-Grid responsive layout. Deploy with one click to GitHub Pages / Vercel / Netlify.
-- **`blog-to-slides`** takes a Chinese reading note produced by `lzk-paper-reading` as its **single source of truth** and reuses the figures already extracted under `assets/paper-imgs/` — no PDF needed: it maps the five-section note onto a single-file HTML deck (Cover → Overview → Introduction → Method → Experiments → Summary & Discussion), typesets formulas with HTML/CSS, references figures by relative path without copying, and stays dependency-free under `file://`.
+- **`blog-to-slides`** takes a Chinese reading note produced by `lzk-paper-reading` as its **narrative input** and reuses reviewed figures under `assets/paper-imgs/`, consulting the PDF when evidence or crops are missing: it maps the five-section note onto a single-file HTML deck (Cover → Overview → Introduction → Method → Experiments → Summary & Discussion), typesets formulas with HTML/CSS, references figures by relative path without copying, and stays dependency-free under `file://`.
 
-> `lzk-paper-reading` and `html-paper-slides` share the same "paper understanding" layer: `pdf_extractor.py` first pulls transparent-background figures from the PDF and archives them per paper title under `assets/paper-imgs/<paper-title>/`; the figures then feed the note flow and the deck flow. `blog-to-slides` adds a third path — it consumes the note flow's outputs (note + figures) directly and turns an existing note into a deck without ever touching the PDF. One paper can produce "note + deck" in a single pass.
+> `lzk-paper-reading` and `html-paper-slides` share the same "paper understanding" layer: `pdf_extractor.py` first pulls transparent-background figures from the PDF and archives them per paper title under `assets/paper-imgs/<paper-title>/`; the figures then feed the note flow and the deck flow. `blog-to-slides` adds a third path — it consumes the note flow's outputs (note + figures) directly and turns an existing note into a deck reusing reviewed assets and consulting the PDF only when needed. One paper can produce "note + deck" in a single pass.
 
-Inside that layer, `pdf_extractor.py` runs a **caption-driven** extraction mode: it locates `Figure/Table` captions (text-pattern match + verb blacklist + nearby-visual verification, filtering out in-text references such as "Figure 3 shows..."), then associates the caption with its figure region ("Figure looks up, Table looks down"), and finally takes the bounding box of the vector/image objects inside the search window for pixel-precise cropping, emitting semantic names like `fig1.png` / `table2.png`. If caption-driven extraction fails, add `--fallback-blind-crop` to enable a blind-crop fallback. See [PDF Figure Precise Location & Cropping](qna/PDF论文图表精准定位与裁切实现原理_20261028_154824.md) for the full principle, and `qna/html-vis/` for the three-stage visual walkthrough (caption detection → region association → boundary refinement).
+Inside that layer, `pdf_extractor.py` runs a **caption-driven** extraction mode: it locates `Figure/Table` captions (text-pattern match + verb blacklist + nearby-visual verification, filtering out in-text references such as "Figure 3 shows..."), then associates the caption with its figure region ("Figure looks up, Table looks down"), and finally takes the bounding box of the vector/image objects inside the search window for pixel-precise cropping, assigning stable IDs by type, number, and page. Failed candidates remain in the inventory and can be repaired individually with `paper_assets.py extract --asset ... --page ... --bbox ...`, then reviewed. See [PDF Figure Precise Location & Cropping](qna/PDF论文图表精准定位与裁切实现原理_20261028_154824.md) for the full principle, and `qna/html-vis/` for the three-stage visual walkthrough (caption detection → region association → boundary refinement).
 
 ---
 
@@ -218,7 +220,7 @@ The output layer of the `lzk-paper-reading` skill: each PDF paper maps to one st
 Paper figures are centralized: key screenshots extracted by `pdf_extractor.py` go into a folder named after the paper title, under `assets/paper-imgs/<paper-title>/`, shared by both the note flow and the deck flow.
 
 ### 3. `paper-slides/` — HTML Decks
-Produced by `html-paper-slides` (PDF input) or `blog-to-slides` (reading-note input from `paper-blogs/`, no PDF needed) — single-file decks built on the same paper's reading note and the figures in `assets/paper-imgs/`, compressed into a 13–22 page presentation structure. Keep a clear chapter flow: **Cover → Abstract → Introduction → Method → Experiments → Ablation → Conclusion & Outlook**, reinforced with cards, flow diagrams, comparison tables, metric highlights, and navigation controls. After a deck is added, **always update `slides-manifest.json`** so `index.html` can render title, path, description, kind, and accent correctly. Then run `python .agents/skills/html-paper-slides/scripts/generate-thumbnails.py` to generate real cover thumbnails for the gallery cards.
+Produced by `html-paper-slides` (PDF input) or `blog-to-slides` (reading-note input from `paper-blogs/`, no PDF needed) — single-file decks built on the same paper's reading note and the figures in `assets/paper-imgs/`, organized into a main presentation and readable appendices covering all assets. Keep a clear chapter flow: **Cover → Abstract → Introduction → Method → Experiments → Ablation → Conclusion & Outlook**, reinforced with cards, flow diagrams, comparison tables, metric highlights, and navigation controls. After a deck is added, **always update `slides-manifest.json`** so `index.html` can render title, path, description, kind, and accent correctly. Then run `python .agents/skills/html-paper-slides/scripts/generate-thumbnails.py` to generate real cover thumbnails for the gallery cards.
 
 ### Quality Checklist
 Before moving to the next stage, confirm:
@@ -249,7 +251,7 @@ Paper-Master/
 ├── README.md             # Chinese README (default)
 ├── README.en.md          # English README
 ├── LICENSE               # MIT License
-├── paper-slides/         # HTML PPT outputs from html-paper-slides + matching _assets/ figures
+├── paper-slides/         # HTML decks; new outputs reference shared assets/paper-imgs/ figures
 │   ├── Attention_Is_All_You_Need.html
 │   ├── DETRs_Beat_YOLOs_on_Real-time_Object_Detection.html
 │   └── ... (more paper decks)
