@@ -90,14 +90,6 @@
       "thumbnail": "assets/thumbnails/DFR-SN-YOLO.png"
     },
     {
-      "title": "Dialogue Director 论文精读",
-      "file": "paper-slides/Dialogue_Director.html",
-      "description": "Dialogue Director 论文精读演示，聚焦对话可视化新任务、免训练三智能体框架（Script Director + Cinematographer + Storyboard Maker）与电影知识整合。",
-      "kind": "期刊/会议",
-      "accent": "rgba(57,102,162,.18)",
-      "thumbnail": "assets/thumbnails/Dialogue_Director.png"
-    },
-    {
       "title": "DilateFormer: Multi-Scale Dilated Transformer for Visual Recognition",
       "file": "paper-slides/DilateFormer.html",
       "description": "DilateFormer: Multi-Scale Dilated Transformer for Visual Recognition 论文演示文稿，基于阅读笔记生成。",
